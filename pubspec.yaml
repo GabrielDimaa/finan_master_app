@@ -11,6 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  path: ^1.8.3
+  sqflite: ^2.2.8+4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
