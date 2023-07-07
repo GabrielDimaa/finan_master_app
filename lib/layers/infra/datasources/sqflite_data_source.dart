@@ -2,34 +2,27 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-final class DatabaseLocal {
+class SqfliteDataSource {
   String get _name => "finan_master.db";
   int get _version => 1;
+
   Database? _database;
 
-  DatabaseLocal? _instance;
+  SqfliteDataSource? _instance;
 
-  DatabaseLocal._();
+  SqfliteDataSource._();
 
-  DatabaseLocal getInstance() {
-    _instance ??= DatabaseLocal._();
-    return _instance!;
-  }
-
-  Future<Database> getDatabase() async {
-    if (_database != null) return _database!;
-
-    _database = await openDatabase(
-      await _getPath(),
-      version: _version,
-      onCreate: _onCreate,
-      onUpgrade: _onUpgrade,
-    );
-
+  Future<SqfliteDataSource> getInstance() async {
+    if (_instance != null) return _instance!;
+    
+    _instance ??= SqfliteDataSource._();
+    
+    await getDatabase();
     await _database?.execute("VACUUM;");
-
-    return _database!;
+    
+    return _instance!;
   }
 
   Future<File> getFileDatabase() async {
@@ -38,6 +31,17 @@ final class DatabaseLocal {
     final String path = await _getPath();
 
     return File(path);
+  }
+
+  Future<Database> getDatabase() async {
+    if (_database != null) return _database!;
+
+    return await openDatabase(
+      await _getPath(),
+      version: _version,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -78,19 +82,14 @@ final class DatabaseLocal {
       '(code $code SQLITE_CONSTRAINT_TRIGGER[$code])',
       'Error Domain=FMDatabase Code=$code',
       '(code $code)',
-      if (e is SqfliteFfiException) '\n Causing statement: ${e.details?['sql']}',
     ];
 
-    if (e is SqfliteDatabaseException) {
-      String? message = e.message;
+    String? message = e.toString();
 
-      for (var clean in clearMessages) {
-        message = message?.replaceAll(clean, '');
-      }
-
-      throw Exception(message);
+    for (var clean in clearMessages) {
+      message = message?.replaceAll(clean, '');
     }
 
-    throw e;
+    throw Exception(message);
   }
 }
