@@ -15,17 +15,17 @@ final class DatabaseLocal implements IDatabaseLocal {
 
   late Database _database;
 
-  DatabaseLocal? _instance;
+  static DatabaseLocal? _instance;
 
   DatabaseLocal._();
 
-  Future<DatabaseLocal> getInstance() async {
+  static Future<DatabaseLocal> getInstance() async {
     if (_instance != null) return _instance!;
 
     _instance ??= DatabaseLocal._();
 
-    await _loadDatabase();
-    await _database.execute("VACUUM;");
+    await _instance?._loadDatabase();
+    await _instance?._database.execute("VACUUM;");
 
     return _instance!;
   }
