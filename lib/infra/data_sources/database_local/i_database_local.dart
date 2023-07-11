@@ -1,8 +1,11 @@
 import 'package:finan_master_app/infra/data_sources/database_local/database_operation.dart';
-import 'package:finan_master_app/infra/data_sources/database_local/i_database_batch.dart';
+import 'package:finan_master_app/infra/data_sources/database_local/i_database_local_batch.dart';
+import 'package:finan_master_app/infra/data_sources/database_local/i_database_local_transaction.dart';
 
 abstract interface class IDatabaseLocal {
-  IDatabaseBatch batch();
+  IDatabaseLocalBatch get batch;
+
+  IDatabaseLocalTransaction get transaction;
 
   Future<int> insert(String table, Map<String, dynamic> values);
 

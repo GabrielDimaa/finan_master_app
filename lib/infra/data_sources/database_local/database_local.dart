@@ -1,11 +1,12 @@
 import 'dart:io';
 
-import 'package:finan_master_app/infra/data_sources/database_local/database_batch.dart';
+import 'package:finan_master_app/infra/data_sources/database_local/database_local_batch.dart';
+import 'package:finan_master_app/infra/data_sources/database_local/database_local_transaction.dart';
 import 'package:finan_master_app/infra/data_sources/database_local/database_operation.dart';
-import 'package:finan_master_app/infra/data_sources/database_local/i_database_batch.dart';
+import 'package:finan_master_app/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/infra/data_sources/database_local/i_database_local.dart';
+import 'package:finan_master_app/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 final class DatabaseLocal implements IDatabaseLocal {
@@ -24,6 +25,8 @@ final class DatabaseLocal implements IDatabaseLocal {
 
     _instance ??= DatabaseLocal._();
 
+    if (Platform.isWindows) sqfliteFfiInit();
+
     await _instance?._loadDatabase();
     await _instance?._database.execute("VACUUM;");
 
@@ -40,6 +43,8 @@ final class DatabaseLocal implements IDatabaseLocal {
   }
 
   Future<void> _loadDatabase() async {
+    if (Platform.isWindows) databaseFactoryOrNull = databaseFactoryFfi;
+
     _database = await openDatabase(
       await _getPath(),
       version: _version,
@@ -93,7 +98,10 @@ final class DatabaseLocal implements IDatabaseLocal {
   }
 
   @override
-  IDatabaseBatch batch() => DatabaseBatch(_database);
+  IDatabaseLocalBatch get batch => DatabaseLocalBatch(database: _database);
+
+  @override
+  IDatabaseLocalTransaction get transaction => DatabaseLocalTransaction(database: _database);
 
   @override
   Future<int> insert(String table, Map<String, dynamic> values) => _database.insert(table, values);

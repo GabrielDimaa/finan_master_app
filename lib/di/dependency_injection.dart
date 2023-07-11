@@ -1,6 +1,7 @@
 import 'package:finan_master_app/infra/data_sources/database_local/database_local.dart';
 import 'package:finan_master_app/infra/data_sources/database_local/i_database_local.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 final class DependencyInjection {
   static final DependencyInjection _instance = DependencyInjection._();

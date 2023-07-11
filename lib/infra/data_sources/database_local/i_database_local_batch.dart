@@ -1,7 +1,7 @@
 import 'package:finan_master_app/infra/data_sources/database_local/database_operation.dart';
 
-abstract interface class IDatabaseBatch {
-  Future<List<Object?>> commit();
+abstract interface class IDatabaseLocalBatch {
+  Future<void> commit();
 
   void insert(String table, Map<String, dynamic> values);
 
@@ -12,17 +12,4 @@ abstract interface class IDatabaseBatch {
   void execute(String sql, [List<dynamic>? arguments]);
 
   void raw(String sql, DatabaseOperation operation, [List<dynamic>? arguments]);
-
-  void query(
-    String table, {
-    bool? distinct,
-    List<String>? columns,
-    String? where,
-    List<dynamic>? whereArgs,
-    String? groupBy,
-    String? having,
-    String? orderBy,
-    int? limit,
-    int? offset,
-  });
 }

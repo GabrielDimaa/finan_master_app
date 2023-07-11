@@ -1,18 +1,17 @@
 import 'package:finan_master_app/infra/data_sources/database_local/database_operation.dart';
-import 'package:finan_master_app/infra/data_sources/database_local/i_database_batch.dart';
+import 'package:finan_master_app/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-final class DatabaseBatch implements IDatabaseBatch {
-  final Database _database;
+final class DatabaseLocalBatch implements IDatabaseLocalBatch {
   late final Batch _batch;
 
-  DatabaseBatch(this._database) {
-    _batch = _database.batch();
+  DatabaseLocalBatch({required Database database, Transaction? txn}) {
+    _batch = (txn ?? database).batch();
   }
 
   @override
-  Future<List<Object?>> commit() => _batch.commit();
+  Future<void> commit() => _batch.commit(noResult: false);
 
   @override
   void insert(String table, Map<String, dynamic> values) => _batch.insert(table, values);
@@ -39,30 +38,4 @@ final class DatabaseBatch implements IDatabaseBatch {
         return _batch.rawDelete(sql, arguments);
     }
   }
-
-  @override
-  void query(
-    String table, {
-    bool? distinct,
-    List<String>? columns,
-    String? where,
-    List<dynamic>? whereArgs,
-    String? groupBy,
-    String? having,
-    String? orderBy,
-    int? limit,
-    int? offset,
-  }) =>
-      _batch.query(
-        table,
-        distinct: distinct,
-        columns: columns,
-        where: where,
-        whereArgs: whereArgs,
-        groupBy: groupBy,
-        having: having,
-        orderBy: orderBy,
-        limit: limit,
-        offset: offset,
-      );
 }
