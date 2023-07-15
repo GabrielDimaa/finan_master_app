@@ -1,5 +1,5 @@
-import 'package:finan_master_app/infra/data_sources/database_local/database_local.dart';
-import 'package:finan_master_app/infra/data_sources/database_local/i_database_local.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
 import 'package:get_it/get_it.dart';
 
 final class DependencyInjection {
