@@ -14,7 +14,7 @@ final class DatabaseLocal implements IDatabaseLocal {
 
   int get _version => 1;
 
-  late Database _database;
+  late Database database;
 
   static DatabaseLocal? _instance;
 
@@ -28,14 +28,14 @@ final class DatabaseLocal implements IDatabaseLocal {
     if (Platform.isWindows) sqfliteFfiInit();
 
     await _instance?._loadDatabase();
-    await _instance?._database.execute("VACUUM;");
+    await _instance?.database.execute("VACUUM;");
 
     return _instance!;
   }
 
   Future<File> getFileDatabase() async {
     //A conexão deve ser fechada antes de obter o arquivo do banco de dados.
-    await _database.close();
+    await database.close();
     final String path = await _getPath();
     await _loadDatabase();
 
@@ -45,7 +45,7 @@ final class DatabaseLocal implements IDatabaseLocal {
   Future<void> _loadDatabase() async {
     if (Platform.isWindows) databaseFactoryOrNull = databaseFactoryFfi;
 
-    _database = await openDatabase(
+    database = await openDatabase(
       await _getPath(),
       version: _version,
       onCreate: _onCreate,
@@ -54,11 +54,11 @@ final class DatabaseLocal implements IDatabaseLocal {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    final Batch batch = db.batch();
+    final IDatabaseLocalBatch batch = DatabaseLocalBatch(database: db);
 
-    // TODO: Create tables.
+    // NomeRepository(databaseLocal: this).createTable(batch);
 
-    await batch.commit(noResult: true);
+    await batch.commit();
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -98,34 +98,34 @@ final class DatabaseLocal implements IDatabaseLocal {
   }
 
   @override
-  IDatabaseLocalBatch get batch => DatabaseLocalBatch(database: _database);
+  IDatabaseLocalBatch batch() => DatabaseLocalBatch(database: database);
 
   @override
-  IDatabaseLocalTransaction get transaction => DatabaseLocalTransaction(database: _database);
+  IDatabaseLocalTransaction transactionInstance() => DatabaseLocalTransaction(database: database);
 
   @override
-  Future<int> insert(String table, Map<String, dynamic> values) => _database.insert(table, values);
+  Future<int> insert(String table, Map<String, dynamic> values) => database.insert(table, values);
 
   @override
-  Future<int> update(String table, Map<String, dynamic> values, {String? where, List<dynamic>? whereArgs}) => _database.update(table, values, where: where, whereArgs: whereArgs);
+  Future<int> update(String table, Map<String, dynamic> values, {String? where, List<dynamic>? whereArgs}) => database.update(table, values, where: where, whereArgs: whereArgs);
 
   @override
-  Future<int> delete(String table, {String? where, List<dynamic>? whereArgs}) => _database.delete(table, where: where, whereArgs: whereArgs);
+  Future<int> delete(String table, {String? where, List<dynamic>? whereArgs}) => database.delete(table, where: where, whereArgs: whereArgs);
 
   @override
-  Future<dynamic> execute(String sql, [List<dynamic>? arguments]) => _database.execute(sql, arguments);
+  Future<dynamic> execute(String sql, [List<dynamic>? arguments]) => database.execute(sql, arguments);
 
   @override
   Future<dynamic> raw(String sql, DatabaseOperation operation, [List<dynamic>? arguments]) {
     switch (operation) {
       case DatabaseOperation.select:
-        return _database.rawQuery(sql, arguments);
+        return database.rawQuery(sql, arguments);
       case DatabaseOperation.insert:
-        return _database.rawInsert(sql, arguments);
+        return database.rawInsert(sql, arguments);
       case DatabaseOperation.update:
-        return _database.rawUpdate(sql, arguments);
+        return database.rawUpdate(sql, arguments);
       case DatabaseOperation.delete:
-        return _database.rawDelete(sql, arguments);
+        return database.rawDelete(sql, arguments);
     }
   }
 
@@ -142,7 +142,7 @@ final class DatabaseLocal implements IDatabaseLocal {
     int? limit,
     int? offset,
   }) =>
-      _database.query(
+      database.query(
         table,
         distinct: distinct,
         columns: columns,

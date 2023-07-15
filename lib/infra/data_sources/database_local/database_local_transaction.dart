@@ -22,10 +22,10 @@ class DatabaseLocalTransaction implements IDatabaseLocalTransaction, ITransactio
   }
 
   @override
-  IDatabaseLocalBatch get batch => DatabaseLocalBatch(database: _txn.database, txn: _txn);
+  IDatabaseLocalBatch batch() => DatabaseLocalBatch(database: _txn.database, txn: _txn);
 
   @override
-  IDatabaseLocalTransaction get transaction => DatabaseLocalTransaction(database: _database);
+  IDatabaseLocalTransaction transactionInstance() => DatabaseLocalTransaction(database: _database);
 
   @override
   Future<int> insert(String table, Map<String, dynamic> values) => _txn.insert(table, values);
@@ -66,5 +66,16 @@ class DatabaseLocalTransaction implements IDatabaseLocalTransaction, ITransactio
     int? limit,
     int? offset,
   }) =>
-      _txn.query(table);
+      _txn.query(
+        table,
+        distinct: distinct,
+        columns: columns,
+        where: where,
+        whereArgs: whereArgs,
+        groupBy: groupBy,
+        having: having,
+        orderBy: orderBy,
+        limit: limit,
+        offset: offset,
+      );
 }

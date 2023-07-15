@@ -11,7 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  collection: ^1.17.1
   get_it: ^7.6.0
+  go_router: ^9.0.3
   path: ^1.8.3
   sqflite: ^2.2.8+4
   sqflite_common_ffi: ^2.2.5
@@ -23,8 +25,6 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
-  uses-material-design: true
-
   fonts:
     - family: Roboto
       fonts:
@@ -58,3 +58,5 @@ flutter:
         - asset: assets/fonts/Roboto/Roboto-BlackItalic.ttf
           weight: 900
           style: italic
+
+  uses-material-design: true
