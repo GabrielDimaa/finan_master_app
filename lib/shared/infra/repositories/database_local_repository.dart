@@ -1,7 +1,7 @@
-import 'package:finan_master_app/domain/repositories/i_database_local_repository.dart';
-import 'package:finan_master_app/infra/data_sources/database_local/i_database_local.dart';
-import 'package:finan_master_app/infra/data_sources/database_local/i_database_local_transaction.dart';
-import 'package:finan_master_app/infra/model/model.dart';
+import 'package:finan_master_app/shared/domain/repositories/i_database_local_repository.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
+import 'package:finan_master_app/shared/infra/model/model.dart';
 
 abstract class DatabaseLocalRepository<T extends Model> implements IDatabaseLocalRepository<T> {
   final IDatabaseLocal databaseLocal;

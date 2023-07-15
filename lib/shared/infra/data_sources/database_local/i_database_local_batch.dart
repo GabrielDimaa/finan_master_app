@@ -1,4 +1,4 @@
-import 'package:finan_master_app/infra/data_sources/database_local/database_operation.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/database_operation.dart';
 
 abstract interface class IDatabaseLocalBatch {
   Future<void> commit();

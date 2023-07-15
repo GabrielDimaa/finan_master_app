@@ -1,4 +1,4 @@
-import 'package:finan_master_app/infra/data_sources/database_local/i_database_local.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
 
 typedef ActionTxn<T> = Future<T> Function(ITransactionExecutor txn);
 
