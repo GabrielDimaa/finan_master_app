@@ -1,0 +1,55 @@
+import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
+import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
+import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/nav/nav.dart';
+import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
+
+sealed class AppRouter {
+  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  static final _homeNavigatorKey = GlobalKey<NavigatorState>();
+  static final _configNavigatorKey = GlobalKey<NavigatorState>();
+
+  static RouterConfig<Object> routerConfig() {
+    return GoRouter(
+      navigatorKey: _rootNavigatorKey, //https://github.com/flutter/flutter/issues/113757#issuecomment-1518421380
+      initialLocation: '/${HomePage.route}',
+      routes: [
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: SplashPage.route,
+          path: '/${SplashPage.route}',
+          builder: (_, __) => const SplashPage(),
+        ),
+        StatefulShellRoute.indexedStack(
+          parentNavigatorKey: _rootNavigatorKey,
+          builder: (_, __, navigationShell) => Nav(navigationShell: navigationShell),
+          branches: [
+            StatefulShellBranch(
+              navigatorKey: _homeNavigatorKey,
+              routes: [
+                GoRoute(
+                  parentNavigatorKey: _homeNavigatorKey,
+                  name: HomePage.route,
+                  path: '/${HomePage.route}',
+                  builder: (_, __) => const HomePage(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              navigatorKey: _configNavigatorKey,
+              routes: [
+                GoRoute(
+                  parentNavigatorKey: _configNavigatorKey,
+                  name: ConfigPage.route,
+                  path: '/${ConfigPage.route}',
+                  builder: (_, __) => const ConfigPage(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
