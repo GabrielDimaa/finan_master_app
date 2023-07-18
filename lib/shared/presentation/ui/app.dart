@@ -1,7 +1,9 @@
+import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-const String appName = "Finan Master";
+const String appName = 'Finan Master';
 
 class App extends StatelessWidget {
   App({Key? key}) : super(key: key);
@@ -17,7 +19,7 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.light,
       theme: ThemeData(
         useMaterial3: true,
-        fontFamily: "Roboto",
+        fontFamily: 'Roboto',
         colorScheme: themeDark,
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(padding: const EdgeInsets.all(20)),
@@ -38,6 +40,9 @@ class App extends StatelessWidget {
           ),
         ),
       ),
+      locale: R.locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 

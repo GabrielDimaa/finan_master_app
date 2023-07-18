@@ -1,3 +1,4 @@
+import 'package:finan_master_app/shared/presentation/mixins/theme_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -9,7 +10,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with ThemePage {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,15 +19,15 @@ class _HomePageState extends State<HomePage> {
           icon: const Icon(Icons.menu),
           onPressed: () {},
         ),
-        title: const Text('Início'),
+        title: Text(strings.home),
         centerTitle: true,
       ),
-      body: const SafeArea(
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Center(
-              child: Text('Home'),
+              child: Text(strings.home),
             ),
           ],
         ),

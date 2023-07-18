@@ -6,6 +6,7 @@ import 'package:finan_master_app/shared/infra/data_sources/database_local/databa
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -77,7 +78,7 @@ final class DatabaseLocal implements IDatabaseLocal {
   static throwable(DatabaseException e, StackTrace st, String tableName) {
     final int? code = e.getResultCode();
 
-    if (code == 2067) throw Exception("Dado já cadastrado.");
+    if (code == 2067) throw Exception(R.strings.registeredData);
 
     final List<String> clearMessages = [
       'SqliteException($code): ',

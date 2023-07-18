@@ -1,6 +1,5 @@
-import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
+import 'package:finan_master_app/shared/presentation/mixins/theme_page.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class ConfigPage extends StatefulWidget {
   static const String route = 'config';
@@ -11,7 +10,7 @@ class ConfigPage extends StatefulWidget {
   State<ConfigPage> createState() => _ConfigPageState();
 }
 
-class _ConfigPageState extends State<ConfigPage> {
+class _ConfigPageState extends State<ConfigPage> with ThemePage {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,20 +19,14 @@ class _ConfigPageState extends State<ConfigPage> {
           icon: const Icon(Icons.menu),
           onPressed: () {},
         ),
-        title: const Text('Configurações'),
+        title: Text(strings.settings),
         centerTitle: true,
       ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Center(
-              child: Text('Configurações'),
-            ),
-            FilledButton(
-              onPressed: () => context.goNamed('splash'),
-              child: Text('Ir para SplashPage'),
-            ),
+            Text(strings.settings),
           ],
         ),
       ),
