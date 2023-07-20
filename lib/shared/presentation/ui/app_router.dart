@@ -1,7 +1,8 @@
+import 'package:finan_master_app/features/categories/presentation/ui/categories_page.dart';
 import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/nav/nav.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_bar_rail.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -23,7 +24,7 @@ sealed class AppRouter {
         ),
         StatefulShellRoute.indexedStack(
           parentNavigatorKey: _rootNavigatorKey,
-          builder: (_, __, navigationShell) => Nav(navigationShell: navigationShell),
+          builder: (_, __, navigationShell) => NavBarRail(navigationShell: navigationShell),
           branches: [
             StatefulShellBranch(
               navigatorKey: _homeNavigatorKey,
@@ -33,6 +34,12 @@ sealed class AppRouter {
                   name: HomePage.route,
                   path: '/${HomePage.route}',
                   builder: (_, __) => const HomePage(),
+                ),
+                GoRoute(
+                  parentNavigatorKey: _homeNavigatorKey,
+                  name: CategoriesPage.route,
+                  path: '/${CategoriesPage.route}',
+                  builder: (_, __) => const CategoriesPage(),
                 ),
               ],
             ),
