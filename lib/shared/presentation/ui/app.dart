@@ -22,22 +22,34 @@ class App extends StatelessWidget {
         fontFamily: 'Roboto',
         colorScheme: themeDark,
         filledButtonTheme: FilledButtonThemeData(
-          style: FilledButton.styleFrom(padding: const EdgeInsets.all(20)),
+          style: FilledButton.styleFrom(
+            fixedSize: const Size.fromHeight(40),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+          ),
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.all(20),
+          style: OutlinedButton.styleFrom(
+            fixedSize: const Size.fromHeight(40),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.all(20),
+          style: ElevatedButton.styleFrom(
+            fixedSize: const Size.fromHeight(40),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
           ),
         ),
         textButtonTheme: TextButtonThemeData(
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.all(20),
+          style: TextButton.styleFrom(
+            fixedSize: const Size.fromHeight(40),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
           ),
+        ),
+        dividerTheme: const DividerThemeData(
+          space: 2,
+        ),
+        listTileTheme: const ListTileThemeData(
+          contentPadding: EdgeInsets.only(left: 16, top: 8, right: 24, bottom: 8),
         ),
       ),
       locale: R.locale,
