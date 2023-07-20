@@ -1,5 +1,16 @@
 {
+  "accounts":  "Accounts",
+  "backup": "Backup",
+  "cards": "Cards",
+  "categories":  "Categories",
+  "category":  "Category",
+  "expense": "Expense",
+  "expenses": "Expenses",
   "home": "Home",
+  "income": "Income",
+  "incomes": "Incomes",
+  "menu": "Menu",
   "settings": "Settings",
+
   "registeredData": "Data already registered."
 }

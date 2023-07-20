@@ -1,5 +1,16 @@
 {
+  "accounts":  "Contas",
+  "backup": "Backup",
+  "cards": "Cartões",
+  "categories":  "Categorias",
+  "category":  "Categoria",
+  "expense": "Receita",
+  "expenses": "Receitas",
   "home": "Início",
+  "income": "Despesa",
+  "incomes": "Despesas",
+  "menu": "Menu",
   "settings": "Configurações",
+
   "registeredData": "Dado já cadastrado."
 }

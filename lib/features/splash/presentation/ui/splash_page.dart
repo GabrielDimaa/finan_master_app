@@ -1,4 +1,4 @@
-import 'package:finan_master_app/shared/presentation/mixins/theme_page.dart';
+import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,7 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> with ThemePage {
+class _SplashPageState extends State<SplashPage> with ThemeContext {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
