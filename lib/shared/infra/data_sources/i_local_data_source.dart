@@ -1,8 +1,8 @@
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
-import 'package:finan_master_app/shared/infra/model/model.dart';
+import 'package:finan_master_app/shared/infra/models/model.dart';
 
-abstract interface class IDatabaseLocalRepository<T extends Model> {
+abstract interface class ILocalDataSource<T extends Model> {
   String get tableName;
 
   void createTable(IDatabaseLocalBatch batch);

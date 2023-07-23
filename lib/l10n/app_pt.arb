@@ -2,8 +2,8 @@
   "accounts":  "Contas",
   "backup": "Backup",
   "cards": "Cartões",
-  "categories":  "Categorias",
-  "category":  "Categoria",
+  "categories": "Categorias",
+  "category": "Categoria",
   "expense": "Receita",
   "expenses": "Receitas",
   "home": "Início",
@@ -11,6 +11,9 @@
   "incomes": "Despesas",
   "menu": "Menu",
   "settings": "Configurações",
+  "close": "Fechar",
 
+  "categoryNotFound": "Categoria não encontrada.",
+  "noCategoryRegistered": "Nenhuma categoria cadastrada.",
   "registeredData": "Dado já cadastrado."
 }

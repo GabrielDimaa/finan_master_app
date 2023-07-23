@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_batch.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_operation.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
@@ -28,28 +29,56 @@ class DatabaseLocalTransaction implements IDatabaseLocalTransaction, ITransactio
   IDatabaseLocalTransaction transactionInstance() => DatabaseLocalTransaction(database: _database);
 
   @override
-  Future<int> insert(String table, Map<String, dynamic> values) => _txn.insert(table, values);
+  Future<int> insert(String table, Map<String, dynamic> values) async {
+    try {
+      return await _txn.insert(table, values);
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
+    }
+  }
 
   @override
-  Future<int> update(String table, Map<String, dynamic> values, {String? where, List? whereArgs}) => _txn.update(table, values, where: where, whereArgs: whereArgs);
+  Future<int> update(String table, Map<String, dynamic> values, {String? where, List? whereArgs}) async {
+    try {
+      return await _txn.update(table, values, where: where, whereArgs: whereArgs);
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
+    }
+  }
 
   @override
-  Future<int> delete(String table, {String? where, List? whereArgs}) => _txn.delete(table, where: where, whereArgs: whereArgs);
+  Future<int> delete(String table, {String? where, List? whereArgs}) async {
+    try {
+      return await _txn.delete(table, where: where, whereArgs: whereArgs);
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
+    }
+  }
 
   @override
-  Future<void> execute(String sql, [List? arguments]) => _txn.execute(sql, arguments);
+  Future<void> execute(String sql, [List? arguments]) async {
+    try {
+      return await _txn.execute(sql, arguments);
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
+    }
+  }
 
   @override
-  Future raw(String sql, DatabaseOperation operation, [List? arguments]) {
-    switch (operation) {
-      case DatabaseOperation.select:
-        return _txn.rawQuery(sql, arguments);
-      case DatabaseOperation.insert:
-        return _txn.rawInsert(sql, arguments);
-      case DatabaseOperation.update:
-        return _txn.rawUpdate(sql, arguments);
-      case DatabaseOperation.delete:
-        return _txn.rawDelete(sql, arguments);
+  Future raw(String sql, DatabaseOperation operation, [List? arguments]) async {
+    try {
+      switch (operation) {
+        case DatabaseOperation.select:
+          return await _txn.rawQuery(sql, arguments);
+        case DatabaseOperation.insert:
+          return await _txn.rawInsert(sql, arguments);
+        case DatabaseOperation.update:
+          return await _txn.rawUpdate(sql, arguments);
+        case DatabaseOperation.delete:
+          return await _txn.rawDelete(sql, arguments);
+      }
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
     }
   }
 
@@ -65,8 +94,9 @@ class DatabaseLocalTransaction implements IDatabaseLocalTransaction, ITransactio
     String? orderBy,
     int? limit,
     int? offset,
-  }) =>
-      _txn.query(
+  }) async {
+    try {
+      return await _txn.query(
         table,
         distinct: distinct,
         columns: columns,
@@ -78,4 +108,8 @@ class DatabaseLocalTransaction implements IDatabaseLocalTransaction, ITransactio
         limit: limit,
         offset: offset,
       );
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
+    }
+  }
 }

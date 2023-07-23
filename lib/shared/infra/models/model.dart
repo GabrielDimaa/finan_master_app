@@ -13,7 +13,15 @@ abstract class Model<T> {
     required this.deletedAt,
   });
 
+  T clone();
+
   Map<String, dynamic> toMap();
 
-  T clone();
+  Map<String, dynamic> baseMap() {
+    return {
+      idColumnName: id,
+      createdAtColumnName: createdAt?.toIso8601String(),
+      deletedAtColumnName: deletedAt?.toIso8601String(),
+    };
+  }
 }

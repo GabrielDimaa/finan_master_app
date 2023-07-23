@@ -1,4 +1,4 @@
-import 'package:finan_master_app/features/categories/presentation/ui/categories_page.dart';
+import 'package:finan_master_app/features/category/presentation/ui/categories_page.dart';
 import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';

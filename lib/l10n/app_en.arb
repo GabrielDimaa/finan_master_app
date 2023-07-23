@@ -2,8 +2,8 @@
   "accounts":  "Accounts",
   "backup": "Backup",
   "cards": "Cards",
-  "categories":  "Categories",
-  "category":  "Category",
+  "categories": "Categories",
+  "category": "Category",
   "expense": "Expense",
   "expenses": "Expenses",
   "home": "Home",
@@ -11,6 +11,9 @@
   "incomes": "Incomes",
   "menu": "Menu",
   "settings": "Settings",
+  "close": "Close",
 
+  "categoryNotFound": "Category not found.",
+  "noCategoryRegistered": "No category registered.",
   "registeredData": "Data already registered."
 }

@@ -1,7 +1,11 @@
+import 'package:finan_master_app/features/category/presentation/controllers/categories_controller.dart';
+import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
+import 'package:finan_master_app/features/category/presentation/ui/components/tab_bar_view_categories.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class CategoriesPage extends StatefulWidget {
   static const String route = 'categories';
@@ -14,9 +18,17 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
+  final CategoriesController controller = GetIt.I.get<CategoriesController>();
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<Tab> get tabs => [Tab(text: strings.expenses), Tab(text: strings.incomes)];
+
+  @override
+  void initState() {
+    super.initState();
+    controller.init(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,31 +49,22 @@ class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
         drawer: const NavDrawer(selectedIndex: CategoriesPage.indexDrawer),
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
-          onPressed: () {},
+          onPressed: () {
+            Icons.add.codePoint;
+          },
         ),
         body: SafeArea(
-          child: TabBarView(
-            children: [
-              ListView.separated(
-                itemCount: 5,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (_, index) {
-                  return ListTile(
-                    leading: CircleAvatar(child: Icon(Icons.local_gas_station_outlined)),
-                    title: Text("Combustível"),
-                    trailing: Icon(Icons.chevron_right),
-                    onTap: () {},
-                  );
-                },
-              ),
-              Column(
-                children: [
-                  FilledButton(onPressed: () {}, child: Text("Filled button")),
-                  Spacing.y(),
-                  FilledButton.icon(onPressed: () {}, icon: Icon(Icons.add), label: Text("Filled button")),
-                ],
-              ),
-            ],
+          child: ValueListenableBuilder(
+            valueListenable: controller.stateNotifier,
+            builder: (_, CategoriesState state, __) {
+              return switch (state) {
+                LoadingCategoriesState _ => const Center(child: CircularProgressIndicator()),
+                GettedCategoriesState state => TabBarViewCategories(state: state),
+                ErrorCategoriesState state => Text(state.exception.toString()),
+                EmptyCategoriesState _ => NoContentWidget(child: Text(strings.noCategoryRegistered)),
+                StartCategoriesState _ => const SizedBox.shrink(),
+              };
+            },
           ),
         ),
       ),

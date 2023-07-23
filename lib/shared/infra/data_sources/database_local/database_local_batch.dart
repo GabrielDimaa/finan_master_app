@@ -1,3 +1,4 @@
+import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_operation.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:sqflite/sqflite.dart';
@@ -11,7 +12,13 @@ final class DatabaseLocalBatch implements IDatabaseLocalBatch {
   }
 
   @override
-  Future<void> commit() => _batch.commit(noResult: false);
+  Future<void> commit() async {
+    try {
+      await _batch.commit(noResult: false);
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
+    }
+  }
 
   @override
   void insert(String table, Map<String, dynamic> values) => _batch.insert(table, values);

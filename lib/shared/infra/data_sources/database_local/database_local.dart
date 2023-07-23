@@ -1,12 +1,13 @@
 import 'dart:io';
 
+import 'package:finan_master_app/features/category/infra/data_sources/category_data_source.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_batch.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_transaction.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_operation.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
-import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -57,7 +58,7 @@ final class DatabaseLocal implements IDatabaseLocal {
   Future<void> _onCreate(Database db, int version) async {
     final IDatabaseLocalBatch batch = DatabaseLocalBatch(database: db);
 
-    // NomeRepository(databaseLocal: this).createTable(batch);
+    CategoryDataSource(databaseLocal: this).createTable(batch);
 
     await batch.commit();
   }
@@ -75,29 +76,6 @@ final class DatabaseLocal implements IDatabaseLocal {
     return path;
   }
 
-  static throwable(DatabaseException e, StackTrace st, String tableName) {
-    final int? code = e.getResultCode();
-
-    if (code == 2067) throw Exception(R.strings.registeredData);
-
-    final List<String> clearMessages = [
-      'SqliteException($code): ',
-      ', constraint failed (code $code)',
-      '(code $code SQLITE_CONSTRAINT_TRIGGER)',
-      '(code $code SQLITE_CONSTRAINT_TRIGGER[$code])',
-      'Error Domain=FMDatabase Code=$code',
-      '(code $code)',
-    ];
-
-    String? message = e.toString();
-
-    for (var clean in clearMessages) {
-      message = message?.replaceAll(clean, '');
-    }
-
-    throw Exception(message);
-  }
-
   @override
   IDatabaseLocalBatch batch() => DatabaseLocalBatch(database: database);
 
@@ -105,28 +83,56 @@ final class DatabaseLocal implements IDatabaseLocal {
   IDatabaseLocalTransaction transactionInstance() => DatabaseLocalTransaction(database: database);
 
   @override
-  Future<int> insert(String table, Map<String, dynamic> values) => database.insert(table, values);
+  Future<int> insert(String table, Map<String, dynamic> values) async {
+    try {
+      return await database.insert(table, values);
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
+    }
+  }
 
   @override
-  Future<int> update(String table, Map<String, dynamic> values, {String? where, List<dynamic>? whereArgs}) => database.update(table, values, where: where, whereArgs: whereArgs);
+  Future<int> update(String table, Map<String, dynamic> values, {String? where, List<dynamic>? whereArgs}) async {
+    try {
+      return await database.update(table, values, where: where, whereArgs: whereArgs);
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
+    }
+  }
 
   @override
-  Future<int> delete(String table, {String? where, List<dynamic>? whereArgs}) => database.delete(table, where: where, whereArgs: whereArgs);
+  Future<int> delete(String table, {String? where, List<dynamic>? whereArgs}) async {
+    try {
+      return await database.delete(table, where: where, whereArgs: whereArgs);
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
+    }
+  }
 
   @override
-  Future<dynamic> execute(String sql, [List<dynamic>? arguments]) => database.execute(sql, arguments);
+  Future<dynamic> execute(String sql, [List<dynamic>? arguments]) async {
+    try {
+      return await database.execute(sql, arguments);
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
+    }
+  }
 
   @override
   Future<dynamic> raw(String sql, DatabaseOperation operation, [List<dynamic>? arguments]) {
-    switch (operation) {
-      case DatabaseOperation.select:
-        return database.rawQuery(sql, arguments);
-      case DatabaseOperation.insert:
-        return database.rawInsert(sql, arguments);
-      case DatabaseOperation.update:
-        return database.rawUpdate(sql, arguments);
-      case DatabaseOperation.delete:
-        return database.rawDelete(sql, arguments);
+    try {
+      switch (operation) {
+        case DatabaseOperation.select:
+          return database.rawQuery(sql, arguments);
+        case DatabaseOperation.insert:
+          return database.rawInsert(sql, arguments);
+        case DatabaseOperation.update:
+          return database.rawUpdate(sql, arguments);
+        case DatabaseOperation.delete:
+          return database.rawDelete(sql, arguments);
+      }
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
     }
   }
 
@@ -142,8 +148,9 @@ final class DatabaseLocal implements IDatabaseLocal {
     String? orderBy,
     int? limit,
     int? offset,
-  }) =>
-      database.query(
+  }) async {
+    try {
+      return await database.query(
         table,
         distinct: distinct,
         columns: columns,
@@ -155,4 +162,8 @@ final class DatabaseLocal implements IDatabaseLocal {
         limit: limit,
         offset: offset,
       );
+    } on DatabaseException catch (e, stackTrace) {
+      throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
+    }
+  }
 }
