@@ -1,4 +1,5 @@
 import 'package:finan_master_app/features/category/presentation/ui/categories_page.dart';
+import 'package:finan_master_app/features/category/presentation/ui/category_page.dart';
 import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
@@ -21,6 +22,12 @@ sealed class AppRouter {
           name: SplashPage.route,
           path: '/${SplashPage.route}',
           builder: (_, __) => const SplashPage(),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: CategoryPage.route,
+          path: '/${CategoryPage.route}',
+          builder: (_, __) => const CategoryPage(),
         ),
         StatefulShellRoute.indexedStack(
           parentNavigatorKey: _rootNavigatorKey,

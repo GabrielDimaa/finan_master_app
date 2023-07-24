@@ -1,5 +1,7 @@
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,9 +18,9 @@ class _HomePageState extends State<HomePage> with ThemeContext {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SliverScaffold(
       key: scaffoldKey,
-      appBar: AppBar(
+      appBar: SliverAppBarSmall(
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () => scaffoldKey.currentState?.openDrawer(),
