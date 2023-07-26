@@ -12,6 +12,11 @@
   "menu": "Menu",
   "settings": "Configurações",
   "close": "Fechar",
+  "save": "Salvar",
+  "delete": "Excluir",
+  "description": "Descrição",
+  "typeCategory": "Tipo de categoria",
+  "icon": "Ícone",
 
   "categoryNotFound": "Categoria não encontrada.",
   "noCategoryRegistered": "Nenhuma categoria cadastrada.",

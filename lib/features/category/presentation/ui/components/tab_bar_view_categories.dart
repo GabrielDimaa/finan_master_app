@@ -1,7 +1,9 @@
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
+import 'package:finan_master_app/features/category/presentation/ui/category_page.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class TabBarViewCategories extends StatelessWidget {
   final GettedCategoriesState state;
@@ -19,18 +21,18 @@ class TabBarViewCategories extends StatelessWidget {
         ListView.separated(
           itemCount: expenses.length,
           separatorBuilder: (_, __) => const Divider(),
-          itemBuilder: (_, index) => _categoryTile(expenses[index]),
+          itemBuilder: (_, index) => _categoryTile(context: context, category: expenses[index]),
         ),
         ListView.separated(
           itemCount: incomes.length,
           separatorBuilder: (_, __) => const Divider(),
-          itemBuilder: (_, index) => _categoryTile(incomes[index]),
+          itemBuilder: (_, index) => _categoryTile(context: context, category: incomes[index]),
         ),
       ],
     );
   }
 
-  Widget _categoryTile(CategoryEntity category) {
+  Widget _categoryTile({required BuildContext context, required CategoryEntity category}) {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Color(int.parse("0x${category.color}")),
@@ -38,7 +40,7 @@ class TabBarViewCategories extends StatelessWidget {
       ),
       title: Text(category.description),
       trailing: const Icon(Icons.chevron_right),
-      onTap: () {},
+      onTap: () => context.pushNamed(CategoryPage.route),
     );
   }
 }

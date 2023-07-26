@@ -19,7 +19,7 @@ class _ConfigPageState extends State<ConfigPage> with ThemeContext {
   @override
   Widget build(BuildContext context) {
     return SliverScaffold(
-      key: scaffoldKey,
+      scaffoldKey: scaffoldKey,
       appBar: SliverAppBarSmall(
         leading: IconButton(
           icon: const Icon(Icons.menu),

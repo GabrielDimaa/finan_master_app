@@ -1,8 +1,8 @@
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/domain/repositories/i_category_repository.dart';
 import 'package:finan_master_app/features/category/exception/category_exception.dart';
+import 'package:finan_master_app/features/category/helpers/category_factory.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/i_category_data_source.dart';
-import 'package:finan_master_app/features/category/infra/mappers/category_mapper.dart';
 import 'package:finan_master_app/features/category/infra/models/category_model.dart';
 import 'package:finan_master_app/shared/classes/result.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
@@ -15,7 +15,7 @@ class CategoryRepository implements ICategoryRepository {
   @override
   Future<Result<List<CategoryEntity>, CategoryException>> findAll() async {
     final List<CategoryModel> categories = await _dataSource.findAll();
-    return Result.success(categories.map((c) => CategoryMapper().toEntity(c)).toList());
+    return Result.success(categories.map((c) => CategoryFactory.toEntity(c)).toList());
   }
 
   @override
@@ -24,6 +24,6 @@ class CategoryRepository implements ICategoryRepository {
 
     if (category == null) return Result.failure(CategoryException(R.strings.categoryNotFound, null));
 
-    return Result.success(CategoryMapper().toEntity(category));
+    return Result.success(CategoryFactory.toEntity(category));
   }
 }

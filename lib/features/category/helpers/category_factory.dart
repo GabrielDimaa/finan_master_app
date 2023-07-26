@@ -1,10 +1,8 @@
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/infra/models/category_model.dart';
-import 'package:finan_master_app/shared/infra/mappers/mapper.dart';
 
-class CategoryMapper implements Mapper<CategoryEntity, CategoryModel> {
-  @override
-  CategoryModel fromEntity(CategoryEntity entity) {
+abstract class CategoryFactory {
+  static CategoryModel fromEntity(CategoryEntity entity) {
     return CategoryModel(
       id: entity.id,
       createdAt: entity.createdAt,
@@ -16,8 +14,7 @@ class CategoryMapper implements Mapper<CategoryEntity, CategoryModel> {
     );
   }
 
-  @override
-  CategoryEntity toEntity(CategoryModel model) {
+  static CategoryEntity toEntity(CategoryModel model) {
     return CategoryEntity(
       id: model.id,
       createdAt: model.createdAt,

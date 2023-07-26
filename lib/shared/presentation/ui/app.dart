@@ -51,6 +51,9 @@ class App extends StatelessWidget {
         listTileTheme: const ListTileThemeData(
           contentPadding: EdgeInsets.only(left: 16, top: 8, right: 24, bottom: 8),
         ),
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(),
+        ),
       ),
       locale: R.locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

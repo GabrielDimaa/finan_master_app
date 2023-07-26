@@ -5,6 +5,7 @@ class SliverScaffold extends StatelessWidget {
   final Widget body;
   final Widget? floatingActionButton;
   final Widget? drawer;
+  final GlobalKey<ScaffoldState>? scaffoldKey;
 
   const SliverScaffold({
     Key? key,
@@ -12,12 +13,13 @@ class SliverScaffold extends StatelessWidget {
     required this.body,
     this.floatingActionButton,
     this.drawer,
+    this.scaffoldKey,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: key,
+      key: scaffoldKey,
       drawer: drawer,
       floatingActionButton: floatingActionButton,
       body: CustomScrollView(
@@ -26,9 +28,7 @@ class SliverScaffold extends StatelessWidget {
             visible: appBar != null,
             sliver: appBar ?? const SizedBox(),
           ),
-          SliverToBoxAdapter(
-            child: body,
-          ),
+          SliverToBoxAdapter(child: body),
         ],
       ),
     );
