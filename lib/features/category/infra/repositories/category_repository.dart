@@ -1,7 +1,7 @@
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/domain/repositories/i_category_repository.dart';
-import 'package:finan_master_app/features/category/exception/category_exception.dart';
-import 'package:finan_master_app/features/category/helpers/category_factory.dart';
+import 'package:finan_master_app/features/category/helpers/exceptions/category_exception.dart';
+import 'package:finan_master_app/features/category/helpers/factories/category_factory.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/i_category_data_source.dart';
 import 'package:finan_master_app/features/category/infra/models/category_model.dart';
 import 'package:finan_master_app/shared/classes/result.dart';

@@ -17,6 +17,8 @@
   "description": "Description",
   "typeCategory": "Category type",
   "icon": "Icon",
+  "color": "Color",
+  "confirm": "Confirm",
 
   "categoryNotFound": "Category not found.",
   "noCategoryRegistered": "No category registered.",

@@ -3,7 +3,7 @@ import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
 class CategoryEntity extends Entity {
   String description;
-  CategoryTypeEnum type;
+  CategoryTypeEnum? type;
   String color;
   int icon;
 

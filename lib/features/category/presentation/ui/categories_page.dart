@@ -1,4 +1,4 @@
-import 'package:finan_master_app/features/category/presentation/controllers/categories_controller.dart';
+import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/tab_bar_view_categories.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -18,7 +18,7 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
-  final CategoriesController controller = GetIt.I.get<CategoriesController>();
+  final CategoriesNotifier notifier = GetIt.I.get<CategoriesNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -27,7 +27,7 @@ class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
   @override
   void initState() {
     super.initState();
-    controller.init(context);
+    notifier.findAll();
   }
 
   @override
@@ -49,18 +49,16 @@ class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
         drawer: const NavDrawer(selectedIndex: CategoriesPage.indexDrawer),
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
-          onPressed: () {
-            Icons.add.codePoint;
-          },
+          onPressed: () {},
         ),
         body: SafeArea(
           child: ValueListenableBuilder(
-            valueListenable: controller.stateNotifier,
+            valueListenable: notifier,
             builder: (_, CategoriesState state, __) {
               return switch (state) {
                 LoadingCategoriesState _ => const Center(child: CircularProgressIndicator()),
-                GettedCategoriesState state => TabBarViewCategories(state: state),
-                ErrorCategoriesState state => Text(state.exception.toString()),
+                ListCategoriesState state => TabBarViewCategories(state: state),
+                ErrorCategoriesState state => Text(state.message),
                 EmptyCategoriesState _ => NoContentWidget(child: Text(strings.noCategoryRegistered)),
                 StartCategoriesState _ => const SizedBox.shrink(),
               };

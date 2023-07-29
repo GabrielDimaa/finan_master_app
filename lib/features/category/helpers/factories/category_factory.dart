@@ -8,7 +8,7 @@ abstract class CategoryFactory {
       createdAt: entity.createdAt,
       deletedAt: entity.deletedAt,
       description: entity.description,
-      type: entity.type,
+      type: entity.type!,
       color: entity.color,
       icon: entity.icon,
     );

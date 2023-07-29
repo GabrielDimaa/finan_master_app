@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class TabBarViewCategories extends StatelessWidget {
-  final GettedCategoriesState state;
+  final ListCategoriesState state;
 
   const TabBarViewCategories({Key? key, required this.state}) : super(key: key);
 
