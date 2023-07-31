@@ -35,7 +35,7 @@ class CategoryModel extends Model {
     return {
       ...baseMap(),
       'description': description,
-      'type': type,
+      'type': type.value,
       'color': color,
       'icon': icon,
     };

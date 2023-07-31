@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/presentation/ui/categories_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/category_page.dart';
 import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
@@ -27,7 +28,7 @@ sealed class AppRouter {
           parentNavigatorKey: _rootNavigatorKey,
           name: CategoryPage.route,
           path: '/${CategoryPage.route}',
-          builder: (_, __) => const CategoryPage(),
+          builder: (_, GoRouterState state) => CategoryPage(category: state.extra as CategoryEntity?),
         ),
         StatefulShellRoute.indexedStack(
           parentNavigatorKey: _rootNavigatorKey,

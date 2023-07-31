@@ -1,6 +1,10 @@
 import 'package:finan_master_app/features/category/domain/repositories/i_category_repository.dart';
+import 'package:finan_master_app/features/category/domain/usecases/category_delete.dart';
 import 'package:finan_master_app/features/category/domain/usecases/category_find.dart';
+import 'package:finan_master_app/features/category/domain/usecases/category_save.dart';
+import 'package:finan_master_app/features/category/domain/usecases/i_category_delete.dart';
 import 'package:finan_master_app/features/category/domain/usecases/i_category_find.dart';
+import 'package:finan_master_app/features/category/domain/usecases/i_category_save.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/category_data_source.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/i_category_data_source.dart';
 import 'package:finan_master_app/features/category/infra/repositories/category_repository.dart';
@@ -31,9 +35,11 @@ final class DependencyInjection {
 
     //Usecases
     getIt.registerFactory<ICategoryFind>(() => CategoryFind(repository: getIt.get<ICategoryRepository>()));
+    getIt.registerFactory<ICategorySave>(() => CategorySave(repository: getIt.get<ICategoryRepository>()));
+    getIt.registerFactory<ICategoryDelete>(() => CategoryDelete(repository: getIt.get<ICategoryRepository>()));
 
     //Controllers
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
-    getIt.registerFactory<CategoryNotifier>(() => CategoryNotifier());
+    getIt.registerFactory<CategoryNotifier>(() => CategoryNotifier(categorySave: getIt.get<ICategorySave>(), categoryDelete: getIt.get<ICategoryDelete>()));
   }
 }

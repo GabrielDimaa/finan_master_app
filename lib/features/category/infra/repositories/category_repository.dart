@@ -26,4 +26,18 @@ class CategoryRepository implements ICategoryRepository {
 
     return Result.success(CategoryFactory.toEntity(category));
   }
+
+  @override
+  Future<Result<CategoryEntity, CategoryException>> save(CategoryEntity entity) async {
+    final CategoryModel category = await _dataSource.upsert(CategoryFactory.fromEntity(entity));
+
+    return Result.success(CategoryFactory.toEntity(category));
+  }
+
+  @override
+  Future<Result<dynamic, CategoryException>> delete(CategoryEntity entity) async {
+    await _dataSource.delete(CategoryFactory.fromEntity(entity));
+
+    return Result.success(null);
+  }
 }

@@ -44,7 +44,6 @@ class _NavBarRailState extends State<NavBarRail> with ThemeContext {
                   selectedIndex: widget.navigationShell.currentIndex,
                   onDestinationSelected: goBranch,
                   groupAlignment: 0,
-                  leading: const Icon(Icons.menu),
                   destinations: destinations.map((e) => NavigationRailDestination(icon: Icon(e.icon), label: Text(e.description), selectedIcon: Icon(e.iconSelected))).toList(),
                 ),
                 Expanded(child: widget.navigationShell),

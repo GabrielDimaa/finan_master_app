@@ -7,11 +7,13 @@ sealed class CategoryState {
 
   factory CategoryState.start() => StartCategoryState();
 
+  CategoryState updateCategory(CategoryEntity category) => ChangedCategoryState(category: category);
+
   CategoryState changedCategory() => ChangedCategoryState(category: category);
 
   CategoryState setSaving() => SavingCategoryState(category: category);
 
-  CategoryState setError(String message) => ErrorCategoryState(category: category, message: message);
+  CategoryState setDeleting() => DeletingCategoryState(category: category);
 }
 
 class StartCategoryState extends CategoryState {
@@ -37,8 +39,6 @@ class SavingCategoryState extends CategoryState {
   const SavingCategoryState({required super.category});
 }
 
-class ErrorCategoryState extends CategoryState {
-  final String message;
-
-  const ErrorCategoryState({required super.category, required this.message});
+class DeletingCategoryState extends CategoryState {
+  const DeletingCategoryState({required super.category});
 }

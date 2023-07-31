@@ -1,11 +1,14 @@
+import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
+import 'package:finan_master_app/features/category/presentation/ui/category_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/tab_bar_view_categories.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 class CategoriesPage extends StatefulWidget {
   static const String route = 'categories';
@@ -39,6 +42,7 @@ class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
         key: scaffoldKey,
         appBar: AppBar(
           leading: IconButton(
+            tooltip: strings.menu,
             icon: const Icon(Icons.menu),
             onPressed: () => scaffoldKey.currentState?.openDrawer(),
           ),
@@ -48,8 +52,8 @@ class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
         ),
         drawer: const NavDrawer(selectedIndex: CategoriesPage.indexDrawer),
         floatingActionButton: FloatingActionButton(
+          onPressed: goCategory,
           child: const Icon(Icons.add),
-          onPressed: () {},
         ),
         body: SafeArea(
           child: ValueListenableBuilder(
@@ -67,5 +71,9 @@ class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
         ),
       ),
     );
+  }
+
+  Future<void> goCategory() async {
+    final CategoryEntity? category = await context.pushNamed(CategoryPage.route);
   }
 }

@@ -22,6 +22,7 @@ class _ConfigPageState extends State<ConfigPage> with ThemeContext {
       scaffoldKey: scaffoldKey,
       appBar: SliverAppBarSmall(
         leading: IconButton(
+          tooltip: strings.menu,
           icon: const Icon(Icons.menu),
           onPressed: () => scaffoldKey.currentState?.openDrawer(),
         ),
