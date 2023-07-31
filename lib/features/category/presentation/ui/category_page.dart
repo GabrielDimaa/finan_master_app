@@ -38,6 +38,8 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
     if (widget.category != null) notifier.updateCategory(widget.category!);
   }
 
+  bool get isLoading => notifier.value is SavingCategoryState || notifier.value is DeletingCategoryState;
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -46,7 +48,7 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
         return SliverScaffold(
           appBar: SliverAppBarMedium(
             title: Text(strings.category),
-            loading: state is SavingCategoryState || state is DeletingCategoryState,
+            loading: isLoading,
             actions: [
               FilledButton(
                 onPressed: save,
@@ -74,6 +76,7 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
                     textCapitalization: TextCapitalization.sentences,
                     validator: InputRequiredValidator().validate,
                     onSaved: (String? value) => state.category.description = value ?? '',
+                    enabled: !isLoading,
                   ),
                 ),
                 const Spacing.y(),
@@ -81,19 +84,19 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
                 const Spacing.y(),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(strings.typeCategory, style: textTheme.bodySmall),
+                  child: Text(strings.typeCategory, style: textTheme.bodySmall?.copyWith(color: isLoading ? Theme.of(context).disabledColor : null)),
                 ),
                 RadioListTile<CategoryTypeEnum>(
                   title: Text(CategoryTypeEnum.expense.description),
                   value: CategoryTypeEnum.expense,
                   groupValue: state.category.type,
-                  onChanged: notifier.setType,
+                  onChanged: !isLoading ? notifier.setType : null,
                 ),
                 RadioListTile<CategoryTypeEnum>(
                   title: Text(CategoryTypeEnum.income.description),
                   value: CategoryTypeEnum.income,
                   groupValue: state.category.type,
-                  onChanged: notifier.setType,
+                  onChanged: !isLoading ? notifier.setType : null,
                 ),
                 const Divider(),
                 GroupTile(
@@ -106,11 +109,13 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
                             child: Icon(state.category.icon.parseIconData()),
                           ),
                           trailing: const Icon(Icons.chevron_right),
+                          enabled: isLoading,
                         )
                       : ListTile(
                           leading: const Icon(Icons.palette_outlined),
                           title: Text(strings.icon),
                           trailing: const Icon(Icons.chevron_right),
+                          enabled: isLoading,
                         ),
                 ),
                 const Divider(),
@@ -123,6 +128,8 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
   }
 
   Future<void> save() async {
+    if (isLoading) return;
+
     try {
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
@@ -138,6 +145,8 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
   }
 
   Future<void> delete() async {
+    if (isLoading) return;
+
     try {
       await notifier.delete();
 
@@ -149,6 +158,8 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
   }
 
   Future<void> selectColorAndIcon() async {
+    if (isLoading) return;
+
     final ({Color color, IconData icon})? result = await ColorAndIconCategory.show(
       context: context,
       color: notifier.category.color.isNotEmpty ? Color(notifier.category.color.toColor()!) : null,

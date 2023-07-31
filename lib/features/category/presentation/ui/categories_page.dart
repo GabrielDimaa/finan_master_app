@@ -1,4 +1,3 @@
-import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/category_page.dart';
@@ -74,6 +73,6 @@ class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
   }
 
   Future<void> goCategory() async {
-    final CategoryEntity? category = await context.pushNamed(CategoryPage.route);
+    await context.pushNamed(CategoryPage.route);
   }
 }
