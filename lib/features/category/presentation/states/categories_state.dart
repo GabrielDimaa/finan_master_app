@@ -1,37 +1,37 @@
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 
 sealed class CategoriesState {
-  const CategoriesState();
+  final List<CategoryEntity> categories;
 
-  factory CategoriesState.start() => const StartCategoriesState();
+  const CategoriesState(this.categories);
 
-  CategoriesState setCategories(List<CategoryEntity> categories) => categories.isEmpty ? const EmptyCategoriesState() : ListCategoriesState(categories);
+  factory CategoriesState.start() => const StartCategoriesState([]);
 
-  CategoriesState setLoading() => const LoadingCategoriesState();
+  CategoriesState setCategories(List<CategoryEntity> categories) => categories.isEmpty ? const EmptyCategoriesState([]) : ListCategoriesState(categories);
+
+  CategoriesState setLoading() => const LoadingCategoriesState([]);
 
   CategoriesState setError(String message) => ErrorCategoriesState(message);
 }
 
 class StartCategoriesState extends CategoriesState {
-  const StartCategoriesState();
+  const StartCategoriesState(super.categories);
 }
 
 class ListCategoriesState extends CategoriesState {
-  final List<CategoryEntity> categories;
-
-  ListCategoriesState(this.categories);
+  ListCategoriesState(super.categories);
 }
 
 class EmptyCategoriesState extends CategoriesState {
-  const EmptyCategoriesState();
+  const EmptyCategoriesState(super.categories);
 }
 
 class LoadingCategoriesState extends CategoriesState {
-  const LoadingCategoriesState();
+  const LoadingCategoriesState(super.categories);
 }
 
 class ErrorCategoriesState extends CategoriesState {
   final String message;
 
-  const ErrorCategoriesState(this.message);
+  const ErrorCategoriesState(this.message) : super(const []);
 }

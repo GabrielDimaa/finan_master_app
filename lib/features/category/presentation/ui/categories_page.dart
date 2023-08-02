@@ -1,7 +1,10 @@
+import 'package:collection/collection.dart';
+import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/category_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/tab_bar_view_categories.dart';
+import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
@@ -60,7 +63,7 @@ class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
             builder: (_, CategoriesState state, __) {
               return switch (state) {
                 LoadingCategoriesState _ => const Center(child: CircularProgressIndicator()),
-                ListCategoriesState state => TabBarViewCategories(state: state),
+                ListCategoriesState _ => TabBarViewCategories(notifier: notifier),
                 ErrorCategoriesState state => Text(state.message),
                 EmptyCategoriesState _ => NoContentWidget(child: Text(strings.noCategoryRegistered)),
                 StartCategoriesState _ => const SizedBox.shrink(),
@@ -73,6 +76,9 @@ class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
   }
 
   Future<void> goCategory() async {
-    await context.pushNamed(CategoryPage.route);
+    final FormResultNavigation<CategoryEntity>? result = await context.pushNamed(CategoryPage.route);
+    if (result == null) return;
+
+    notifier.findAll();
   }
 }

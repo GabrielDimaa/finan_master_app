@@ -12,7 +12,7 @@ class GroupTile extends StatelessWidget {
     required this.title,
     required this.tile,
     this.onTap,
-    this.enabled = false,
+    this.enabled = true,
   }) : super(key: key);
 
   @override

@@ -3,6 +3,7 @@ import 'package:finan_master_app/features/category/domain/enums/category_type_en
 import 'package:finan_master_app/features/category/presentation/notifiers/category_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/category_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/color_and_icon_category.dart';
+import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -102,6 +103,7 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
                 GroupTile(
                   onTap: selectColorAndIcon,
                   title: strings.typeCategory,
+                  enabled: !isLoading,
                   tile: state.category.color.isNotEmpty && state.category.icon > 0
                       ? ListTile(
                           leading: CircleAvatar(
@@ -109,13 +111,13 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
                             child: Icon(state.category.icon.parseIconData()),
                           ),
                           trailing: const Icon(Icons.chevron_right),
-                          enabled: isLoading,
+                          enabled: !isLoading,
                         )
                       : ListTile(
                           leading: const Icon(Icons.palette_outlined),
                           title: Text(strings.icon),
                           trailing: const Icon(Icons.chevron_right),
-                          enabled: isLoading,
+                          enabled: !isLoading,
                         ),
                 ),
                 const Divider(),
@@ -137,7 +139,7 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
         await notifier.save();
 
         if (!mounted) return;
-        context.pop(notifier.category);
+        context.pop(FormResultNavigation.save(notifier.category));
       }
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
@@ -151,7 +153,7 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
       await notifier.delete();
 
       if (!mounted) return;
-      context.pop();
+      context.pop(FormResultNavigation<CategoryEntity>.delete());
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
     }
