@@ -14,7 +14,7 @@ class CategoryDataSource extends LocalDataSource<CategoryModel> implements ICate
   String get tableName => 'categories';
 
   @override
-  String get orderByDefault => 'description';
+  String get orderByDefault => 'description COLLATE NOCASE';
 
   @override
   void createTable(IDatabaseLocalBatch batch) {
