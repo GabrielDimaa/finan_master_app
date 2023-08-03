@@ -1,7 +1,7 @@
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
-import 'package:finan_master_app/features/category/domain/usecases/i_category_delete.dart';
-import 'package:finan_master_app/features/category/domain/usecases/i_category_save.dart';
+import 'package:finan_master_app/features/category/domain/use_cases/i_category_delete.dart';
+import 'package:finan_master_app/features/category/domain/use_cases/i_category_save.dart';
 import 'package:finan_master_app/features/category/presentation/states/category_state.dart';
 import 'package:flutter/foundation.dart';
 

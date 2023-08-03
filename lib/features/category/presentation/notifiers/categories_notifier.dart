@@ -1,4 +1,4 @@
-import 'package:finan_master_app/features/category/domain/usecases/i_category_find.dart';
+import 'package:finan_master_app/features/category/domain/use_cases/i_category_find.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:flutter/foundation.dart';
 
