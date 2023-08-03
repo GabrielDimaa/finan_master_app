@@ -7,3 +7,11 @@ class BaseException implements Exception {
   @override
   String toString() => message;
 }
+
+class NotFoundException extends BaseException {
+  NotFoundException(super.message, super.stackTrace);
+}
+
+class ValidationException extends BaseException {
+  ValidationException(super.message, super.stackTrace);
+}
