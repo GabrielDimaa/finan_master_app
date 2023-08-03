@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:finan_master_app/features/account/infra/data_sources/account_data_source.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/category_data_source.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
@@ -59,6 +60,7 @@ final class DatabaseLocal implements IDatabaseLocal {
     final IDatabaseLocalBatch batch = DatabaseLocalBatch(database: db);
 
     CategoryDataSource(databaseLocal: this).createTable(batch);
+    AccountDataSource(databaseLocal: this).createTable(batch);
 
     await batch.commit();
   }

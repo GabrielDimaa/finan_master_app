@@ -19,6 +19,7 @@ class AccountDataSource extends LocalDataSource<AccountModel> implements IAccoun
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
         description TEXT NOT NULL,
+        balance REAL NOT NULL DEFAULT 0,
         initial_value REAL NOT NULL DEFAULT 0,
         financial_institution INTEGER NOT NULL,
         include_total_balance INTEGER NOT NULL DEFAULT 1
@@ -35,6 +36,7 @@ class AccountDataSource extends LocalDataSource<AccountModel> implements IAccoun
       createdAt: base.createdAt,
       deletedAt: base.deletedAt,
       description: map['description'],
+      balance: map['balance'],
       initialValue: map['initial_value'],
       financialInstitution: FinancialInstitutionEnum.getByValue(map['financial_institution'])!,
       includeTotalBalance: map['include_total_balance'] == 1,

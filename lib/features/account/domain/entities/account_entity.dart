@@ -3,8 +3,9 @@ import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
 class AccountEntity extends Entity {
   String description;
+  double balance;
   double initialValue;
-  FinancialInstitutionEnum financialInstitution;
+  FinancialInstitutionEnum? financialInstitution;
   bool includeTotalBalance;
 
   AccountEntity({
@@ -12,6 +13,7 @@ class AccountEntity extends Entity {
     required super.createdAt,
     required super.deletedAt,
     required this.description,
+    required this.balance,
     required this.initialValue,
     required this.financialInstitution,
     required this.includeTotalBalance,
