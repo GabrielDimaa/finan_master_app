@@ -7,13 +7,13 @@ import 'package:finan_master_app/shared/classes/result.dart';
 import 'package:finan_master_app/shared/exceptions/exceptions.dart';
 
 class AccountRepository implements IAccountRepository {
-  final IAccountDataSource _accountDataSource;
+  final IAccountDataSource _dataSource;
 
-  AccountRepository({required IAccountDataSource accountDataSource}) : _accountDataSource = accountDataSource;
+  AccountRepository({required IAccountDataSource dataSource}) : _dataSource = dataSource;
 
   @override
   Future<Result<List<AccountEntity>, BaseException>> findAll() async {
-    final List<AccountModel> accounts = await _accountDataSource.findAll();
+    final List<AccountModel> accounts = await _dataSource.findAll();
     return Result.success(accounts.map((account) => AccountFactory.toEntity(account)).toList());
   }
 }

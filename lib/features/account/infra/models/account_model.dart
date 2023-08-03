@@ -37,7 +37,7 @@ class AccountModel extends Model {
       'description': description,
       'initial_value': initialValue,
       'financial_institution': financialInstitution.value,
-      'include_total_balance': includeTotalBalance,
+      'include_total_balance': includeTotalBalance ? 1 : 0,
     };
   }
 }

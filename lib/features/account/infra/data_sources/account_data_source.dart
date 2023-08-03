@@ -37,7 +37,7 @@ class AccountDataSource extends LocalDataSource<AccountModel> implements IAccoun
       description: map['description'],
       initialValue: map['initial_value'],
       financialInstitution: FinancialInstitutionEnum.getByValue(map['financial_institution'])!,
-      includeTotalBalance: map['include_total_balance'],
+      includeTotalBalance: map['include_total_balance'] == 1,
     );
   }
 }

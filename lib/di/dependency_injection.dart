@@ -1,3 +1,7 @@
+import 'package:finan_master_app/features/account/domain/repositories/i_account_repository.dart';
+import 'package:finan_master_app/features/account/infra/data_sources/account_data_source.dart';
+import 'package:finan_master_app/features/account/infra/data_sources/i_account_data_source.dart';
+import 'package:finan_master_app/features/account/infra/repositories/account_repository.dart';
 import 'package:finan_master_app/features/category/domain/repositories/i_category_repository.dart';
 import 'package:finan_master_app/features/category/domain/usecases/category_delete.dart';
 import 'package:finan_master_app/features/category/domain/usecases/category_find.dart';
@@ -29,9 +33,11 @@ final class DependencyInjection {
 
     getIt.registerSingleton<IDatabaseLocal>(databaseLocal);
     getIt.registerFactory<ICategoryDataSource>(() => CategoryDataSource(databaseLocal: databaseLocal));
+    getIt.registerFactory<IAccountDataSource>(() => AccountDataSource(databaseLocal: databaseLocal));
 
     //Repositories
     getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryDataSource>()));
+    getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountDataSource>()));
 
     //Usecases
     getIt.registerFactory<ICategoryFind>(() => CategoryFind(repository: getIt.get<ICategoryRepository>()));
