@@ -5,6 +5,8 @@ abstract class Entity {
   DateTime? createdAt;
   DateTime? deletedAt;
 
+  bool get isNew => createdAt == null;
+
   Entity({
     String? id,
     required this.createdAt,
