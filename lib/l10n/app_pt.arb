@@ -1,10 +1,11 @@
 {
-  "account":  "Conta",
-  "accounts":  "Contas",
+  "account": "Conta",
+  "accounts": "Contas",
   "backup": "Backup",
   "cards": "Cartões",
   "categories": "Categorias",
   "category": "Categoria",
+  "categoryNotFound": "Categoria não encontrada.",
   "close": "Fechar",
   "color": "Cor",
   "confirm": "Confirmar",
@@ -23,24 +24,18 @@
   "includeTotalBalanceExplication": "O saldo desta conta será considerado no cálculo do saldo total exibido.",
   "initialValue": "Valor inicial",
   "menu": "Menu",
+  "noAccountsRegistered": "Nenhuma conta cadastrada.",
+  "noCategoryRegistered": "Nenhuma categoria cadastrada.",
+  "registeredData": "Dado já cadastrado.",
+  "requiredField": "Campo obrigatório.",
   "save": "Salvar",
   "settings": "Configurações",
-  "typeCategory": "Tipo de categoria",
-  "wallet": "Carteira",
-
-  "requiredField": "Campo obrigatório.",
-  "uninformedDescription": "Descrição não informada.",
-  "uninformedTypeCategory": "Tipo de categoria não informado.",
-  "uninformedColor": "Cor não informado.",
-  "uninformedIcon": "Ícone não informado.",
-  "uninformedFinancialInstitution": "Instituição financeira não informada.",
-
   "smallerThanZero": "O valor deve ser maior ou igual a zero.",
-
-  "categoryNotFound": "Categoria não encontrada.",
-  "noCategoryRegistered": "Nenhuma categoria cadastrada.",
-
-  "noAccountsRegistered": "Nenhuma conta cadastrada.",
-
-  "registeredData": "Dado já cadastrado."
+  "typeCategory": "Tipo de categoria",
+  "uninformedColor": "Cor não informado.",
+  "uninformedDescription": "Descrição não informada.",
+  "uninformedFinancialInstitution": "Instituição financeira não informada.",
+  "uninformedIcon": "Ícone não informado.",
+  "uninformedTypeCategory": "Tipo de categoria não informado.",
+  "wallet": "Carteira"
 }

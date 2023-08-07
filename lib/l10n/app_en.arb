@@ -1,10 +1,11 @@
 {
-  "account":  "Account",
-  "accounts":  "Accounts",
+  "account": "Account",
+  "accounts": "Accounts",
   "backup": "Backup",
   "cards": "Cards",
   "categories": "Categories",
   "category": "Category",
+  "categoryNotFound": "Category not found.",
   "close": "Close",
   "color": "Color",
   "confirm": "Confirm",
@@ -23,24 +24,18 @@
   "includeTotalBalanceExplication": "The balance of this account will be taken into consideration in the calculation of the total displayed balance.",
   "initialValue": "Initial value",
   "menu": "Menu",
+  "noAccountsRegistered": "No accounts registered.",
+  "noCategoryRegistered": "No category registered.",
+  "registeredData": "Data already registered.",
+  "requiredField": "Required field.",
   "save": "Save",
   "settings": "Settings",
-  "typeCategory": "Category type",
-  "wallet": "Wallet",
-
-  "requiredField": "Required field.",
-  "uninformedDescription": "Uninformed description.",
-  "uninformedTypeCategory": "Type of category not informed.",
-  "uninformedColor": "Uninformed color.",
-  "uninformedIcon": "Uninformed icon.",
-  "uninformedFinancialInstitution": "Uninformed financial institution.",
-
   "smallerThanZero": "The value must be greater than or equal to zero.",
-
-  "categoryNotFound": "Category not found.",
-  "noCategoryRegistered": "No category registered.",
-
-  "noAccountsRegistered": "No accounts registered.",
-
-  "registeredData": "Data already registered."
+  "typeCategory": "Category type",
+  "uninformedColor": "Uninformed color.",
+  "uninformedDescription": "Uninformed description.",
+  "uninformedFinancialInstitution": "Uninformed financial institution.",
+  "uninformedIcon": "Uninformed icon.",
+  "uninformedTypeCategory": "Type of category not informed.",
+  "wallet": "Wallet"
 }
