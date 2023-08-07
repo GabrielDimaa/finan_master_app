@@ -3,6 +3,8 @@ import 'package:finan_master_app/features/account/infra/data_sources/i_account_d
 import 'package:finan_master_app/features/account/infra/models/account_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
+import 'package:finan_master_app/shared/infra/models/model.dart';
+import 'package:uuid/uuid.dart';
 
 class AccountDataSource extends LocalDataSource<AccountModel> implements IAccountDataSource {
   AccountDataSource({required super.databaseLocal});
@@ -24,6 +26,11 @@ class AccountDataSource extends LocalDataSource<AccountModel> implements IAccoun
         financial_institution INTEGER NOT NULL,
         include_total_balance INTEGER NOT NULL DEFAULT 1
       );
+    ''');
+
+    batch.execute('''
+      INSERT INTO $tableName (${Model.idColumnName}, ${Model.createdAtColumnName}, description, balance, initial_value, financial_institution, include_total_balance)
+      VALUES ('${const Uuid().v1()}', '${DateTime.now().toIso8601String()}', 'Carteira', 0, 0, ${FinancialInstitutionEnum.wallet.value}, 1);
     ''');
   }
 
