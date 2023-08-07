@@ -55,7 +55,7 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
                 onPressed: save,
                 child: Text(strings.save),
               ),
-              if (state.category.createdAt != null)
+              if (!state.category.isNew)
                 IconButton(
                   tooltip: strings.delete,
                   onPressed: delete,
@@ -88,12 +88,14 @@ class _CategoryPageState extends State<CategoryPage> with ThemeContext {
                   child: Text(strings.typeCategory, style: textTheme.bodySmall?.copyWith(color: isLoading ? Theme.of(context).disabledColor : null)),
                 ),
                 RadioListTile<CategoryTypeEnum>(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                   title: Text(CategoryTypeEnum.expense.description),
                   value: CategoryTypeEnum.expense,
                   groupValue: state.category.type,
                   onChanged: !isLoading ? notifier.setType : null,
                 ),
                 RadioListTile<CategoryTypeEnum>(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                   title: Text(CategoryTypeEnum.income.description),
                   value: CategoryTypeEnum.income,
                   groupValue: state.category.type,
