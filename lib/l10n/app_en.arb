@@ -1,4 +1,5 @@
 {
+  "account":  "Account",
   "accounts":  "Accounts",
   "backup": "Backup",
   "cards": "Cards",
@@ -11,10 +12,16 @@
   "description": "Description",
   "expense": "Expense",
   "expenses": "Expenses",
+  "financialInstitution": "Financial institution",
+  "financialInstitutions": "Financial institutions",
+  "selectFinancialInstitution": "Select financial institution",
   "home": "Home",
   "icon": "Icon",
   "income": "Income",
   "incomes": "Incomes",
+  "includeTotalBalance": "Include total balance",
+  "includeTotalBalanceExplication": "The balance of this account will be taken into consideration in the calculation of the total displayed balance.",
+  "initialValue": "Initial value",
   "menu": "Menu",
   "save": "Save",
   "settings": "Settings",
@@ -26,8 +33,14 @@
   "uninformedTypeCategory": "Type of category not informed.",
   "uninformedColor": "Uninformed color.",
   "uninformedIcon": "Uninformed icon.",
+  "uninformedFinancialInstitution": "Uninformed financial institution.",
+
+  "smallerThanZero": "The value must be greater than or equal to zero.",
 
   "categoryNotFound": "Category not found.",
   "noCategoryRegistered": "No category registered.",
+
+  "noAccountsRegistered": "No accounts registered.",
+
   "registeredData": "Data already registered."
 }

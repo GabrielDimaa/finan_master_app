@@ -16,4 +16,18 @@ class AccountRepository implements IAccountRepository {
     final List<AccountModel> accounts = await _dataSource.findAll();
     return Result.success(accounts.map((account) => AccountFactory.toEntity(account)).toList());
   }
+
+  @override
+  Future<Result<AccountEntity, BaseException>> save(AccountEntity entity) async {
+    final AccountModel account = await _dataSource.upsert(AccountFactory.fromEntity(entity));
+
+    return Result.success(AccountFactory.toEntity(account));
+  }
+
+  @override
+  Future<Result<dynamic, BaseException>> delete(AccountEntity entity) async {
+    await _dataSource.delete(AccountFactory.fromEntity(entity));
+
+    return Result.success(null);
+  }
 }

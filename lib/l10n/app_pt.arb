@@ -1,4 +1,5 @@
 {
+  "account":  "Conta",
   "accounts":  "Contas",
   "backup": "Backup",
   "cards": "Cartões",
@@ -11,10 +12,16 @@
   "description": "Descrição",
   "expense": "Receita",
   "expenses": "Receitas",
+  "financialInstitution": "Instituição financeira",
+  "financialInstitutions": "Instituições financeiras",
+  "selectFinancialInstitution": "Selecionar instituição financeira",
   "home": "Início",
   "icon": "Ícone",
   "income": "Despesa",
   "incomes": "Despesas",
+  "includeTotalBalance": "Contabilizar no saldo total",
+  "includeTotalBalanceExplication": "O saldo desta conta será considerado no cálculo do saldo total exibido.",
+  "initialValue": "Valor inicial",
   "menu": "Menu",
   "save": "Salvar",
   "settings": "Configurações",
@@ -26,8 +33,14 @@
   "uninformedTypeCategory": "Tipo de categoria não informado.",
   "uninformedColor": "Cor não informado.",
   "uninformedIcon": "Ícone não informado.",
+  "uninformedFinancialInstitution": "Instituição financeira não informada.",
+
+  "smallerThanZero": "O valor deve ser maior ou igual a zero.",
 
   "categoryNotFound": "Categoria não encontrada.",
   "noCategoryRegistered": "Nenhuma categoria cadastrada.",
+
+  "noAccountsRegistered": "Nenhuma conta cadastrada.",
+
   "registeredData": "Dado já cadastrado."
 }

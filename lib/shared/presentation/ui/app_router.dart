@@ -1,3 +1,6 @@
+import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
+import 'package:finan_master_app/features/account/presentation/ui/account_page.dart';
+import 'package:finan_master_app/features/account/presentation/ui/accounts_page.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/presentation/ui/categories_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/category_page.dart';
@@ -30,6 +33,12 @@ sealed class AppRouter {
           path: '/${CategoryPage.route}',
           builder: (_, GoRouterState state) => CategoryPage(category: state.extra as CategoryEntity?),
         ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: AccountPage.route,
+          path: '/${AccountPage.route}',
+          builder: (_, GoRouterState state) => AccountPage(account: state.extra as AccountEntity?),
+        ),
         StatefulShellRoute.indexedStack(
           parentNavigatorKey: _rootNavigatorKey,
           builder: (_, __, navigationShell) => NavBarRail(navigationShell: navigationShell),
@@ -48,6 +57,12 @@ sealed class AppRouter {
                   name: CategoriesPage.route,
                   path: '/${CategoriesPage.route}',
                   builder: (_, __) => const CategoriesPage(),
+                ),
+                GoRoute(
+                  parentNavigatorKey: _homeNavigatorKey,
+                  name: AccountsPage.route,
+                  path: '/${AccountsPage.route}',
+                  builder: (_, __) => const AccountsPage(),
                 ),
               ],
             ),

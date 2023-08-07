@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/account/presentation/ui/accounts_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/categories_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class _NavDrawerState extends State<NavDrawer> with ThemeContext {
   Map<int, NavigationDrawerDestination> get destinations => {
     CategoriesPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.categories), icon: const Icon(Icons.category_outlined), selectedIcon: const Icon(Icons.category)),
     1: NavigationDrawerDestination(label: Text(strings.cards), icon: const Icon(Icons.credit_card_outlined), selectedIcon: const Icon(Icons.credit_card)),
-    2: NavigationDrawerDestination(label: Text(strings.accounts), icon: const Icon(Icons.account_balance_outlined), selectedIcon: const Icon(Icons.account_balance)),
+    AccountsPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.accounts), icon: const Icon(Icons.account_balance_outlined), selectedIcon: const Icon(Icons.account_balance)),
     3: NavigationDrawerDestination(label: Text(strings.backup), icon: const Icon(Icons.backup_outlined), selectedIcon: const Icon(Icons.backup))
   };
 
@@ -24,6 +25,9 @@ class _NavDrawerState extends State<NavDrawer> with ThemeContext {
     switch (index) {
       case CategoriesPage.indexDrawer:
         context.goNamed(CategoriesPage.route);
+        break;
+      case AccountsPage.indexDrawer:
+        context.goNamed(AccountsPage.route);
         break;
     }
   }
@@ -43,7 +47,7 @@ class _NavDrawerState extends State<NavDrawer> with ThemeContext {
         ),
         destinations[CategoriesPage.indexDrawer]!,
         destinations[1]!,
-        destinations[2]!,
+        destinations[AccountsPage.indexDrawer]!,
         const Divider(),
         destinations[3]!,
       ],
