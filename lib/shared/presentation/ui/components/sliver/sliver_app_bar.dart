@@ -33,7 +33,10 @@ class SliverAppBarMedium extends StatelessWidget {
     return SliverAppBar.medium(
       title: title,
       centerTitle: centerTitle,
-      actions: actions,
+      actions: [
+        ...?actions,
+        const Padding(padding: EdgeInsets.only(right: 8)),
+      ],
       leading: leading ?? const BackButton(),
       scrolledUnderElevation: 0,
       bottom: loading == true ? const LinearProgressIndicatorAppBar() : null,

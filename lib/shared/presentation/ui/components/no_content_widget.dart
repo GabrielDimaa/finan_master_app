@@ -12,6 +12,8 @@ class NoContentWidget extends StatelessWidget {
 
     return Center(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset('assets/images/no_content.png', width: orientation == Orientation.portrait ? size.width * 0.8 : size.height / 1.5),
           child,
