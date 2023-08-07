@@ -1,4 +1,5 @@
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/draggable_bottom_sheet.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,12 +17,10 @@ class ColorAndIconCategory extends StatefulWidget {
     return await showModalBottomSheet<({Color color, IconData icon})>(
       context: context,
       showDragHandle: true,
+      enableDrag: true,
       useSafeArea: true,
       isScrollControlled: true,
-      builder: (_) => FractionallySizedBox(
-        heightFactor: 0.8,
-        child: ColorAndIconCategory(color: color, icon: icon),
-      ),
+      builder: (_) => ColorAndIconCategory(color: color, icon: icon),
     );
   }
 }
@@ -42,67 +41,72 @@ class _ColorAndIconCategoryState extends State<ColorAndIconCategory> with ThemeC
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: [
-              Text(strings.color, style: textTheme.titleMedium),
-              const Spacing.y(1.5),
-              Align(
-                alignment: Alignment.center,
-                child: Wrap(
-                  runSpacing: 10,
-                  children: colors
-                      .map(
-                        (color) => RawMaterialButton(
-                          materialTapTargetSize: MaterialTapTargetSize.padded,
-                          visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.all(16),
-                          shape: const CircleBorder(),
-                          fillColor: color,
-                          child: Icon(Icons.check, color: colorSelected == color ? Colors.white : Colors.transparent),
-                          onPressed: () => setState(() => colorSelected = color),
-                        ),
-                      )
-                      .toList(),
-                ),
+    return DraggableBottomSheet(
+      builder: (scrollController) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  Text(strings.color, style: textTheme.titleMedium),
+                  const Spacing.y(1.5),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Wrap(
+                      runSpacing: 10,
+                      children: colors
+                          .map(
+                            (color) => RawMaterialButton(
+                              materialTapTargetSize: MaterialTapTargetSize.padded,
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.all(16),
+                              shape: const CircleBorder(),
+                              fillColor: color,
+                              child: Icon(Icons.check, color: colorSelected == color ? Colors.white : Colors.transparent),
+                              onPressed: () => setState(() => colorSelected = color),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                  const Spacing.y(2),
+                  Text(strings.icon, style: textTheme.titleMedium),
+                  const Spacing.y(1.5),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Wrap(
+                      runSpacing: 10,
+                      children: icons
+                          .map(
+                            (IconData icon) => RawMaterialButton(
+                              materialTapTargetSize: MaterialTapTargetSize.padded,
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.all(16),
+                              shape: const CircleBorder(),
+                              fillColor: iconSelected?.codePoint == icon.codePoint ? colorSelected : null,
+                              child: Icon(icon),
+                              onPressed: () => setState(() => iconSelected = icon),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ],
               ),
-              const Spacing.y(2),
-              Text(strings.icon, style: textTheme.titleMedium),
-              const Spacing.y(1.5),
-              Align(
-                alignment: Alignment.center,
-                child: Wrap(
-                  runSpacing: 10,
-                  children: icons
-                      .map(
-                        (IconData icon) => RawMaterialButton(
-                          materialTapTargetSize: MaterialTapTargetSize.padded,
-                          visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.all(16),
-                          shape: const CircleBorder(),
-                          fillColor: iconSelected?.codePoint == icon.codePoint ? colorSelected : null,
-                          child: Icon(icon),
-                          onPressed: () => setState(() => iconSelected = icon),
-                        ),
-                      )
-                      .toList(),
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: FilledButton(
+                onPressed: confirmButtonEnabled ? () => context.pop<({Color color, IconData icon})?>((color: colorSelected!, icon: iconSelected!)) : null,
+                child: Text(strings.confirm),
               ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: FilledButton(
-            onPressed: confirmButtonEnabled ? () => context.pop<({Color color, IconData icon})?>((color: colorSelected!, icon: iconSelected!)) : null,
-            child: Text(strings.confirm),
-          ),
-        ),
-      ],
+            ),
+          ],
+        );
+      },
     );
   }
 
