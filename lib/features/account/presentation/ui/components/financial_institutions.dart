@@ -59,7 +59,7 @@ class _FinancialInstitutionsState extends State<FinancialInstitutions> with Them
                   return RadioListTile<FinancialInstitutionEnum>(
                     title: Row(
                       children: [
-                        financialInstitution.icon,
+                        financialInstitution.icon(),
                         const Spacing.x(),
                         Expanded(child: Text(financialInstitution.description)),
                       ],

@@ -1,5 +1,5 @@
-import 'package:finan_master_app/features/account/presentation/ui/accounts_page.dart';
-import 'package:finan_master_app/features/category/presentation/ui/categories_page.dart';
+import 'package:finan_master_app/features/account/presentation/ui/accounts_list_page.dart';
+import 'package:finan_master_app/features/category/presentation/ui/categories_list_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,19 +15,19 @@ class NavDrawer extends StatefulWidget {
 
 class _NavDrawerState extends State<NavDrawer> with ThemeContext {
   Map<int, NavigationDrawerDestination> get destinations => {
-    CategoriesPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.categories), icon: const Icon(Icons.category_outlined), selectedIcon: const Icon(Icons.category)),
+    CategoriesListPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.categories), icon: const Icon(Icons.category_outlined), selectedIcon: const Icon(Icons.category)),
     1: NavigationDrawerDestination(label: Text(strings.cards), icon: const Icon(Icons.credit_card_outlined), selectedIcon: const Icon(Icons.credit_card)),
-    AccountsPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.accounts), icon: const Icon(Icons.account_balance_outlined), selectedIcon: const Icon(Icons.account_balance)),
+    AccountsListPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.accounts), icon: const Icon(Icons.account_balance_outlined), selectedIcon: const Icon(Icons.account_balance)),
     3: NavigationDrawerDestination(label: Text(strings.backup), icon: const Icon(Icons.backup_outlined), selectedIcon: const Icon(Icons.backup))
   };
 
   void onDestinationSelected(int? index) {
     switch (index) {
-      case CategoriesPage.indexDrawer:
-        context.goNamed(CategoriesPage.route);
+      case CategoriesListPage.indexDrawer:
+        context.goNamed(CategoriesListPage.route);
         break;
-      case AccountsPage.indexDrawer:
-        context.goNamed(AccountsPage.route);
+      case AccountsListPage.indexDrawer:
+        context.goNamed(AccountsListPage.route);
         break;
     }
   }
@@ -45,9 +45,9 @@ class _NavDrawerState extends State<NavDrawer> with ThemeContext {
             style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
-        destinations[CategoriesPage.indexDrawer]!,
+        destinations[CategoriesListPage.indexDrawer]!,
         destinations[1]!,
-        destinations[AccountsPage.indexDrawer]!,
+        destinations[AccountsListPage.indexDrawer]!,
         const Divider(),
         destinations[3]!,
       ],

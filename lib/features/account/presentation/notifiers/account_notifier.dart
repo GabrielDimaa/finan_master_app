@@ -16,7 +16,7 @@ class AccountNotifier extends ValueNotifier<AccountState> {
 
   AccountEntity get account => value.account;
 
-  void updateAccount(AccountEntity account) => value = value.updateAccount(account);
+  void setAccount(AccountEntity account) => value = value.setAccount(account);
 
   void setFinancialInstitution(FinancialInstitutionEnum? financialInstitution) async {
     value.account.financialInstitution = financialInstitution;

@@ -1,7 +1,8 @@
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
-import 'package:finan_master_app/features/account/presentation/ui/account_page.dart';
+import 'package:finan_master_app/features/account/presentation/ui/account_details_page.dart';
+import 'package:finan_master_app/features/account/presentation/ui/account_form_page.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/account_list_tile.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -11,17 +12,17 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
-class AccountsPage extends StatefulWidget {
-  static const String route = 'accounts';
+class AccountsListPage extends StatefulWidget {
+  static const String route = 'accounts-list';
   static const int indexDrawer = 2;
 
-  const AccountsPage({Key? key}) : super(key: key);
+  const AccountsListPage({Key? key}) : super(key: key);
 
   @override
-  State<AccountsPage> createState() => _AccountsPageState();
+  State<AccountsListPage> createState() => _AccountsListPageState();
 }
 
-class _AccountsPageState extends State<AccountsPage> with ThemeContext {
+class _AccountsListPageState extends State<AccountsListPage> with ThemeContext {
   final AccountsNotifier notifier = GetIt.I.get<AccountsNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -45,7 +46,7 @@ class _AccountsPageState extends State<AccountsPage> with ThemeContext {
         title: Text(strings.accounts),
         centerTitle: true,
       ),
-      drawer: const NavDrawer(selectedIndex: AccountsPage.indexDrawer),
+      drawer: const NavDrawer(selectedIndex: AccountsListPage.indexDrawer),
       floatingActionButton: FloatingActionButton(
         onPressed: goAccount,
         child: const Icon(Icons.add),
@@ -78,7 +79,14 @@ class _AccountsPageState extends State<AccountsPage> with ThemeContext {
   }
 
   Future<void> goAccount([AccountEntity? account]) async {
-    final FormResultNavigation<AccountEntity>? result = await context.pushNamed(AccountPage.route, extra: account);
+    late final FormResultNavigation<AccountEntity>? result;
+
+    if (account == null) {
+      result = await context.pushNamed(AccountFormPage.route, extra: account);
+    } else {
+      result = await context.pushNamed(AccountDetailsPage.route, extra: account);
+    }
+
     if (result == null) return;
 
     notifier.findAll();

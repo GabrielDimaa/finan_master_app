@@ -21,18 +21,18 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-class AccountPage extends StatefulWidget {
-  static const route = 'account';
+class AccountFormPage extends StatefulWidget {
+  static const route = 'account-form';
 
   final AccountEntity? account;
 
-  const AccountPage({Key? key, this.account}) : super(key: key);
+  const AccountFormPage({Key? key, this.account}) : super(key: key);
 
   @override
-  State<AccountPage> createState() => _AccountPageState();
+  State<AccountFormPage> createState() => _AccountFormPageState();
 }
 
-class _AccountPageState extends State<AccountPage> with ThemeContext {
+class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
   final AccountNotifier notifier = GetIt.I.get<AccountNotifier>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -43,7 +43,7 @@ class _AccountPageState extends State<AccountPage> with ThemeContext {
   void initState() {
     super.initState();
 
-    if (widget.account != null) notifier.updateAccount(widget.account!);
+    if (widget.account != null) notifier.setAccount(widget.account!);
   }
 
   @override
@@ -116,7 +116,7 @@ class _AccountPageState extends State<AccountPage> with ThemeContext {
                           enabled: !isLoading,
                         )
                       : ListTile(
-                          leading: state.account.financialInstitution?.icon,
+                          leading: state.account.financialInstitution?.icon(),
                           title: Text(state.account.financialInstitution?.description ?? ''),
                           trailing: const Icon(Icons.chevron_right),
                           enabled: !isLoading,

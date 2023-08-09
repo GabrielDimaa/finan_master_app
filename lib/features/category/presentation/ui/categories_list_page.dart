@@ -1,7 +1,7 @@
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
-import 'package:finan_master_app/features/category/presentation/ui/category_page.dart';
+import 'package:finan_master_app/features/category/presentation/ui/category_form_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/tab_bar_view_categories.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -11,17 +11,17 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
-class CategoriesPage extends StatefulWidget {
-  static const String route = 'categories';
+class CategoriesListPage extends StatefulWidget {
+  static const String route = 'categories-list';
   static const int indexDrawer = 0;
 
-  const CategoriesPage({Key? key}) : super(key: key);
+  const CategoriesListPage({Key? key}) : super(key: key);
 
   @override
-  State<CategoriesPage> createState() => _CategoriesPageState();
+  State<CategoriesListPage> createState() => _CategoriesListPageState();
 }
 
-class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
+class _CategoriesListPageState extends State<CategoriesListPage> with ThemeContext {
   final CategoriesNotifier notifier = GetIt.I.get<CategoriesNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -51,7 +51,7 @@ class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
           centerTitle: true,
           bottom: TabBar(tabs: tabs),
         ),
-        drawer: const NavDrawer(selectedIndex: CategoriesPage.indexDrawer),
+        drawer: const NavDrawer(selectedIndex: CategoriesListPage.indexDrawer),
         floatingActionButton: FloatingActionButton(
           onPressed: goCategory,
           child: const Icon(Icons.add),
@@ -75,7 +75,7 @@ class _CategoriesPageState extends State<CategoriesPage> with ThemeContext {
   }
 
   Future<void> goCategory() async {
-    final FormResultNavigation<CategoryEntity>? result = await context.pushNamed(CategoryPage.route);
+    final FormResultNavigation<CategoryEntity>? result = await context.pushNamed(CategoryFormPage.route);
     if (result == null) return;
 
     notifier.findAll();

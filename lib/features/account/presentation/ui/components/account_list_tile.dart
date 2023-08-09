@@ -1,5 +1,6 @@
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
+import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:flutter/material.dart';
 
 class AccountListTile extends StatelessWidget {
@@ -11,8 +12,9 @@ class AccountListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: account.financialInstitution!.icon,
+      leading: account.financialInstitution!.icon(),
       title: Text(account.description),
+      subtitle: Text(account.balance.money),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
     );

@@ -1,7 +1,7 @@
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
-import 'package:finan_master_app/features/category/presentation/ui/category_page.dart';
+import 'package:finan_master_app/features/category/presentation/ui/category_form_page.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
@@ -44,7 +44,7 @@ class TabBarViewCategories extends StatelessWidget {
       title: Text(category.description),
       trailing: const Icon(Icons.chevron_right),
       onTap: () async {
-        final FormResultNavigation<CategoryEntity>? result = await context.pushNamed(CategoryPage.route, extra: category);
+        final FormResultNavigation<CategoryEntity>? result = await context.pushNamed(CategoryFormPage.route, extra: category);
         if (result == null) return;
 
         notifier.findAll();

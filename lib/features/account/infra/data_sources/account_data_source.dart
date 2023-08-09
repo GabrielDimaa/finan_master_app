@@ -30,7 +30,7 @@ class AccountDataSource extends LocalDataSource<AccountModel> implements IAccoun
 
     batch.execute('''
       INSERT INTO $tableName (${Model.idColumnName}, ${Model.createdAtColumnName}, description, balance, initial_value, financial_institution, include_total_balance)
-      VALUES ('${const Uuid().v1()}', '${DateTime.now().toIso8601String()}', 'Carteira', 0, 0, ${FinancialInstitutionEnum.wallet.value}, 1);
+      VALUES ('${const Uuid().v1()}', '${DateTime.now().toIso8601String()}', '${FinancialInstitutionEnum.wallet.description}', 0, 0, ${FinancialInstitutionEnum.wallet.value}, 1);
     ''');
   }
 

@@ -16,6 +16,10 @@ class AccountSave implements IAccountSave {
     if (entity.initialValue < 0) return Result.failure(ValidationException(R.strings.smallerThanZero, null));
     if (entity.financialInstitution == null) return Result.failure(ValidationException(R.strings.uninformedFinancialInstitution, null));
 
+    if (entity.isNew) {
+      entity.balance = entity.initialValue;
+    }
+
     return await _repository.save(entity);
   }
 }

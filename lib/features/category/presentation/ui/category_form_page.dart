@@ -17,18 +17,18 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
-class CategoryPage extends StatefulWidget {
-  static const route = 'category';
+class CategoryFormPage extends StatefulWidget {
+  static const route = 'category-form';
 
   final CategoryEntity? category;
 
-  const CategoryPage({Key? key, this.category}) : super(key: key);
+  const CategoryFormPage({Key? key, this.category}) : super(key: key);
 
   @override
-  State<CategoryPage> createState() => _CategoryPageState();
+  State<CategoryFormPage> createState() => _CategoryFormPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage> with ThemeContext {
+class _CategoryFormPageState extends State<CategoryFormPage> with ThemeContext {
   final CategoryNotifier notifier = GetIt.I.get<CategoryNotifier>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();

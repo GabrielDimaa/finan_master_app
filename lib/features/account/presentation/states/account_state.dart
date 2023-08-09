@@ -7,7 +7,7 @@ sealed class AccountState {
 
   factory AccountState.start() => StartAccountState();
 
-  AccountState updateAccount(AccountEntity account) => ChangedAccountState(account: account);
+  AccountState setAccount(AccountEntity account) => ChangedAccountState(account: account);
 
   AccountState changedAccount() => ChangedAccountState(account: account);
 

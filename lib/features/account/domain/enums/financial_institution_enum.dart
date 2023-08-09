@@ -60,38 +60,38 @@ extension FinancialInstitutionExtension on FinancialInstitutionEnum {
         FinancialInstitutionEnum.xp => 'XP',
       };
 
-  Widget get icon => ClipRRect(
-        borderRadius: BorderRadius.circular(100),
-        child: switch (this) {
-          FinancialInstitutionEnum.wallet => Container(
-              height: _size,
-              width: _size,
-              decoration: const BoxDecoration(color: Color(0xFF2A7953)),
-              child: const Icon(Icons.account_balance_wallet_outlined),
-            ),
-          FinancialInstitutionEnum.acesso => SvgPicture.asset('assets/icons/banks/acesso.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.agibank => SvgPicture.asset('assets/icons/banks/agibank.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.banrisul => SvgPicture.asset('assets/icons/banks/banrisul.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.bb => SvgPicture.asset('assets/icons/banks/bb.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.bmg => SvgPicture.asset('assets/icons/banks/bmg.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.bnb => SvgPicture.asset('assets/icons/banks/bnb.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.bradesco => SvgPicture.asset('assets/icons/banks/bradesco.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.bs2 => SvgPicture.asset('assets/icons/banks/bs2.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.c6bank => SvgPicture.asset('assets/icons/banks/c6.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.caixa => SvgPicture.asset('assets/icons/banks/caixa.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.citibank => SvgPicture.asset('assets/icons/banks/citibank.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.digio => SvgPicture.asset('assets/icons/banks/digio.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.hsbc => SvgPicture.asset('assets/icons/banks/hsbc.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.inter => SvgPicture.asset('assets/icons/banks/inter.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.itau => SvgPicture.asset('assets/icons/banks/itau.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.neon => SvgPicture.asset('assets/icons/banks/neon.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.nubank => SvgPicture.asset('assets/icons/banks/nubank.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.original => SvgPicture.asset('assets/icons/banks/original.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.safra => SvgPicture.asset('assets/icons/banks/safra.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.santander => SvgPicture.asset('assets/icons/banks/santander.svg', height: _size, width: _size),
-          FinancialInstitutionEnum.xp => SvgPicture.asset('assets/icons/banks/xp.svg', height: _size, width: _size),
-        },
-      );
+  Widget icon([double size = 36]) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(100),
+      child: switch (this) {
+        FinancialInstitutionEnum.wallet => Container(
+          height: size,
+          width: size,
+          decoration: const BoxDecoration(color: Color(0xFF2A7953)),
+          child: Icon(Icons.account_balance_wallet_outlined, size: size / 1.5),
+        ),
+        FinancialInstitutionEnum.acesso => SvgPicture.asset('assets/icons/banks/acesso.svg', height: size, width: size),
+        FinancialInstitutionEnum.agibank => SvgPicture.asset('assets/icons/banks/agibank.svg', height: size, width: size),
+        FinancialInstitutionEnum.banrisul => SvgPicture.asset('assets/icons/banks/banrisul.svg', height: size, width: size),
+        FinancialInstitutionEnum.bb => SvgPicture.asset('assets/icons/banks/bb.svg', height: size, width: size),
+        FinancialInstitutionEnum.bmg => SvgPicture.asset('assets/icons/banks/bmg.svg', height: size, width: size),
+        FinancialInstitutionEnum.bnb => SvgPicture.asset('assets/icons/banks/bnb.svg', height: size, width: size),
+        FinancialInstitutionEnum.bradesco => SvgPicture.asset('assets/icons/banks/bradesco.svg', height: size, width: size),
+        FinancialInstitutionEnum.bs2 => SvgPicture.asset('assets/icons/banks/bs2.svg', height: size, width: size),
+        FinancialInstitutionEnum.c6bank => SvgPicture.asset('assets/icons/banks/c6.svg', height: size, width: size),
+        FinancialInstitutionEnum.caixa => SvgPicture.asset('assets/icons/banks/caixa.svg', height: size, width: size),
+        FinancialInstitutionEnum.citibank => SvgPicture.asset('assets/icons/banks/citibank.svg', height: size, width: size),
+        FinancialInstitutionEnum.digio => SvgPicture.asset('assets/icons/banks/digio.svg', height: size, width: size),
+        FinancialInstitutionEnum.hsbc => SvgPicture.asset('assets/icons/banks/hsbc.svg', height: size, width: size),
+        FinancialInstitutionEnum.inter => SvgPicture.asset('assets/icons/banks/inter.svg', height: size, width: size),
+        FinancialInstitutionEnum.itau => SvgPicture.asset('assets/icons/banks/itau.svg', height: size, width: size),
+        FinancialInstitutionEnum.neon => SvgPicture.asset('assets/icons/banks/neon.svg', height: size, width: size),
+        FinancialInstitutionEnum.nubank => SvgPicture.asset('assets/icons/banks/nubank.svg', height: size, width: size),
+        FinancialInstitutionEnum.original => SvgPicture.asset('assets/icons/banks/original.svg', height: size, width: size),
+        FinancialInstitutionEnum.safra => SvgPicture.asset('assets/icons/banks/safra.svg', height: size, width: size),
+        FinancialInstitutionEnum.santander => SvgPicture.asset('assets/icons/banks/santander.svg', height: size, width: size),
+        FinancialInstitutionEnum.xp => SvgPicture.asset('assets/icons/banks/xp.svg', height: size, width: size),
+      },
+    );
+  }
 }
-
-const double _size = 36;
