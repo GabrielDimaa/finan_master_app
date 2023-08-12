@@ -98,7 +98,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
                       const Spacing.y(),
                       Text(state.account.description, style: textTheme.titleLarge),
                       const Spacing.y(1.5),
-                      Text(strings.accountBalance, style: textTheme.labelLarge),
+                      Text(strings.accountBalance),
                       const Spacing.y(0.5),
                       Text(state.account.balance.money, style: textTheme.headlineLarge),
                       const Spacing.y(0.5),
@@ -111,7 +111,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
                           Text(state.account.financialInstitution!.description, style: textTheme.titleMedium),
                         ],
                       ),
-                      const Spacing.y(2),
+                      const Spacing.y(3),
                       IntrinsicWidth(
                         stepWidth: double.infinity,
                         child: OutlinedButton.icon(
