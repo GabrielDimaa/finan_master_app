@@ -7,7 +7,7 @@ import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/error_dialog.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_required_validator.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/group_tile.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar.dart';

@@ -9,10 +9,10 @@ class ConfirmDialog extends StatefulWidget {
   const ConfirmDialog({Key? key, this.title, required this.message}) : super(key: key);
 
   static Future<bool> show({required BuildContext context, String? title, required String message}) async {
-    return (await showDialog<bool>(
+    return await showDialog<bool?>(
           context: context,
           builder: (_) => ConfirmDialog(title: title, message: message),
-        )) ??
+        ) ??
         false;
   }
 

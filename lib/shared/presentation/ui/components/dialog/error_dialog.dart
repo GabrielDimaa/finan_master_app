@@ -10,8 +10,8 @@ class ErrorDialog extends StatefulWidget {
   @override
   State<ErrorDialog> createState() => _ErrorDialogState();
 
-  static Future<void> show(BuildContext context, String mensagem) async {
-    await showDialog(context: context, builder: (context) => ErrorDialog(message: mensagem));
+  static Future<void> show(BuildContext context, String message) async {
+    await showDialog(context: context, builder: (context) => ErrorDialog(message: message));
   }
 }
 

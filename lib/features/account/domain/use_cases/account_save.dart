@@ -22,4 +22,14 @@ class AccountSave implements IAccountSave {
 
     return await _repository.save(entity);
   }
+
+  @override
+  Future<Result<AccountEntity, BaseException>> readjustBalance(AccountEntity entity, readjustmentValue) async {
+    if (readjustmentValue < 0) return Result.failure(ValidationException(R.strings.smallerThanZero, null));
+
+    entity.initialValue = readjustmentValue;
+    entity.balance = readjustmentValue;
+
+    return await save(entity);
+  }
 }

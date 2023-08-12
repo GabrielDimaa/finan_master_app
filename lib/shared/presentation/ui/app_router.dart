@@ -1,9 +1,10 @@
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
-import 'package:finan_master_app/features/account/presentation/ui/account_page.dart';
-import 'package:finan_master_app/features/account/presentation/ui/accounts_page.dart';
+import 'package:finan_master_app/features/account/presentation/ui/account_details_page.dart';
+import 'package:finan_master_app/features/account/presentation/ui/account_form_page.dart';
+import 'package:finan_master_app/features/account/presentation/ui/accounts_list_page.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
-import 'package:finan_master_app/features/category/presentation/ui/categories_page.dart';
-import 'package:finan_master_app/features/category/presentation/ui/category_page.dart';
+import 'package:finan_master_app/features/category/presentation/ui/categories_list_page.dart';
+import 'package:finan_master_app/features/category/presentation/ui/category_form_page.dart';
 import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
@@ -29,15 +30,21 @@ sealed class AppRouter {
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,
-          name: CategoryPage.route,
-          path: '/${CategoryPage.route}',
-          builder: (_, GoRouterState state) => CategoryPage(category: state.extra as CategoryEntity?),
+          name: CategoryFormPage.route,
+          path: '/${CategoryFormPage.route}',
+          builder: (_, GoRouterState state) => CategoryFormPage(category: state.extra as CategoryEntity?),
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,
-          name: AccountPage.route,
-          path: '/${AccountPage.route}',
-          builder: (_, GoRouterState state) => AccountPage(account: state.extra as AccountEntity?),
+          name: AccountFormPage.route,
+          path: '/${AccountFormPage.route}',
+          builder: (_, GoRouterState state) => AccountFormPage(account: state.extra as AccountEntity?),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: AccountDetailsPage.route,
+          path: '/${AccountDetailsPage.route}',
+          builder: (_, GoRouterState state) => AccountDetailsPage(account: state.extra as AccountEntity),
         ),
         StatefulShellRoute.indexedStack(
           parentNavigatorKey: _rootNavigatorKey,
@@ -54,15 +61,15 @@ sealed class AppRouter {
                 ),
                 GoRoute(
                   parentNavigatorKey: _homeNavigatorKey,
-                  name: CategoriesPage.route,
-                  path: '/${CategoriesPage.route}',
-                  builder: (_, __) => const CategoriesPage(),
+                  name: CategoriesListPage.route,
+                  path: '/${CategoriesListPage.route}',
+                  builder: (_, __) => const CategoriesListPage(),
                 ),
                 GoRoute(
                   parentNavigatorKey: _homeNavigatorKey,
-                  name: AccountsPage.route,
-                  path: '/${AccountsPage.route}',
-                  builder: (_, __) => const AccountsPage(),
+                  name: AccountsListPage.route,
+                  path: '/${AccountsListPage.route}',
+                  builder: (_, __) => const AccountsListPage(),
                 ),
               ],
             ),

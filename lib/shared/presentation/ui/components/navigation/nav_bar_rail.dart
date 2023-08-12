@@ -26,7 +26,7 @@ class _NavBarRailState extends State<NavBarRail> with ThemeContext {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (_, constraints) {
-        if (constraints.maxWidth < 450) {
+        if (constraints.maxWidth < 800) {
           return Scaffold(
             body: widget.navigationShell,
             bottomNavigationBar: NavigationBar(

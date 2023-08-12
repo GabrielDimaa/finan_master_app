@@ -14,6 +14,4 @@ abstract class Entity {
   }) {
     this.id = id ?? const Uuid().v1();
   }
-
-  void validate() {}
 }
