@@ -199,14 +199,18 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
 
-        if (notifier.account.balance == readjustmentValue) {
+        final double difference = readjustmentValue - notifier.account.balance;
+
+        if (difference == 0) {
           context.pop();
           return;
         }
 
-        final double valueDialog = readjustmentOption.value == ReadjustmentOption.changeInitialValue ? readjustmentValue : notifier.account.balance - readjustmentValue;
-
-        final bool confirm = await ConfirmReadjustBalanceDialog.show(context: context, value: valueDialog, option: readjustmentOption.value);
+        final bool confirm = await ConfirmReadjustBalanceDialog.show(
+          context: context,
+          value: readjustmentOption.value == ReadjustmentOption.changeInitialValue ? readjustmentValue : difference,
+          option: readjustmentOption.value,
+        );
         if (!confirm) return;
 
         await notifier.readjustBalance(readjustmentValue: readjustmentValue, option: readjustmentOption.value, description: transactionDescription);
