@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/config/presentation/ui/components/switch_theme_mode.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar.dart';
@@ -30,12 +31,14 @@ class _ConfigPageState extends State<ConfigPage> with ThemeContext {
         centerTitle: true,
       ),
       drawer: const NavDrawer(),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(strings.settings),
-          ],
+      body: const SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SwitchThemeMode(),
+            ],
+          ),
         ),
       ),
     );

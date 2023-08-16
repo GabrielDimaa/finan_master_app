@@ -47,6 +47,7 @@
   "save": "Save",
   "settings": "Settings",
   "smallerThanZero": "The value must be greater than or equal to zero.",
+  "theme": "Theme",
   "transactionDescription": "Transaction description",
   "typeCategory": "Category type",
   "uninformedColor": "Uninformed color.",
