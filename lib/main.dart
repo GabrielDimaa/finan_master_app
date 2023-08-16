@@ -11,5 +11,5 @@ void main() async {
     DependencyInjection().setup(),
   ]);
 
-  runApp(App());
+  runApp(const App());
 }

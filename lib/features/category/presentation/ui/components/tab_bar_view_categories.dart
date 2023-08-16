@@ -39,7 +39,7 @@ class TabBarViewCategories extends StatelessWidget {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Color(category.color.toColor()!),
-        child: Icon(category.icon.parseIconData()),
+        child: Icon(category.icon.parseIconData(), color: Colors.white),
       ),
       title: Text(category.description),
       trailing: const Icon(Icons.chevron_right),

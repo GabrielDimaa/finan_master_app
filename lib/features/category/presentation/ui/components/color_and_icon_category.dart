@@ -87,7 +87,7 @@ class _ColorAndIconCategoryState extends State<ColorAndIconCategory> with ThemeC
                               padding: const EdgeInsets.all(16),
                               shape: const CircleBorder(),
                               fillColor: iconSelected?.codePoint == icon.codePoint ? colorSelected : null,
-                              child: Icon(icon),
+                              child: Icon(icon, color: iconSelected?.codePoint == icon.codePoint ? Colors.white : null),
                               onPressed: () => setState(() => iconSelected = icon),
                             ),
                           )

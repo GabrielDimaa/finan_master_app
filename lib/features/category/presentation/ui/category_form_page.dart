@@ -110,7 +110,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> with ThemeContext {
                       ? ListTile(
                           leading: CircleAvatar(
                             backgroundColor: Color(state.category.color.toColor() ?? 0),
-                            child: Icon(state.category.icon.parseIconData()),
+                            child: Icon(state.category.icon.parseIconData(), color: Colors.white),
                           ),
                           trailing: const Icon(Icons.chevron_right),
                           enabled: !isLoading,
