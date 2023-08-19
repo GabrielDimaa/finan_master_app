@@ -11,4 +11,7 @@ class ConfigSave implements IConfigSave {
 
   @override
   Future<Result<ThemeMode, BaseException>> saveThemeMode(ThemeMode themeMode) => _repository.saveThemeMode(themeMode);
+
+  @override
+  Future<Result<Locale, BaseException>> saveLocale(Locale locale) => _repository.saveLocale(locale);
 }

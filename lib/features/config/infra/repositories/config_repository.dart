@@ -11,6 +11,7 @@ class ConfigRepository implements IConfigRepository {
   ConfigRepository({required ICacheLocal cacheLocal}) : _cacheLocal = cacheLocal;
 
   static const String themeModeKey = "theme_mode";
+  static const String localeKey = "locale";
 
   @override
   Result<ThemeMode?, BaseException> findThemeMode() {
@@ -25,5 +26,20 @@ class ConfigRepository implements IConfigRepository {
   Future<Result<ThemeMode, BaseException>> saveThemeMode(ThemeMode themeMode) async {
     await _cacheLocal.save(themeModeKey, themeMode.value);
     return Result.success(themeMode);
+  }
+
+  @override
+  Result<Locale?, BaseException> findLocale() {
+    final String? locale = _cacheLocal.get<String>(localeKey);
+
+    if (locale == null) return Result.success(null);
+
+    return Result.success(Locale(locale));
+  }
+
+  @override
+  Future<Result<Locale, BaseException>> saveLocale(Locale locale) async {
+    await _cacheLocal.save(localeKey, locale.languageCode);
+    return Result.success(locale);
   }
 }

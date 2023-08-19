@@ -6,4 +6,8 @@ abstract interface class IConfigRepository {
   Result<ThemeMode?, BaseException> findThemeMode();
 
   Future<Result<ThemeMode, BaseException>> saveThemeMode(ThemeMode themeMode);
+
+  Result<Locale?, BaseException> findLocale();
+
+  Future<Result<Locale, BaseException>> saveLocale(Locale locale);
 }

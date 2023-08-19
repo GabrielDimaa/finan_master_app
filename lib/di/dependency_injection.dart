@@ -28,6 +28,7 @@ import 'package:finan_master_app/features/config/domain/use_cases/config_save.da
 import 'package:finan_master_app/features/config/domain/use_cases/i_config_find.dart';
 import 'package:finan_master_app/features/config/domain/use_cases/i_config_save.dart';
 import 'package:finan_master_app/features/config/infra/repositories/config_repository.dart';
+import 'package:finan_master_app/features/config/presentation/notifiers/locale_notifier.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/theme_mode_notifier.dart';
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/cache_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/i_cache_local.dart';
@@ -78,5 +79,6 @@ final class DependencyInjection {
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<AccountNotifier>(() => AccountNotifier(accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
+    getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
   }
 }

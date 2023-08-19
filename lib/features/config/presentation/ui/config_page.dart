@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/config/presentation/ui/components/languages.dart';
 import 'package:finan_master_app/features/config/presentation/ui/components/switch_theme_mode.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
@@ -31,16 +32,25 @@ class _ConfigPageState extends State<ConfigPage> with ThemeContext {
         centerTitle: true,
       ),
       drawer: const NavDrawer(),
-      body: const SafeArea(
+      body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SwitchThemeMode(),
+              ListTile(
+                leading: const Icon(Icons.language_outlined),
+                title: Text(strings.language),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: language,
+              ),
+              const Divider(),
+              const SwitchThemeMode(),
             ],
           ),
         ),
       ),
     );
   }
+
+  Future<void> language() => Languages.show(context);
 }

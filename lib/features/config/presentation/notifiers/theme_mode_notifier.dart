@@ -26,7 +26,5 @@ class ThemeModeNotifier extends ValueNotifier<ThemeMode> {
     save(themeMode);
   }
 
-  Future<void> save(ThemeMode themeMode) async {
-    await _configSave.saveThemeMode(value);
-  }
+  Future<void> save(ThemeMode themeMode) => _configSave.saveThemeMode(themeMode);
 }

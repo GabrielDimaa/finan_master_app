@@ -4,4 +4,6 @@ import 'package:flutter/material.dart';
 
 abstract interface class IConfigSave {
   Future<Result<ThemeMode, BaseException>> saveThemeMode(ThemeMode themeMode);
+
+  Future<Result<Locale, BaseException>> saveLocale(Locale locale);
 }

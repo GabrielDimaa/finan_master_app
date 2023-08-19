@@ -4,4 +4,5 @@ import 'package:flutter/material.dart';
 
 abstract interface class IConfigFind {
   Result<ThemeMode, BaseException> findThemeMode();
+  Result<Locale, BaseException> findLocale();
 }

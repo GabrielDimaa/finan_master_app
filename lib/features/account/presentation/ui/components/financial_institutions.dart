@@ -1,3 +1,4 @@
+import 'package:diacritic/diacritic.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/draggable_bottom_sheet.dart';
@@ -26,7 +27,7 @@ class FinancialInstitutions extends StatefulWidget {
 }
 
 class _FinancialInstitutionsState extends State<FinancialInstitutions> with ThemeContext {
-  final List<FinancialInstitutionEnum> list = FinancialInstitutionEnum.values.toList()..sort((a, b) => a.description.compareTo(b.description));
+  final List<FinancialInstitutionEnum> list = FinancialInstitutionEnum.values.toList()..sort((a, b) => removeDiacritics(a.description).compareTo(removeDiacritics(b.description)));
 
   late FinancialInstitutionEnum? selected;
 

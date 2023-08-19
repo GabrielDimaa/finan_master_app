@@ -7,8 +7,6 @@ abstract class R {
   static Locale get locale => AppLocale().locale;
 
   static AppLocalizations get strings => AppLocale().strings;
-
-  static Future<void> changeLocale(Locale locale) => AppLocale().changeLocale(locale);
 }
 
 class AppLocale {

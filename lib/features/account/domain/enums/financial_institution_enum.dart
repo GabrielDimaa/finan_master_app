@@ -68,7 +68,7 @@ extension FinancialInstitutionExtension on FinancialInstitutionEnum {
           height: size,
           width: size,
           decoration: const BoxDecoration(color: Color(0xFF2A7953)),
-          child: Icon(Icons.account_balance_wallet_outlined, size: size / 1.5),
+          child: Icon(Icons.account_balance_wallet_outlined, size: size / 1.5, color: Colors.white),
         ),
         FinancialInstitutionEnum.acesso => SvgPicture.asset('assets/icons/banks/acesso.svg', height: size, width: size),
         FinancialInstitutionEnum.agibank => SvgPicture.asset('assets/icons/banks/agibank.svg', height: size, width: size),
