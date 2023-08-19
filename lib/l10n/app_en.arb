@@ -16,6 +16,8 @@
   "close": "Close",
   "color": "Color",
   "confirm": "Confirm",
+  "createCategory": "Create category",
+  "createAccount": "Create account",
   "createTransaction": "Create transaction",
   "createTransactionExplication": "A transaction will be created to adjust the current balance.",
   "createTransactionConfirmation": "Create adjustment transaction?",

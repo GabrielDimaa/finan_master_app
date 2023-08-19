@@ -53,6 +53,7 @@ class _CategoriesListPageState extends State<CategoriesListPage> with ThemeConte
         ),
         drawer: const NavDrawer(selectedIndex: CategoriesListPage.indexDrawer),
         floatingActionButton: FloatingActionButton(
+          tooltip: strings.createCategory,
           onPressed: goCategory,
           child: const Icon(Icons.add),
         ),

@@ -48,6 +48,7 @@ class _AccountsListPageState extends State<AccountsListPage> with ThemeContext {
       ),
       drawer: const NavDrawer(selectedIndex: AccountsListPage.indexDrawer),
       floatingActionButton: FloatingActionButton(
+        tooltip: strings.createAccount,
         onPressed: goAccount,
         child: const Icon(Icons.add),
       ),

@@ -16,6 +16,8 @@
   "close": "Fechar",
   "color": "Cor",
   "confirm": "Confirmar",
+  "createCategory": "Criar categoria",
+  "createAccount": "Criar conta",
   "createTransaction": "Criar transação",
   "createTransactionExplication": "Será criado uma transação para reajustar o saldo atual.",
   "createTransactionConfirmation": "Criar transação de reajuste?",
