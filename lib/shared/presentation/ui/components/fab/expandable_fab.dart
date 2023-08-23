@@ -79,7 +79,7 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
       },
       child: FadeTransition(
         opacity: expandAnimation,
-        child: widget.children[0],
+        child: widget.children[index],
       ),
     );
   }
