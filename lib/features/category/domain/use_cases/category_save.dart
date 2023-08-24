@@ -12,7 +12,7 @@ class CategorySave implements ICategorySave {
 
   @override
   Future<Result<CategoryEntity, BaseException>> save(CategoryEntity entity) async {
-    if (entity.description.isEmpty) return Result.failure(ValidationException(R.strings.uninformedDescription, null));
+    if (entity.description.trim().isEmpty) return Result.failure(ValidationException(R.strings.uninformedDescription, null));
     if (entity.type == null) return Result.failure(ValidationException(R.strings.uninformedTypeCategory, null));
     if (entity.icon == 0) return Result.failure(ValidationException(R.strings.uninformedIcon, null));
     if (entity.color.isEmpty) return Result.failure(ValidationException(R.strings.uninformedColor, null));

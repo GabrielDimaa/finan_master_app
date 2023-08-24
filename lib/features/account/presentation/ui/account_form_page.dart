@@ -96,7 +96,7 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
                     validator: InputRequiredValidator().validate,
                     textInputAction: TextInputAction.done,
                     enabled: !notifier.isLoading,
-                    onSaved: (String? value) => state.account.description = value ?? '',
+                    onSaved: (String? value) => state.account.description = value?.trim() ?? '',
                   ),
                 ),
                 const Spacing.y(),

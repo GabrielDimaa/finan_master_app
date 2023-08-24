@@ -12,7 +12,7 @@ class AccountSave implements IAccountSave {
 
   @override
   Future<Result<AccountEntity, BaseException>> save(AccountEntity entity) async {
-    if (entity.description.isEmpty) return Result.failure(ValidationException(R.strings.uninformedDescription, null));
+    if (entity.description.trim().isEmpty) return Result.failure(ValidationException(R.strings.uninformedDescription, null));
     if (entity.initialValue < 0) return Result.failure(ValidationException(R.strings.smallerThanZero, null));
     if (entity.financialInstitution == null) return Result.failure(ValidationException(R.strings.uninformedFinancialInstitution, null));
 

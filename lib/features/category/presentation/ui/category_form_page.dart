@@ -76,7 +76,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> with ThemeContext {
                     decoration: InputDecoration(label: Text(strings.description)),
                     textCapitalization: TextCapitalization.sentences,
                     validator: InputRequiredValidator().validate,
-                    onSaved: (String? value) => state.category.description = value ?? '',
+                    onSaved: (String? value) => state.category.description = value?.trim() ?? '',
                     enabled: !isLoading,
                   ),
                 ),
