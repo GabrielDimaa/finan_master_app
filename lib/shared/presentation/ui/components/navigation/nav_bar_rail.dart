@@ -19,6 +19,7 @@ class _NavBarRailState extends State<NavBarRail> with ThemeContext {
 
   List<NavBarRailDestination> get destinations => [
         NavBarRailDestination(description: strings.home, icon: Icons.home_outlined, iconSelected: Icons.home),
+        NavBarRailDestination(description: strings.transactions, icon: Icons.sync_alt_outlined, iconSelected: Icons.sync_alt),
         NavBarRailDestination(description: strings.settings, icon: Icons.settings_outlined, iconSelected: Icons.settings),
       ];
 

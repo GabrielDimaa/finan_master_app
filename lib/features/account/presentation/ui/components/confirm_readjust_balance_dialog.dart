@@ -1,4 +1,4 @@
-import 'package:finan_master_app/features/account/domain/enums/adjustment_option.dart';
+import 'package:finan_master_app/features/account/domain/enums/adjustment_option_enum.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +6,11 @@ import 'package:go_router/go_router.dart';
 
 class ConfirmReadjustBalanceDialog extends StatefulWidget {
   final double value;
-  final ReadjustmentOption option;
+  final ReadjustmentOptionEnum option;
 
   const ConfirmReadjustBalanceDialog({Key? key, required this.value, required this.option}) : super(key: key);
 
-  static Future<bool> show({required BuildContext context, required double value, required ReadjustmentOption option}) async {
+  static Future<bool> show({required BuildContext context, required double value, required ReadjustmentOptionEnum option}) async {
     return await showDialog<bool>(
       context: context,
       builder: (_) => ConfirmReadjustBalanceDialog(value: value, option: option),
@@ -22,7 +22,7 @@ class ConfirmReadjustBalanceDialog extends StatefulWidget {
 }
 
 class _ConfirmReadjustBalanceDialogState extends State<ConfirmReadjustBalanceDialog> with ThemeContext {
-  String get message => widget.option == ReadjustmentOption.changeInitialValue ? strings.changeInitialValueConfirmation : strings.createTransactionConfirmation;
+  String get message => widget.option == ReadjustmentOptionEnum.changeInitialValue ? strings.changeInitialValueConfirmation : strings.createTransactionConfirmation;
 
   @override
   Widget build(BuildContext context) {

@@ -17,4 +17,9 @@ extension CategoryTypeExtension on CategoryTypeEnum {
         CategoryTypeEnum.expense => R.strings.expense,
         CategoryTypeEnum.income => R.strings.income,
       };
+
+  String get descriptionPlural => switch (this) {
+    CategoryTypeEnum.expense => R.strings.expenses,
+    CategoryTypeEnum.income => R.strings.incomes,
+  };
 }

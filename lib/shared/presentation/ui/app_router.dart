@@ -8,6 +8,7 @@ import 'package:finan_master_app/features/category/presentation/ui/category_form
 import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/transactions_list_page.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_bar_rail.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +16,7 @@ import 'package:go_router/go_router.dart';
 sealed class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _homeNavigatorKey = GlobalKey<NavigatorState>();
+  static final _transactionsNavigatorKey = GlobalKey<NavigatorState>();
   static final _configNavigatorKey = GlobalKey<NavigatorState>();
 
   static RouterConfig<Object> routerConfig() {
@@ -70,6 +72,17 @@ sealed class AppRouter {
                   name: AccountsListPage.route,
                   path: '/${AccountsListPage.route}',
                   builder: (_, __) => const AccountsListPage(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              navigatorKey: _transactionsNavigatorKey,
+              routes: [
+                GoRoute(
+                  parentNavigatorKey: _transactionsNavigatorKey,
+                  name: TransactionsListPage.route,
+                  path: '/${TransactionsListPage.route}',
+                  builder: (_, __) => const TransactionsListPage(),
                 ),
               ],
             ),

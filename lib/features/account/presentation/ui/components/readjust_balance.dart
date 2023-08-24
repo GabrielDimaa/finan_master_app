@@ -1,5 +1,5 @@
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
-import 'package:finan_master_app/features/account/domain/enums/adjustment_option.dart';
+import 'package:finan_master_app/features/account/domain/enums/adjustment_option_enum.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/confirm_readjust_balance_dialog.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
@@ -39,7 +39,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   double readjustmentValue = 0.0;
-  final ValueNotifier<ReadjustmentOption> readjustmentOption = ValueNotifier(ReadjustmentOption.createTransaction);
+  final ValueNotifier<ReadjustmentOptionEnum> readjustmentOption = ValueNotifier(ReadjustmentOptionEnum.createTransaction);
   String? transactionDescription;
 
   @override
@@ -117,20 +117,20 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                                       margin: EdgeInsets.zero,
                                       clipBehavior: Clip.hardEdge,
                                       shape: RoundedRectangleBorder(
-                                        side: BorderSide(color: value == ReadjustmentOption.createTransaction ? colorScheme.primary : colorScheme.outline),
+                                        side: BorderSide(color: value == ReadjustmentOptionEnum.createTransaction ? colorScheme.primary : colorScheme.outline),
                                         borderRadius: const BorderRadius.all(Radius.circular(12)),
                                       ),
                                       child: InkWell(
                                         onTap: () {
                                           if (notifier.isLoading) return;
-                                          readjustmentOption.value = ReadjustmentOption.createTransaction;
+                                          readjustmentOption.value = ReadjustmentOptionEnum.createTransaction;
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.all(16),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(strings.createTransaction, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOption.createTransaction ? colorScheme.primary : null)),
+                                              Text(strings.createTransaction, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOptionEnum.createTransaction ? colorScheme.primary : null)),
                                               const Spacing.y(0.5),
                                               Text(strings.createTransactionExplication, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
                                             ],
@@ -146,20 +146,20 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                                       margin: EdgeInsets.zero,
                                       clipBehavior: Clip.hardEdge,
                                       shape: RoundedRectangleBorder(
-                                        side: BorderSide(color: value == ReadjustmentOption.changeInitialValue ? colorScheme.primary : colorScheme.outline),
+                                        side: BorderSide(color: value == ReadjustmentOptionEnum.changeInitialValue ? colorScheme.primary : colorScheme.outline),
                                         borderRadius: const BorderRadius.all(Radius.circular(12)),
                                       ),
                                       child: InkWell(
                                         onTap: () {
                                           if (notifier.isLoading) return;
-                                          readjustmentOption.value = ReadjustmentOption.changeInitialValue;
+                                          readjustmentOption.value = ReadjustmentOptionEnum.changeInitialValue;
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.all(16),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(strings.changeInitialValue, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOption.changeInitialValue ? colorScheme.primary : null)),
+                                              Text(strings.changeInitialValue, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOptionEnum.changeInitialValue ? colorScheme.primary : null)),
                                               const Spacing.y(0.5),
                                               Text(strings.changeInitialValueExplication, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
                                             ],
@@ -175,7 +175,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                             TextFormField(
                               decoration: InputDecoration(label: Text(strings.transactionDescription)),
                               textInputAction: TextInputAction.done,
-                              enabled: !notifier.isLoading && readjustmentOption.value == ReadjustmentOption.createTransaction,
+                              enabled: !notifier.isLoading && readjustmentOption.value == ReadjustmentOptionEnum.createTransaction,
                               onSaved: (String? value) => transactionDescription = value,
                             ),
                           ],
@@ -208,7 +208,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
 
         final bool confirm = await ConfirmReadjustBalanceDialog.show(
           context: context,
-          value: readjustmentOption.value == ReadjustmentOption.changeInitialValue ? readjustmentValue : difference,
+          value: readjustmentOption.value == ReadjustmentOptionEnum.changeInitialValue ? readjustmentValue : difference,
           option: readjustmentOption.value,
         );
         if (!confirm) return;

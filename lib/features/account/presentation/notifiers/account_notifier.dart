@@ -1,5 +1,5 @@
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
-import 'package:finan_master_app/features/account/domain/enums/adjustment_option.dart';
+import 'package:finan_master_app/features/account/domain/enums/adjustment_option_enum.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_delete.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_save.dart';
@@ -53,10 +53,10 @@ class AccountNotifier extends ValueNotifier<AccountState> {
     );
   }
 
-  Future<void> readjustBalance({required double readjustmentValue, required ReadjustmentOption option, required String? description}) async {
+  Future<void> readjustBalance({required double readjustmentValue, required ReadjustmentOptionEnum option, required String? description}) async {
     value = value.setSaving();
 
-    if (option == ReadjustmentOption.changeInitialValue) {
+    if (option == ReadjustmentOptionEnum.changeInitialValue) {
       final result = await _accountSave.readjustBalance(account, readjustmentValue);
 
       result.fold(
