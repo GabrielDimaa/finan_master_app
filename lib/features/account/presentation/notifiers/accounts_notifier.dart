@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_find.dart';
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
 import 'package:flutter/foundation.dart';
@@ -13,12 +14,8 @@ class AccountsNotifier extends ValueNotifier<AccountsState> {
     try {
       value = value.setLoading();
 
-      final result = await _accountFind.findAll();
-
-      result.fold(
-        (success) => value = value.setAccounts(success),
-        (failure) => value = value.setError(failure.message),
-      );
+      final List<AccountEntity> accounts = await _accountFind.findAll();
+      value = value.setAccounts(accounts);
     } catch (e) {
       value = value.setError(e.toString());
     }

@@ -31,23 +31,11 @@ class CategoryNotifier extends ValueNotifier<CategoryState> {
 
   Future<void> save() async {
     value = value.setSaving();
-
-    final result = await _categorySave.save(value.category);
-
-    result.fold(
-      (success) => null,
-      (failure) => throw failure,
-    );
+    await _categorySave.save(value.category);
   }
 
   Future<void> delete() async {
     value = value.setDeleting();
-
-    final result = await _categoryDelete.delete(value.category);
-
-    result.fold(
-      (success) => null,
-      (failure) => throw failure,
-    );
+    await _categoryDelete.delete(value.category);
   }
 }

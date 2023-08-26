@@ -1,7 +1,6 @@
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/repositories/i_account_repository.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_save.dart';
-import 'package:finan_master_app/shared/classes/result.dart';
 import 'package:finan_master_app/shared/exceptions/exceptions.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
@@ -11,10 +10,10 @@ class AccountSave implements IAccountSave {
   AccountSave({required IAccountRepository repository}) : _repository = repository;
 
   @override
-  Future<Result<AccountEntity, BaseException>> save(AccountEntity entity) async {
-    if (entity.description.trim().isEmpty) return Result.failure(ValidationException(R.strings.uninformedDescription, null));
-    if (entity.initialValue < 0) return Result.failure(ValidationException(R.strings.smallerThanZero, null));
-    if (entity.financialInstitution == null) return Result.failure(ValidationException(R.strings.uninformedFinancialInstitution, null));
+  Future<AccountEntity> save(AccountEntity entity) async {
+    if (entity.description.trim().isEmpty) throw ValidationException(R.strings.uninformedDescription);
+    if (entity.initialValue < 0) throw ValidationException(R.strings.smallerThanZero);
+    if (entity.financialInstitution == null) return throw ValidationException(R.strings.uninformedFinancialInstitution);
 
     if (entity.isNew) {
       entity.balance = entity.initialValue;
@@ -24,8 +23,8 @@ class AccountSave implements IAccountSave {
   }
 
   @override
-  Future<Result<AccountEntity, BaseException>> readjustBalance(AccountEntity entity, readjustmentValue) async {
-    if (readjustmentValue < 0) return Result.failure(ValidationException(R.strings.smallerThanZero, null));
+  Future<AccountEntity> readjustBalance(AccountEntity entity, readjustmentValue) async {
+    if (readjustmentValue < 0) throw ValidationException(R.strings.smallerThanZero);
 
     entity.initialValue = readjustmentValue;
     entity.balance = readjustmentValue;

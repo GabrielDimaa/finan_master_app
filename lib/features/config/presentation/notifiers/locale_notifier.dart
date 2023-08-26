@@ -20,14 +20,10 @@ class LocaleNotifier extends ValueNotifier<Locale> {
   }
 
   void find() {
-    final result = _configFind.findLocale();
+    value = _configFind.findLocale();
 
-    if (result.isSuccess()) {
-      value = result.successOrNull()!;
-
-      if (AppLocale().locale.languageCode != value.languageCode) {
-        AppLocale().changeLocale(value);
-      }
+    if (AppLocale().locale.languageCode != value.languageCode) {
+      AppLocale().changeLocale(value);
     }
   }
 

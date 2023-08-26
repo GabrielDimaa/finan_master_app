@@ -33,36 +33,20 @@ class AccountNotifier extends ValueNotifier<AccountState> {
 
   Future<void> save() async {
     value = value.setSaving();
-
-    final result = await _accountSave.save(account);
-
-    result.fold(
-      (success) => null,
-      (failure) => throw failure,
-    );
+    await _accountSave.save(account);
   }
 
   Future<void> delete() async {
     value = value.setDeleting();
-
-    final result = await _accountDelete.delete(account);
-
-    result.fold(
-      (success) => null,
-      (failure) => throw failure,
-    );
+    await _accountDelete.delete(account);
   }
 
   Future<void> readjustBalance({required double readjustmentValue, required ReadjustmentOptionEnum option, required String? description}) async {
     value = value.setSaving();
 
     if (option == ReadjustmentOptionEnum.changeInitialValue) {
-      final result = await _accountSave.readjustBalance(account, readjustmentValue);
-
-      result.fold(
-        (success) => value.setAccount(success),
-        (failure) => throw failure,
-      );
+      final AccountEntity accountSaved = await _accountSave.readjustBalance(account, readjustmentValue);
+      value.setAccount(accountSaved);
     } else {
       //TODO: Criar transação de reajuste.
     }

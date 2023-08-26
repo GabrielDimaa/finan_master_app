@@ -13,13 +13,7 @@ class ThemeModeNotifier extends ValueNotifier<ThemeMode> {
     find();
   }
 
-  void find() {
-    final result = _configFind.findThemeMode();
-
-    if (result.isSuccess()) {
-      value = result.successOrNull()!;
-    }
-  }
+  void find() => value = _configFind.findThemeMode();
 
   void changeAndSave(ThemeMode themeMode) {
     value = themeMode;

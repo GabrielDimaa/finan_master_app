@@ -1,7 +1,6 @@
 import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_transfer_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_save.dart';
-import 'package:finan_master_app/shared/classes/result.dart';
 import 'package:finan_master_app/shared/exceptions/exceptions.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
@@ -11,10 +10,10 @@ class TransferSave implements ITransferSave {
   TransferSave({required ITransferRepository repository}) : _repository = repository;
 
   @override
-  Future<Result<TransferEntity, BaseException>> save(TransferEntity entity) async {
-    if (entity.value <= 0) return Result.failure(ValidationException(R.strings.greaterThanZero, null));
-    if (entity.accountFrom == null) return Result.failure(ValidationException(R.strings.uninformedAccount, null));
-    if (entity.accountTo == null) return Result.failure(ValidationException(R.strings.uninformedAccount, null));
+  Future<TransferEntity> save(TransferEntity entity) async {
+    if (entity.value <= 0) throw ValidationException(R.strings.greaterThanZero);
+    if (entity.accountFrom == null) throw ValidationException(R.strings.uninformedAccount);
+    if (entity.accountTo == null) throw ValidationException(R.strings.uninformedAccount);
 
     // TODO: implement save
     throw UnimplementedError();
