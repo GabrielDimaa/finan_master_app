@@ -1,13 +1,13 @@
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
-import 'package:finan_master_app/features/account/infra/data_sources/i_account_data_source.dart';
+import 'package:finan_master_app/features/account/infra/data_sources/i_account_local_data_source.dart';
 import 'package:finan_master_app/features/account/infra/models/account_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
 import 'package:uuid/uuid.dart';
 
-class AccountDataSource extends LocalDataSource<AccountModel> implements IAccountDataSource {
-  AccountDataSource({required super.databaseLocal});
+class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IAccountLocalDataSource {
+  AccountLocalDataSource({required super.databaseLocal});
 
   @override
   String get tableName => 'accounts';

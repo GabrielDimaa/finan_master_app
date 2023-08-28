@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:finan_master_app/features/account/infra/data_sources/account_data_source.dart';
-import 'package:finan_master_app/features/category/infra/data_sources/category_data_source.dart';
+import 'package:finan_master_app/features/account/infra/data_sources/account_local_data_source.dart';
+import 'package:finan_master_app/features/category/infra/data_sources/category_local_data_source.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_transaction.dart';
@@ -59,8 +59,8 @@ final class DatabaseLocal implements IDatabaseLocal {
   Future<void> _onCreate(Database db, int version) async {
     final IDatabaseLocalBatch batch = DatabaseLocalBatch(database: db);
 
-    CategoryDataSource(databaseLocal: this).createTable(batch);
-    AccountDataSource(databaseLocal: this).createTable(batch);
+    CategoryLocalDataSource(databaseLocal: this).createTable(batch);
+    AccountLocalDataSource(databaseLocal: this).createTable(batch);
 
     await batch.commit();
   }

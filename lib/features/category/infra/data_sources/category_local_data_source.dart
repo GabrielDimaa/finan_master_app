@@ -1,5 +1,5 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
-import 'package:finan_master_app/features/category/infra/data_sources/i_category_data_source.dart';
+import 'package:finan_master_app/features/category/infra/data_sources/i_category_local_data_source.dart';
 import 'package:finan_master_app/features/category/infra/models/category_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
@@ -7,8 +7,8 @@ import 'package:finan_master_app/shared/infra/models/model.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-class CategoryDataSource extends LocalDataSource<CategoryModel> implements ICategoryDataSource {
-  CategoryDataSource({required super.databaseLocal});
+class CategoryLocalDataSource extends LocalDataSource<CategoryModel> implements ICategoryLocalDataSource {
+  CategoryLocalDataSource({required super.databaseLocal});
 
   @override
   String get tableName => 'categories';

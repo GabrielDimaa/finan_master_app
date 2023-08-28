@@ -1,10 +1,10 @@
+import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/exceptions/local_data_source_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/i_local_data_source.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
   final IDatabaseLocal databaseLocal;
@@ -65,7 +65,7 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
       }
 
       return modelClone;
-    } on DatabaseException catch (e, stackTrace) {
+    } on DatabaseLocalException catch (e, stackTrace) {
       throw throwable(e, stackTrace);
     }
   }
@@ -111,7 +111,7 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
       } else {
         await fun(txn);
       }
-    } on DatabaseException catch (e, stackTrace) {
+    } on DatabaseLocalException catch (e, stackTrace) {
       throw throwable(e, stackTrace);
     }
   }
@@ -120,7 +120,7 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
   Future<bool> exists({required String where, List? whereArgs, ITransactionExecutor? txn}) async {
     try {
       return (await (txn ?? databaseLocal).query(tableName, where: where, whereArgs: whereArgs, limit: 1)).firstOrNull != null;
-    } on DatabaseException catch (e, stackTrace) {
+    } on DatabaseLocalException catch (e, stackTrace) {
       throw throwable(e, stackTrace);
     }
   }
@@ -162,23 +162,21 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
       );
 
       return results.map((result) => fromMap(result)).toList();
-    } on DatabaseException catch (e, stackTrace) {
+    } on DatabaseLocalException catch (e, stackTrace) {
       throw throwable(e, stackTrace);
     }
   }
 
-  static LocalDataSourceException throwable(DatabaseException e, StackTrace stackTrace) {
-    final int? code = e.getResultCode();
-
-    if (code == 2067) return LocalDataSourceException(R.strings.registeredData, code, stackTrace);
+  LocalDataSourceException throwable(DatabaseLocalException e, StackTrace stackTrace) {
+    if (e.code == 2067) return LocalDataSourceException(R.strings.registeredData, e.code, stackTrace);
 
     final List<String> clearMessages = [
-      'SqliteException($code): ',
-      ', constraint failed (code $code)',
-      '(code $code SQLITE_CONSTRAINT_TRIGGER)',
-      '(code $code SQLITE_CONSTRAINT_TRIGGER[$code])',
-      'Error Domain=FMDatabase Code=$code',
-      '(code $code)',
+      'SqliteException(${e.code}): ',
+      ', constraint failed (code ${e.code})',
+      '(code ${e.code} SQLITE_CONSTRAINT_TRIGGER)',
+      '(code ${e.code} SQLITE_CONSTRAINT_TRIGGER[${e.code}])',
+      'Error Domain=FMDatabase Code=${e.code}',
+      '(code ${e.code})',
     ];
 
     String message = e.toString();
@@ -187,6 +185,6 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
       message = message.replaceAll(clean, '');
     }
 
-    return LocalDataSourceException(message, code, stackTrace);
+    return LocalDataSourceException(message, e.code, stackTrace);
   }
 }

@@ -5,8 +5,8 @@ import 'package:finan_master_app/features/account/domain/use_cases/account_save.
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_delete.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_find.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_save.dart';
-import 'package:finan_master_app/features/account/infra/data_sources/account_data_source.dart';
-import 'package:finan_master_app/features/account/infra/data_sources/i_account_data_source.dart';
+import 'package:finan_master_app/features/account/infra/data_sources/account_local_data_source.dart';
+import 'package:finan_master_app/features/account/infra/data_sources/i_account_local_data_source.dart';
 import 'package:finan_master_app/features/account/infra/repositories/account_repository.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
@@ -17,8 +17,8 @@ import 'package:finan_master_app/features/category/domain/use_cases/category_sav
 import 'package:finan_master_app/features/category/domain/use_cases/i_category_delete.dart';
 import 'package:finan_master_app/features/category/domain/use_cases/i_category_find.dart';
 import 'package:finan_master_app/features/category/domain/use_cases/i_category_save.dart';
-import 'package:finan_master_app/features/category/infra/data_sources/category_data_source.dart';
-import 'package:finan_master_app/features/category/infra/data_sources/i_category_data_source.dart';
+import 'package:finan_master_app/features/category/infra/data_sources/category_local_data_source.dart';
+import 'package:finan_master_app/features/category/infra/data_sources/i_category_local_data_source.dart';
 import 'package:finan_master_app/features/category/infra/repositories/category_repository.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/category_notifier.dart';
@@ -55,12 +55,12 @@ final class DependencyInjection {
     getIt.registerSingleton<SharedPreferences>(sharedPreferences);
     getIt.registerFactory<ICacheLocal>(() => CacheLocal(sharedPreferences: sharedPreferences));
 
-    getIt.registerFactory<ICategoryDataSource>(() => CategoryDataSource(databaseLocal: databaseLocal));
-    getIt.registerFactory<IAccountDataSource>(() => AccountDataSource(databaseLocal: databaseLocal));
+    getIt.registerFactory<ICategoryLocalDataSource>(() => CategoryLocalDataSource(databaseLocal: databaseLocal));
+    getIt.registerFactory<IAccountLocalDataSource>(() => AccountLocalDataSource(databaseLocal: databaseLocal));
 
     //Repositories
-    getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryDataSource>()));
-    getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountDataSource>()));
+    getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryLocalDataSource>()));
+    getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>()));
     getIt.registerFactory<IConfigRepository>(() => ConfigRepository(cacheLocal: getIt.get<ICacheLocal>()));
 
     //Usecases
