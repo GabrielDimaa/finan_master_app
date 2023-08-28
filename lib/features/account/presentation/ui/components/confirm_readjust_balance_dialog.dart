@@ -22,7 +22,7 @@ class ConfirmReadjustBalanceDialog extends StatefulWidget {
 }
 
 class _ConfirmReadjustBalanceDialogState extends State<ConfirmReadjustBalanceDialog> with ThemeContext {
-  String get message => widget.option == ReadjustmentOptionEnum.changeInitialValue ? strings.changeInitialValueConfirmation : strings.createTransactionConfirmation;
+  String get message => widget.option == ReadjustmentOptionEnum.changeInitialValue ? strings.changeInitialAmountConfirmation : strings.createTransactionConfirmation;
 
   @override
   Widget build(BuildContext context) {

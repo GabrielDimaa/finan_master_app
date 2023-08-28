@@ -73,16 +73,16 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: TextFormField(
-                    initialValue: state.account.initialValue.moneyWithoutSymbol,
+                    initialValue: state.account.initialAmount.moneyWithoutSymbol,
                     decoration: InputDecoration(
-                      label: Text(strings.initialValue),
+                      label: Text(strings.initialAmount),
                       prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
                     ),
                     validator: InputRequiredValidator().validate,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
                     enabled: !notifier.isLoading && state.account.isNew,
-                    onSaved: (String? value) => state.account.initialValue = (value ?? '').moneyToDouble(),
+                    onSaved: (String? value) => state.account.initialAmount = (value ?? '').moneyToDouble(),
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
                   ),
                 ),

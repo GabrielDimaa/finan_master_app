@@ -25,8 +25,8 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
 
   bool open = false;
 
-  ///[40] - FAB small size.
-  ///[16] - Gap between FAB.
+  ///[40] - Tamanho do FAB.small.
+  ///[16] - Espaços entre os botões.
   static const double spacing = 40 + 16;
   static const double spacingInitial = 80;
 

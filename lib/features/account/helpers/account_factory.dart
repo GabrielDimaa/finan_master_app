@@ -9,7 +9,7 @@ abstract class AccountFactory {
       deletedAt: entity.deletedAt,
       description: entity.description,
       balance: entity.balance,
-      initialValue: entity.initialValue,
+      initialValue: entity.initialAmount,
       financialInstitution: entity.financialInstitution!,
       includeTotalBalance: entity.includeTotalBalance,
     );
@@ -22,7 +22,7 @@ abstract class AccountFactory {
       deletedAt: model.deletedAt,
       description: model.description,
       balance: model.balance,
-      initialValue: model.initialValue,
+      initialAmount: model.initialValue,
       financialInstitution: model.financialInstitution,
       includeTotalBalance: model.includeTotalBalance,
     );

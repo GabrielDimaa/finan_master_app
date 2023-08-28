@@ -99,7 +99,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(strings.initialAccountBalance, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
-                        Text(notifier.account.initialValue.money, style: textTheme.labelMedium?.copyWith(color: colorScheme.outline)),
+                        Text(notifier.account.initialAmount.money, style: textTheme.labelMedium?.copyWith(color: colorScheme.outline)),
                       ],
                     ),
                     const Spacing.y(),
@@ -159,9 +159,9 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(strings.changeInitialValue, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOptionEnum.changeInitialValue ? colorScheme.primary : null)),
+                                              Text(strings.changeInitialAmount, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOptionEnum.changeInitialValue ? colorScheme.primary : null)),
                                               const Spacing.y(0.5),
-                                              Text(strings.changeInitialValueExplication, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
+                                              Text(strings.changeInitialAmountExplication, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
                                             ],
                                           ),
                                         ),
