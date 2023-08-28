@@ -8,7 +8,7 @@ abstract class Entity {
   bool get isNew => createdAt == null;
 
   Entity({
-    String? id,
+    required String? id,
     required this.createdAt,
     required this.deletedAt,
   }) {
