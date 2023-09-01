@@ -2,29 +2,30 @@ import 'package:finan_master_app/features/transactions/domain/enums/transaction_
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class TransactionModel extends Model {
-  String? idAccount;
   double amount;
-  TransactionTypeEnum typeTransaction;
+  TransactionTypeEnum type;
   DateTime date;
+
+  String idAccount;
 
   TransactionModel({
     required super.id,
     required super.createdAt,
     required super.deletedAt,
-    required this.idAccount,
     required this.amount,
-    required this.typeTransaction,
+    required this.type,
     required this.date,
+    required this.idAccount,
   });
 
   @override
   Map<String, dynamic> toMap() {
     return {
       ...baseMap(),
-      'id_account': idAccount,
       'amount': amount,
-      'type_transaction': typeTransaction.value,
+      'type': type.value,
       'date': date.toIso8601String(),
+      'id_account': idAccount,
     };
   }
 
@@ -34,10 +35,10 @@ class TransactionModel extends Model {
       id: id,
       createdAt: createdAt,
       deletedAt: deletedAt,
-      idAccount: idAccount,
       amount: amount,
-      typeTransaction: typeTransaction,
+      type: type,
       date: date,
+      idAccount: idAccount,
     );
   }
 }

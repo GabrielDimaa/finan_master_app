@@ -9,7 +9,7 @@ enum CategoryTypeEnum {
 
   const CategoryTypeEnum(this.value);
 
-  static CategoryTypeEnum? getByValue(int value) => CategoryTypeEnum.values.firstWhereOrNull((v) => v.value == value);
+  static CategoryTypeEnum? getByValue(int? value) => CategoryTypeEnum.values.firstWhereOrNull((v) => v.value == value);
 }
 
 extension CategoryTypeExtension on CategoryTypeEnum {

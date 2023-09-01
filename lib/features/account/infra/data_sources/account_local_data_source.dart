@@ -42,11 +42,11 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       id: base.id,
       createdAt: base.createdAt,
       deletedAt: base.deletedAt,
-      description: map['description'],
-      balance: map['balance'],
-      initialValue: map['initial_value'],
-      financialInstitution: FinancialInstitutionEnum.getByValue(map['financial_institution'])!,
-      includeTotalBalance: map['include_total_balance'] == 1,
+      description: map['${prefix}description'],
+      balance: map['${prefix}balance'],
+      initialValue: map['${prefix}initial_value'],
+      financialInstitution: FinancialInstitutionEnum.getByValue(map['${prefix}financial_institution'])!,
+      includeTotalBalance: map['${prefix}include_total_balance'] == 1,
     );
   }
 }

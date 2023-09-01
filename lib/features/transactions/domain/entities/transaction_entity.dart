@@ -2,18 +2,19 @@ import 'package:finan_master_app/features/transactions/domain/enums/transaction_
 import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
 class TransactionEntity extends Entity {
-  String? idAccount;
   double amount;
-  TransactionTypeEnum typeTransaction;
+  TransactionTypeEnum type;
   DateTime date;
+
+  String? idAccount;
 
   TransactionEntity({
     required super.id,
     required super.createdAt,
     required super.deletedAt,
-    required this.idAccount,
     required this.amount,
-    required this.typeTransaction,
+    required this.type,
     required this.date,
+    required this.idAccount,
   });
 }

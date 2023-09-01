@@ -58,6 +58,8 @@
   "theme": "Tema",
   "transactions": "Transações",
   "transactionDescription": "Descrição da transação",
+  "transactionNotFound": "Transação não encontrada.",
+  "transferAmountDivergent": "Valor da conta de saída e de entrada estão divergentes.",
   "typeCategory": "Tipo de categoria",
   "uninformedAccount": "Conta não informada.",
   "uninformedCategory": "Categoria não informada.",

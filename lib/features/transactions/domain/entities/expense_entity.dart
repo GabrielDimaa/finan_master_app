@@ -1,30 +1,41 @@
-import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
-import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/enums/transaction_type_enum.dart';
+import 'package:finan_master_app/features/transactions/helpers/factories/transaction_factory.dart';
+import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
-class ExpenseEntity extends TransactionEntity {
+class ExpenseEntity extends Entity {
   String description;
   String? observation;
 
-  CategoryEntity? category;
-  AccountEntity? account;
+  String? idCategory;
 
-  @override
-  String? get idAccount => account?.id;
+  late TransactionEntity _transaction;
+
+  TransactionEntity get transaction => _transaction;
+
+  set transaction(TransactionEntity value) => _transaction = value..type = TransactionTypeEnum.expense;
 
   ExpenseEntity({
     required super.id,
     required super.createdAt,
     required super.deletedAt,
-    required super.amount,
-    required super.date,
     required this.description,
     required this.observation,
-    required this.category,
-    required this.account,
-  }) : super(
-          idAccount: account?.id,
-          typeTransaction: TransactionTypeEnum.expense,
-        );
+    required this.idCategory,
+    required TransactionEntity? transaction,
+  }) {
+    this.transaction = transaction ?? TransactionFactory.newEntity(TransactionTypeEnum.expense);
+  }
+
+  ExpenseEntity clone() {
+    return ExpenseEntity(
+      id: id,
+      createdAt: createdAt,
+      deletedAt: deletedAt,
+      description: description,
+      observation: observation,
+      idCategory: idCategory,
+      transaction: transaction,
+    );
+  }
 }

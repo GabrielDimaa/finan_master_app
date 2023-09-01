@@ -12,9 +12,9 @@ class IncomeSave implements IIncomeSave {
   @override
   Future<IncomeEntity> save(IncomeEntity entity) async {
     if (entity.description.trim().isEmpty) throw ValidationException(R.strings.description);
-    if (entity.value <= 0) throw ValidationException(R.strings.greaterThanZero);
-    if (entity.category == null) throw ValidationException(R.strings.uninformedCategory);
-    if (entity.account == null) throw ValidationException(R.strings.uninformedAccount);
+    if (entity.transaction.amount <= 0) throw ValidationException(R.strings.greaterThanZero);
+    if (entity.idCategory == null) throw ValidationException(R.strings.uninformedCategory);
+    if (entity.transaction.idAccount == null) throw ValidationException(R.strings.uninformedAccount);
 
     // TODO: implement save
     throw UnimplementedError();

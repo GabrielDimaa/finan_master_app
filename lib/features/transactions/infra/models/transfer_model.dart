@@ -1,24 +1,35 @@
-import 'package:finan_master_app/features/account/infra/models/account_model.dart';
-import 'package:finan_master_app/features/transactions/domain/enums/transaction_type_enum.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transaction_model.dart';
+import 'package:finan_master_app/shared/infra/models/model.dart';
 
-class TransferModel extends TransactionModel {
-  AccountModel? accountFrom;
-  AccountModel? accountTo;
-
-  @override
-  String? get idAccount => accountTo?.id;
+class TransferModel extends Model {
+  TransactionModel transactionFrom;
+  TransactionModel transactionTo;
 
   TransferModel({
     required super.id,
     required super.createdAt,
     required super.deletedAt,
-    required super.amount,
-    required super.date,
-    required this.accountFrom,
-    required this.accountTo,
-  }) : super(
-    idAccount: accountTo?.id,
-    typeTransaction: TransactionTypeEnum.transfer,
-  );
+    required this.transactionFrom,
+    required this.transactionTo,
+  });
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      ...baseMap(),
+      'id_transaction_from': transactionFrom.id,
+      'id_transaction_to': transactionTo.id,
+    };
+  }
+
+  @override
+  TransferModel clone() {
+    return TransferModel(
+      id: id,
+      createdAt: createdAt,
+      deletedAt: deletedAt,
+      transactionFrom: transactionFrom.clone(),
+      transactionTo: transactionTo.clone(),
+    );
+  }
 }
