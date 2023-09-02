@@ -13,10 +13,10 @@ class ExpenseRepository implements IExpenseRepository {
   final ITransactionLocalDataSource _transactionLocalDataSource;
 
   ExpenseRepository({
-    required IDatabaseLocalTransaction dbTrasanction,
+    required IDatabaseLocalTransaction dbTransaction,
     required IExpenseLocalDataSource expenseLocalDataSource,
     required ITransactionLocalDataSource transactionLocalDataSource,
-  })  : _dbTransaction = dbTrasanction,
+  })  : _dbTransaction = dbTransaction,
         _expenseLocalDataSource = expenseLocalDataSource,
         _transactionLocalDataSource = transactionLocalDataSource;
 

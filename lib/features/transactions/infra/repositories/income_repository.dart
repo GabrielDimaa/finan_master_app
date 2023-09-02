@@ -13,10 +13,10 @@ class IncomeRepository implements IIncomeRepository {
   final ITransactionLocalDataSource _transactionLocalDataSource;
 
   IncomeRepository({
-    required IDatabaseLocalTransaction dbTrasanction,
+    required IDatabaseLocalTransaction dbTransaction,
     required IIncomeLocalDataSource incomeLocalDataSource,
     required ITransactionLocalDataSource transactionLocalDataSource,
-  })  : _dbTransaction = dbTrasanction,
+  })  : _dbTransaction = dbTransaction,
         _incomeLocalDataSource = incomeLocalDataSource,
         _transactionLocalDataSource = transactionLocalDataSource;
 

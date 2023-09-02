@@ -13,10 +13,10 @@ class TransferRepository implements ITransferRepository {
   final ITransactionLocalDataSource _transactionLocalDataSource;
 
   TransferRepository({
-    required IDatabaseLocalTransaction dbTrasanction,
+    required IDatabaseLocalTransaction dbTransaction,
     required ITransferLocalDataSource transferLocalDataSource,
     required ITransactionLocalDataSource transactionLocalDataSource,
-  })  : _dbTransaction = dbTrasanction,
+  })  : _dbTransaction = dbTransaction,
         _transferLocalDataSource = transferLocalDataSource,
         _transactionLocalDataSource = transactionLocalDataSource;
 

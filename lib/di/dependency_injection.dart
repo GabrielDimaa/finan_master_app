@@ -30,6 +30,27 @@ import 'package:finan_master_app/features/config/domain/use_cases/i_config_save.
 import 'package:finan_master_app/features/config/infra/repositories/config_repository.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/locale_notifier.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/theme_mode_notifier.dart';
+import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
+import 'package:finan_master_app/features/transactions/domain/repositories/i_income_repository.dart';
+import 'package:finan_master_app/features/transactions/domain/repositories/i_transfer_repository.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/expense_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/income_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/transfer_save.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/expense_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/i_income_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/i_transfer_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/income_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/transaction_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/transfer_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/repositories/expense_repository.dart';
+import 'package:finan_master_app/features/transactions/infra/repositories/income_repository.dart';
+import 'package:finan_master_app/features/transactions/infra/repositories/transfer_repository.dart';
+import 'package:finan_master_app/features/transactions/presentation/notifiers/expense_notifier.dart';
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/cache_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/i_cache_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local.dart';
@@ -57,11 +78,18 @@ final class DependencyInjection {
 
     getIt.registerFactory<ICategoryLocalDataSource>(() => CategoryLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<IAccountLocalDataSource>(() => AccountLocalDataSource(databaseLocal: databaseLocal));
+    getIt.registerFactory<ITransactionLocalDataSource>(() => TransactionLocalDataSource(databaseLocal: databaseLocal));
+    getIt.registerFactory<IExpenseLocalDataSource>(() => ExpenseLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
+    getIt.registerFactory<IIncomeLocalDataSource>(() => IncomeLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
+    getIt.registerFactory<ITransferLocalDataSource>(() => TransferLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
 
     //Repositories
     getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryLocalDataSource>()));
     getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>()));
     getIt.registerFactory<IConfigRepository>(() => ConfigRepository(cacheLocal: getIt.get<ICacheLocal>()));
+    getIt.registerFactory<IExpenseRepository>(() => ExpenseRepository(dbTransaction: databaseLocal.transactionInstance(), expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>()));
+    getIt.registerFactory<IIncomeRepository>(() => IncomeRepository(dbTransaction: databaseLocal.transactionInstance(), incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>()));
+    getIt.registerFactory<ITransferRepository>(() => TransferRepository(dbTransaction: databaseLocal.transactionInstance(), transferLocalDataSource: getIt.get<ITransferLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>()));
 
     //Usecases
     getIt.registerFactory<ICategoryFind>(() => CategoryFind(repository: getIt.get<ICategoryRepository>()));
@@ -72,6 +100,9 @@ final class DependencyInjection {
     getIt.registerFactory<IAccountDelete>(() => AccountDelete(repository: getIt.get<IAccountRepository>()));
     getIt.registerFactory<IConfigFind>(() => ConfigFind(repository: getIt.get<IConfigRepository>()));
     getIt.registerFactory<IConfigSave>(() => ConfigSave(repository: getIt.get<IConfigRepository>()));
+    getIt.registerFactory<IExpenseSave>(() => ExpenseSave(repository: getIt.get<IExpenseRepository>()));
+    getIt.registerFactory<IIncomeSave>(() => IncomeSave(repository: getIt.get<IIncomeRepository>()));
+    getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>()));
 
     //Controllers
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
@@ -80,5 +111,6 @@ final class DependencyInjection {
     getIt.registerFactory<AccountNotifier>(() => AccountNotifier(accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
+    getIt.registerFactory<ExpenseNotifier>(() => ExpenseNotifier(expenseSave: getIt.get<IExpenseSave>()));
   }
 }
