@@ -17,7 +17,6 @@ class TransferSave implements ITransferSave {
     if (entity.transactionTo.idAccount == null) throw ValidationException(R.strings.uninformedAccount);
     if (entity.transactionFrom.idAccount == null) throw ValidationException(R.strings.uninformedAccount);
 
-    // TODO: implement save
-    throw UnimplementedError();
+    return await _repository.save(entity);
   }
 }

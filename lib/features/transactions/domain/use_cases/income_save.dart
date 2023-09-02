@@ -16,7 +16,6 @@ class IncomeSave implements IIncomeSave {
     if (entity.idCategory == null) throw ValidationException(R.strings.uninformedCategory);
     if (entity.transaction.idAccount == null) throw ValidationException(R.strings.uninformedAccount);
 
-    // TODO: implement save
-    throw UnimplementedError();
+    return await _repository.save(entity);
   }
 }
