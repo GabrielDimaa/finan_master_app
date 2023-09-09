@@ -17,4 +17,15 @@ extension DoubleExtension on double {
 
     return ((this * mod).round().toDouble() / mod);
   }
+
+  String removeTrailingZeros() {
+    String formattedNumber = toString();
+
+    if (formattedNumber.contains('.')) {
+      formattedNumber = formattedNumber.replaceAll(RegExp(r'0*$'), '');
+      formattedNumber = formattedNumber.replaceAll(RegExp(r'\.$'), '');
+    }
+
+    return formattedNumber;
+  }
 }
