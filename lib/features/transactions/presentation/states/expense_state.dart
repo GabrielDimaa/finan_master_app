@@ -9,7 +9,7 @@ sealed class ExpenseState {
 
   ExpenseState updateExpense(ExpenseEntity expense) => ChangedExpenseState(expense: expense);
 
-  ExpenseState changedCategory() => ChangedExpenseState(expense: expense);
+  ExpenseState changedExpense() => ChangedExpenseState(expense: expense);
 
   ExpenseState setSaving() => SavingExpenseState(expense: expense);
 
