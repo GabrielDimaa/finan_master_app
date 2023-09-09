@@ -2,6 +2,11 @@ import 'dart:io';
 
 import 'package:finan_master_app/features/account/infra/data_sources/account_local_data_source.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/category_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/expense_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/income_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/transaction_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/transfer_local_data_source.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_transaction.dart';
@@ -61,6 +66,10 @@ final class DatabaseLocal implements IDatabaseLocal {
 
     CategoryLocalDataSource(databaseLocal: this).createTable(batch);
     AccountLocalDataSource(databaseLocal: this).createTable(batch);
+    final ITransactionLocalDataSource transactionDb = TransactionLocalDataSource(databaseLocal: this)..createTable(batch);
+    ExpenseLocalDataSource(databaseLocal: this, transactionDataSource: transactionDb).createTable(batch);
+    IncomeLocalDataSource(databaseLocal: this, transactionDataSource: transactionDb).createTable(batch);
+    TransferLocalDataSource(databaseLocal: this, transactionDataSource: transactionDb).createTable(batch);
 
     await batch.commit();
   }

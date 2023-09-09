@@ -25,7 +25,7 @@ class IncomeLocalDataSource extends LocalDataSource<IncomeModel> implements IInc
         ${baseColumnsSql()},
         description TEXT NOT NULL,
         id_category TEXT NOT NULL REFERENCES categories(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
-        id_transaction TEXT NOT NULL REFERENCES ${_transactionDataSource.tableName}(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE UPDATE,
+        id_transaction TEXT NOT NULL REFERENCES ${_transactionDataSource.tableName}(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE CASCADE,
         observation TEXT
       );
     ''');

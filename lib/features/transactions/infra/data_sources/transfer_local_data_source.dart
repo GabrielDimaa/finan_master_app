@@ -23,8 +23,8 @@ class TransferLocalDataSource extends LocalDataSource<TransferModel> implements 
     batch.execute('''
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
-        id_transaction_from TEXT NOT NULL REFERENCES ${_transactionDataSource.tableName}(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE UPDATE,
-        id_transaction_to TEXT NOT NULL REFERENCES ${_transactionDataSource.tableName}(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE UPDATE
+        id_transaction_from TEXT NOT NULL REFERENCES ${_transactionDataSource.tableName}(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE CASCADE,
+        id_transaction_to TEXT NOT NULL REFERENCES ${_transactionDataSource.tableName}(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE CASCADE
       );
     ''');
   }
