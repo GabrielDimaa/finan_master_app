@@ -1,5 +1,6 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -56,11 +57,11 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
         children: [
           ExpandableFabChild(
             icon: const Icon(Icons.arrow_downward_outlined),
-            onPressed: () {},
+            onPressed: goIncomeFormPage,
           ),
           ExpandableFabChild(
             icon: const Icon(Icons.arrow_upward_outlined),
-            onPressed: () => context.pushNamed(ExpenseFormPage.route),
+            onPressed: goExpenseFormPage,
           ),
           ExpandableFabChild(
             icon: const Icon(Icons.credit_card_outlined),
@@ -174,5 +175,13 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
         ),
       ),
     );
+  }
+
+  Future<void> goExpenseFormPage() async {
+    await context.pushNamed(ExpenseFormPage.route);
+  }
+
+  Future<void> goIncomeFormPage() async {
+    await context.pushNamed(IncomeFormPage.route);
   }
 }

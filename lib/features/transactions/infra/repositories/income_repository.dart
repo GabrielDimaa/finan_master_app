@@ -28,9 +28,9 @@ class IncomeRepository implements IIncomeRepository {
     late final TransactionModel transactionResult;
 
     await _dbTransaction.openTransaction((txn) async {
-      Future.wait([
-        Future.value(() async => transactionResult = await _transactionLocalDataSource.upsert(model.transaction)),
-        Future.value(() async => incomeResult = await _incomeLocalDataSource.upsert(model)),
+      await Future.wait([
+        Future(() async => transactionResult = await _transactionLocalDataSource.upsert(model.transaction, txn: txn)),
+        Future(() async => incomeResult = await _incomeLocalDataSource.upsert(model, txn: txn)),
       ]);
     });
 

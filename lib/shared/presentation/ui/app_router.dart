@@ -9,7 +9,9 @@ import 'package:finan_master_app/features/config/presentation/ui/config_page.dar
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transactions_list_page.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_bar_rail.dart';
 import 'package:flutter/widgets.dart';
@@ -55,6 +57,12 @@ sealed class AppRouter {
           name: ExpenseFormPage.route,
           path: '/${ExpenseFormPage.route}',
           builder: (_, GoRouterState state) => ExpenseFormPage(expense: state.extra as ExpenseEntity?),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: IncomeFormPage.route,
+          path: '/${IncomeFormPage.route}',
+          builder: (_, GoRouterState state) => IncomeFormPage(income: state.extra as IncomeEntity?),
         ),
         StatefulShellRoute.indexedStack(
           parentNavigatorKey: _rootNavigatorKey,
