@@ -25,5 +25,5 @@ abstract interface class ILocalDataSource<T extends Model> {
 
   Future<T?> findById(String id, {bool deleted = false, ITransactionExecutor? txn});
 
-  Future<List<T>> findAll({bool deleted = false, ITransactionExecutor? txn});
+  Future<List<T>> findAll({String? where, List<dynamic>? whereArgs, bool deleted = false, ITransactionExecutor? txn});
 }
