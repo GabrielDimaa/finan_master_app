@@ -71,12 +71,12 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
 
       if (!mounted) return;
 
-      if (accountsNotifier.value is ErrorAccountsState) {
-        ErrorDialog.show(context, (accountsNotifier.value as ErrorAccountsState).message);
-      }
-
       if (categoriesNotifier.value is ErrorCategoriesState) {
         ErrorDialog.show(context, (categoriesNotifier.value as ErrorCategoriesState).message);
+      }
+
+      if (accountsNotifier.value is ErrorAccountsState) {
+        ErrorDialog.show(context, (accountsNotifier.value as ErrorAccountsState).message);
       }
     });
   }
@@ -235,6 +235,8 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
     if (loadingNotifier.value) return;
 
     try {
+      loadingNotifier.value = true;
+
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
 
@@ -245,6 +247,8 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
       }
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
+    } finally {
+      loadingNotifier.value = false;
     }
   }
 
