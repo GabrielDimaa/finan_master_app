@@ -104,7 +104,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> with ThemeContext {
                 const Divider(),
                 GroupTile(
                   onTap: selectColorAndIcon,
-                  title: strings.typeCategory,
+                  title: strings.icon,
                   enabled: !isLoading,
                   tile: state.category.color.isNotEmpty && state.category.icon > 0
                       ? ListTile(
@@ -117,7 +117,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> with ThemeContext {
                         )
                       : ListTile(
                           leading: const Icon(Icons.palette_outlined),
-                          title: Text(strings.icon),
+                          title: Text(strings.selectIcon),
                           trailing: const Icon(Icons.chevron_right),
                           enabled: !isLoading,
                         ),

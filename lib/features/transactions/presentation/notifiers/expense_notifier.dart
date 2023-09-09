@@ -16,6 +16,21 @@ class ExpenseNotifier extends ValueNotifier<ExpenseState> {
 
   void updateExpense(ExpenseEntity expense) => value = value.updateExpense(expense);
 
+  void setCategory(String idCategory) {
+    expense.idCategory = idCategory;
+    value = value.changedExpense();
+  }
+
+  void setAccount(String idAccount) {
+    expense.transaction.idAccount = idAccount;
+    value = value.changedExpense();
+  }
+
+  void setDate(DateTime date) {
+    expense.transaction.date = date;
+    value = value.changedExpense();
+  }
+
   Future<ExpenseEntity> save() async {
     value = value.setSaving();
     return await _expenseSave.save(expense);

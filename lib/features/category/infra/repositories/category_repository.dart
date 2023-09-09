@@ -1,4 +1,5 @@
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
+import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/category/domain/repositories/i_category_repository.dart';
 import 'package:finan_master_app/features/category/helpers/factories/category_factory.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/i_category_local_data_source.dart';
@@ -10,8 +11,15 @@ class CategoryRepository implements ICategoryRepository {
   CategoryRepository({required ICategoryLocalDataSource dataSource}) : _dataSource = dataSource;
 
   @override
-  Future<List<CategoryEntity>> findAll() async {
-    final List<CategoryModel> categories = await _dataSource.findAll();
+  Future<List<CategoryEntity>> findAll({CategoryTypeEnum? type}) async {
+    List<CategoryModel> categories = [];
+
+    if (type == null) {
+      categories = await _dataSource.findAll();
+    } else {
+      categories = await _dataSource.findAll(where: 'type = ?', whereArgs: [type.index]);
+    }
+
     return categories.map((c) => CategoryFactory.toEntity(c)).toList();
   }
 
