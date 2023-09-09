@@ -28,9 +28,9 @@ class ExpenseRepository implements IExpenseRepository {
     late final TransactionModel transactionResult;
 
     await _dbTransaction.openTransaction((txn) async {
-      Future.wait([
-        Future.value(() async => transactionResult = await _transactionLocalDataSource.upsert(model.transaction)),
-        Future.value(() async => expenseResult = await _expenseLocalDataSource.upsert(model)),
+      await Future.wait([
+        Future(() async => transactionResult = await _transactionLocalDataSource.upsert(model.transaction, txn: txn)),
+        Future(() async => expenseResult = await _expenseLocalDataSource.upsert(model, txn: txn)),
       ]);
     });
 
