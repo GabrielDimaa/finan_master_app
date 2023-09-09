@@ -17,7 +17,7 @@ class CategoryRepository implements ICategoryRepository {
     if (type == null) {
       categories = await _dataSource.findAll();
     } else {
-      categories = await _dataSource.findAll(where: 'type = ?', whereArgs: [type.index]);
+      categories = await _dataSource.findAll(where: 'type = ?', whereArgs: [type.value]);
     }
 
     return categories.map((c) => CategoryFactory.toEntity(c)).toList();

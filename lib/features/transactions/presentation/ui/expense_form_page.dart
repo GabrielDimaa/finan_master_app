@@ -5,6 +5,7 @@ import 'package:finan_master_app/features/account/presentation/notifiers/account
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/accounts_list_bottom_sheet.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
+import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/categories_list_bottom_sheet.dart';
@@ -62,7 +63,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
         loadingNotifier.value = true;
 
         await Future.wait([
-          categoriesNotifier.findAll(),
+          categoriesNotifier.findAll(type: CategoryTypeEnum.expense),
           accountsNotifier.findAll(),
         ]);
       } finally {
