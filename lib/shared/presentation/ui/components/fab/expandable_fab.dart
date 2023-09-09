@@ -49,6 +49,7 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
           _CloseFab(
             open: open,
             child: FloatingActionButton(
+              heroTag: null,
               onPressed: toggle,
               child: widget.iconClose ?? const Icon(Icons.close_outlined),
             ),
@@ -57,6 +58,7 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
           _OpenFab(
             open: open,
             child: FloatingActionButton(
+              heroTag: null,
               onPressed: toggle,
               child: widget.iconOpen,
             ),
@@ -79,7 +81,7 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
       },
       child: FadeTransition(
         opacity: expandAnimation,
-        child: widget.children[index],
+        child: fabChild(widget.children[index]),
       ),
     );
   }
@@ -99,6 +101,24 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
       open = !open;
       open ? controller.forward() : controller.reverse();
     });
+  }
+
+  Widget fabChild(ExpandableFabChild child) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        child.label ?? const SizedBox(),
+        FloatingActionButton.small(
+          heroTag: null,
+          onPressed: () {
+            child.onPressed?.call();
+            toggle();
+          },
+          child: child.icon,
+        ),
+      ],
+    );
   }
 
   @override

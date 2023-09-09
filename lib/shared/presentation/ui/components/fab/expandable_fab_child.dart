@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ExpandableFabChild extends StatelessWidget {
+class ExpandableFabChild {
   final Widget? label;
   final Widget icon;
   final VoidCallback? onPressed;
 
-  const ExpandableFabChild({super.key, this.label, required this.icon, this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        label ?? const SizedBox(),
-        FloatingActionButton.small(
-          onPressed: onPressed,
-          child: icon,
-        ),
-      ],
-    );
-  }
+  const ExpandableFabChild({this.label, required this.icon, this.onPressed});
 }
