@@ -1,6 +1,7 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -69,7 +70,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
           ),
           ExpandableFabChild(
             icon: const Icon(Icons.move_up_outlined),
-            onPressed: () {},
+            onPressed: goTransferFormPage,
           ),
         ],
       ),
@@ -183,5 +184,9 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
 
   Future<void> goIncomeFormPage() async {
     await context.pushNamed(IncomeFormPage.route);
+  }
+
+  Future<void> goTransferFormPage() async {
+    await context.pushNamed(TransferFormPage.route);
   }
 }

@@ -13,6 +13,7 @@ import 'package:finan_master_app/features/transactions/domain/entities/income_en
 import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transactions_list_page.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_bar_rail.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -63,6 +64,12 @@ sealed class AppRouter {
           name: IncomeFormPage.route,
           path: '/${IncomeFormPage.route}',
           builder: (_, GoRouterState state) => IncomeFormPage(income: state.extra as IncomeEntity?),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: TransferFormPage.route,
+          path: '/${TransferFormPage.route}',
+          builder: (_, GoRouterState state) => const TransferFormPage(),
         ),
         StatefulShellRoute.indexedStack(
           parentNavigatorKey: _rootNavigatorKey,

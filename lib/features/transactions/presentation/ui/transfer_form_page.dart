@@ -4,16 +4,8 @@ import 'package:finan_master_app/features/account/domain/enums/financial_institu
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/accounts_list_bottom_sheet.dart';
-import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
-import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
-import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
-import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
-import 'package:finan_master_app/features/category/presentation/ui/components/categories_list_bottom_sheet.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
-import 'package:finan_master_app/features/transactions/presentation/notifiers/income_notifier.dart';
+import 'package:finan_master_app/features/transactions/presentation/notifiers/transfer_notifier.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
-import 'package:finan_master_app/shared/extensions/double_extension.dart';
-import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
@@ -31,20 +23,17 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-class IncomeFormPage extends StatefulWidget {
-  static const route = 'income-form';
+class TransferFormPage extends StatefulWidget {
+  static const route = 'transfer-form';
 
-  final IncomeEntity? income;
-
-  const IncomeFormPage({Key? key, this.income}) : super(key: key);
+  const TransferFormPage({Key? key}) : super(key: key);
 
   @override
-  State<IncomeFormPage> createState() => _IncomeFormPageState();
+  State<TransferFormPage> createState() => _TransferFormPageState();
 }
 
-class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
-  final IncomeNotifier notifier = GetIt.I.get<IncomeNotifier>();
-  final CategoriesNotifier categoriesNotifier = GetIt.I.get<CategoriesNotifier>();
+class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
+  final TransferNotifier notifier = GetIt.I.get<TransferNotifier>();
   final AccountsNotifier accountsNotifier = GetIt.I.get<AccountsNotifier>();
 
   final ValueNotifier<bool> loadingNotifier = ValueNotifier(false);
@@ -56,25 +45,17 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
   void initState() {
     super.initState();
 
-    dateController.text = DateFormat.yMd(AppLocale().locale.languageCode).format(notifier.income.transaction.date);
+    dateController.text = DateFormat.yMd(AppLocale().locale.languageCode).format(notifier.transfer.date);
 
     Future(() async {
       try {
         loadingNotifier.value = true;
-
-        await Future.wait([
-          categoriesNotifier.findAll(type: CategoryTypeEnum.income),
-          accountsNotifier.findAll(),
-        ]);
+        accountsNotifier.findAll();
       } finally {
         loadingNotifier.value = false;
       }
 
       if (!mounted) return;
-
-      if (categoriesNotifier.value is ErrorCategoriesState) {
-        ErrorDialog.show(context, (categoriesNotifier.value as ErrorCategoriesState).message);
-      }
 
       if (accountsNotifier.value is ErrorAccountsState) {
         ErrorDialog.show(context, (accountsNotifier.value as ErrorAccountsState).message);
@@ -89,19 +70,13 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
       builder: (_, loading, __) {
         return SliverScaffold(
           appBar: SliverAppBarMedium(
-            title: Text(strings.income),
+            title: Text(strings.transfer),
             loading: loading,
             actions: [
               FilledButton(
                 onPressed: save,
                 child: Text(strings.save),
               ),
-              if (widget.income?.isNew == false)
-                IconButton(
-                  tooltip: strings.delete,
-                  onPressed: null,
-                  icon: const Icon(Icons.delete_outline),
-                ),
             ],
           ),
           body: Builder(
@@ -121,7 +96,6 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                           child: Column(
                             children: [
                               TextFormField(
-                                initialValue: state.income.transaction.amount.moneyWithoutSymbol,
                                 decoration: InputDecoration(
                                   label: Text(strings.amount),
                                   prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
@@ -130,17 +104,8 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                                 keyboardType: TextInputType.number,
                                 textInputAction: TextInputAction.next,
                                 enabled: !loading,
-                                onSaved: (String? value) => state.income.transaction.amount = (value ?? '').moneyToDouble(),
+                                onSaved: (String? value) => state.transfer.amount = (value ?? '').moneyToDouble(),
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
-                              ),
-                              const Spacing.y(),
-                              TextFormField(
-                                initialValue: state.income.description,
-                                decoration: InputDecoration(label: Text(strings.description)),
-                                textCapitalization: TextCapitalization.sentences,
-                                validator: InputRequiredValidator().validate,
-                                onSaved: (String? value) => state.income.description = value?.trim() ?? '',
-                                enabled: !loading,
                               ),
                               const Spacing.y(),
                               TextFormField(
@@ -160,40 +125,13 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                         const Spacing.y(),
                         const Divider(),
                         GroupTile(
-                          onTap: selectCategory,
-                          title: strings.category,
+                          onTap: selectAccountFrom,
+                          title: strings.from,
                           enabled: !loading,
-                          tile: state.income.idCategory != null
+                          tile: state.transfer.transactionFrom.idAccount != null
                               ? Builder(
                                   builder: (_) {
-                                    final CategoryEntity category = categoriesNotifier.value.categories.firstWhere((category) => category.id == state.income.idCategory);
-                                    return ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: Color(category.color.toColor() ?? 0),
-                                        child: Icon(category.icon.parseIconData(), color: Colors.white),
-                                      ),
-                                      title: Text(category.description),
-                                      trailing: const Icon(Icons.chevron_right),
-                                      enabled: !loading,
-                                    );
-                                  },
-                                )
-                              : ListTile(
-                                  leading: const Icon(Icons.category_outlined),
-                                  title: Text(strings.selectCategory),
-                                  trailing: const Icon(Icons.chevron_right),
-                                  enabled: !loading,
-                                ),
-                        ),
-                        const Divider(),
-                        GroupTile(
-                          onTap: selectAccount,
-                          title: strings.account,
-                          enabled: !loading,
-                          tile: state.income.transaction.idAccount != null
-                              ? Builder(
-                                  builder: (_) {
-                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.income.transaction.idAccount);
+                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.transfer.transactionFrom.idAccount);
                                     return ListTile(
                                       leading: account.financialInstitution!.icon(),
                                       title: Text(account.description),
@@ -210,19 +148,30 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                                 ),
                         ),
                         const Divider(),
-                        const Spacing.y(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: TextFormField(
-                            initialValue: state.income.observation,
-                            decoration: InputDecoration(label: Text("${strings.observation} (${strings.optional})")),
-                            textCapitalization: TextCapitalization.sentences,
-                            minLines: 2,
-                            maxLines: 5,
-                            onSaved: (String? value) => state.income.observation = value?.trim() ?? '',
-                            enabled: !loading,
-                          ),
+                        GroupTile(
+                          onTap: selectAccountTo,
+                          title: strings.to,
+                          enabled: !loading,
+                          tile: state.transfer.transactionTo.idAccount != null
+                              ? Builder(
+                                  builder: (_) {
+                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.transfer.transactionTo.idAccount);
+                                    return ListTile(
+                                      leading: account.financialInstitution!.icon(),
+                                      title: Text(account.description),
+                                      trailing: const Icon(Icons.chevron_right),
+                                      enabled: !loading,
+                                    );
+                                  },
+                                )
+                              : ListTile(
+                                  leading: const Icon(Icons.account_balance_outlined),
+                                  title: Text(strings.selectAccount),
+                                  trailing: const Icon(Icons.chevron_right),
+                                  enabled: !loading,
+                                ),
                         ),
+                        const Divider(),
                       ],
                     ),
                   );
@@ -247,7 +196,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
         await notifier.save();
 
         if (!mounted) return;
-        context.pop(FormResultNavigation.save(notifier.income));
+        context.pop(FormResultNavigation.save(notifier.transfer));
       }
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
@@ -256,43 +205,41 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
     }
   }
 
-  Future<void> selectCategory() async {
+  Future<void> selectAccountFrom() async {
     if (loadingNotifier.value) return;
 
-    final CategoryEntity? result = await CategoriesListBottomSheet.show(
-      context: context,
-      categorySelected: categoriesNotifier.value.categories.firstWhereOrNull((category) => category.id == notifier.income.idCategory),
-      categories: categoriesNotifier.value.categories,
-    );
-
+    final AccountEntity? result = await showAccountListBottomSheet(notifier.transfer.transactionFrom.idAccount);
     if (result == null) return;
 
-    notifier.setCategory(result.id);
+    notifier.setAccountFrom(result.id);
   }
 
-  Future<void> selectAccount() async {
+  Future<void> selectAccountTo() async {
     if (loadingNotifier.value) return;
 
-    final AccountEntity? result = await AccountsListBottomSheet.show(
-      context: context,
-      accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == notifier.income.transaction.idAccount),
-      accounts: accountsNotifier.value.accounts,
-    );
-
+    final AccountEntity? result = await showAccountListBottomSheet(notifier.transfer.transactionTo.idAccount);
     if (result == null) return;
 
-    notifier.setAccount(result.id);
+    notifier.setAccountTo(result.id);
+  }
+
+  Future<AccountEntity?> showAccountListBottomSheet(String? idAccount) async {
+    return await AccountsListBottomSheet.show(
+      context: context,
+      accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == idAccount),
+      accounts: accountsNotifier.value.accounts,
+    );
   }
 
   Future<void> selectDate() async {
     final DateTime? result = await showDatePicker(
       context: context,
-      initialDate: notifier.income.transaction.date,
+      initialDate: notifier.transfer.date,
       firstDate: DateTime(2000, 1, 1),
       lastDate: DateTime(2100, 12, 31),
     );
 
-    if (result == null || result == notifier.income.transaction.date) return;
+    if (result == null || result == notifier.transfer.date) return;
 
     dateController.text = DateFormat.yMd(AppLocale().locale.languageCode).format(result);
     notifier.setDate(result);

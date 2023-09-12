@@ -11,9 +11,21 @@ class TransferEntity extends Entity {
 
   TransactionEntity get transactionTo => _transactionTo;
 
+  DateTime get date => _transactionFrom.date;
+
   set transactionFrom(TransactionEntity value) => _transactionFrom = value..type = TransactionTypeEnum.transfer;
 
   set transactionTo(TransactionEntity value) => _transactionTo = value..type = TransactionTypeEnum.transfer;
+
+  set amount(double value) {
+    _transactionFrom.amount = value * -1;
+    _transactionTo.amount = value;
+  }
+
+  set date(DateTime value) {
+    _transactionFrom.date = value;
+    _transactionTo.date = value;
+  }
 
   TransferEntity({
     required super.id,
@@ -22,7 +34,7 @@ class TransferEntity extends Entity {
     required TransactionEntity? transactionFrom,
     required TransactionEntity? transactionTo,
   }) {
-    transactionFrom = transactionFrom ?? TransactionFactory.newEntity(TransactionTypeEnum.transfer);
-    transactionTo = transactionTo ?? TransactionFactory.newEntity(TransactionTypeEnum.transfer);
+    _transactionFrom = transactionFrom ?? TransactionFactory.newEntity(TransactionTypeEnum.transfer);
+    _transactionTo = transactionTo ?? TransactionFactory.newEntity(TransactionTypeEnum.transfer);
   }
 }

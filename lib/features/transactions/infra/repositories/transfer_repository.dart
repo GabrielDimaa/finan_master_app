@@ -29,10 +29,10 @@ class TransferRepository implements ITransferRepository {
     late final TransactionModel transactionToResult;
 
     await _dbTransaction.openTransaction((txn) async {
-      Future.wait([
-        Future.value(() async => transactionFromResult = await _transactionLocalDataSource.upsert(model.transactionFrom)),
-        Future.value(() async => transactionToResult = await _transactionLocalDataSource.upsert(model.transactionTo)),
-        Future.value(() async => transferResult = await _transferLocalDataSource.upsert(model)),
+      await Future.wait([
+        Future(() async => transactionFromResult = await _transactionLocalDataSource.upsert(model.transactionFrom, txn: txn)),
+        Future(() async => transactionToResult = await _transactionLocalDataSource.upsert(model.transactionTo, txn: txn)),
+        Future(() async => transferResult = await _transferLocalDataSource.upsert(model, txn: txn)),
       ]);
     });
 

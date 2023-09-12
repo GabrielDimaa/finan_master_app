@@ -144,7 +144,10 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                               ),
                               const Spacing.y(),
                               TextFormField(
-                                decoration: InputDecoration(label: Text(strings.date)),
+                                decoration: InputDecoration(
+                                  prefixIcon: const Icon(Icons.calendar_today_outlined),
+                                  label: Text(strings.date),
+                                ),
                                 readOnly: true,
                                 controller: dateController,
                                 validator: InputRequiredValidator().validate,
@@ -272,7 +275,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
 
     final AccountEntity? result = await AccountsListBottomSheet.show(
       context: context,
-      accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((category) => category.id == notifier.expense.transaction.idAccount),
+      accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == notifier.expense.transaction.idAccount),
       accounts: accountsNotifier.value.accounts,
     );
 

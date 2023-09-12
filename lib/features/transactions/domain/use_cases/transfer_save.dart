@@ -11,11 +11,12 @@ class TransferSave implements ITransferSave {
 
   @override
   Future<TransferEntity> save(TransferEntity entity) async {
-    if (entity.transactionTo.amount <= 0) throw ValidationException(R.strings.greaterThanZero);
-    if (entity.transactionFrom.amount >= 0) throw ValidationException(R.strings.greaterThanZero);
-    if (entity.transactionTo.amount.abs() != entity.transactionFrom.amount.abs()) throw ValidationException(R.strings.transferAmountDivergent);
-    if (entity.transactionTo.idAccount == null) throw ValidationException(R.strings.uninformedAccount);
     if (entity.transactionFrom.idAccount == null) throw ValidationException(R.strings.uninformedAccount);
+    if (entity.transactionTo.idAccount == null) throw ValidationException(R.strings.uninformedAccount);
+    if (entity.transactionFrom.amount >= 0) throw ValidationException(R.strings.lessThanZero);
+    if (entity.transactionTo.amount <= 0) throw ValidationException(R.strings.greaterThanZero);
+    if (entity.transactionTo.amount.abs() != entity.transactionFrom.amount.abs()) throw ValidationException(R.strings.transferAmountDivergent);
+    if (entity.transactionFrom.idAccount == entity.transactionTo.idAccount) throw ValidationException(R.strings.sourceAccountAndDestinationEquals);
 
     return await _repository.save(entity);
   }

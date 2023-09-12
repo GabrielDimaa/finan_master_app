@@ -52,6 +52,7 @@ import 'package:finan_master_app/features/transactions/infra/repositories/income
 import 'package:finan_master_app/features/transactions/infra/repositories/transfer_repository.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/expense_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/income_notifier.dart';
+import 'package:finan_master_app/features/transactions/presentation/notifiers/transfer_notifier.dart';
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/cache_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/i_cache_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local.dart';
@@ -114,5 +115,6 @@ final class DependencyInjection {
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<ExpenseNotifier>(() => ExpenseNotifier(expenseSave: getIt.get<IExpenseSave>()));
     getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>()));
+    getIt.registerFactory<TransferNotifier>(() => TransferNotifier(transferSave: getIt.get<ITransferSave>()));
   }
 }
