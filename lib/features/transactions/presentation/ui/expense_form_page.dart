@@ -47,7 +47,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   final CategoriesNotifier categoriesNotifier = GetIt.I.get<CategoriesNotifier>();
   final AccountsNotifier accountsNotifier = GetIt.I.get<AccountsNotifier>();
 
-  final ValueNotifier<bool> loadingNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(false);
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController dateController = TextEditingController();
@@ -60,14 +60,14 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
 
     Future(() async {
       try {
-        loadingNotifier.value = true;
+        initialLoadingNotifier.value = true;
 
         await Future.wait([
           categoriesNotifier.findAll(type: CategoryTypeEnum.expense),
           accountsNotifier.findAll(),
         ]);
       } finally {
-        loadingNotifier.value = false;
+        initialLoadingNotifier.value = false;
       }
 
       if (!mounted) return;
@@ -85,32 +85,32 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: loadingNotifier,
-      builder: (_, loading, __) {
-        return SliverScaffold(
-          appBar: SliverAppBarMedium(
-            title: Text(strings.expense),
-            loading: loading,
-            actions: [
-              FilledButton(
-                onPressed: save,
-                child: Text(strings.save),
+      valueListenable: initialLoadingNotifier,
+      builder: (_, initialLoading, __) {
+        return ValueListenableBuilder(
+          valueListenable: notifier,
+          builder: (_, state, __) {
+            return SliverScaffold(
+              appBar: SliverAppBarMedium(
+                title: Text(strings.expense),
+                loading: notifier.isLoading,
+                actions: [
+                  FilledButton(
+                    onPressed: save,
+                    child: Text(strings.save),
+                  ),
+                  if (widget.expense?.isNew == false)
+                    IconButton(
+                      tooltip: strings.delete,
+                      onPressed: null,
+                      icon: const Icon(Icons.delete_outline),
+                    ),
+                ],
               ),
-              if (widget.expense?.isNew == false)
-                IconButton(
-                  tooltip: strings.delete,
-                  onPressed: null,
-                  icon: const Icon(Icons.delete_outline),
-                ),
-            ],
-          ),
-          body: Builder(
-            builder: (_) {
-              if (loading) return const SizedBox.shrink();
+              body: Builder(
+                builder: (_) {
+                  if (initialLoading) return const SizedBox.shrink();
 
-              return ValueListenableBuilder(
-                valueListenable: notifier,
-                builder: (_, state, __) {
                   return Form(
                     key: formKey,
                     child: Column(
@@ -129,7 +129,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                 validator: InputGreaterThanValueValidator().validate,
                                 keyboardType: TextInputType.number,
                                 textInputAction: TextInputAction.next,
-                                enabled: !loading,
+                                enabled: !notifier.isLoading,
                                 onSaved: (String? value) => state.expense.transaction.amount = (value ?? '').moneyToDouble(),
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
                               ),
@@ -140,7 +140,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                 textCapitalization: TextCapitalization.sentences,
                                 validator: InputRequiredValidator().validate,
                                 onSaved: (String? value) => state.expense.description = value?.trim() ?? '',
-                                enabled: !loading,
+                                enabled: !notifier.isLoading,
                               ),
                               const Spacing.y(),
                               TextFormField(
@@ -151,7 +151,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                 readOnly: true,
                                 controller: dateController,
                                 validator: InputRequiredValidator().validate,
-                                enabled: !loading,
+                                enabled: !notifier.isLoading,
                                 onTap: selectDate,
                               ),
                             ],
@@ -162,7 +162,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                         GroupTile(
                           onTap: selectCategory,
                           title: strings.category,
-                          enabled: !loading,
+                          enabled: !notifier.isLoading,
                           tile: state.expense.idCategory != null
                               ? Builder(
                                   builder: (_) {
@@ -174,7 +174,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                       ),
                                       title: Text(category.description),
                                       trailing: const Icon(Icons.chevron_right),
-                                      enabled: !loading,
+                                      enabled: !notifier.isLoading,
                                     );
                                   },
                                 )
@@ -182,14 +182,14 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                   leading: const Icon(Icons.category_outlined),
                                   title: Text(strings.selectCategory),
                                   trailing: const Icon(Icons.chevron_right),
-                                  enabled: !loading,
+                                  enabled: !notifier.isLoading,
                                 ),
                         ),
                         const Divider(),
                         GroupTile(
                           onTap: selectAccount,
                           title: strings.account,
-                          enabled: !loading,
+                          enabled: !notifier.isLoading,
                           tile: state.expense.transaction.idAccount != null
                               ? Builder(
                                   builder: (_) {
@@ -198,7 +198,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                       leading: account.financialInstitution!.icon(),
                                       title: Text(account.description),
                                       trailing: const Icon(Icons.chevron_right),
-                                      enabled: !loading,
+                                      enabled: !notifier.isLoading,
                                     );
                                   },
                                 )
@@ -206,7 +206,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                   leading: const Icon(Icons.account_balance_outlined),
                                   title: Text(strings.selectAccount),
                                   trailing: const Icon(Icons.chevron_right),
-                                  enabled: !loading,
+                                  enabled: !notifier.isLoading,
                                 ),
                         ),
                         const Divider(),
@@ -220,27 +220,25 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                             minLines: 2,
                             maxLines: 5,
                             onSaved: (String? value) => state.expense.observation = value?.trim() ?? '',
-                            enabled: !loading,
+                            enabled: !notifier.isLoading,
                           ),
                         ),
                       ],
                     ),
                   );
                 },
-              );
-            },
-          ),
+              ),
+            );
+          },
         );
       },
     );
   }
 
   Future<void> save() async {
-    if (loadingNotifier.value) return;
+    if (initialLoadingNotifier.value || notifier.isLoading) return;
 
     try {
-      loadingNotifier.value = true;
-
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
 
@@ -251,13 +249,11 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
       }
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
-    } finally {
-      loadingNotifier.value = false;
     }
   }
 
   Future<void> selectCategory() async {
-    if (loadingNotifier.value) return;
+    if (initialLoadingNotifier.value || notifier.isLoading) return;
 
     final CategoryEntity? result = await CategoriesListBottomSheet.show(
       context: context,
@@ -271,7 +267,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   }
 
   Future<void> selectAccount() async {
-    if (loadingNotifier.value) return;
+    if (initialLoadingNotifier.value || notifier.isLoading) return;
 
     final AccountEntity? result = await AccountsListBottomSheet.show(
       context: context,
@@ -285,6 +281,8 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   }
 
   Future<void> selectDate() async {
+    if (initialLoadingNotifier.value || notifier.isLoading) return;
+
     final DateTime? result = await showDatePicker(
       context: context,
       initialDate: notifier.expense.transaction.date,

@@ -36,7 +36,7 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
   final TransferNotifier notifier = GetIt.I.get<TransferNotifier>();
   final AccountsNotifier accountsNotifier = GetIt.I.get<AccountsNotifier>();
 
-  final ValueNotifier<bool> loadingNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(false);
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController dateController = TextEditingController();
@@ -49,10 +49,10 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
 
     Future(() async {
       try {
-        loadingNotifier.value = true;
+        initialLoadingNotifier.value = true;
         accountsNotifier.findAll();
       } finally {
-        loadingNotifier.value = false;
+        initialLoadingNotifier.value = false;
       }
 
       if (!mounted) return;
@@ -66,130 +66,133 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: loadingNotifier,
-      builder: (_, loading, __) {
-        return SliverScaffold(
-          appBar: SliverAppBarMedium(
-            title: Text(strings.transfer),
-            loading: loading,
-            actions: [
-              FilledButton(
-                onPressed: save,
-                child: Text(strings.save),
+      valueListenable: initialLoadingNotifier,
+      builder: (_, initialLoading, __) {
+        return ValueListenableBuilder(
+          valueListenable: notifier,
+          builder: (_, state, __) {
+            return SliverScaffold(
+              appBar: SliverAppBarMedium(
+                title: Text(strings.transfer),
+                loading: notifier.isLoading,
+                actions: [
+                  FilledButton(
+                    onPressed: save,
+                    child: Text(strings.save),
+                  ),
+                ],
               ),
-            ],
-          ),
-          body: Builder(
-            builder: (_) {
-              if (loading) return const SizedBox.shrink();
+              body: Builder(
+                builder: (_) {
+                  if (initialLoading) return const SizedBox.shrink();
 
-              return ValueListenableBuilder(
-                valueListenable: notifier,
-                builder: (_, state, __) {
-                  return Form(
-                    key: formKey,
-                    child: Column(
-                      children: [
-                        const Spacing.y(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  label: Text(strings.amount),
-                                  prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
-                                ),
-                                validator: InputGreaterThanValueValidator().validate,
-                                keyboardType: TextInputType.number,
-                                textInputAction: TextInputAction.next,
-                                enabled: !loading,
-                                onSaved: (String? value) => state.transfer.amount = (value ?? '').moneyToDouble(),
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
+                  return ValueListenableBuilder(
+                    valueListenable: notifier,
+                    builder: (_, state, __) {
+                      return Form(
+                        key: formKey,
+                        child: Column(
+                          children: [
+                            const Spacing.y(),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Column(
+                                children: [
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      label: Text(strings.amount),
+                                      prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
+                                    ),
+                                    validator: InputGreaterThanValueValidator().validate,
+                                    keyboardType: TextInputType.number,
+                                    textInputAction: TextInputAction.next,
+                                    enabled: !notifier.isLoading,
+                                    onSaved: (String? value) => state.transfer.amount = (value ?? '').moneyToDouble(),
+                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
+                                  ),
+                                  const Spacing.y(),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      prefixIcon: const Icon(Icons.calendar_today_outlined),
+                                      label: Text(strings.date),
+                                    ),
+                                    readOnly: true,
+                                    controller: dateController,
+                                    validator: InputRequiredValidator().validate,
+                                    enabled: !notifier.isLoading,
+                                    onTap: selectDate,
+                                  ),
+                                ],
                               ),
-                              const Spacing.y(),
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.calendar_today_outlined),
-                                  label: Text(strings.date),
-                                ),
-                                readOnly: true,
-                                controller: dateController,
-                                validator: InputRequiredValidator().validate,
-                                enabled: !loading,
-                                onTap: selectDate,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Spacing.y(),
-                        const Divider(),
-                        GroupTile(
-                          onTap: selectAccountFrom,
-                          title: strings.from,
-                          enabled: !loading,
-                          tile: state.transfer.transactionFrom.idAccount != null
-                              ? Builder(
-                                  builder: (_) {
-                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.transfer.transactionFrom.idAccount);
-                                    return ListTile(
-                                      leading: account.financialInstitution!.icon(),
-                                      title: Text(account.description),
+                            ),
+                            const Spacing.y(),
+                            const Divider(),
+                            GroupTile(
+                              onTap: selectAccountFrom,
+                              title: strings.from,
+                              enabled: !notifier.isLoading,
+                              tile: state.transfer.transactionFrom.idAccount != null
+                                  ? Builder(
+                                      builder: (_) {
+                                        final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.transfer.transactionFrom.idAccount);
+                                        return ListTile(
+                                          leading: account.financialInstitution!.icon(),
+                                          title: Text(account.description),
+                                          trailing: const Icon(Icons.chevron_right),
+                                          enabled: !notifier.isLoading,
+                                        );
+                                      },
+                                    )
+                                  : ListTile(
+                                      leading: const Icon(Icons.account_balance_outlined),
+                                      title: Text(strings.selectAccount),
                                       trailing: const Icon(Icons.chevron_right),
-                                      enabled: !loading,
-                                    );
-                                  },
-                                )
-                              : ListTile(
-                                  leading: const Icon(Icons.account_balance_outlined),
-                                  title: Text(strings.selectAccount),
-                                  trailing: const Icon(Icons.chevron_right),
-                                  enabled: !loading,
-                                ),
-                        ),
-                        const Divider(),
-                        GroupTile(
-                          onTap: selectAccountTo,
-                          title: strings.to,
-                          enabled: !loading,
-                          tile: state.transfer.transactionTo.idAccount != null
-                              ? Builder(
-                                  builder: (_) {
-                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.transfer.transactionTo.idAccount);
-                                    return ListTile(
-                                      leading: account.financialInstitution!.icon(),
-                                      title: Text(account.description),
+                                      enabled: !notifier.isLoading,
+                                    ),
+                            ),
+                            const Divider(),
+                            GroupTile(
+                              onTap: selectAccountTo,
+                              title: strings.to,
+                              enabled: !notifier.isLoading,
+                              tile: state.transfer.transactionTo.idAccount != null
+                                  ? Builder(
+                                      builder: (_) {
+                                        final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.transfer.transactionTo.idAccount);
+                                        return ListTile(
+                                          leading: account.financialInstitution!.icon(),
+                                          title: Text(account.description),
+                                          trailing: const Icon(Icons.chevron_right),
+                                          enabled: !notifier.isLoading,
+                                        );
+                                      },
+                                    )
+                                  : ListTile(
+                                      leading: const Icon(Icons.account_balance_outlined),
+                                      title: Text(strings.selectAccount),
                                       trailing: const Icon(Icons.chevron_right),
-                                      enabled: !loading,
-                                    );
-                                  },
-                                )
-                              : ListTile(
-                                  leading: const Icon(Icons.account_balance_outlined),
-                                  title: Text(strings.selectAccount),
-                                  trailing: const Icon(Icons.chevron_right),
-                                  enabled: !loading,
-                                ),
+                                      enabled: !notifier.isLoading,
+                                    ),
+                            ),
+                            const Divider(),
+                          ],
                         ),
-                        const Divider(),
-                      ],
-                    ),
+                      );
+                    },
                   );
                 },
-              );
-            },
-          ),
+              ),
+            );
+          },
         );
       },
     );
   }
 
   Future<void> save() async {
-    if (loadingNotifier.value) return;
+    if (initialLoadingNotifier.value || notifier.isLoading) return;
 
     try {
-      loadingNotifier.value = true;
-
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
 
@@ -200,13 +203,11 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
       }
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
-    } finally {
-      loadingNotifier.value = false;
     }
   }
 
   Future<void> selectAccountFrom() async {
-    if (loadingNotifier.value) return;
+    if (initialLoadingNotifier.value || notifier.isLoading) return;
 
     final AccountEntity? result = await showAccountListBottomSheet(notifier.transfer.transactionFrom.idAccount);
     if (result == null) return;
@@ -215,7 +216,7 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
   }
 
   Future<void> selectAccountTo() async {
-    if (loadingNotifier.value) return;
+    if (initialLoadingNotifier.value || notifier.isLoading) return;
 
     final AccountEntity? result = await showAccountListBottomSheet(notifier.transfer.transactionTo.idAccount);
     if (result == null) return;
@@ -232,6 +233,8 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
   }
 
   Future<void> selectDate() async {
+    if (initialLoadingNotifier.value || notifier.isLoading) return;
+
     final DateTime? result = await showDatePicker(
       context: context,
       initialDate: notifier.transfer.date,
