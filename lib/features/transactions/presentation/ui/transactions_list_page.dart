@@ -1,4 +1,6 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
+import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
+import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/i_financial_operation.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
@@ -10,6 +12,8 @@ import 'package:finan_master_app/features/transactions/presentation/ui/income_fo
 import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
+import 'package:finan_master_app/shared/extensions/int_extension.dart';
+import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab_child.dart';
@@ -34,6 +38,7 @@ class TransactionsListPage extends StatefulWidget {
 
 class _TransactionsListPageState extends State<TransactionsListPage> with ThemeContext {
   final TransactionsNotifier notifier = GetIt.I.get<TransactionsNotifier>();
+  final CategoriesNotifier categoriesNotifier = GetIt.I.get<CategoriesNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -49,7 +54,18 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
     dateNow = DateTime.now();
     dateFiltered = dateNow;
 
-    findTransactions();
+    Future(() async {
+      notifier.value.setLoading();
+
+      await categoriesNotifier.findAll();
+
+      if (categoriesNotifier is ErrorCategoriesState) {
+        notifier.value.setError((categoriesNotifier.value as ErrorCategoriesState).message);
+        return;
+      }
+
+      await categoriesNotifier.findAll();
+    });
   }
 
   Future<void> findTransactions() => notifier.findByPeriod(DateTime(dateFiltered.year, dateFiltered.month, 1), DateTime(dateFiltered.year, dateFiltered.month, dateFiltered.getLastDayInMonth()));
@@ -178,42 +194,53 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                               final IFinancialOperation transaction = state.transactions[index];
 
                               return switch (transaction) {
-                                ExpenseEntity expense => ListTile(
-                                  title: Text(expense.description),
-                                  // subtitle: Text(expense.category.description),
-                                  trailing: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(expense.transaction.amount.money, style: textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                                      Text(DateFormat.yMMMMEEEEd().format(expense.transaction.date)),
-                                    ],
+                                ExpenseEntity expense => Builder(
+                                    builder: (_) {
+                                      final category = categoriesNotifier.value.categories.firstWhere((category) => category.id == expense.idCategory);
+                                      return ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: Color(category.color.toColor()!),
+                                          child: Icon(category.icon.parseIconData(), color: Colors.white),
+                                        ),
+                                        title: Text(expense.description),
+                                        subtitle: Text(category.description),
+                                        trailing: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            Text(expense.transaction.amount.money, style: textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                                            Text(DateFormat.yMMMMEEEEd().format(expense.transaction.date)),
+                                          ],
+                                        ),
+                                      );
+                                    },
                                   ),
-                                ),
-                                IncomeEntity income => ListTile(),
+                                IncomeEntity income => Builder(
+                                    builder: (_) {
+                                      final category = categoriesNotifier.value.categories.firstWhere((category) => category.id == income.idCategory);
+                                      return ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: Color(category.color.toColor()!),
+                                          child: Icon(category.icon.parseIconData(), color: Colors.white),
+                                        ),
+                                        title: Text(income.description),
+                                        subtitle: Text(category.description),
+                                        trailing: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            Text(income.transaction.amount.money, style: textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                                            Text(DateFormat.yMMMMEEEEd().format(income.transaction.date)),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 TransferEntity transfer => ListTile(),
                                 _ => const SizedBox.shrink(),
                               };
-
-                              // return ListTile(
-                              //   leading: CircleAvatar(
-                              //     backgroundColor: Colors.blue,
-                              //     child: Icon(Icons.home_repair_service_outlined, color: Colors.white),
-                              //   ),
-                              //   title: Text("Conta de luz"),
-                              //   subtitle: Text("Casa"),
-                              //   trailing: Column(
-                              //     mainAxisSize: MainAxisSize.min,
-                              //     mainAxisAlignment: MainAxisAlignment.center,
-                              //     crossAxisAlignment: CrossAxisAlignment.end,
-                              //     children: [
-                              //       Text('- ${2500.0.money}', style: textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                              //       Text('Ontem'),
-                              //     ],
-                              //   ),
-                              //   onTap: () {},
-                              // );
                             },
                           ),
                         ],

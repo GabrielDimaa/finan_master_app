@@ -21,6 +21,8 @@ class TransactionsNotifier extends ValueNotifier<TransactionsState> {
 
   Future<void> findByPeriod(DateTime startDate, DateTime endDate) async {
     try {
+      value.setLoading();
+
       final List<IFinancialOperation> transactions = [];
 
       await Future.wait([
