@@ -24,7 +24,7 @@ class StartAccountState extends AccountState {
             createdAt: null,
             deletedAt: null,
             description: '',
-            balance: 0,
+            transactionsAmount: 0,
             initialAmount: 0,
             financialInstitution: null,
             includeTotalBalance: true,

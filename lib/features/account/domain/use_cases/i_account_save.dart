@@ -3,5 +3,5 @@ import 'package:finan_master_app/features/account/domain/entities/account_entity
 abstract interface class IAccountSave {
   Future<AccountEntity> save(AccountEntity entity);
 
-  Future<AccountEntity> readjustBalance(AccountEntity entity, readjustmentValue);
+  Future<AccountEntity> readjustBalance(AccountEntity entity, double readjustmentValue);
 }

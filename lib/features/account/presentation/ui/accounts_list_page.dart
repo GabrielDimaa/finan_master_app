@@ -58,6 +58,9 @@ class _AccountsListPageState extends State<AccountsListPage> with ThemeContext {
           builder: (_, AccountsState state, __) {
             return switch (state) {
               LoadingAccountsState _ => const Center(child: CircularProgressIndicator()),
+              ErrorAccountsState _ => Text(state.message),
+              EmptyAccountsState _ => NoContentWidget(child: Text(strings.noAccountsRegistered)),
+              StartAccountsState _ => const SizedBox.shrink(),
               ListAccountsState state => ListView.separated(
                   itemCount: state.accounts.length,
                   separatorBuilder: (_, __) => const Divider(),
@@ -69,9 +72,6 @@ class _AccountsListPageState extends State<AccountsListPage> with ThemeContext {
                     );
                   },
                 ),
-              ErrorAccountsState state => Text(state.message),
-              EmptyAccountsState _ => NoContentWidget(child: Text(strings.noAccountsRegistered)),
-              StartAccountsState _ => const SizedBox.shrink(),
             };
           },
         ),

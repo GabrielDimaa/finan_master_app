@@ -21,7 +21,6 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
         description TEXT NOT NULL,
-        balance REAL NOT NULL DEFAULT 0,
         initial_value REAL NOT NULL DEFAULT 0,
         financial_institution INTEGER NOT NULL,
         include_total_balance INTEGER NOT NULL DEFAULT 1
@@ -29,8 +28,8 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
     ''');
 
     batch.execute('''
-      INSERT INTO $tableName (${Model.idColumnName}, ${Model.createdAtColumnName}, description, balance, initial_value, financial_institution, include_total_balance)
-      VALUES ('${const Uuid().v1()}', '${DateTime.now().toIso8601String()}', '${FinancialInstitutionEnum.wallet.description}', 0, 0, ${FinancialInstitutionEnum.wallet.value}, 1);
+      INSERT INTO $tableName (${Model.idColumnName}, ${Model.createdAtColumnName}, description, initial_value, financial_institution, include_total_balance)
+      VALUES ('${const Uuid().v1()}', '${DateTime.now().toIso8601String()}', '${FinancialInstitutionEnum.wallet.description}', 0, ${FinancialInstitutionEnum.wallet.value}, 1);
     ''');
   }
 
@@ -43,7 +42,7 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       createdAt: base.createdAt,
       deletedAt: base.deletedAt,
       description: map['${prefix}description'],
-      balance: map['${prefix}balance'],
+      transactionsAmount: map['${prefix}transactions_amount'], //TODO: Implementar a buscar de transações por conta.
       initialValue: map['${prefix}initial_value'],
       financialInstitution: FinancialInstitutionEnum.getByValue(map['${prefix}financial_institution'])!,
       includeTotalBalance: map['${prefix}include_total_balance'] == 1,

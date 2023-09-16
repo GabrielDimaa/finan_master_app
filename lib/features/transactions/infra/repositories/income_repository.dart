@@ -4,7 +4,6 @@ import 'package:finan_master_app/features/transactions/helpers/factories/income_
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_income_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/income_model.dart';
-import 'package:finan_master_app/features/transactions/infra/models/transaction_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 
 class IncomeRepository implements IIncomeRepository {
@@ -24,18 +23,17 @@ class IncomeRepository implements IIncomeRepository {
   Future<IncomeEntity> save(IncomeEntity entity) async {
     final IncomeModel model = IncomeFactory.fromEntity(entity);
 
-    late final IncomeModel incomeResult;
-    late final TransactionModel transactionResult;
-
-    await _dbTransaction.openTransaction((txn) async {
-      await Future.wait([
-        Future(() async => transactionResult = await _transactionLocalDataSource.upsert(model.transaction, txn: txn)),
-        Future(() async => incomeResult = await _incomeLocalDataSource.upsert(model, txn: txn)),
-      ]);
+    final IncomeModel result = await _dbTransaction.openTransaction<IncomeModel>((txn) async {
+      model.transaction = await _transactionLocalDataSource.upsert(model.transaction, txn: txn);
+      return await _incomeLocalDataSource.upsert(model, txn: txn);
     });
 
-    incomeResult.transaction = transactionResult;
+    return IncomeFactory.toEntity(result);
+  }
 
-    return IncomeFactory.toEntity(incomeResult);
+  @override
+  Future<List<IncomeEntity>> findByPeriod(DateTime start, DateTime end) async {
+    final List<IncomeModel> result = await _incomeLocalDataSource.findByPeriod(start, end);
+    return result.map((e) => IncomeFactory.toEntity(e)).toList();
   }
 }

@@ -1,9 +1,10 @@
+import 'package:finan_master_app/features/transactions/domain/entities/i_financial_operation.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/enums/transaction_type_enum.dart';
 import 'package:finan_master_app/features/transactions/helpers/factories/transaction_factory.dart';
 import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
-class ExpenseEntity extends Entity {
+class ExpenseEntity extends Entity implements IFinancialOperation {
   String description;
   String? observation;
 

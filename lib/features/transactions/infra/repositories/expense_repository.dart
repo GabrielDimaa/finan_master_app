@@ -4,7 +4,6 @@ import 'package:finan_master_app/features/transactions/helpers/factories/expense
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/expense_model.dart';
-import 'package:finan_master_app/features/transactions/infra/models/transaction_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 
 class ExpenseRepository implements IExpenseRepository {
@@ -24,18 +23,17 @@ class ExpenseRepository implements IExpenseRepository {
   Future<ExpenseEntity> save(ExpenseEntity entity) async {
     final ExpenseModel model = ExpenseFactory.fromEntity(entity);
 
-    late final ExpenseModel expenseResult;
-    late final TransactionModel transactionResult;
-
-    await _dbTransaction.openTransaction((txn) async {
-      await Future.wait([
-        Future(() async => transactionResult = await _transactionLocalDataSource.upsert(model.transaction, txn: txn)),
-        Future(() async => expenseResult = await _expenseLocalDataSource.upsert(model, txn: txn)),
-      ]);
+    final ExpenseModel result = await _dbTransaction.openTransaction<ExpenseModel>((txn) async {
+      model.transaction = await _transactionLocalDataSource.upsert(model.transaction, txn: txn);
+      return await _expenseLocalDataSource.upsert(model, txn: txn);
     });
 
-    expenseResult.transaction = transactionResult;
+    return ExpenseFactory.toEntity(result);
+  }
 
-    return ExpenseFactory.toEntity(expenseResult);
+  @override
+  Future<List<ExpenseEntity>> findByPeriod(DateTime start, DateTime end) async {
+    final List<ExpenseModel> result = await _expenseLocalDataSource.findByPeriod(start, end);
+    return result.map((e) => ExpenseFactory.toEntity(e)).toList();
   }
 }

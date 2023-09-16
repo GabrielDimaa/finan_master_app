@@ -25,7 +25,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
         amount REAL NOT NULL,
-        type REAL NOT NULL,
+        type INTEGER NOT NULL,
         date TEXT NOT NULL,
         id_account TEXT NOT NULL REFERENCES accounts(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT
       );

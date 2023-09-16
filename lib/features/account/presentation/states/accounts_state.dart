@@ -19,7 +19,7 @@ class StartAccountsState extends AccountsState {
 }
 
 class ListAccountsState extends AccountsState {
-  ListAccountsState(super.categories);
+  const ListAccountsState(super.categories);
 }
 
 class EmptyAccountsState extends AccountsState {

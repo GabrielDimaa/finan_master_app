@@ -96,4 +96,7 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
 
     return results.map((e) => fromMap(e, prefix: '${tableName}_')).toList();
   }
+
+  @override
+  Future<List<ExpenseModel>> findByPeriod(DateTime start, DateTime end) => selectFull(where: '${_transactionDataSource.tableName}.date BETWEEN ? AND ?', whereArgs: [start.toIso8601String(), end.toIso8601String()]);
 }

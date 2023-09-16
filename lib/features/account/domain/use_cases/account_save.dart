@@ -15,19 +15,16 @@ class AccountSave implements IAccountSave {
     if (entity.initialAmount < 0) throw ValidationException(R.strings.smallerThanZero);
     if (entity.financialInstitution == null) return throw ValidationException(R.strings.uninformedFinancialInstitution);
 
-    if (entity.isNew) {
-      entity.balance = entity.initialAmount;
-    }
-
     return await _repository.save(entity);
   }
 
   @override
-  Future<AccountEntity> readjustBalance(AccountEntity entity, readjustmentValue) async {
+  Future<AccountEntity> readjustBalance(AccountEntity entity, double readjustmentValue) async {
     if (readjustmentValue < 0) throw ValidationException(R.strings.smallerThanZero);
 
-    entity.initialAmount = readjustmentValue;
-    entity.balance = readjustmentValue;
+    // TODO: Criar reajuste de saldo.
+    // entity.initialAmount = readjustmentValue;
+    // entity.balance = readjustmentValue;
 
     return await save(entity);
   }

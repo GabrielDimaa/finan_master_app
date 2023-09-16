@@ -16,7 +16,7 @@ class TransferLocalDataSource extends LocalDataSource<TransferModel> implements 
   String get tableName => 'transfers';
 
   @override
-  String get orderByDefault => '${_transactionDataSource.tableName}_date DESC';
+  String get orderByDefault => '${_transactionDataSource.tableName}_from.date DESC';
 
   @override
   void createTable(IDatabaseLocalBatch batch) {
@@ -88,9 +88,9 @@ class TransferLocalDataSource extends LocalDataSource<TransferModel> implements 
         ${_transactionDataSource.tableName}_to.id_account AS ${_transactionDataSource.tableName}_to_id_account
       FROM $tableName
       INNER JOIN ${_transactionDataSource.tableName} ${_transactionDataSource.tableName}_from
-        ON ${_transactionDataSource.tableName}.${Model.idColumnName} = $tableName.id_transaction_from
+        ON ${_transactionDataSource.tableName}_from.${Model.idColumnName} = $tableName.id_transaction_from
       INNER JOIN ${_transactionDataSource.tableName} ${_transactionDataSource.tableName}_to
-        ON ${_transactionDataSource.tableName}.${Model.idColumnName} = $tableName.id_transaction_to
+        ON ${_transactionDataSource.tableName}_to.${Model.idColumnName} = $tableName.id_transaction_to
       ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
       ORDER BY ${orderBy ?? orderByDefault}
       ${limit != null ? ' LIMIT $limit' : ''}
@@ -101,4 +101,7 @@ class TransferLocalDataSource extends LocalDataSource<TransferModel> implements 
 
     return results.map((e) => fromMap(e, prefix: '${tableName}_')).toList();
   }
+
+  @override
+  Future<List<TransferModel>> findByPeriod(DateTime start, DateTime end) => selectFull(where: '${_transactionDataSource.tableName}_from.date BETWEEN ? AND ?', whereArgs: [start.toIso8601String(), end.toIso8601String()]);
 }

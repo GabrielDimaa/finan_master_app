@@ -1,4 +1,10 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/i_financial_operation.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
+import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
+import 'package:finan_master_app/features/transactions/presentation/states/transactions_state.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
@@ -8,10 +14,12 @@ import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab_child.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_scaffold.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -25,6 +33,8 @@ class TransactionsListPage extends StatefulWidget {
 }
 
 class _TransactionsListPageState extends State<TransactionsListPage> with ThemeContext {
+  final TransactionsNotifier notifier = GetIt.I.get<TransactionsNotifier>();
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   late final DateTime dateNow;
@@ -38,7 +48,11 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
 
     dateNow = DateTime.now();
     dateFiltered = dateNow;
+
+    findTransactions();
   }
+
+  Future<void> findTransactions() => notifier.findByPeriod(DateTime(dateFiltered.year, dateFiltered.month, 1), DateTime(dateFiltered.year, dateFiltered.month, dateFiltered.getLastDayInMonth()));
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +115,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                   IconButton(
                     tooltip: strings.previous,
                     icon: const Icon(Icons.chevron_left_outlined),
-                    onPressed: () => setState(() => dateFiltered = dateFiltered.substractMonth(1)),
+                    onPressed: () => setState(() => dateFiltered = dateFiltered.subtractMonth(1)),
                   ),
                   const Spacing.x(4),
                   ConstrainedBox(
@@ -122,53 +136,89 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                 ],
               ),
               const Spacing.y(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Wrap(
-                  alignment: WrapAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Receita mensal", style: textTheme.bodySmall),
-                        Text(2500.0.money, style: textTheme.labelLarge),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text("Receita mensal", style: textTheme.bodySmall),
-                        Text(2500.0.money, style: textTheme.labelLarge),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const Spacing.y(0.5),
-              ListView.separated(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                separatorBuilder: (_, __) => const Divider(),
-                itemCount: 2,
-                itemBuilder: (_, index) {
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.blue,
-                      child: Icon(Icons.home_repair_service_outlined, color: Colors.white),
-                    ),
-                    title: Text("Conta de luz"),
-                    subtitle: Text("Casa"),
-                    trailing: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('- ${2500.0.money}', style: textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                        Text('Ontem'),
-                      ],
-                    ),
-                    onTap: () {},
-                  );
+              ValueListenableBuilder(
+                valueListenable: notifier,
+                builder: (_, TransactionsState state, __) {
+                  return switch (state) {
+                    StartTransactionsState _ => const SizedBox.shrink(),
+                    LoadingTransactionsState _ => const Center(child: CircularProgressIndicator()),
+                    ErrorTransactionsState _ => Text(state.message),
+                    EmptyTransactionsState _ => NoContentWidget(child: Text(strings.noTransactionsRegistered)),
+                    ListTransactionsState _ => Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Wrap(
+                              alignment: WrapAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Receita mensal", style: textTheme.bodySmall),
+                                    Text(2500.0.money, style: textTheme.labelLarge),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text("Receita mensal", style: textTheme.bodySmall),
+                                    Text(2500.0.money, style: textTheme.labelLarge),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Spacing.y(0.5),
+                          ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemCount: state.transactions.length,
+                            itemBuilder: (_, index) {
+                              final IFinancialOperation transaction = state.transactions[index];
+
+                              return switch (transaction) {
+                                ExpenseEntity expense => ListTile(
+                                  title: Text(expense.description),
+                                  // subtitle: Text(expense.category.description),
+                                  trailing: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(expense.transaction.amount.money, style: textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                                      Text(DateFormat.yMMMMEEEEd().format(expense.transaction.date)),
+                                    ],
+                                  ),
+                                ),
+                                IncomeEntity income => ListTile(),
+                                TransferEntity transfer => ListTile(),
+                                _ => const SizedBox.shrink(),
+                              };
+
+                              // return ListTile(
+                              //   leading: CircleAvatar(
+                              //     backgroundColor: Colors.blue,
+                              //     child: Icon(Icons.home_repair_service_outlined, color: Colors.white),
+                              //   ),
+                              //   title: Text("Conta de luz"),
+                              //   subtitle: Text("Casa"),
+                              //   trailing: Column(
+                              //     mainAxisSize: MainAxisSize.min,
+                              //     mainAxisAlignment: MainAxisAlignment.center,
+                              //     crossAxisAlignment: CrossAxisAlignment.end,
+                              //     children: [
+                              //       Text('- ${2500.0.money}', style: textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                              //       Text('Ontem'),
+                              //     ],
+                              //   ),
+                              //   onTap: () {},
+                              // );
+                            },
+                          ),
+                        ],
+                      ),
+                  };
                 },
               ),
             ],

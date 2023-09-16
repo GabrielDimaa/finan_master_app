@@ -3,7 +3,6 @@ import 'package:finan_master_app/features/transactions/domain/repositories/i_tra
 import 'package:finan_master_app/features/transactions/helpers/factories/transfer_factory.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transfer_local_data_source.dart';
-import 'package:finan_master_app/features/transactions/infra/models/transaction_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transfer_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 
@@ -24,21 +23,18 @@ class TransferRepository implements ITransferRepository {
   Future<TransferEntity> save(TransferEntity entity) async {
     final TransferModel model = TransferFactory.fromEntity(entity);
 
-    late final TransferModel transferResult;
-    late final TransactionModel transactionFromResult;
-    late final TransactionModel transactionToResult;
-
-    await _dbTransaction.openTransaction((txn) async {
-      await Future.wait([
-        Future(() async => transactionFromResult = await _transactionLocalDataSource.upsert(model.transactionFrom, txn: txn)),
-        Future(() async => transactionToResult = await _transactionLocalDataSource.upsert(model.transactionTo, txn: txn)),
-        Future(() async => transferResult = await _transferLocalDataSource.upsert(model, txn: txn)),
-      ]);
+    final TransferModel result = await _dbTransaction.openTransaction<TransferModel>((txn) async {
+      model.transactionFrom = await _transactionLocalDataSource.upsert(model.transactionFrom, txn: txn);
+      model.transactionTo = await _transactionLocalDataSource.upsert(model.transactionTo, txn: txn);
+      return await _transferLocalDataSource.upsert(model, txn: txn);
     });
 
-    transferResult.transactionFrom = transactionFromResult;
-    transferResult.transactionTo = transactionToResult;
+    return TransferFactory.toEntity(result);
+  }
 
-    return TransferFactory.toEntity(transferResult);
+  @override
+  Future<List<TransferEntity>> findByPeriod(DateTime start, DateTime end) async {
+    final List<TransferModel> result = await _transferLocalDataSource.findByPeriod(start, end);
+    return result.map((e) => TransferFactory.toEntity(e)).toList();
   }
 }

@@ -33,11 +33,17 @@ import 'package:finan_master_app/features/config/presentation/notifiers/theme_mo
 import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_income_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_transfer_repository.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/expense_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/expense_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/income_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/income_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/transfer_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/transfer_save.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/expense_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
@@ -52,6 +58,7 @@ import 'package:finan_master_app/features/transactions/infra/repositories/income
 import 'package:finan_master_app/features/transactions/infra/repositories/transfer_repository.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/expense_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/income_notifier.dart';
+import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transfer_notifier.dart';
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/cache_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/i_cache_local.dart';
@@ -105,6 +112,9 @@ final class DependencyInjection {
     getIt.registerFactory<IExpenseSave>(() => ExpenseSave(repository: getIt.get<IExpenseRepository>()));
     getIt.registerFactory<IIncomeSave>(() => IncomeSave(repository: getIt.get<IIncomeRepository>()));
     getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>()));
+    getIt.registerFactory<IExpenseFind>(() => ExpenseFind(repository: getIt.get<IExpenseRepository>()));
+    getIt.registerFactory<IIncomeFind>(() => IncomeFind(repository: getIt.get<IIncomeRepository>()));
+    getIt.registerFactory<ITransferFind>(() => TransferFind(repository: getIt.get<ITransferRepository>()));
 
     //Notifiers
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
@@ -116,5 +126,6 @@ final class DependencyInjection {
     getIt.registerFactory<ExpenseNotifier>(() => ExpenseNotifier(expenseSave: getIt.get<IExpenseSave>()));
     getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>()));
     getIt.registerFactory<TransferNotifier>(() => TransferNotifier(transferSave: getIt.get<ITransferSave>()));
+    getIt.registerFactory<TransactionsNotifier>(() => TransactionsNotifier(expenseFind: getIt.get<IExpenseFind>(), incomeFind: getIt.get<IIncomeFind>(), transferFind: getIt.get<ITransferFind>()));
   }
 }
