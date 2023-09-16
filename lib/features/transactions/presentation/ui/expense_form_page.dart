@@ -12,6 +12,7 @@ import 'package:finan_master_app/features/category/presentation/ui/components/ca
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/expense_notifier.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
+import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
@@ -56,7 +57,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   void initState() {
     super.initState();
 
-    dateController.text = DateFormat.yMd(AppLocale().locale.languageCode).format(notifier.expense.transaction.date);
+    dateController.text = notifier.expense.transaction.date.format();
 
     Future(() async {
       try {
@@ -292,7 +293,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
 
     if (result == null || result == notifier.expense.transaction.date) return;
 
-    dateController.text = DateFormat.yMd(AppLocale().locale.languageCode).format(result);
+    dateController.text = result.format();
     notifier.setDate(result);
   }
 }

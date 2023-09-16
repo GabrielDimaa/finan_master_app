@@ -55,20 +55,20 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
     dateFiltered = dateNow;
 
     Future(() async {
-      notifier.value.setLoading();
+      notifier.value = notifier.value.setLoading();
 
       await categoriesNotifier.findAll();
 
       if (categoriesNotifier is ErrorCategoriesState) {
-        notifier.value.setError((categoriesNotifier.value as ErrorCategoriesState).message);
+        notifier.value = notifier.value.setError((categoriesNotifier.value as ErrorCategoriesState).message);
         return;
       }
 
-      await categoriesNotifier.findAll();
+      await findTransactions();
     });
   }
 
-  Future<void> findTransactions() => notifier.findByPeriod(DateTime(dateFiltered.year, dateFiltered.month, 1), DateTime(dateFiltered.year, dateFiltered.month, dateFiltered.getLastDayInMonth()));
+  Future<void> findTransactions() => notifier.findByPeriod(DateTime(dateFiltered.year, dateFiltered.month, 1), DateTime(dateFiltered.year, dateFiltered.month, dateFiltered.getLastDayInMonth(), 23, 59, 59, 59));
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +161,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                     ErrorTransactionsState _ => Text(state.message),
                     EmptyTransactionsState _ => NoContentWidget(child: Text(strings.noTransactionsRegistered)),
                     ListTransactionsState _ => Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -210,7 +211,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                                           crossAxisAlignment: CrossAxisAlignment.end,
                                           children: [
                                             Text(expense.transaction.amount.money, style: textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                                            Text(DateFormat.yMMMMEEEEd().format(expense.transaction.date)),
+                                            Text(expense.transaction.date.formatDateToRelative()),
                                           ],
                                         ),
                                       );
@@ -232,7 +233,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                                           crossAxisAlignment: CrossAxisAlignment.end,
                                           children: [
                                             Text(income.transaction.amount.money, style: textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                                            Text(DateFormat.yMMMMEEEEd().format(income.transaction.date)),
+                                            Text(income.transaction.date.formatDateToRelative()),
                                           ],
                                         ),
                                       );

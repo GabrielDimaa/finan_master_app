@@ -1,6 +1,7 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/i_category_local_data_source.dart';
 import 'package:finan_master_app/features/category/infra/models/category_model.dart';
+import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
@@ -11,7 +12,7 @@ class CategoryLocalDataSource extends LocalDataSource<CategoryModel> implements 
   CategoryLocalDataSource({required super.databaseLocal});
 
   @override
-  String get tableName => 'categories';
+  String get tableName => categoriesTableName;
 
   @override
   String get orderByDefault => 'description COLLATE NOCASE';

@@ -6,6 +6,7 @@ import 'package:finan_master_app/features/account/presentation/states/accounts_s
 import 'package:finan_master_app/features/account/presentation/ui/components/accounts_list_bottom_sheet.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transfer_notifier.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
+import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
@@ -45,7 +46,7 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
   void initState() {
     super.initState();
 
-    dateController.text = DateFormat.yMd(AppLocale().locale.languageCode).format(notifier.transfer.date);
+    dateController.text = notifier.transfer.date.format();
 
     Future(() async {
       try {
@@ -244,7 +245,7 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
 
     if (result == null || result == notifier.transfer.date) return;
 
-    dateController.text = DateFormat.yMd(AppLocale().locale.languageCode).format(result);
+    dateController.text = result.format();
     notifier.setDate(result);
   }
 }

@@ -72,6 +72,7 @@
   "sourceAccountAndDestinationEquals": "A conta de origem e a conta de destino devem ser diferentes.",
   "theme": "Tema",
   "to": "Para",
+  "today": "Hoje",
   "transactions": "Transações",
   "transactionDescription": "Descrição da transação",
   "transactionNotFound": "Transação não encontrada.",
@@ -85,5 +86,6 @@
   "uninformedFinancialInstitution": "Instituição financeira não informada.",
   "uninformedIcon": "Ícone não informado.",
   "uninformedTypeCategory": "Tipo de categoria não informado.",
-  "wallet": "Carteira"
+  "wallet": "Carteira",
+  "yesterday": "Ontem"
 }
