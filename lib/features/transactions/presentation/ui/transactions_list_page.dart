@@ -73,6 +73,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
   @override
   Widget build(BuildContext context) {
     return SliverScaffold(
+      scaffoldKey: scaffoldKey,
       appBar: SliverAppBarSmall(
         leading: IconButton(
           tooltip: strings.menu,
@@ -210,7 +211,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           crossAxisAlignment: CrossAxisAlignment.end,
                                           children: [
-                                            Text(expense.transaction.amount.money, style: textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                                            Text(expense.transaction.amount.money, style: textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
                                             Text(expense.transaction.date.formatDateToRelative()),
                                           ],
                                         ),
@@ -239,7 +240,47 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                                       );
                                     },
                                   ),
-                                TransferEntity transfer => ListTile(),
+                                TransferEntity transfer => Builder(
+                                    builder: (_) {
+                                      return Column(
+                                        children: [
+                                          ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: colorScheme.onSecondary,
+                                              child: const Icon(Icons.move_up_outlined),
+                                            ),
+                                            title: Text(strings.transfer),
+                                            trailing: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: [
+                                                Text(transfer.transactionTo.amount.money, style: textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                                                Text(transfer.transactionTo.date.formatDateToRelative()),
+                                              ],
+                                            ),
+                                          ),
+                                          const Divider(),
+                                          ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: colorScheme.onSecondary,
+                                              child: const Icon(Icons.move_up_outlined),
+                                            ),
+                                            title: Text(strings.transfer),
+                                            trailing: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: [
+                                                Text(transfer.transactionFrom.amount.money, style: textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                                                Text(transfer.transactionFrom.date.formatDateToRelative()),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
                                 _ => const SizedBox.shrink(),
                               };
                             },

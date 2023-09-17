@@ -17,7 +17,7 @@ extension DateTimeExtension on DateTime {
 
     if (isSameDay(now.subtract(const Duration(days: 1)), this)) return R.strings.yesterday;
 
-    return format();
+    return DateFormat.MMMd(AppLocale().locale.languageCode).format(this);
   }
 
   bool isSameDay(DateTime date1, DateTime date2) => date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;

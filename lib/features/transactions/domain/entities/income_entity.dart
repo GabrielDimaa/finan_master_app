@@ -16,6 +16,8 @@ class IncomeEntity extends Entity implements IFinancialOperation {
 
   set transaction(TransactionEntity value) => _transaction = value..type = TransactionTypeEnum.income;
 
+  set amount(double value) => _transaction.amount = value * -1;
+
   IncomeEntity({
     required super.id,
     required super.createdAt,

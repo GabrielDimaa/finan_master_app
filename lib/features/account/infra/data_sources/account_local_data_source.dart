@@ -83,6 +83,7 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
         LEFT JOIN $transactionsTableName
           ON $tableName.id = $transactionsTableName.id_account
         ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
+        GROUP BY $tableName.${Model.idColumnName}, description
         ORDER BY ${orderBy ?? orderByDefault}
         ${limit != null ? ' LIMIT $limit' : ''}
         ${offset != null ? ' OFFSET $offset' : ''};

@@ -122,7 +122,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                           child: Column(
                             children: [
                               TextFormField(
-                                initialValue: state.income.transaction.amount.moneyWithoutSymbol,
+                                initialValue: state.income.transaction.amount.abs().moneyWithoutSymbol,
                                 decoration: InputDecoration(
                                   label: Text(strings.amount),
                                   prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
@@ -131,7 +131,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                                 keyboardType: TextInputType.number,
                                 textInputAction: TextInputAction.next,
                                 enabled: !notifier.isLoading,
-                                onSaved: (String? value) => state.income.transaction.amount = (value ?? '').moneyToDouble(),
+                                onSaved: (String? value) => state.income.amount = (value ?? '').moneyToDouble(),
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
                               ),
                               const Spacing.y(),
@@ -230,7 +230,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                 },
               ),
             );
-          }
+          },
         );
       },
     );

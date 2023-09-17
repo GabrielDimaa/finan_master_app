@@ -73,7 +73,7 @@ class _AccountsListBottomSheetState extends State<AccountsListBottomSheet> with 
                 padding: const EdgeInsets.all(16),
                 child: FilledButton.tonalIcon(
                   icon: const Icon(Icons.add_outlined),
-                  label: Text(strings.newCategory),
+                  label: Text(strings.newAccount),
                   onPressed: goAccount,
                 ),
               ),
