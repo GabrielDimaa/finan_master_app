@@ -107,7 +107,4 @@ class TransferLocalDataSource extends LocalDataSource<TransferModel> implements 
       throw throwable(e, stackTrace);
     }
   }
-
-  @override
-  Future<List<TransferModel>> findByPeriod(DateTime start, DateTime end) => selectFull(where: '${_transactionDataSource.tableName}_from.date BETWEEN ? AND ?', whereArgs: [start.toIso8601String(), end.toIso8601String()]);
 }

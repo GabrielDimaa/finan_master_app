@@ -30,10 +30,4 @@ class IncomeRepository implements IIncomeRepository {
 
     return IncomeFactory.toEntity(result);
   }
-
-  @override
-  Future<List<IncomeEntity>> findByPeriod(DateTime start, DateTime end) async {
-    final List<IncomeModel> result = await _incomeLocalDataSource.findByPeriod(start, end);
-    return result.map((e) => IncomeFactory.toEntity(e)).toList();
-  }
 }

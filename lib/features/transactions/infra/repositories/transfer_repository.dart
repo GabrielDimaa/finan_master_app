@@ -31,10 +31,4 @@ class TransferRepository implements ITransferRepository {
 
     return TransferFactory.toEntity(result);
   }
-
-  @override
-  Future<List<TransferEntity>> findByPeriod(DateTime start, DateTime end) async {
-    final List<TransferModel> result = await _transferLocalDataSource.findByPeriod(start, end);
-    return result.map((e) => TransferFactory.toEntity(e)).toList();
-  }
 }

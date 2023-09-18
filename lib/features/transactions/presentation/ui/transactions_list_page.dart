@@ -2,7 +2,7 @@ import 'package:finan_master_app/features/category/domain/enums/category_type_en
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/i_financial_operation.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/i_financial_operation_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
@@ -193,7 +193,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                             separatorBuilder: (_, __) => const Divider(),
                             itemCount: state.transactions.length,
                             itemBuilder: (_, index) {
-                              final IFinancialOperation transaction = state.transactions[index];
+                              final IFinancialOperationEntity transaction = state.transactions[index];
 
                               return switch (transaction) {
                                 ExpenseEntity expense => Builder(

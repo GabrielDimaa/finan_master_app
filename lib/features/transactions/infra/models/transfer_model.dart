@@ -1,7 +1,8 @@
+import 'package:finan_master_app/features/transactions/infra/models/i_financial_operation_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transaction_model.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
-class TransferModel extends Model {
+class TransferModel extends Model implements IFinancialOperationModel {
   TransactionModel transactionFrom;
   TransactionModel transactionTo;
 

@@ -2,6 +2,4 @@ import 'package:finan_master_app/features/transactions/domain/entities/expense_e
 
 abstract interface class IExpenseRepository {
   Future<ExpenseEntity> save(ExpenseEntity entity);
-
-  Future<List<ExpenseEntity>> findByPeriod(DateTime start, DateTime end);
 }

@@ -2,6 +2,4 @@ import 'package:finan_master_app/features/transactions/domain/entities/transfer_
 
 abstract interface class ITransferRepository {
   Future<TransferEntity> save(TransferEntity entity);
-
-  Future<List<TransferEntity>> findByPeriod(DateTime start, DateTime end);
 }

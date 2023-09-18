@@ -1,7 +1,7 @@
-import 'package:finan_master_app/features/transactions/domain/entities/i_financial_operation.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/i_financial_operation_entity.dart';
 
 sealed class TransactionsState {
-  final List<IFinancialOperation> transactions;
+  final List<IFinancialOperationEntity> transactions;
 
   const TransactionsState({required this.transactions});
 
@@ -9,7 +9,7 @@ sealed class TransactionsState {
 
   TransactionsState setLoading() => LoadingTransactionsState(transactions: transactions);
 
-  TransactionsState setTransactions(List<IFinancialOperation> transactions) => transactions.isEmpty ? EmptyTransactionsState(transactions: transactions) : ListTransactionsState(transactions: transactions);
+  TransactionsState setTransactions(List<IFinancialOperationEntity> transactions) => transactions.isEmpty ? EmptyTransactionsState(transactions: transactions) : ListTransactionsState(transactions: transactions);
 
   TransactionsState setError(String message) => ErrorTransactionsState(message: message, transactions: transactions);
 }

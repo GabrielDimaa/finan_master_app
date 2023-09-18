@@ -30,10 +30,4 @@ class ExpenseRepository implements IExpenseRepository {
 
     return ExpenseFactory.toEntity(result);
   }
-
-  @override
-  Future<List<ExpenseEntity>> findByPeriod(DateTime start, DateTime end) async {
-    final List<ExpenseModel> result = await _expenseLocalDataSource.findByPeriod(start, end);
-    return result.map((e) => ExpenseFactory.toEntity(e)).toList();
-  }
 }

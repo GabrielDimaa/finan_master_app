@@ -1,6 +1,13 @@
 import 'package:finan_master_app/features/transactions/domain/enums/transaction_type_enum.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/expense_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/i_income_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/i_transfer_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/income_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/transfer_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/expense_model.dart';
+import 'package:finan_master_app/features/transactions/infra/models/i_financial_operation_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/income_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transaction_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transfer_model.dart';
@@ -13,7 +20,15 @@ import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dar
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class TransactionLocalDataSource extends LocalDataSource<TransactionModel> implements ITransactionLocalDataSource {
-  TransactionLocalDataSource({required super.databaseLocal});
+  late final IExpenseLocalDataSource _expenseLocalDataSource;
+  late final IIncomeLocalDataSource _incomeLocalDataSource;
+  late final ITransferLocalDataSource _transferLocalDataSource;
+
+  TransactionLocalDataSource({required super.databaseLocal}) {
+    _expenseLocalDataSource = ExpenseLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: this);
+    _incomeLocalDataSource = IncomeLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: this);
+    _transferLocalDataSource = TransferLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: this);
+  }
 
   @override
   String get tableName => transactionsTableName;
@@ -101,5 +116,221 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
     } on DatabaseLocalException catch (e, stackTrace) {
       throw throwable(e, stackTrace);
     }
+  }
+
+  @override
+  Future<List<IFinancialOperationModel>> findFinancialOperations({required DateTime startDate, required DateTime endDate}) async {
+    final String sql = '''
+      SELECT *
+      FROM (
+        SELECT
+          -- Expense
+          ${_expenseLocalDataSource.tableName}.${Model.idColumnName} AS ${_expenseLocalDataSource.tableName}_${Model.idColumnName},
+          ${_expenseLocalDataSource.tableName}.${Model.createdAtColumnName} AS ${_expenseLocalDataSource.tableName}_${Model.createdAtColumnName},
+          ${_expenseLocalDataSource.tableName}.${Model.deletedAtColumnName} AS ${_expenseLocalDataSource.tableName}_${Model.deletedAtColumnName},
+          ${_expenseLocalDataSource.tableName}.description AS ${_expenseLocalDataSource.tableName}_description,
+          ${_expenseLocalDataSource.tableName}.id_category AS ${_expenseLocalDataSource.tableName}_id_category,
+          ${_expenseLocalDataSource.tableName}.id_transaction AS ${_expenseLocalDataSource.tableName}_id_transaction,
+          ${_expenseLocalDataSource.tableName}.observation AS ${_expenseLocalDataSource.tableName}_observation,
+          
+          -- Income
+          NULL AS ${_incomeLocalDataSource.tableName}_${Model.idColumnName},
+          NULL AS ${_incomeLocalDataSource.tableName}_${Model.createdAtColumnName},
+          NULL AS ${_incomeLocalDataSource.tableName}_${Model.deletedAtColumnName},
+          NULL AS ${_incomeLocalDataSource.tableName}_description,
+          NULL AS ${_incomeLocalDataSource.tableName}_id_category,
+          NULL AS ${_incomeLocalDataSource.tableName}_id_transaction,
+          NULL AS ${_incomeLocalDataSource.tableName}_observation,
+          
+          -- Transaction
+          $tableName.${Model.idColumnName} AS ${tableName}_${Model.idColumnName},
+          $tableName.${Model.createdAtColumnName} AS ${tableName}_${Model.createdAtColumnName},
+          $tableName.${Model.deletedAtColumnName} AS ${tableName}_${Model.deletedAtColumnName},
+          $tableName.amount AS ${tableName}_amount,
+          $tableName.type AS ${tableName}_type,
+          $tableName.date AS ${tableName}_date,
+          $tableName.id_account AS ${tableName}_id_account,
+          
+          -- Transfers
+          NULL AS ${_transferLocalDataSource.tableName}_${Model.idColumnName},
+          NULL AS ${_transferLocalDataSource.tableName}_${Model.createdAtColumnName},
+          NULL AS ${_transferLocalDataSource.tableName}_${Model.deletedAtColumnName},
+          NULL AS ${_transferLocalDataSource.tableName}_id_transaction_from,
+          NULL AS ${_transferLocalDataSource.tableName}_id_transaction_to,
+          
+          -- Transaction from
+          NULL AS ${tableName}_from_${Model.idColumnName},
+          NULL AS ${tableName}_from_${Model.createdAtColumnName},
+          NULL AS ${tableName}_from_${Model.deletedAtColumnName},
+          NULL AS ${tableName}_from_amount,
+          NULL AS ${tableName}_from_type,
+          NULL AS ${tableName}_from_date,
+          NULL AS ${tableName}_from_id_account,
+          
+          -- Transaction to
+          NULL AS ${tableName}_to_${Model.idColumnName},
+          NULL AS ${tableName}_to_${Model.createdAtColumnName},
+          NULL AS ${tableName}_to_${Model.deletedAtColumnName},
+          NULL AS ${tableName}_to_amount,
+          NULL AS ${tableName}_to_type,
+          NULL AS ${tableName}_to_date,
+          NULL AS ${tableName}_to_id_account
+        FROM ${_expenseLocalDataSource.tableName}
+        INNER JOIN $tableName
+          ON $tableName.${Model.idColumnName} = ${_expenseLocalDataSource.tableName}.id_transaction
+        WHERE
+          $tableName.${Model.deletedAtColumnName} IS NULL AND
+          $tableName.date BETWEEN ? AND ?
+          
+        UNION ALL
+        
+        SELECT
+          -- Expense
+          NULL AS ${_expenseLocalDataSource.tableName}_${Model.idColumnName},
+          NULL AS ${_expenseLocalDataSource.tableName}_${Model.createdAtColumnName},
+          NULL AS ${_expenseLocalDataSource.tableName}_${Model.deletedAtColumnName},
+          NULL AS ${_expenseLocalDataSource.tableName}_description,
+          NULL AS ${_expenseLocalDataSource.tableName}_id_category,
+          NULL AS ${_expenseLocalDataSource.tableName}_id_transaction,
+          NULL AS ${_expenseLocalDataSource.tableName}_observation,
+        
+          -- Income
+          ${_incomeLocalDataSource.tableName}.${Model.idColumnName} AS ${_incomeLocalDataSource.tableName}_${Model.idColumnName},
+          ${_incomeLocalDataSource.tableName}.${Model.createdAtColumnName} AS ${_incomeLocalDataSource.tableName}_${Model.createdAtColumnName},
+          ${_incomeLocalDataSource.tableName}.${Model.deletedAtColumnName} AS ${_incomeLocalDataSource.tableName}_${Model.deletedAtColumnName},
+          ${_incomeLocalDataSource.tableName}.description AS ${_incomeLocalDataSource.tableName}_description,
+          ${_incomeLocalDataSource.tableName}.id_category AS ${_incomeLocalDataSource.tableName}_id_category,
+          ${_incomeLocalDataSource.tableName}.id_transaction AS ${_incomeLocalDataSource.tableName}_id_transaction,
+          ${_incomeLocalDataSource.tableName}.observation AS ${_incomeLocalDataSource.tableName}_observation,
+          
+          -- Transaction
+          $tableName.${Model.idColumnName} AS ${tableName}_${Model.idColumnName},
+          $tableName.${Model.createdAtColumnName} AS ${tableName}_${Model.createdAtColumnName},
+          $tableName.${Model.deletedAtColumnName} AS ${tableName}_${Model.deletedAtColumnName},
+          $tableName.amount AS ${tableName}_amount,
+          $tableName.type AS ${tableName}_type,
+          $tableName.date AS ${tableName}_date,
+          $tableName.id_account AS ${tableName}_id_account,
+          
+          -- Transfers
+          NULL AS ${_transferLocalDataSource.tableName}_${Model.idColumnName},
+          NULL AS ${_transferLocalDataSource.tableName}_${Model.createdAtColumnName},
+          NULL AS ${_transferLocalDataSource.tableName}_${Model.deletedAtColumnName},
+          NULL AS ${_transferLocalDataSource.tableName}_id_transaction_from,
+          NULL AS ${_transferLocalDataSource.tableName}_id_transaction_to,
+          
+          -- Transaction from
+          NULL AS ${tableName}_from_${Model.idColumnName},
+          NULL AS ${tableName}_from_${Model.createdAtColumnName},
+          NULL AS ${tableName}_from_${Model.deletedAtColumnName},
+          NULL AS ${tableName}_from_amount,
+          NULL AS ${tableName}_from_type,
+          NULL AS ${tableName}_from_date,
+          NULL AS ${tableName}_from_id_account,
+          
+          -- Transaction to
+          NULL AS ${tableName}_to_${Model.idColumnName},
+          NULL AS ${tableName}_to_${Model.createdAtColumnName},
+          NULL AS ${tableName}_to_${Model.deletedAtColumnName},
+          NULL AS ${tableName}_to_amount,
+          NULL AS ${tableName}_to_type,
+          NULL AS ${tableName}_to_date,
+          NULL AS ${tableName}_to_id_account
+        FROM ${_incomeLocalDataSource.tableName}
+        INNER JOIN $tableName
+          ON $tableName.${Model.idColumnName} = ${_incomeLocalDataSource.tableName}.id_transaction
+        WHERE
+          $tableName.${Model.deletedAtColumnName} IS NULL AND
+          $tableName.date BETWEEN ? AND ?
+          
+        UNION ALL
+        
+        SELECT
+          -- Expense
+          NULL AS ${_expenseLocalDataSource.tableName}_${Model.idColumnName},
+          NULL AS ${_expenseLocalDataSource.tableName}_${Model.createdAtColumnName},
+          NULL AS ${_expenseLocalDataSource.tableName}_${Model.deletedAtColumnName},
+          NULL AS ${_expenseLocalDataSource.tableName}_description,
+          NULL AS ${_expenseLocalDataSource.tableName}_id_category,
+          NULL AS ${_expenseLocalDataSource.tableName}_id_transaction,
+          NULL AS ${_expenseLocalDataSource.tableName}_observation,
+          
+          -- Income
+          NULL AS ${_incomeLocalDataSource.tableName}_${Model.idColumnName},
+          NULL AS ${_incomeLocalDataSource.tableName}_${Model.createdAtColumnName},
+          NULL AS ${_incomeLocalDataSource.tableName}_${Model.deletedAtColumnName},
+          NULL AS ${_incomeLocalDataSource.tableName}_description,
+          NULL AS ${_incomeLocalDataSource.tableName}_id_category,
+          NULL AS ${_incomeLocalDataSource.tableName}_id_transaction,
+          NULL AS ${_incomeLocalDataSource.tableName}_observation,
+        
+          -- Transaction
+          NULL AS ${tableName}_${Model.idColumnName},
+          NULL AS ${tableName}_${Model.createdAtColumnName},
+          NULL AS ${tableName}_${Model.deletedAtColumnName},
+          NULL AS ${tableName}_amount,
+          NULL AS ${tableName}_type,
+          ${tableName}_from.date AS ${tableName}_date,
+          NULL AS ${tableName}_id_account,
+        
+          -- Transfers
+          ${_transferLocalDataSource.tableName}.${Model.idColumnName} AS ${_transferLocalDataSource.tableName}_${Model.idColumnName},
+          ${_transferLocalDataSource.tableName}.${Model.createdAtColumnName} AS ${_transferLocalDataSource.tableName}_${Model.createdAtColumnName},
+          ${_transferLocalDataSource.tableName}.${Model.deletedAtColumnName} AS ${_transferLocalDataSource.tableName}_${Model.deletedAtColumnName},
+          ${_transferLocalDataSource.tableName}.id_transaction_from AS ${_transferLocalDataSource.tableName}_id_transaction_from,
+          ${_transferLocalDataSource.tableName}.id_transaction_to AS ${_transferLocalDataSource.tableName}_id_transaction_to,
+          
+          -- Transaction from
+          ${tableName}_from.${Model.idColumnName} AS ${tableName}_from_${Model.idColumnName},
+          ${tableName}_from.${Model.createdAtColumnName} AS ${tableName}_from_${Model.createdAtColumnName},
+          ${tableName}_from.${Model.deletedAtColumnName} AS ${tableName}_from_${Model.deletedAtColumnName},
+          ${tableName}_from.amount AS ${tableName}_from_amount,
+          ${tableName}_from.type AS ${tableName}_from_type,
+          ${tableName}_from.date AS ${tableName}_from_date,
+          ${tableName}_from.id_account AS ${tableName}_from_id_account,
+          
+          -- Transaction to
+          ${tableName}_to.${Model.idColumnName} AS ${tableName}_to_${Model.idColumnName},
+          ${tableName}_to.${Model.createdAtColumnName} AS ${tableName}_to_${Model.createdAtColumnName},
+          ${tableName}_to.${Model.deletedAtColumnName} AS ${tableName}_to_${Model.deletedAtColumnName},
+          ${tableName}_to.amount AS ${tableName}_to_amount,
+          ${tableName}_to.type AS ${tableName}_to_type,
+          ${tableName}_to.date AS ${tableName}_to_date,
+          ${tableName}_to.id_account AS ${tableName}_to_id_account
+        FROM ${_transferLocalDataSource.tableName}
+        INNER JOIN $tableName ${tableName}_from
+          ON ${tableName}_from.${Model.idColumnName} = $tableName.id_transaction_from
+        INNER JOIN $tableName ${tableName}_to
+          ON ${tableName}_to.${Model.idColumnName} = $tableName.id_transaction_to
+        WHERE
+          ${tableName}_from.${Model.deletedAtColumnName} IS NULL AND
+          ${tableName}_from.date BETWEEN ? AND ?
+      )
+      ORDER BY ${tableName}_date DESC;
+    ''';
+
+    final List<Map<String, dynamic>> results = await databaseLocal.raw(
+      sql,
+      DatabaseOperation.select,
+      [startDate.toIso8601String(), endDate.toIso8601String(), startDate.toIso8601String(), endDate.toIso8601String(), startDate.toIso8601String(), endDate.toIso8601String()],
+    );
+
+    final List<IFinancialOperationModel> listModels = [];
+
+    for (final result in results) {
+      if (result['${_expenseLocalDataSource.tableName}_${Model.idColumnName}'] != null) {
+        listModels.add(_expenseLocalDataSource.fromMap(result, prefix: '${_expenseLocalDataSource.tableName}_'));
+      }
+
+      if (result['${_incomeLocalDataSource.tableName}_${Model.idColumnName}'] != null) {
+        listModels.add(_incomeLocalDataSource.fromMap(result, prefix: '${_incomeLocalDataSource.tableName}_'));
+      }
+
+      if (result['${_transferLocalDataSource.tableName}_${Model.idColumnName}'] != null) {
+        listModels.add(_transferLocalDataSource.fromMap(result, prefix: '${_transferLocalDataSource.tableName}_'));
+      }
+    }
+
+    return listModels;
   }
 }
