@@ -299,9 +299,9 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
           ${tableName}_to.id_account AS ${tableName}_to_id_account
         FROM ${_transferLocalDataSource.tableName}
         INNER JOIN $tableName ${tableName}_from
-          ON ${tableName}_from.${Model.idColumnName} = $tableName.id_transaction_from
+          ON ${tableName}_from.${Model.idColumnName} = ${_transferLocalDataSource.tableName}.id_transaction_from
         INNER JOIN $tableName ${tableName}_to
-          ON ${tableName}_to.${Model.idColumnName} = $tableName.id_transaction_to
+          ON ${tableName}_to.${Model.idColumnName} = ${_transferLocalDataSource.tableName}.id_transaction_to
         WHERE
           ${tableName}_from.${Model.deletedAtColumnName} IS NULL AND
           ${tableName}_from.date BETWEEN ? AND ?
