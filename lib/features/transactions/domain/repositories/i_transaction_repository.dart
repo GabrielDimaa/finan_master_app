@@ -1,5 +1,5 @@
-import 'package:finan_master_app/features/transactions/domain/entities/i_financial_operation_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transactions_by_period_entity.dart';
 
 abstract interface class ITransactionRepository {
-  Future<List<IFinancialOperationEntity>> findByPeriod(DateTime startDate, DateTime endDate);
+  Future<TransactionsByPeriodEntity> findByPeriod(DateTime startDate, DateTime endDate);
 }

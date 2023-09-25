@@ -1,8 +1,8 @@
-import 'package:finan_master_app/features/transactions/infra/models/i_financial_operation_model.dart';
+import 'package:finan_master_app/features/transactions/infra/models/i_transaction_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transaction_model.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
-class IncomeModel extends Model implements IFinancialOperationModel {
+class IncomeModel extends Model implements ITransactionModel {
   String description;
   String? observation;
 

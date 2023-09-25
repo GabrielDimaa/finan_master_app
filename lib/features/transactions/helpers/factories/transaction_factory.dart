@@ -1,7 +1,5 @@
-import 'package:finan_master_app/features/transactions/domain/entities/i_financial_operation_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/enums/transaction_type_enum.dart';
-import 'package:finan_master_app/features/transactions/infra/models/i_financial_operation_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transaction_model.dart';
 
 abstract class TransactionFactory {

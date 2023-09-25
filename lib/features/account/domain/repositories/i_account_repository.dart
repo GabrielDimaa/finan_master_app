@@ -6,4 +6,6 @@ abstract interface class IAccountRepository {
   Future<AccountEntity> save(AccountEntity entity);
 
   Future<void> delete(AccountEntity entity);
+
+  Future<double> findBalanceUntilDate(DateTime date);
 }

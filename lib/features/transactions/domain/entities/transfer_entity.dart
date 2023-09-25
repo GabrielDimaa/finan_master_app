@@ -1,18 +1,17 @@
-import 'package:finan_master_app/features/transactions/domain/entities/i_financial_operation_entity.dart';
+import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/enums/transaction_type_enum.dart';
 import 'package:finan_master_app/features/transactions/helpers/factories/transaction_factory.dart';
 import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
-class TransferEntity extends Entity implements IFinancialOperationEntity {
+class TransferEntity extends Entity implements ITransactionEntity {
   late TransactionEntity _transactionFrom;
   late TransactionEntity _transactionTo;
 
   TransactionEntity get transactionFrom => _transactionFrom;
 
   TransactionEntity get transactionTo => _transactionTo;
-
-  DateTime get date => _transactionFrom.date;
 
   set transactionFrom(TransactionEntity value) => _transactionFrom = value..type = TransactionTypeEnum.transfer;
 
@@ -27,6 +26,15 @@ class TransferEntity extends Entity implements IFinancialOperationEntity {
     _transactionFrom.date = value;
     _transactionTo.date = value;
   }
+
+  @override
+  double get amount => _transactionFrom.amount;
+
+  @override
+  DateTime get date => _transactionFrom.date;
+
+  @override
+  CategoryTypeEnum? get categoryType => null;
 
   TransferEntity({
     required super.id,

@@ -3,7 +3,7 @@ import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class AccountModel extends Model {
   String description;
-  double initialValue;
+  double initialAmount;
   FinancialInstitutionEnum financialInstitution;
   bool includeTotalBalance;
 
@@ -15,7 +15,7 @@ class AccountModel extends Model {
     required super.deletedAt,
     required this.description,
     required this.transactionsAmount,
-    required this.initialValue,
+    required this.initialAmount,
     required this.financialInstitution,
     required this.includeTotalBalance,
   });
@@ -28,7 +28,7 @@ class AccountModel extends Model {
       deletedAt: deletedAt,
       description: description,
       transactionsAmount: transactionsAmount,
-      initialValue: initialValue,
+      initialAmount: initialAmount,
       financialInstitution: financialInstitution,
       includeTotalBalance: includeTotalBalance,
     );
@@ -39,7 +39,7 @@ class AccountModel extends Model {
     return {
       ...baseMap(),
       'description': description,
-      'initial_value': initialValue,
+      'initial_amount': initialAmount,
       'financial_institution': financialInstitution.value,
       'include_total_balance': includeTotalBalance ? 1 : 0,
     };

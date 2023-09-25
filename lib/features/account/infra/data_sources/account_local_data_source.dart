@@ -1,7 +1,6 @@
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/account/infra/data_sources/i_account_local_data_source.dart';
 import 'package:finan_master_app/features/account/infra/models/account_model.dart';
-import 'package:finan_master_app/features/transactions/infra/data_sources/transaction_local_data_source.dart';
 import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_operation.dart';
@@ -26,14 +25,14 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
         description TEXT NOT NULL,
-        initial_value REAL NOT NULL DEFAULT 0,
+        initial_amount REAL NOT NULL DEFAULT 0,
         financial_institution INTEGER NOT NULL,
         include_total_balance INTEGER NOT NULL DEFAULT 1
       );
     ''');
 
     batch.execute('''
-      INSERT INTO $tableName (${Model.idColumnName}, ${Model.createdAtColumnName}, description, initial_value, financial_institution, include_total_balance)
+      INSERT INTO $tableName (${Model.idColumnName}, ${Model.createdAtColumnName}, description, initial_amount, financial_institution, include_total_balance)
       VALUES ('${const Uuid().v1()}', '${DateTime.now().toIso8601String()}', '${FinancialInstitutionEnum.wallet.description}', 0, ${FinancialInstitutionEnum.wallet.value}, 1);
     ''');
   }
@@ -48,7 +47,7 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       deletedAt: base.deletedAt,
       description: map['${prefix}description'],
       transactionsAmount: map['${prefix}transactions_amount'],
-      initialValue: map['${prefix}initial_value'],
+      initialAmount: map['${prefix}initial_amount'],
       financialInstitution: FinancialInstitutionEnum.getByValue(map['${prefix}financial_institution'])!,
       includeTotalBalance: map['${prefix}include_total_balance'] == 1,
     );
@@ -92,6 +91,24 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       final List<Map<String, dynamic>> results = await (txn ?? databaseLocal).raw(sql, DatabaseOperation.select, whereArgs);
 
       return results.map((e) => fromMap(e)).toList();
+    } on DatabaseLocalException catch (e, stackTrace) {
+      throw throwable(e, stackTrace);
+    }
+  }
+
+  @override
+  Future<double> findBalanceUntilDate(DateTime date) async {
+    try {
+      const String sql = '''
+        SELECT
+          SUM(amount) + (SELECT SUM(initial_amount) FROM accounts WHERE include_total_balance = ?) AS balance
+        FROM transactions
+        WHERE date <= ?;
+      ''';
+
+      final List<Map<String, dynamic>> results = await databaseLocal.raw(sql, DatabaseOperation.select, [1, date.toIso8601String()]);
+
+      return results.firstOrNull?['balance'] ?? 0;
     } on DatabaseLocalException catch (e, stackTrace) {
       throw throwable(e, stackTrace);
     }

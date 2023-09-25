@@ -23,4 +23,7 @@ class AccountRepository implements IAccountRepository {
 
   @override
   Future<void> delete(AccountEntity entity) => _dataSource.delete(AccountFactory.fromEntity(entity));
+
+  @override
+  Future<double> findBalanceUntilDate(DateTime date) => _dataSource.findBalanceUntilDate(date);
 }

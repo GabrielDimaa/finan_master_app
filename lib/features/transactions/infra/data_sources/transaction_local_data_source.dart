@@ -7,7 +7,7 @@ import 'package:finan_master_app/features/transactions/infra/data_sources/i_tran
 import 'package:finan_master_app/features/transactions/infra/data_sources/income_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/transfer_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/expense_model.dart';
-import 'package:finan_master_app/features/transactions/infra/models/i_financial_operation_model.dart';
+import 'package:finan_master_app/features/transactions/infra/models/i_transaction_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/income_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transaction_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transfer_model.dart';
@@ -119,7 +119,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
   }
 
   @override
-  Future<List<IFinancialOperationModel>> findFinancialOperations({required DateTime startDate, required DateTime endDate}) async {
+  Future<List<ITransactionModel>> findByPeriod({required DateTime startDate, required DateTime endDate}) async {
     final String sql = '''
       SELECT *
       FROM (
@@ -315,7 +315,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
       [startDate.toIso8601String(), endDate.toIso8601String(), startDate.toIso8601String(), endDate.toIso8601String(), startDate.toIso8601String(), endDate.toIso8601String()],
     );
 
-    final List<IFinancialOperationModel> listModels = [];
+    final List<ITransactionModel> listModels = [];
 
     for (final result in results) {
       if (result['${_expenseLocalDataSource.tableName}_${Model.idColumnName}'] != null) {

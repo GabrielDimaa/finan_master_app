@@ -1,8 +1,8 @@
-import 'package:finan_master_app/features/transactions/domain/entities/i_financial_operation_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transactions_by_period_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_transaction_repository.dart';
 import 'package:finan_master_app/features/transactions/helpers/factories/financial_operation.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
-import 'package:finan_master_app/features/transactions/infra/models/i_financial_operation_model.dart';
+import 'package:finan_master_app/features/transactions/infra/models/i_transaction_model.dart';
 
 class TransactionRepository implements ITransactionRepository {
   final ITransactionLocalDataSource _transactionDataSource;
@@ -10,8 +10,8 @@ class TransactionRepository implements ITransactionRepository {
   TransactionRepository({required ITransactionLocalDataSource transactionDataSource}) : _transactionDataSource = transactionDataSource;
 
   @override
-  Future<List<IFinancialOperationEntity>> findByPeriod(DateTime startDate, DateTime endDate) async {
-    final List<IFinancialOperationModel> models = await _transactionDataSource.findFinancialOperations(startDate: startDate, endDate: endDate);
-    return models.map((model) => FinancialOperationFactory.toEntity(model)).toList();
+  Future<TransactionsByPeriodEntity> findByPeriod(DateTime startDate, DateTime endDate) async {
+    final List<ITransactionModel> models = await _transactionDataSource.findByPeriod(startDate: startDate, endDate: endDate);
+    return TransactionsByPeriodEntity(transactions: models.map((model) => FinancialOperationFactory.toEntity(model)).toList());
   }
 }
