@@ -5,6 +5,7 @@ import 'package:finan_master_app/features/transactions/presentation/states/trans
 import 'package:finan_master_app/features/transactions/presentation/ui/components/fab_transactions.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/filters_transactions.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/list_transactions.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/components/totals_transactions.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -94,25 +95,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                             children: [
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Wrap(
-                                  alignment: WrapAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text("Receita mensal", style: textTheme.bodySmall),
-                                        Text(2500.0.money, style: textTheme.labelLarge),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: [
-                                        Text("Receita mensal", style: textTheme.bodySmall),
-                                        Text(2500.0.money, style: textTheme.labelLarge),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                child: TotalsTransactions(notifier: notifier),
                               ),
                               const Spacing.y(0.5),
                               ListTransactions(state: state, categories: categoriesNotifier.value.categories),

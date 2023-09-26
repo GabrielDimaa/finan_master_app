@@ -16,7 +16,7 @@ class TransactionsNotifier extends ValueNotifier<TransactionsState> {
         super(TransactionsState.start());
 
   TransactionsByPeriodEntity transactionsByPeriod = TransactionsByPeriodEntity(transactions: []);
-  double balanceMonthly = 0;
+  double monthlyBalanceCumulative = 0;
 
   Set<CategoryTypeEnum?> filterType = {null};
 
@@ -25,7 +25,7 @@ class TransactionsNotifier extends ValueNotifier<TransactionsState> {
       value = value.setLoading();
 
       transactionsByPeriod = await _transactionFind.findByPeriod(startDate, endDate);
-      balanceMonthly = await _accountFind.findBalanceUntilDate(endDate);
+      monthlyBalanceCumulative = await _accountFind.findBalanceUntilDate(endDate);
 
       filterTransactions(filterType);
     } catch (e) {

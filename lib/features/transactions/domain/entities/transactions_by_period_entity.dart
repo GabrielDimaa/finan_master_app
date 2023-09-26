@@ -9,5 +9,7 @@ class TransactionsByPeriodEntity {
 
   double get amountsExpense => transactions.map((transaction) => transaction.categoryType == CategoryTypeEnum.expense ? transaction.amount : 0).sum.toDouble();
 
+  double get balance => amountsExpense - amountsIncome;
+
   TransactionsByPeriodEntity({required this.transactions});
 }
