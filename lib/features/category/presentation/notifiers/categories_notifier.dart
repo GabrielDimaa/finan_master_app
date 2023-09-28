@@ -11,11 +11,11 @@ class CategoriesNotifier extends ValueNotifier<CategoriesState> {
       : _categoryFind = categoryFind,
         super(CategoriesState.start());
 
-  Future<void> findAll({CategoryTypeEnum? type}) async {
+  Future<void> findAll({CategoryTypeEnum? type, bool deleted = false}) async {
     try {
       value = value.setLoading();
 
-      final List<CategoryEntity> categories = await _categoryFind.findAll(type: type);
+      final List<CategoryEntity> categories = await _categoryFind.findAll(type: type, deleted: deleted);
       value = value.setCategories(categories);
     } catch (e) {
       value = value.setError(e.toString());

@@ -1,3 +1,5 @@
+import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
+import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
@@ -28,6 +30,7 @@ class TransactionsListPage extends StatefulWidget {
 class _TransactionsListPageState extends State<TransactionsListPage> with ThemeContext {
   final TransactionsNotifier notifier = GetIt.I.get<TransactionsNotifier>();
   final CategoriesNotifier categoriesNotifier = GetIt.I.get<CategoriesNotifier>();
+  final AccountsNotifier accountsNotifier = GetIt.I.get<AccountsNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -38,18 +41,23 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
     Future(() async {
       notifier.value = notifier.value.setLoading();
 
-      await categoriesNotifier.findAll();
+      await Future.wait([
+        categoriesNotifier.findAll(deleted: true),
+        accountsNotifier.findAll(deleted: true),
+      ]);
 
       if (categoriesNotifier is ErrorCategoriesState) {
         notifier.value = notifier.value.setError((categoriesNotifier.value as ErrorCategoriesState).message);
         return;
       }
 
+      if (accountsNotifier is ErrorAccountsState) {
+        notifier.value = notifier.value.setError((accountsNotifier.value as ErrorAccountsState).message);
+        return;
+      }
+
       final DateTime dateNow = DateTime.now();
-      await notifier.findByPeriod(
-        DateTime(dateNow.year, dateNow.month, 1),
-        DateTime(dateNow.year, dateNow.month, dateNow.getLastDayInMonth(), 23, 59, 59, 59),
-      );
+      await notifier.findByPeriod(DateTime(dateNow.year, dateNow.month, 1), DateTime(dateNow.year, dateNow.month, dateNow.getLastDayInMonth(), 23, 59, 59, 59));
     });
   }
 
@@ -67,7 +75,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
         centerTitle: true,
       ),
       drawer: const NavDrawer(),
-      floatingActionButton: const FabTransactions(),
+      floatingActionButton: FabTransactions(notifier: notifier),
       body: SafeArea(
         child: SingleChildScrollView(
           child: ValueListenableBuilder(
@@ -97,7 +105,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                             child: TotalsTransactions(notifier: notifier),
                           ),
                           const Spacing.y(0.5),
-                          ListTransactions(state: state, categories: categoriesNotifier.value.categories),
+                          ListTransactions(state: state, categories: categoriesNotifier.value.categories, accounts: accountsNotifier.value.accounts),
                         ],
                       ),
                     },

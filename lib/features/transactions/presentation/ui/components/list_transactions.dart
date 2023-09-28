@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
@@ -14,8 +15,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class ListTransactions extends StatelessWidget {
   final TransactionsState state;
   final List<CategoryEntity> categories;
+  final List<AccountEntity> accounts;
 
-  const ListTransactions({Key? key, required this.state, required this.categories}) : super(key: key);
+  const ListTransactions({Key? key, required this.state, required this.categories, required this.accounts}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +76,7 @@ class ListTransactions extends StatelessWidget {
           ),
           TransferEntity transfer => Builder(
             builder: (_) {
+              final account = accounts.firstWhere((account) => account.id == transfer.idAccount);
               return Column(
                 children: [
                   ListTile(
@@ -82,6 +85,7 @@ class ListTransactions extends StatelessWidget {
                       child: const Icon(Icons.move_up_outlined),
                     ),
                     title: Text(AppLocalizations.of(context)!.transfer),
+                    subtitle: Text(account.description),
                     trailing: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -99,6 +103,7 @@ class ListTransactions extends StatelessWidget {
                       child: const Icon(Icons.move_up_outlined),
                     ),
                     title: Text(AppLocalizations.of(context)!.transfer),
+                    subtitle: Text(account.description),
                     trailing: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,

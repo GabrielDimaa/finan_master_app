@@ -11,13 +11,13 @@ class CategoryRepository implements ICategoryRepository {
   CategoryRepository({required ICategoryLocalDataSource dataSource}) : _dataSource = dataSource;
 
   @override
-  Future<List<CategoryEntity>> findAll({CategoryTypeEnum? type}) async {
+  Future<List<CategoryEntity>> findAll({CategoryTypeEnum? type, bool deleted = false}) async {
     List<CategoryModel> categories = [];
 
     if (type == null) {
-      categories = await _dataSource.findAll();
+      categories = await _dataSource.findAll(deleted: deleted);
     } else {
-      categories = await _dataSource.findAll(where: 'type = ?', whereArgs: [type.value]);
+      categories = await _dataSource.findAll(where: 'type = ?', whereArgs: [type.value], deleted: deleted);
     }
 
     return categories.map((c) => CategoryFactory.toEntity(c)).toList();

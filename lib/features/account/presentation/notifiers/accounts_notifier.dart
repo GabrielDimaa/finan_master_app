@@ -10,11 +10,11 @@ class AccountsNotifier extends ValueNotifier<AccountsState> {
       : _accountFind = accountFind,
         super(AccountsState.start());
 
-  Future<void> findAll() async {
+  Future<void> findAll({bool deleted = false}) async {
     try {
       value = value.setLoading();
 
-      final List<AccountEntity> accounts = await _accountFind.findAll();
+      final List<AccountEntity> accounts = await _accountFind.findAll(deleted: deleted);
       value = value.setAccounts(accounts);
     } catch (e) {
       value = value.setError(e.toString());

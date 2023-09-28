@@ -1,13 +1,20 @@
+import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
+import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
+import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab_child.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class FabTransactions extends StatefulWidget {
-  const FabTransactions({Key? key}) : super(key: key);
+  final TransactionsNotifier notifier;
+
+  const FabTransactions({Key? key, required this.notifier}) : super(key: key);
 
   @override
   State<FabTransactions> createState() => _FabTransactionsState();
@@ -40,14 +47,20 @@ class _FabTransactionsState extends State<FabTransactions> {
   }
 
   Future<void> goExpenseFormPage() async {
-    await context.pushNamed(ExpenseFormPage.route);
+    final FormResultNavigation<ExpenseEntity>? result = await context.pushNamed(ExpenseFormPage.route);
+
+    if (result != null) await widget.notifier.refreshTransactions();
   }
 
   Future<void> goIncomeFormPage() async {
-    await context.pushNamed(IncomeFormPage.route);
+    final FormResultNavigation<IncomeEntity>? result = await context.pushNamed(IncomeFormPage.route);
+
+    if (result != null) await widget.notifier.refreshTransactions();
   }
 
   Future<void> goTransferFormPage() async {
-    await context.pushNamed(TransferFormPage.route);
+    final FormResultNavigation<TransferEntity>? result = await context.pushNamed(TransferFormPage.route);
+
+    if (result != null) await widget.notifier.refreshTransactions();
   }
 }

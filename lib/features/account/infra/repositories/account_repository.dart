@@ -10,8 +10,8 @@ class AccountRepository implements IAccountRepository {
   AccountRepository({required IAccountLocalDataSource dataSource}) : _dataSource = dataSource;
 
   @override
-  Future<List<AccountEntity>> findAll() async {
-    final List<AccountModel> accounts = await _dataSource.findAll();
+  Future<List<AccountEntity>> findAll({bool deleted = false}) async {
+    final List<AccountModel> accounts = await _dataSource.findAll(deleted: deleted);
     return accounts.map((account) => AccountFactory.toEntity(account)).toList();
   }
 

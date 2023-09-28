@@ -9,7 +9,7 @@ class CategoryFind implements ICategoryFind {
   CategoryFind({required ICategoryRepository repository}) : _repository = repository;
 
   @override
-  Future<List<CategoryEntity>> findAll({CategoryTypeEnum? type}) => _repository.findAll(type: type);
+  Future<List<CategoryEntity>> findAll({CategoryTypeEnum? type, bool deleted = false}) => _repository.findAll(type: type, deleted: deleted);
 
   @override
   Future<CategoryEntity?> findById(String id) => _repository.findById(id);
