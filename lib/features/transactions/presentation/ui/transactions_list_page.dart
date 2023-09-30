@@ -10,6 +10,7 @@ import 'package:finan_master_app/features/transactions/presentation/ui/component
 import 'package:finan_master_app/features/transactions/presentation/ui/components/totals_transactions.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/dialog/date_picker.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar.dart';
@@ -57,7 +58,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
       }
 
       final DateTime dateNow = DateTime.now();
-      await notifier.findByPeriod(DateTime(dateNow.year, dateNow.month, 1), DateTime(dateNow.year, dateNow.month, dateNow.getLastDayInMonth(), 23, 59, 59, 59));
+      await notifier.findByPeriod(dateNow.getInitialMonth(), dateNow.getFinalMonth());
     });
   }
 
@@ -73,6 +74,12 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
         ),
         title: Text(strings.transactions),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.today_outlined),
+            onPressed: selectDate,
+          ),
+        ],
       ),
       drawer: const NavDrawer(),
       floatingActionButton: FabTransactions(notifier: notifier),
@@ -90,25 +97,28 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                     child: FiltersTransactions(notifier: notifier),
                   ),
                   const Spacing.y(),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 500),
-                    child: switch (state) {
-                      StartTransactionsState _ => const SizedBox.shrink(),
-                      LoadingTransactionsState _ => const Center(child: CircularProgressIndicator()),
-                      ErrorTransactionsState _ => Text(state.message),
-                      EmptyTransactionsState _ => NoContentWidget(child: Text(strings.noTransactionsRegistered)),
-                      ListTransactionsState _ => Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: TotalsTransactions(notifier: notifier),
+                  RefreshIndicator(
+                    onRefresh: notifier.refreshTransactions,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      child: switch (state) {
+                        StartTransactionsState _ => const SizedBox.shrink(),
+                        LoadingTransactionsState _ => const Center(child: CircularProgressIndicator()),
+                        ErrorTransactionsState _ => Text(state.message),
+                        EmptyTransactionsState _ => NoContentWidget(child: Text(strings.noTransactionsRegistered)),
+                        ListTransactionsState _ => Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: TotalsTransactions(notifier: notifier),
+                              ),
+                              const Spacing.y(0.5),
+                              ListTransactions(state: state, categories: categoriesNotifier.value.categories, accounts: accountsNotifier.value.accounts),
+                            ],
                           ),
-                          const Spacing.y(0.5),
-                          ListTransactions(state: state, categories: categoriesNotifier.value.categories, accounts: accountsNotifier.value.accounts),
-                        ],
-                      ),
-                    },
+                      },
+                    ),
                   ),
                 ],
               );
@@ -117,5 +127,12 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
         ),
       ),
     );
+  }
+
+  Future<void> selectDate() async {
+    final DateTime? date = await showDatePickerDefault(context: context, initialDate: notifier.startDate);
+    if (date != null) {
+      await notifier.findByPeriod(date.getInitialMonth(), date.getFinalMonth());
+    }
   }
 }

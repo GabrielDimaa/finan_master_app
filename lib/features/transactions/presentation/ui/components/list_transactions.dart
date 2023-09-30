@@ -29,97 +29,102 @@ class ListTransactions extends StatelessWidget {
       itemBuilder: (_, index) {
         final ITransactionEntity transaction = state.transactions[index];
 
-        return switch (transaction) {
-          ExpenseEntity expense => Builder(
-            builder: (_) {
-              final category = categories.firstWhere((category) => category.id == expense.idCategory);
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Color(category.color.toColor()!),
-                  child: Icon(category.icon.parseIconData(), color: Colors.white),
+        return Column(
+          children: [
+            switch (transaction) {
+              ExpenseEntity expense => Builder(
+                  builder: (_) {
+                    final category = categories.firstWhere((category) => category.id == expense.idCategory);
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Color(category.color.toColor()!),
+                        child: Icon(category.icon.parseIconData(), color: Colors.white),
+                      ),
+                      title: Text(expense.description),
+                      subtitle: Text(category.description),
+                      trailing: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                          Text(expense.transaction.date.formatDateToRelative()),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-                title: Text(expense.description),
-                subtitle: Text(category.description),
-                trailing: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
-                    Text(expense.transaction.date.formatDateToRelative()),
-                  ],
+              IncomeEntity income => Builder(
+                  builder: (_) {
+                    final category = categories.firstWhere((category) => category.id == income.idCategory);
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Color(category.color.toColor()!),
+                        child: Icon(category.icon.parseIconData(), color: Colors.white),
+                      ),
+                      title: Text(income.description),
+                      subtitle: Text(category.description),
+                      trailing: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(income.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                          Text(income.transaction.date.formatDateToRelative()),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-          IncomeEntity income => Builder(
-            builder: (_) {
-              final category = categories.firstWhere((category) => category.id == income.idCategory);
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Color(category.color.toColor()!),
-                  child: Icon(category.icon.parseIconData(), color: Colors.white),
-                ),
-                title: Text(income.description),
-                subtitle: Text(category.description),
-                trailing: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(income.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                    Text(income.transaction.date.formatDateToRelative()),
-                  ],
-                ),
-              );
-            },
-          ),
-          TransferEntity transfer => Builder(
-            builder: (_) {
-              final account = accounts.firstWhere((account) => account.id == transfer.idAccount);
-              return Column(
-                children: [
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.onSecondary,
-                      child: const Icon(Icons.move_up_outlined),
-                    ),
-                    title: Text(AppLocalizations.of(context)!.transfer),
-                    subtitle: Text(account.description),
-                    trailing: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+              TransferEntity transfer => Builder(
+                  builder: (_) {
+                    final account = accounts.firstWhere((account) => account.id == transfer.idAccount);
+                    return Column(
                       children: [
-                        Text(transfer.transactionTo.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
-                        Text(transfer.transactionTo.date.formatDateToRelative()),
+                        ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Theme.of(context).colorScheme.onSecondary,
+                            child: const Icon(Icons.move_up_outlined),
+                          ),
+                          title: Text(AppLocalizations.of(context)!.transfer),
+                          subtitle: Text(account.description),
+                          trailing: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(transfer.transactionTo.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                              Text(transfer.transactionTo.date.formatDateToRelative()),
+                            ],
+                          ),
+                        ),
+                        const Divider(),
+                        ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Theme.of(context).colorScheme.onSecondary,
+                            child: const Icon(Icons.move_up_outlined),
+                          ),
+                          title: Text(AppLocalizations.of(context)!.transfer),
+                          subtitle: Text(account.description),
+                          trailing: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(transfer.transactionFrom.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                              Text(transfer.transactionFrom.date.formatDateToRelative()),
+                            ],
+                          ),
+                        ),
                       ],
-                    ),
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.onSecondary,
-                      child: const Icon(Icons.move_up_outlined),
-                    ),
-                    title: Text(AppLocalizations.of(context)!.transfer),
-                    subtitle: Text(account.description),
-                    trailing: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(transfer.transactionFrom.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                        Text(transfer.transactionFrom.date.formatDateToRelative()),
-                      ],
-                    ),
-                  ),
-                ],
-              );
+                    );
+                  },
+                ),
+              _ => const SizedBox.shrink(),
             },
-          ),
-          _ => const SizedBox.shrink(),
-        };
+            if (index == state.transactions.length - 1) const SizedBox(height: 50),
+          ],
+        );
       },
     );
   }

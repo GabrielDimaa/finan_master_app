@@ -6,6 +6,10 @@ extension DateTimeExtension on DateTime {
 
   DateTime subtractMonth(int month) => copyWith(month: this.month - month);
 
+  DateTime getInitialMonth() => DateTime(year, month, 1);
+
+  DateTime getFinalMonth() => DateTime(year, month, getLastDayInMonth(), 23, 59, 59, 59);
+
   int getLastDayInMonth() => addMonth(1).copyWith(day: 1).subtract(const Duration(days: 1)).day;
 
   String format() => DateFormat.yMd(AppLocale().locale.languageCode).format(this);

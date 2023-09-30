@@ -154,8 +154,8 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
 
       final List<Map<String, dynamic>> results = await (txn ?? databaseLocal).query(
         tableName,
-        where: whereListed.join(' AND '),
-        whereArgs: whereArgs,
+        where: whereListed.isNotEmpty ? whereListed.join(' AND ') : null,
+        whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
         orderBy: orderBy ?? orderByDefault,
         limit: limit,
         offset: offset,

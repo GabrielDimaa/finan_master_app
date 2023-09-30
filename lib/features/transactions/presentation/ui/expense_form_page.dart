@@ -18,6 +18,7 @@ import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/dialog/date_picker.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/mask/mask_input_formatter.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_greater_than_value.dart';
@@ -284,12 +285,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   Future<void> selectDate() async {
     if (initialLoadingNotifier.value || notifier.isLoading) return;
 
-    final DateTime? result = await showDatePicker(
-      context: context,
-      initialDate: notifier.expense.transaction.date,
-      firstDate: DateTime(2000, 1, 1),
-      lastDate: DateTime(2100, 12, 31),
-    );
+    final DateTime? result = await showDatePickerDefault(context: context, initialDate: notifier.expense.transaction.date);
 
     if (result == null || result == notifier.expense.transaction.date) return;
 

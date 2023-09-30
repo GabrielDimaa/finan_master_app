@@ -17,16 +17,9 @@ class FiltersTransactions extends StatefulWidget {
 }
 
 class _FiltersTransactionsState extends State<FiltersTransactions> with ThemeContext {
-  late final DateTime dateNow;
-  late DateTime dateFiltered;
+  final DateTime dateNow = DateTime.now();
 
-  @override
-  void initState() {
-    super.initState();
-
-    dateNow = DateTime.now();
-    dateFiltered = dateNow;
-  }
+  DateTime get dateFiltered => widget.notifier.startDate;
 
   @override
   Widget build(BuildContext context) {
@@ -75,12 +68,5 @@ class _FiltersTransactionsState extends State<FiltersTransactions> with ThemeCon
     );
   }
 
-  Future<void> changeDateFiltered(DateTime date) async {
-    setState(() => dateFiltered = date);
-
-    await widget.notifier.findByPeriod(
-      DateTime(date.year, date.month, 1),
-      DateTime(date.year, date.month, date.getLastDayInMonth(), 23, 59, 59, 59),
-    );
-  }
+  Future<void> changeDateFiltered(DateTime date) => widget.notifier.findByPeriod(date.getInitialMonth(), date.getFinalMonth());
 }

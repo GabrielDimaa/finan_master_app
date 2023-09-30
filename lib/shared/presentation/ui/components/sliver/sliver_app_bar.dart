@@ -9,7 +9,7 @@ class SliverAppBarSmall extends SliverAppBar {
     super.actions,
     super.leading = const BackButton(),
     bool? loading,
-  }) : super(scrolledUnderElevation: 0, bottom: loading == true ? const LinearProgressIndicatorAppBar() : null);
+  }) : super(scrolledUnderElevation: 0, pinned: true, bottom: loading == true ? const LinearProgressIndicatorAppBar() : null);
 }
 
 class SliverAppBarMedium extends StatelessWidget {
