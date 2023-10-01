@@ -83,7 +83,7 @@ class ListTransactions extends StatelessWidget {
                       children: [
                         ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: Theme.of(context).colorScheme.onSecondary,
+                            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
                             child: const Icon(Icons.move_up_outlined),
                           ),
                           title: Text(AppLocalizations.of(context)!.transfer),
@@ -101,7 +101,7 @@ class ListTransactions extends StatelessWidget {
                         const Divider(),
                         ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: Theme.of(context).colorScheme.onSecondary,
+                            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
                             child: const Icon(Icons.move_up_outlined),
                           ),
                           title: Text(AppLocalizations.of(context)!.transfer),
