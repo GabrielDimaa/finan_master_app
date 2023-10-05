@@ -66,6 +66,7 @@ class _FinancialInstitutionsState extends State<FinancialInstitutions> with Them
                       ],
                     ),
                     controlAffinity: ListTileControlAffinity.trailing,
+                    toggleable: true,
                     value: financialInstitution,
                     groupValue: selected,
                     onChanged: (FinancialInstitutionEnum? value) {

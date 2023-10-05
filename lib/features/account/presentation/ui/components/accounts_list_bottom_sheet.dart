@@ -59,6 +59,7 @@ class _AccountsListBottomSheetState extends State<AccountsListBottomSheet> with 
                         ],
                       ),
                       controlAffinity: ListTileControlAffinity.trailing,
+                      toggleable: true,
                       value: account,
                       groupValue: account.id == widget.accountSelected?.id ? account : null,
                       onChanged: (_) => context.pop(account),

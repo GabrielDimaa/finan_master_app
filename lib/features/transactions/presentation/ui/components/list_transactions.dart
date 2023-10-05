@@ -47,7 +47,7 @@ class ListTransactions extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                          Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
                           Text(expense.transaction.date.formatDateToRelative()),
                         ],
                       ),
@@ -69,7 +69,7 @@ class ListTransactions extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(income.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                          Text(income.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
                           Text(income.transaction.date.formatDateToRelative()),
                         ],
                       ),

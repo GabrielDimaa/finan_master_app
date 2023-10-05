@@ -104,20 +104,26 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
   }
 
   Widget fabChild(ExpandableFabChild child) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        child.label ?? const SizedBox(),
-        FloatingActionButton.small(
-          heroTag: null,
-          onPressed: () {
-            child.onPressed?.call();
-            toggle();
-          },
-          child: child.icon,
-        ),
-      ],
+    return GestureDetector(
+      onTap: () {
+        child.onPressed?.call();
+        toggle();
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          child.label ?? const SizedBox(),
+          FloatingActionButton.small(
+            heroTag: null,
+            onPressed: () {
+              child.onPressed?.call();
+              toggle();
+            },
+            child: child.icon,
+          ),
+        ],
+      ),
     );
   }
 

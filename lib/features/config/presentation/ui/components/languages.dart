@@ -54,6 +54,7 @@ class _LanguagesState extends State<Languages> with ThemeContext {
                   return RadioListTile<Locale>(
                     title: Text(locale.getDisplayLanguage()),
                     controlAffinity: ListTileControlAffinity.trailing,
+                    toggleable: true,
                     value: locale,
                     groupValue: AppLocalizations.of(context)?.localeName == locale.languageCode ? locale : null,
                     onChanged: (_) {

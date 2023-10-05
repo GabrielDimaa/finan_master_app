@@ -63,6 +63,7 @@ class _CategoriesListBottomSheetState extends State<CategoriesListBottomSheet> w
                         ],
                       ),
                       controlAffinity: ListTileControlAffinity.trailing,
+                      toggleable: true,
                       value: category,
                       groupValue: category.id == widget.categorySelected?.id ? category : null,
                       onChanged: (_) => context.pop(category),
