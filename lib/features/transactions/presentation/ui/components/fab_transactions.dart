@@ -39,6 +39,7 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
         ),
         ExpandableFabChild(
           icon: const Icon(Icons.credit_card_outlined),
+          label: label(text: strings.cardExpense),
           onPressed: () {},
         ),
         ExpandableFabChild(
