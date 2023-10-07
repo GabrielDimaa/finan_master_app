@@ -12,7 +12,7 @@ class AccountSave implements IAccountSave {
   @override
   Future<AccountEntity> save(AccountEntity entity) async {
     if (entity.description.trim().isEmpty) throw ValidationException(R.strings.uninformedDescription);
-    if (entity.initialAmount < 0) throw ValidationException(R.strings.lessThanZero);
+    if (entity.initialAmount < 0) throw ValidationException(R.strings.greaterThanZero);
     if (entity.financialInstitution == null) return throw ValidationException(R.strings.uninformedFinancialInstitution);
 
     return await _repository.save(entity);
@@ -20,7 +20,7 @@ class AccountSave implements IAccountSave {
 
   @override
   Future<AccountEntity> readjustBalance(AccountEntity entity, double readjustmentValue) async {
-    if (readjustmentValue < 0) throw ValidationException(R.strings.lessThanZero);
+    if (readjustmentValue < 0) throw ValidationException(R.strings.greaterThanZero);
 
     // TODO: Criar reajuste de saldo.
     // entity.initialAmount = readjustmentValue;

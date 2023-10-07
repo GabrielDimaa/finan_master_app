@@ -106,6 +106,7 @@
   "transferAmountDivergent": "Outgoing and incoming account values are divergent.",
   "typeCategory": "Category type",
   "uninformedAccount": "Uninformed account.",
+  "uninformedCardBrand": "Uninformed card brand.",
   "uninformedCategory": "Uninformed category.",
   "uninformedColor": "Uninformed color.",
   "uninformedDescription": "Uninformed description.",

@@ -21,7 +21,7 @@ enum CardBrandEnum {
 
   const CardBrandEnum(this.value);
 
-  static CardBrandEnum? getByValue(int value) => CardBrandEnum.values.firstWhereOrNull((v) => v.value == value);
+  static CardBrandEnum? getByValue(int? value) => CardBrandEnum.values.firstWhereOrNull((v) => v.value == value);
 }
 
 extension CardBrandExtension on CardBrandEnum {

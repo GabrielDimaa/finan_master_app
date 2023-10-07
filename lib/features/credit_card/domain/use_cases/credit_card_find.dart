@@ -8,8 +8,5 @@ class CreditCardFind implements ICreditCardFind {
   CreditCardFind({required ICreditCardRepository repository}) : _repository = repository;
 
   @override
-  Future<List<CreditCardEntity>> findAll() {
-    // TODO: implement findAll
-    throw UnimplementedError();
-  }
+  Future<List<CreditCardEntity>> findAll() => _repository.findAll();
 }
