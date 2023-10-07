@@ -66,9 +66,14 @@ class _AccountsListPageState extends State<AccountsListPage> with ThemeContext {
                   separatorBuilder: (_, __) => const Divider(),
                   itemBuilder: (_, index) {
                     final AccountEntity account = state.accounts[index];
-                    return AccountListTile(
-                      account: account,
-                      onTap: () => goAccount(account),
+                    return Column(
+                      children: [
+                        AccountListTile(
+                          account: account,
+                          onTap: () => goAccount(account),
+                        ),
+                        if (index == state.accounts.length - 1) const SizedBox(height: 50),
+                      ],
                     );
                   },
                 ),

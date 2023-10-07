@@ -24,12 +24,22 @@ class TabBarViewCategories extends StatelessWidget {
         ListView.separated(
           itemCount: expenses.length,
           separatorBuilder: (_, __) => const Divider(),
-          itemBuilder: (_, index) => _categoryTile(context: context, category: expenses[index]),
+          itemBuilder: (_, index) => Column(
+            children: [
+              _categoryTile(context: context, category: expenses[index]),
+              if (index == expenses.length - 1) const SizedBox(height: 50),
+            ],
+          ),
         ),
         ListView.separated(
           itemCount: incomes.length,
           separatorBuilder: (_, __) => const Divider(),
-          itemBuilder: (_, index) => _categoryTile(context: context, category: incomes[index]),
+          itemBuilder: (_, index) => Column(
+            children: [
+              _categoryTile(context: context, category: incomes[index]),
+              if (index == incomes.length - 1) const SizedBox(height: 50),
+            ],
+          ),
         ),
       ],
     );
