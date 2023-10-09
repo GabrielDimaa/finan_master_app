@@ -1,11 +1,15 @@
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_cards_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_cards_state.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
+import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
+import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 class CreditCardsPage extends StatefulWidget {
   static const String route = 'credit-cards';
@@ -59,8 +63,9 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
                       children: [
                         ListTile(
                           title: Text(creditCard.description),
-                          subtitle: Text('${strings.limit}: ${creditCard.amountLimit}'),
+                          subtitle: Text('${strings.limit}: ${creditCard.amountLimit.money}'),
                           trailing: const Icon(Icons.chevron_right),
+                          onTap: () => goCreditCard(creditCard),
                         ),
                         if (index == state.creditCards.length - 1) const SizedBox(height: 50),
                       ],
@@ -74,5 +79,11 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
     );
   }
 
-  Future<void> goCreditCard([CreditCardEntity? creditCard]) async {}
+  Future<void> goCreditCard([CreditCardEntity? creditCard]) async {
+    final FormResultNavigation<CreditCardEntity>? result = await context.pushNamed(CreditCardFormPage.route, extra: creditCard);
+
+    if (result == null) return;
+
+    notifier.findAll();
+  }
 }

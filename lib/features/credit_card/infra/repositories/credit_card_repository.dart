@@ -16,6 +16,9 @@ class CreditCardRepository implements ICreditCardRepository {
   }
 
   @override
+  Future<void> delete(CreditCardEntity entity) => _dataSource.delete(CreditCardFactory.fromEntity(entity));
+
+  @override
   Future<List<CreditCardEntity>> findAll() async {
     final List<CreditCardModel> result = await _dataSource.findAll();
     return result.map((e) => CreditCardFactory.toEntity(e)).toList();

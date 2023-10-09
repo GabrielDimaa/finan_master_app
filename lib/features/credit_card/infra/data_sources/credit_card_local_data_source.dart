@@ -21,8 +21,8 @@ class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> impleme
         ${baseColumnsSql()},
         description TEXT NOT NULL,
         amount_limit REAL NOT NULL,
-        invoice_closing_date DATETIME NOT NULL,
-        invoice_due_date DATETIME NOT NULL,
+        invoice_closing_day INTEGER NOT NULL,
+        invoice_due_day INTEGER NOT NULL,
         brand INTEGER NOT NULL,
         id_account TEXT NOT NULL REFERENCES accounts(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT
       );
@@ -39,8 +39,8 @@ class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> impleme
       deletedAt: base.deletedAt,
       description: map['${prefix}description'],
       amountLimit: map['${prefix}amount_limit'],
-      invoiceClosingDay: map['${prefix}invoice_closing_date'],
-      invoiceDueDay: map['${prefix}invoice_due_date'],
+      invoiceClosingDay: map['${prefix}invoice_closing_day'],
+      invoiceDueDay: map['${prefix}invoice_due_day'],
       brand: CardBrandEnum.getByValue(map['${prefix}brand'])!,
       idAccount: map['${prefix}id_account'],
     );

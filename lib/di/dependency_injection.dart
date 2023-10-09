@@ -31,13 +31,16 @@ import 'package:finan_master_app/features/config/infra/repositories/config_repos
 import 'package:finan_master_app/features/config/presentation/notifiers/locale_notifier.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/theme_mode_notifier.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_repository.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_delete.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_save.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_delete.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_save.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/repositories/credit_card_repository.dart';
+import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_cards_notifier.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_income_repository.dart';
@@ -125,6 +128,7 @@ final class DependencyInjection {
     getIt.registerFactory<ITransactionFind>(() => TransactionFind(repository: getIt.get<ITransactionRepository>()));
     getIt.registerFactory<ICreditCardSave>(() => CreditCardSave(repository: getIt.get<ICreditCardRepository>()));
     getIt.registerFactory<ICreditCardFind>(() => CreditCardFind(repository: getIt.get<ICreditCardRepository>()));
+    getIt.registerFactory<ICreditCardDelete>(() => CreditCardDelete(repository: getIt.get<ICreditCardRepository>()));
 
     //Notifiers
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
@@ -138,5 +142,6 @@ final class DependencyInjection {
     getIt.registerFactory<TransferNotifier>(() => TransferNotifier(transferSave: getIt.get<ITransferSave>()));
     getIt.registerFactory<TransactionsNotifier>(() => TransactionsNotifier(transactionFind: getIt.get<ITransactionFind>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<CreditCardsNotifier>(() => CreditCardsNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
+    getIt.registerFactory<CreditCardNotifier>(() => CreditCardNotifier(creditCardSave: getIt.get<ICreditCardSave>(), creditCardDelete: getIt.get<ICreditCardDelete>()));
   }
 }

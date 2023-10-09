@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -42,23 +43,20 @@ extension CardBrandExtension on CardBrandEnum {
   };
 
   Widget icon({double size = 36, Color? color}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(100),
-      child: switch (this) {
-        CardBrandEnum.alelo => SvgPicture.asset('assets/icons/card-brands/alelo.svg', height: size, width: size),
-        CardBrandEnum.americanExpress => SvgPicture.asset('assets/icons/card-brands/americanexpress.svg', height: size, width: size),
-        CardBrandEnum.banescard => SvgPicture.asset('assets/icons/card-brands/banescard.svg', height: size, width: size),
-        CardBrandEnum.banricompras => SvgPicture.asset('assets/icons/card-brands/banricompras.svg', height: size, width: size),
-        CardBrandEnum.cabal => SvgPicture.asset('assets/icons/card-brands/cabal.svg', height: size, width: size),
-        CardBrandEnum.dinersClub => SvgPicture.asset('assets/icons/card-brands/dinersclub.svg', height: size, width: size),
-        CardBrandEnum.elo => SvgPicture.asset('assets/icons/card-brands/elo.svg', height: size, width: size),
-        CardBrandEnum.goodcard => SvgPicture.asset('assets/icons/card-brands/goodcard.svg', height: size, width: size),
-        CardBrandEnum.hipercard => SvgPicture.asset('assets/icons/card-brands/hipercard.svg', height: size, width: size),
-        CardBrandEnum.jcb => SvgPicture.asset('assets/icons/card-brands/jcb.svg', height: size, width: size),
-        CardBrandEnum.mastercard => SvgPicture.asset('assets/icons/card-brands/mastercard.svg', height: size, width: size),
-        CardBrandEnum.sorocred => SvgPicture.asset('assets/icons/card-brands/sorocred.svg', height: size, width: size),
-        CardBrandEnum.visa => SvgPicture.asset('assets/icons/card-brands/visa.svg', height: size, width: size),
-      },
-    );
+    return switch (this) {
+      CardBrandEnum.alelo => SvgPicture.asset('assets/icons/card-brands/alelo.svg', height: size, width: size),
+      CardBrandEnum.americanExpress => SvgPicture.asset('assets/icons/card-brands/americanexpress.svg', height: size, width: size),
+      CardBrandEnum.banescard => SvgPicture.asset('assets/icons/card-brands/banescard.svg', height: size, width: size),
+      CardBrandEnum.banricompras => SvgPicture.asset('assets/icons/card-brands/banricompras.svg', height: size, width: size),
+      CardBrandEnum.cabal => SvgPicture.asset('assets/icons/card-brands/cabal.svg', height: size, width: size),
+      CardBrandEnum.dinersClub => SvgPicture.asset('assets/icons/card-brands/dinersclub.svg', height: size, width: size),
+      CardBrandEnum.elo => SvgPicture.asset('assets/icons/card-brands/elo.svg', height: size, width: size),
+      CardBrandEnum.goodcard => SvgPicture.asset('assets/icons/card-brands/goodcard.svg', height: size, width: size),
+      CardBrandEnum.hipercard => SvgPicture.asset('assets/icons/card-brands/hipercard.svg', height: size, width: size),
+      CardBrandEnum.jcb => SvgPicture.asset('assets/icons/card-brands/jcb.svg', height: size, width: size),
+      CardBrandEnum.mastercard => SvgPicture.asset('assets/icons/card-brands/mastercard.svg', height: size, width: size),
+      CardBrandEnum.sorocred => SvgPicture.asset('assets/icons/card-brands/sorocred.svg', height: size, width: size),
+      CardBrandEnum.visa => SvgPicture.asset('assets/icons/card-brands/visa.svg', height: size, width: size),
+    };
   }
 }
