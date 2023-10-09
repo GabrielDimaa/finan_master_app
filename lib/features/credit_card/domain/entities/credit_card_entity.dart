@@ -3,7 +3,7 @@ import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
 class CreditCardEntity extends Entity {
   String description;
-  double limit;
+  double amountLimit;
   int invoiceClosingDay;
   int invoiceDueDay;
   CardBrandEnum? brand;
@@ -14,7 +14,7 @@ class CreditCardEntity extends Entity {
     required super.createdAt,
     required super.deletedAt,
     required this.description,
-    required this.limit,
+    required this.amountLimit,
     required this.invoiceClosingDay,
     required this.invoiceDueDay,
     required this.brand,

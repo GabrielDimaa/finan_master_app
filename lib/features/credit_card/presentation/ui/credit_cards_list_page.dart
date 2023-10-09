@@ -59,7 +59,7 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
                       children: [
                         ListTile(
                           title: Text(creditCard.description),
-                          subtitle: Text('${strings.limit}: ${creditCard.limit}'),
+                          subtitle: Text('${strings.limit}: ${creditCard.amountLimit}'),
                           trailing: const Icon(Icons.chevron_right),
                         ),
                         if (index == state.creditCards.length - 1) const SizedBox(height: 50),

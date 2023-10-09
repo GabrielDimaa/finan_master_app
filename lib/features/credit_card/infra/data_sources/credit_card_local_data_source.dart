@@ -20,7 +20,7 @@ class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> impleme
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
         description TEXT NOT NULL,
-        limit REAL NOT NULL,
+        amount_limit REAL NOT NULL,
         invoice_closing_date DATETIME NOT NULL,
         invoice_due_date DATETIME NOT NULL,
         brand INTEGER NOT NULL,
@@ -38,7 +38,7 @@ class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> impleme
       createdAt: base.createdAt,
       deletedAt: base.deletedAt,
       description: map['${prefix}description'],
-      limit: map['${prefix}limit'],
+      amountLimit: map['${prefix}amount_limit'],
       invoiceClosingDay: map['${prefix}invoice_closing_date'],
       invoiceDueDay: map['${prefix}invoice_due_date'],
       brand: CardBrandEnum.getByValue(map['${prefix}brand'])!,

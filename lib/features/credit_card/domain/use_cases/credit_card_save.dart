@@ -12,9 +12,10 @@ class CreditCardSave implements ICreditCardSave {
   @override
   Future<CreditCardEntity> save(CreditCardEntity entity) async {
     if (entity.description.trim().isEmpty) throw ValidationException(R.strings.uninformedDescription);
-    if (entity.limit <= 0) throw ValidationException(R.strings.greaterThanZero);
+    if (entity.amountLimit <= 0) throw ValidationException(R.strings.greaterThanZero);
     if (entity.invoiceClosingDay <= 0) throw ValidationException(R.strings.greaterThanZero);
     if (entity.invoiceDueDay <= 0) throw ValidationException(R.strings.greaterThanZero);
+    if (entity.invoiceClosingDay > 31 || entity.invoiceDueDay > 31) throw ValidationException('${R.strings.lessThan} 31');
     if (entity.brand == null) return throw ValidationException(R.strings.uninformedCardBrand);
     if (entity.idAccount == null) return throw ValidationException(R.strings.uninformedAccount);
 

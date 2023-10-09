@@ -6,8 +6,6 @@ class InputGreaterThanValueValidator {
 
   InputGreaterThanValueValidator([this.value = 0]);
 
-  String get message => R.strings.greaterThan + value.toString();
-
   String? validate(String? value) {
     if (value == null || value.isEmpty) return R.strings.requiredField;
 
@@ -15,7 +13,7 @@ class InputGreaterThanValueValidator {
 
     if (valueNum == null) return R.strings.invalidValue;
 
-    if (valueNum <= this.value) return "${R.strings.greaterThan} ${this.value.removeTrailingZeros()}.";
+    if (valueNum <= this.value) return '${R.strings.greaterThan} ${this.value.removeTrailingZeros()}.';
 
     return null;
   }

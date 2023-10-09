@@ -1,5 +1,6 @@
 import 'package:finan_master_app/features/account/presentation/ui/accounts_list_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/categories_list_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_cards_list_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +17,7 @@ class NavDrawer extends StatefulWidget {
 class _NavDrawerState extends State<NavDrawer> with ThemeContext {
   Map<int, NavigationDrawerDestination> get destinations => {
     CategoriesListPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.categories), icon: const Icon(Icons.category_outlined), selectedIcon: const Icon(Icons.category)),
-    1: NavigationDrawerDestination(label: Text(strings.cards), icon: const Icon(Icons.credit_card_outlined), selectedIcon: const Icon(Icons.credit_card)),
+    CreditCardsPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.creditCards), icon: const Icon(Icons.credit_card_outlined), selectedIcon: const Icon(Icons.credit_card)),
     AccountsListPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.accounts), icon: const Icon(Icons.account_balance_outlined), selectedIcon: const Icon(Icons.account_balance)),
     3: NavigationDrawerDestination(label: Text(strings.backup), icon: const Icon(Icons.backup_outlined), selectedIcon: const Icon(Icons.backup))
   };
@@ -25,6 +26,9 @@ class _NavDrawerState extends State<NavDrawer> with ThemeContext {
     switch (index) {
       case CategoriesListPage.indexDrawer:
         context.goNamed(CategoriesListPage.route);
+        break;
+      case CreditCardsPage.indexDrawer:
+        context.goNamed(CreditCardsPage.route);
         break;
       case AccountsListPage.indexDrawer:
         context.goNamed(AccountsListPage.route);
@@ -46,7 +50,7 @@ class _NavDrawerState extends State<NavDrawer> with ThemeContext {
           ),
         ),
         destinations[CategoriesListPage.indexDrawer]!,
-        destinations[1]!,
+        destinations[CreditCardsPage.indexDrawer]!,
         destinations[AccountsListPage.indexDrawer]!,
         const Divider(),
         destinations[3]!,

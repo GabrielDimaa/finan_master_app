@@ -6,6 +6,7 @@ import 'package:finan_master_app/features/category/domain/entities/category_enti
 import 'package:finan_master_app/features/category/presentation/ui/categories_list_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/category_form_page.dart';
 import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_cards_list_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
@@ -89,6 +90,12 @@ sealed class AppRouter {
                   name: CategoriesListPage.route,
                   path: '/${CategoriesListPage.route}',
                   builder: (_, __) => const CategoriesListPage(),
+                ),
+                GoRoute(
+                  parentNavigatorKey: _homeNavigatorKey,
+                  name: CreditCardsPage.route,
+                  path: '/${CreditCardsPage.route}',
+                  builder: (_, __) => const CreditCardsPage(),
                 ),
                 GoRoute(
                   parentNavigatorKey: _homeNavigatorKey,
