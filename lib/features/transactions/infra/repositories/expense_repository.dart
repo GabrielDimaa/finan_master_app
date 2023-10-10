@@ -30,4 +30,14 @@ class ExpenseRepository implements IExpenseRepository {
 
     return ExpenseFactory.toEntity(result);
   }
+
+  @override
+  Future<void> delete(ExpenseEntity entity) async {
+    final ExpenseModel model = ExpenseFactory.fromEntity(entity);
+
+    await _dbTransaction.openTransaction((txn) async {
+      await _expenseLocalDataSource.delete(model, txn: txn);
+      await _transactionLocalDataSource.delete(model.transaction, txn: txn);
+    });
+  }
 }

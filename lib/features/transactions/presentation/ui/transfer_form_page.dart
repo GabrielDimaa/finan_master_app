@@ -85,7 +85,7 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
                   if (!state.transfer.isNew)
                     IconButton(
                       tooltip: strings.delete,
-                      onPressed: null,
+                      onPressed: delete,
                       icon: const Icon(Icons.delete_outline),
                     ),
                 ],
@@ -210,6 +210,20 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
         if (!mounted) return;
         context.pop(FormResultNavigation.save(notifier.transfer));
       }
+    } catch (e) {
+      await ErrorDialog.show(context, e.toString());
+    }
+  }
+
+  Future<void> delete() async {
+    if (initialLoadingNotifier.value || notifier.isLoading) return;
+
+    try {
+      await notifier.delete();
+      if (notifier.value is ErrorTransferState) throw Exception((notifier.value as ErrorTransferState).message);
+
+      if (!mounted) return;
+      context.pop(FormResultNavigation.delete());
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
     }

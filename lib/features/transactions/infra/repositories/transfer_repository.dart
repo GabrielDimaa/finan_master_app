@@ -31,4 +31,15 @@ class TransferRepository implements ITransferRepository {
 
     return TransferFactory.toEntity(result);
   }
+
+  @override
+  Future<void> delete(TransferEntity entity) async {
+    final TransferModel model = TransferFactory.fromEntity(entity);
+
+    await _dbTransaction.openTransaction((txn) async {
+      await _transferLocalDataSource.upsert(model, txn: txn);
+      await _transactionLocalDataSource.upsert(model.transactionFrom, txn: txn);
+      await _transactionLocalDataSource.upsert(model.transactionTo, txn: txn);
+    });
+  }
 }

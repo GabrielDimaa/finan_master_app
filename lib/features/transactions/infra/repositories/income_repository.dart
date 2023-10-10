@@ -30,4 +30,14 @@ class IncomeRepository implements IIncomeRepository {
 
     return IncomeFactory.toEntity(result);
   }
+
+  @override
+  Future<void> delete(IncomeEntity entity) async {
+    final IncomeModel model = IncomeFactory.fromEntity(entity);
+
+    await _dbTransaction.openTransaction((txn) async {
+      await _incomeLocalDataSource.delete(model, txn: txn);
+      await _transactionLocalDataSource.delete(model.transaction, txn: txn);
+    });
+  }
 }

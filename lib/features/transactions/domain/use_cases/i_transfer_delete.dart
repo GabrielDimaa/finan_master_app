@@ -1,7 +1,5 @@
 import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
 
-abstract interface class ITransferRepository {
-  Future<TransferEntity> save(TransferEntity entity);
-
+abstract interface class ITransferDelete {
   Future<void> delete(TransferEntity entity);
 }

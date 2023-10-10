@@ -101,7 +101,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                   if (!state.expense.isNew)
                     IconButton(
                       tooltip: strings.delete,
-                      onPressed: null,
+                      onPressed: delete,
                       icon: const Icon(Icons.delete_outline),
                     ),
                 ],
@@ -247,6 +247,20 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
         if (!mounted) return;
         context.pop(FormResultNavigation.save(notifier.expense));
       }
+    } catch (e) {
+      await ErrorDialog.show(context, e.toString());
+    }
+  }
+
+  Future<void> delete() async {
+    if (initialLoadingNotifier.value || notifier.isLoading) return;
+
+    try {
+      await notifier.delete();
+      if (notifier.value is ErrorExpenseState) throw Exception((notifier.value as ErrorExpenseState).message);
+
+      if (!mounted) return;
+      context.pop(FormResultNavigation.delete());
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
     }
