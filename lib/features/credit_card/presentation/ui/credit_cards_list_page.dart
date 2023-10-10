@@ -27,6 +27,13 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
+  void initState() {
+    super.initState();
+
+    notifier.findAll();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,

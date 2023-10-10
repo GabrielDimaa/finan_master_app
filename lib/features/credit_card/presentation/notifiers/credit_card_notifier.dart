@@ -31,12 +31,22 @@ class CreditCardNotifier extends ValueNotifier<CreditCardState> {
   }
 
   Future<void> save() async {
-    value = value.setSaving();
-    await _creditCardSave.save(creditCard);
+    try {
+      value = value.setSaving();
+      await _creditCardSave.save(creditCard);
+      value = value.changedCreditCard();
+    } catch (e) {
+      value = value.setError(e.toString());
+    }
   }
 
   Future<void> delete() async {
-    value = value.setDeleting();
-    await _creditCardDelete.delete(creditCard);
+    try {
+      value = value.setDeleting();
+      await _creditCardDelete.delete(creditCard);
+      value = value.changedCreditCard();
+    } catch (e) {
+      value = value.setError(e.toString());
+    }
   }
 }

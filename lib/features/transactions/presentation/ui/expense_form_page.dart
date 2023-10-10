@@ -11,6 +11,7 @@ import 'package:finan_master_app/features/category/presentation/states/categorie
 import 'package:finan_master_app/features/category/presentation/ui/components/categories_list_bottom_sheet.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/expense_notifier.dart';
+import 'package:finan_master_app/features/transactions/presentation/states/expense_state.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
@@ -68,18 +69,14 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
           categoriesNotifier.findAll(type: CategoryTypeEnum.expense),
           accountsNotifier.findAll(),
         ]);
+
+        if (categoriesNotifier.value is ErrorCategoriesState) throw Exception((categoriesNotifier.value as ErrorCategoriesState).message);
+        if (accountsNotifier.value is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
+      } catch (e) {
+        if (!mounted) return;
+        ErrorDialog.show(context, e.toString());
       } finally {
         initialLoadingNotifier.value = false;
-      }
-
-      if (!mounted) return;
-
-      if (categoriesNotifier.value is ErrorCategoriesState) {
-        ErrorDialog.show(context, (categoriesNotifier.value as ErrorCategoriesState).message);
-      }
-
-      if (accountsNotifier.value is ErrorAccountsState) {
-        ErrorDialog.show(context, (accountsNotifier.value as ErrorAccountsState).message);
       }
     });
   }
@@ -101,7 +98,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                     onPressed: save,
                     child: Text(strings.save),
                   ),
-                  if (widget.expense?.isNew == false)
+                  if (!state.expense.isNew)
                     IconButton(
                       tooltip: strings.delete,
                       onPressed: null,
@@ -245,6 +242,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
         formKey.currentState?.save();
 
         await notifier.save();
+        if (notifier.value is ErrorExpenseState) throw Exception((notifier.value as ErrorExpenseState).message);
 
         if (!mounted) return;
         context.pop(FormResultNavigation.save(notifier.expense));

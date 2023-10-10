@@ -1,6 +1,7 @@
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
+import 'package:finan_master_app/features/account/presentation/states/account_state.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/financial_institutions.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
@@ -103,7 +104,7 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
                 const Divider(),
                 GroupTile(
                   title: strings.financialInstitution,
-                  onTap: selectFinancialInstituition,
+                  onTap: selectFinancialInstitution,
                   enabled: !notifier.isLoading,
                   tile: state.account.financialInstitution == null
                       ? ListTile(
@@ -143,6 +144,7 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
         formKey.currentState?.save();
 
         await notifier.save();
+        if (notifier.value is ErrorAccountState) throw Exception((notifier.value as ErrorAccountState).message);
 
         if (!mounted) return;
         context.pop(FormResultNavigation.save(notifier.account));
@@ -157,6 +159,7 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
 
     try {
       await notifier.delete();
+      if (notifier.value is ErrorAccountState) throw Exception((notifier.value as ErrorAccountState).message);
 
       if (!mounted) return;
       context.pop(FormResultNavigation<AccountEntity>.delete());
@@ -165,7 +168,7 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
     }
   }
 
-  Future<void> selectFinancialInstituition() async {
+  Future<void> selectFinancialInstitution() async {
     final FinancialInstitutionEnum? financialInstitution = await FinancialInstitutions.show(context: context, financialInstitution: notifier.account.financialInstitution);
     if (financialInstitution == null) return;
 

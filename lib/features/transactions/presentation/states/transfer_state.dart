@@ -14,6 +14,8 @@ sealed class TransferState {
   TransferState changedTransfer() => ChangedTransferState(transfer: transfer);
 
   TransferState setDeleting() => DeletingTransferState(transfer: transfer);
+
+  TransferState setError(String message) => ErrorTransferState(message, transfer: transfer);
 }
 
 class StartTransferState extends TransferState {
@@ -39,4 +41,10 @@ class SavingTransferState extends TransferState {
 
 class DeletingTransferState extends TransferState {
   const DeletingTransferState({required super.transfer});
+}
+
+class ErrorTransferState extends TransferState {
+  final String message;
+
+  const ErrorTransferState(this.message, {required super.transfer});
 }

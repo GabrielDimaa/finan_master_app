@@ -14,6 +14,8 @@ sealed class IncomeState {
   IncomeState changedIncome() => ChangedIncomeState(income: income);
 
   IncomeState setDeleting() => DeletingIncomeState(income: income);
+
+  IncomeState setError(String message) => ErrorIncomeState(message, income: income);
 }
 
 class StartIncomeState extends IncomeState {
@@ -41,4 +43,10 @@ class SavingIncomeState extends IncomeState {
 
 class DeletingIncomeState extends IncomeState {
   const DeletingIncomeState({required super.income});
+}
+
+class ErrorIncomeState extends IncomeState {
+  final String message;
+
+  const ErrorIncomeState(this.message, {required super.income});
 }

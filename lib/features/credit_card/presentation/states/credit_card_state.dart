@@ -14,6 +14,8 @@ sealed class CreditCardState {
   CreditCardState setSaving() => SavingCreditCardState(creditCard: creditCard);
 
   CreditCardState setDeleting() => DeletingCreditCardState(creditCard: creditCard);
+
+  CreditCardState setError(String message) => ErrorCreditCardState(message, creditCard: creditCard);
 }
 
 class StartCreditCardState extends CreditCardState {
@@ -43,4 +45,10 @@ class SavingCreditCardState extends CreditCardState {
 
 class DeletingCreditCardState extends CreditCardState {
   const DeletingCreditCardState({required super.creditCard});
+}
+
+class ErrorCreditCardState extends CreditCardState {
+  final String message;
+
+  const ErrorCreditCardState(this.message, {required super.creditCard});
 }

@@ -31,8 +31,13 @@ class ExpenseNotifier extends ValueNotifier<ExpenseState> {
     value = value.changedExpense();
   }
 
-  Future<ExpenseEntity> save() async {
-    value = value.setSaving();
-    return await _expenseSave.save(expense);
+  Future<void> save() async {
+    try {
+      value = value.setSaving();
+      await _expenseSave.save(expense);
+      value = value.changedExpense();
+    } catch (e) {
+      value = value.setError(e.toString());
+    }
   }
 }

@@ -31,8 +31,13 @@ class TransferNotifier extends ValueNotifier<TransferState> {
     value = value.changedTransfer();
   }
 
-  Future<TransferEntity> save() async {
-    value = value.setSaving();
-    return await _transferSave.save(transfer);
+  Future<void> save() async {
+    try {
+      value = value.setSaving();
+      await _transferSave.save(transfer);
+      value = value.changedTransfer();
+    } catch (e) {
+      value = value.setError(e.toString());
+    }
   }
 }

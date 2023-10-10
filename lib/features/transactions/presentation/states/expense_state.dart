@@ -14,6 +14,8 @@ sealed class ExpenseState {
   ExpenseState setSaving() => SavingExpenseState(expense: expense);
 
   ExpenseState setDeleting() => DeletingExpenseState(expense: expense);
+
+  ExpenseState setError(String message) => ErrorExpenseState(message, expense: expense);
 }
 
 class StartExpenseState extends ExpenseState {
@@ -41,4 +43,10 @@ class SavingExpenseState extends ExpenseState {
 
 class DeletingExpenseState extends ExpenseState {
   const DeletingExpenseState({required super.expense});
+}
+
+class ErrorExpenseState extends ExpenseState {
+  final String message;
+
+  const ErrorExpenseState(this.message, {required super.expense});
 }

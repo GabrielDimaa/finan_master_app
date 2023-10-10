@@ -31,8 +31,13 @@ class IncomeNotifier extends ValueNotifier<IncomeState> {
     value = value.changedIncome();
   }
 
-  Future<IncomeEntity> save() async {
-    value = value.setSaving();
-    return await _incomeSave.save(income);
+  Future<void> save() async {
+    try {
+      value = value.setSaving();
+      await _incomeSave.save(income);
+      value = value.changedIncome();
+    } catch (e) {
+      value = value.setError(e.toString());
+    }
   }
 }

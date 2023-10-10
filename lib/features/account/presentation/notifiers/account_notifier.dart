@@ -32,13 +32,23 @@ class AccountNotifier extends ValueNotifier<AccountState> {
   }
 
   Future<void> save() async {
-    value = value.setSaving();
-    await _accountSave.save(account);
+    try {
+      value = value.setSaving();
+      await _accountSave.save(account);
+      value = value.changedAccount();
+    } catch (e) {
+      value = value.setError(e.toString());
+    }
   }
 
   Future<void> delete() async {
-    value = value.setDeleting();
-    await _accountDelete.delete(account);
+    try {
+      value = value.setDeleting();
+      await _accountDelete.delete(account);
+      value = value.changedAccount();
+    } catch (e) {
+      value = value.setError(e.toString());
+    }
   }
 
   Future<void> readjustBalance({required double readjustmentValue, required ReadjustmentOptionEnum option, required String? description}) async {

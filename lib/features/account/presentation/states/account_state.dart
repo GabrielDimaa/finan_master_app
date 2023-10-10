@@ -14,6 +14,8 @@ sealed class AccountState {
   AccountState setSaving() => SavingAccountState(account: account);
 
   AccountState setDeleting() => DeletingAccountState(account: account);
+
+  AccountState setError(String message) => ErrorAccountState(message, account: account);
 }
 
 class StartAccountState extends AccountState {
@@ -42,4 +44,10 @@ class SavingAccountState extends AccountState {
 
 class DeletingAccountState extends AccountState {
   const DeletingAccountState({required super.account});
+}
+
+class ErrorAccountState extends AccountState {
+  final String message;
+
+  ErrorAccountState(this.message, {required super.account});
 }

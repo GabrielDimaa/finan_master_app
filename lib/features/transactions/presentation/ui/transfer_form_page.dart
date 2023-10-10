@@ -5,6 +5,7 @@ import 'package:finan_master_app/features/account/presentation/notifiers/account
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/accounts_list_bottom_sheet.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transfer_notifier.dart';
+import 'package:finan_master_app/features/transactions/presentation/states/transfer_state.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
@@ -52,15 +53,14 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
     Future(() async {
       try {
         initialLoadingNotifier.value = true;
-        accountsNotifier.findAll();
+
+        await accountsNotifier.findAll();
+        if (accountsNotifier.value is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
+      } catch (e) {
+        if (!mounted) return;
+        ErrorDialog.show(context, e.toString());
       } finally {
         initialLoadingNotifier.value = false;
-      }
-
-      if (!mounted) return;
-
-      if (accountsNotifier.value is ErrorAccountsState) {
-        ErrorDialog.show(context, (accountsNotifier.value as ErrorAccountsState).message);
       }
     });
   }
@@ -82,6 +82,12 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
                     onPressed: save,
                     child: Text(strings.save),
                   ),
+                  if (!state.transfer.isNew)
+                    IconButton(
+                      tooltip: strings.delete,
+                      onPressed: null,
+                      icon: const Icon(Icons.delete_outline),
+                    ),
                 ],
               ),
               body: Builder(
@@ -199,6 +205,7 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
         formKey.currentState?.save();
 
         await notifier.save();
+        if (notifier.value is ErrorTransferState) throw Exception((notifier.value as ErrorTransferState).message);
 
         if (!mounted) return;
         context.pop(FormResultNavigation.save(notifier.transfer));

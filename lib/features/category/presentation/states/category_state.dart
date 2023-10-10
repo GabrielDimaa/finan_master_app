@@ -14,6 +14,8 @@ sealed class CategoryState {
   CategoryState setSaving() => SavingCategoryState(category: category);
 
   CategoryState setDeleting() => DeletingCategoryState(category: category);
+
+  CategoryState setError(String message) => ErrorCategoryState(message, category: category);
 }
 
 class StartCategoryState extends CategoryState {
@@ -41,4 +43,10 @@ class SavingCategoryState extends CategoryState {
 
 class DeletingCategoryState extends CategoryState {
   const DeletingCategoryState({required super.category});
+}
+
+class ErrorCategoryState extends CategoryState {
+  final String message;
+
+  const ErrorCategoryState(this.message, {required super.category});
 }
