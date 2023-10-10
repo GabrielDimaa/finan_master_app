@@ -13,7 +13,7 @@ class ExpenseSave implements IExpenseSave {
   Future<ExpenseEntity> save(ExpenseEntity entity) async {
     if (entity.description.trim().isEmpty) throw ValidationException(R.strings.description);
     if (entity.idCategory == null) throw ValidationException(R.strings.uninformedCategory);
-    if (entity.transaction.amount <= 0) throw ValidationException(R.strings.greaterThanZero);
+    if (entity.transaction.amount >= 0) throw ValidationException(R.strings.lessThanZero);
     if (entity.transaction.idAccount == null) throw ValidationException(R.strings.uninformedAccount);
 
     return await _repository.save(entity);

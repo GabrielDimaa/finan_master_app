@@ -17,7 +17,7 @@ class IncomeEntity extends Entity implements ITransactionEntity {
 
   set transaction(TransactionEntity value) => _transaction = value..type = TransactionTypeEnum.income;
 
-  set amount(double value) => _transaction.amount = value * -1;
+  set amount(double value) => _transaction.amount = value;
 
   @override
   double get amount => transaction.amount;

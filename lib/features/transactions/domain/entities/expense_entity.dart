@@ -17,6 +17,8 @@ class ExpenseEntity extends Entity implements ITransactionEntity {
 
   set transaction(TransactionEntity value) => _transaction = value..type = TransactionTypeEnum.expense;
 
+  set amount(double value) => _transaction.amount = value * -1;
+
   @override
   double get amount => transaction.amount;
 

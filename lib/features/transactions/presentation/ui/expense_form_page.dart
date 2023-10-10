@@ -129,7 +129,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                 keyboardType: TextInputType.number,
                                 textInputAction: TextInputAction.next,
                                 enabled: !notifier.isLoading,
-                                onSaved: (String? value) => state.expense.transaction.amount = (value ?? '').moneyToDouble(),
+                                onSaved: (String? value) => state.expense.amount = (value ?? '').moneyToDouble(),
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
                               ),
                               const Spacing.y(),
