@@ -4,15 +4,26 @@ import 'package:finan_master_app/features/account/domain/enums/financial_institu
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_delete.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_save.dart';
 import 'package:finan_master_app/features/account/presentation/states/account_state.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transaction_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/enums/transaction_type_enum.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_save.dart';
+import 'package:finan_master_app/shared/classes/constants.dart';
 import 'package:flutter/foundation.dart';
 
 class AccountNotifier extends ValueNotifier<AccountState> {
   final IAccountSave _accountSave;
   final IAccountDelete _accountDelete;
+  final IIncomeSave _incomeSave;
+  final IExpenseSave _expenseSave;
 
-  AccountNotifier({required IAccountSave accountSave, required IAccountDelete accountDelete})
+  AccountNotifier({required IAccountSave accountSave, required IAccountDelete accountDelete, required IIncomeSave incomeSave, required IExpenseSave expenseSave})
       : _accountSave = accountSave,
         _accountDelete = accountDelete,
+        _incomeSave = incomeSave,
+        _expenseSave = expenseSave,
         super(AccountState.start());
 
   AccountEntity get account => value.account;
@@ -51,14 +62,50 @@ class AccountNotifier extends ValueNotifier<AccountState> {
     }
   }
 
-  Future<void> readjustBalance({required double readjustmentValue, required ReadjustmentOptionEnum option, required String? description}) async {
-    value = value.setSaving();
+  Future<void> readjustBalance({required double readjustmentValue, required ReadjustmentOptionEnum option, required String description}) async {
+    try {
+      value = value.setSaving();
 
-    if (option == ReadjustmentOptionEnum.changeInitialValue) {
-      final AccountEntity accountSaved = await _accountSave.readjustBalance(account, readjustmentValue);
-      value.setAccount(accountSaved);
-    } else {
-      //TODO: Criar transação de reajuste.
+      if (option == ReadjustmentOptionEnum.changeInitialAmount) {
+        final AccountEntity accountSaved = await _accountSave.changeInitialAmount(entity: account, readjustmentValue: readjustmentValue);
+        value = value.setAccount(accountSaved);
+      } else {
+        if (readjustmentValue > 0) {
+          final IncomeEntity income = IncomeEntity(
+            id: null,
+            createdAt: null,
+            deletedAt: null,
+            description: description,
+            observation: null,
+            idCategory: categoryOthersUuidIncome,
+            transaction: null,
+          );
+
+          income.amount = readjustmentValue.abs();
+          income.transaction.idAccount = account.id;
+
+          await _incomeSave.save(income);
+        } else {
+          final ExpenseEntity expense = ExpenseEntity(
+            id: null,
+            createdAt: null,
+            deletedAt: null,
+            description: description,
+            observation: null,
+            idCategory: categoryOthersUuidExpense,
+            transaction: null,
+          );
+
+          expense.amount = readjustmentValue.abs();
+          expense.transaction.idAccount = account.id;
+
+          await _expenseSave.save(expense);
+        }
+
+        value = value.changedAccount();
+      }
+    } catch (e) {
+      value = value.setError(e.toString());
     }
   }
 }

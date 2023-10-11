@@ -1,4 +1,4 @@
 enum ReadjustmentOptionEnum {
   createTransaction,
-  changeInitialValue,
+  changeInitialAmount,
 }

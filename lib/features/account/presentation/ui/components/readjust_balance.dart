@@ -1,6 +1,7 @@
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/enums/adjustment_option_enum.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
+import 'package:finan_master_app/features/account/presentation/states/account_state.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/confirm_readjust_balance_dialog.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
@@ -146,20 +147,20 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                                       margin: EdgeInsets.zero,
                                       clipBehavior: Clip.hardEdge,
                                       shape: RoundedRectangleBorder(
-                                        side: BorderSide(color: value == ReadjustmentOptionEnum.changeInitialValue ? colorScheme.primary : colorScheme.outline),
+                                        side: BorderSide(color: value == ReadjustmentOptionEnum.changeInitialAmount ? colorScheme.primary : colorScheme.outline),
                                         borderRadius: const BorderRadius.all(Radius.circular(12)),
                                       ),
                                       child: InkWell(
                                         onTap: () {
                                           if (notifier.isLoading) return;
-                                          readjustmentOption.value = ReadjustmentOptionEnum.changeInitialValue;
+                                          readjustmentOption.value = ReadjustmentOptionEnum.changeInitialAmount;
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.all(16),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(strings.changeInitialAmount, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOptionEnum.changeInitialValue ? colorScheme.primary : null)),
+                                              Text(strings.changeInitialAmount, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOptionEnum.changeInitialAmount ? colorScheme.primary : null)),
                                               const Spacing.y(0.5),
                                               Text(strings.changeInitialAmountExplication, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
                                             ],
@@ -206,14 +207,11 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
           return;
         }
 
-        final bool confirm = await ConfirmReadjustBalanceDialog.show(
-          context: context,
-          value: readjustmentOption.value == ReadjustmentOptionEnum.changeInitialValue ? readjustmentValue : difference,
-          option: readjustmentOption.value,
-        );
+        final bool confirm = await ConfirmReadjustBalanceDialog.show(context: context, accountEntity: notifier.account, value: difference, option: readjustmentOption.value);
         if (!confirm) return;
 
-        await notifier.readjustBalance(readjustmentValue: readjustmentValue, option: readjustmentOption.value, description: transactionDescription);
+        await notifier.readjustBalance(readjustmentValue: difference, option: readjustmentOption.value, description: transactionDescription?.isNotEmpty == true ? transactionDescription! : strings.readjustmentTransaction);
+        if (notifier.value is ErrorAccountState) throw Exception((notifier.value as ErrorAccountState).message);
 
         if (!mounted) return;
         context.pop(notifier.account);

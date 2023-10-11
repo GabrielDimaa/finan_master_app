@@ -1,6 +1,7 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/i_category_local_data_source.dart';
 import 'package:finan_master_app/features/category/infra/models/category_model.dart';
+import 'package:finan_master_app/shared/classes/constants.dart';
 import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
@@ -38,7 +39,7 @@ class CategoryLocalDataSource extends LocalDataSource<CategoryModel> implements 
         ('${const Uuid().v1()}', '$createdAt', '${R.strings.categorySalary}', ${CategoryTypeEnum.income.value}, 'FF33B047', ${Icons.monetization_on_outlined.codePoint}),
         ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryInvestments}', ${CategoryTypeEnum.income.value}, 'FF109089', ${Icons.trending_up_outlined.codePoint}),
         ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryCashback}', ${CategoryTypeEnum.income.value}, 'FF98A31A', ${Icons.currency_exchange_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryOthers}', ${CategoryTypeEnum.income.value}, 'FF626262', ${Icons.more_outlined.codePoint});
+        ('$categoryOthersUuidIncome', '$createdAt', '${R.strings.categoryOthers}', ${CategoryTypeEnum.income.value}, 'FF626262', ${Icons.more_outlined.codePoint});
     ''');
 
     batch.execute('''
@@ -57,7 +58,7 @@ class CategoryLocalDataSource extends LocalDataSource<CategoryModel> implements 
         ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryHealth}', ${CategoryTypeEnum.expense.value}, 'FF9D4141', ${Icons.medical_services_outlined.codePoint}),
         ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryRestaurant}', ${CategoryTypeEnum.expense.value}, 'FFFE4848', ${Icons.fastfood_outlined.codePoint}),
         ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryEducation}', ${CategoryTypeEnum.expense.value}, 'FF374F51', ${Icons.school_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryOthers}', ${CategoryTypeEnum.expense.value}, 'FF626262', ${Icons.more_outlined.codePoint});
+        ('$categoryOthersUuidExpense', '$createdAt', '${R.strings.categoryOthers}', ${CategoryTypeEnum.expense.value}, 'FF626262', ${Icons.more_outlined.codePoint});
     ''');
   }
 
