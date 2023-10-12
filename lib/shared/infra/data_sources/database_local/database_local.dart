@@ -42,6 +42,7 @@ final class DatabaseLocal implements IDatabaseLocal {
     return _instance!;
   }
 
+  @override
   Future<File> getFileDatabase() async {
     //A conexão deve ser fechada antes de obter o arquivo do banco de dados.
     await database.close();

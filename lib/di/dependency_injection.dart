@@ -10,6 +10,11 @@ import 'package:finan_master_app/features/account/infra/data_sources/i_account_l
 import 'package:finan_master_app/features/account/infra/repositories/account_repository.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
+import 'package:finan_master_app/features/backup/domain/repositories/i_backup_repository.dart';
+import 'package:finan_master_app/features/backup/domain/use_cases/backup.dart';
+import 'package:finan_master_app/features/backup/domain/use_cases/i_backup.dart';
+import 'package:finan_master_app/features/backup/infra/repositories/backup_repository.dart';
+import 'package:finan_master_app/features/backup/presentation/notifiers/backup_notifier.dart';
 import 'package:finan_master_app/features/category/domain/repositories/i_category_repository.dart';
 import 'package:finan_master_app/features/category/domain/use_cases/category_delete.dart';
 import 'package:finan_master_app/features/category/domain/use_cases/category_find.dart';
@@ -80,6 +85,8 @@ import 'package:finan_master_app/shared/infra/data_sources/cache_local/cache_loc
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/i_cache_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
+import 'package:finan_master_app/shared/infra/drivers/share/i_share_driver.dart';
+import 'package:finan_master_app/shared/infra/drivers/share/share_driver.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -92,6 +99,9 @@ final class DependencyInjection {
 
   Future<void> setup() async {
     final GetIt getIt = GetIt.instance;
+
+    //Drivers
+    getIt.registerFactory<IShareDriver>(() => ShareDriver());
 
     //Data Sources
     final DatabaseLocal databaseLocal = await DatabaseLocal.getInstance();
@@ -118,11 +128,13 @@ final class DependencyInjection {
     getIt.registerFactory<IIncomeRepository>(() => IncomeRepository(dbTransaction: databaseLocal.transactionInstance(), incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>()));
     getIt.registerFactory<ITransactionRepository>(() => TransactionRepository(transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
     getIt.registerFactory<ITransferRepository>(() => TransferRepository(dbTransaction: databaseLocal.transactionInstance(), transferLocalDataSource: getIt.get<ITransferLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>()));
+    getIt.registerFactory<IBackupRepository>(() => BackupRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>(), shareDriver: getIt.get<IShareDriver>()));
 
     //Use cases
     getIt.registerFactory<IAccountDelete>(() => AccountDelete(repository: getIt.get<IAccountRepository>()));
     getIt.registerFactory<IAccountFind>(() => AccountFind(repository: getIt.get<IAccountRepository>()));
     getIt.registerFactory<IAccountSave>(() => AccountSave(repository: getIt.get<IAccountRepository>()));
+    getIt.registerFactory<IBackup>(() => Backup(repository: getIt.get<IBackupRepository>()));
     getIt.registerFactory<ICategoryDelete>(() => CategoryDelete(repository: getIt.get<ICategoryRepository>()));
     getIt.registerFactory<ICategoryFind>(() => CategoryFind(repository: getIt.get<ICategoryRepository>()));
     getIt.registerFactory<ICategorySave>(() => CategorySave(repository: getIt.get<ICategoryRepository>()));
@@ -142,6 +154,7 @@ final class DependencyInjection {
     //Notifiers
     getIt.registerFactory<AccountNotifier>(() => AccountNotifier(accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>(), incomeSave: getIt.get<IIncomeSave>(), expenseSave: getIt.get<IExpenseSave>()));
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
+    getIt.registerFactory<BackupNotifier>(() => BackupNotifier(backup: getIt.get<IBackup>()));
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
     getIt.registerFactory<CategoryNotifier>(() => CategoryNotifier(categorySave: getIt.get<ICategorySave>(), categoryDelete: getIt.get<ICategoryDelete>()));
     getIt.registerFactory<CreditCardNotifier>(() => CreditCardNotifier(creditCardSave: getIt.get<ICreditCardSave>(), creditCardDelete: getIt.get<ICreditCardDelete>()));

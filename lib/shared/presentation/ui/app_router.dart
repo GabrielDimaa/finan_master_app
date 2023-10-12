@@ -2,6 +2,7 @@ import 'package:finan_master_app/features/account/domain/entities/account_entity
 import 'package:finan_master_app/features/account/presentation/ui/account_details_page.dart';
 import 'package:finan_master_app/features/account/presentation/ui/account_form_page.dart';
 import 'package:finan_master_app/features/account/presentation/ui/accounts_list_page.dart';
+import 'package:finan_master_app/features/backup/presentation/ui/backup_page.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/presentation/ui/categories_list_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/category_form_page.dart';
@@ -110,6 +111,12 @@ sealed class AppRouter {
                   name: AccountsListPage.route,
                   path: '/${AccountsListPage.route}',
                   builder: (_, __) => const AccountsListPage(),
+                ),
+                GoRoute(
+                  parentNavigatorKey: _homeNavigatorKey,
+                  name: BackupPage.route,
+                  path: '/${BackupPage.route}',
+                  builder: (_, __) => const BackupPage(),
                 ),
               ],
             ),

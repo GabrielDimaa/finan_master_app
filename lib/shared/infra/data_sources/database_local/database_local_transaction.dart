@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
@@ -111,5 +112,10 @@ class DatabaseLocalTransaction implements IDatabaseLocalTransaction, ITransactio
     } on DatabaseException catch (e, stackTrace) {
       throw DatabaseLocalException(e.toString(), e.getResultCode(), stackTrace);
     }
+  }
+
+  @override
+  Future<File> getFileDatabase() {
+    throw UnimplementedError();
   }
 }

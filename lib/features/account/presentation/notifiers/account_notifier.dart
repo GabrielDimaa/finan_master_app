@@ -6,8 +6,6 @@ import 'package:finan_master_app/features/account/domain/use_cases/i_account_sav
 import 'package:finan_master_app/features/account/presentation/states/account_state.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/transaction_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/enums/transaction_type_enum.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_save.dart';
 import 'package:finan_master_app/shared/classes/constants.dart';
