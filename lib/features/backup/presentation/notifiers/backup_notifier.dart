@@ -19,6 +19,8 @@ class BackupNotifier extends ValueNotifier<BackupState> {
 
   bool get isLoading => value is LoadingBackupState;
 
+  bool get isFinalized => value is FinalizedBackupState;
+
   void loadLastBackupDate() => lastBackupDate = _backup.findLastBackupDate();
 
   Future<void> backup() async {

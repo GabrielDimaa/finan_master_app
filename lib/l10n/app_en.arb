@@ -7,6 +7,7 @@
   "amount": "Amount",
   "backup": "Backup",
   "backupButton": "Backup",
+  "backupButtonFinalized": "Finalized",
   "backupSubtitleExplication": "Making backups is essential to keep your data protected against unexpected events.",
   "backupTitleExplication": "Preserve your important information!",
   "balanceReadjustment": "Balance readjustment",

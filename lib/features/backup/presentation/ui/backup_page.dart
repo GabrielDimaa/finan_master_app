@@ -56,9 +56,9 @@ class _BackupPageState extends State<BackupPage> with ThemeContext {
                   Text(strings.backupSubtitleExplication, style: textTheme.bodyMedium, textAlign: TextAlign.center),
                   const Spacing.y(4),
                   FilledButton.icon(
-                    onPressed: notifier.isLoading ? null : backup,
-                    icon: const Icon(Icons.file_download_outlined),
-                    label: Text(strings.backupButton),
+                    onPressed: notifier.isLoading || notifier.isFinalized ? null : backup,
+                    icon: notifier.isFinalized ? const Icon(Icons.check) : const Icon(Icons.file_download_outlined),
+                    label: notifier.isFinalized ? Text(strings.backupButtonFinalized) : Text(strings.backupButton),
                   ),
                   const Spacing.y(2),
                   Text('${strings.lastBackupDate}: ${notifier.lastBackupDate?.format() ?? strings.unrealized}', style: textTheme.bodySmall, textAlign: TextAlign.center),
