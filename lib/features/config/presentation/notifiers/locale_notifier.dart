@@ -30,6 +30,7 @@ class LocaleNotifier extends ValueNotifier<Locale> {
   void changeAndSave(Locale locale) {
     value = locale;
     save(locale);
+    AppLocale().changeLocale(value);
   }
 
   Future<void> save(Locale locale) => _configSave.saveLocale(locale);
