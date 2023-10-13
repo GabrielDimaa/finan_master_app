@@ -114,7 +114,12 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                                 child: TotalsTransactions(notifier: notifier),
                               ),
                               const Spacing.y(0.5),
-                              ListTransactions(state: state, categories: categoriesNotifier.value.categories, accounts: accountsNotifier.value.accounts),
+                              ListTransactions(
+                                state: state,
+                                categories: categoriesNotifier.value.categories,
+                                accounts: accountsNotifier.value.accounts,
+                                refreshTransactions: notifier.refreshTransactions,
+                              ),
                             ],
                           ),
                       },

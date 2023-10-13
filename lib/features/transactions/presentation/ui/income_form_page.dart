@@ -50,7 +50,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
   final CategoriesNotifier categoriesNotifier = GetIt.I.get<CategoriesNotifier>();
   final AccountsNotifier accountsNotifier = GetIt.I.get<AccountsNotifier>();
 
-  final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(true);
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController dateController = TextEditingController();
@@ -63,8 +63,6 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
 
     Future(() async {
       try {
-        initialLoadingNotifier.value = true;
-
         await Future.wait([
           categoriesNotifier.findAll(type: CategoryTypeEnum.income),
           accountsNotifier.findAll(),
@@ -72,6 +70,8 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
 
         if (categoriesNotifier.value is ErrorCategoriesState) throw Exception((categoriesNotifier.value as ErrorCategoriesState).message);
         if (accountsNotifier.value is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
+
+        if (widget.income != null) notifier.setIncome(widget.income!);
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());

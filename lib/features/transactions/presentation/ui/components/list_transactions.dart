@@ -5,19 +5,31 @@ import 'package:finan_master_app/features/transactions/domain/entities/i_transac
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
 import 'package:finan_master_app/features/transactions/presentation/states/transactions_state.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
+import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class ListTransactions extends StatelessWidget {
   final TransactionsState state;
   final List<CategoryEntity> categories;
   final List<AccountEntity> accounts;
+  final VoidCallback refreshTransactions;
 
-  const ListTransactions({Key? key, required this.state, required this.categories, required this.accounts}) : super(key: key);
+  const ListTransactions({
+    Key? key,
+    required this.state,
+    required this.categories,
+    required this.accounts,
+    required this.refreshTransactions,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +63,7 @@ class ListTransactions extends StatelessWidget {
                           Text(expense.transaction.date.formatDateToRelative()),
                         ],
                       ),
+                      onTap: () => goFormsPage(context: context, route: ExpenseFormPage.route, entity: expense),
                     );
                   },
                 ),
@@ -73,6 +86,7 @@ class ListTransactions extends StatelessWidget {
                           Text(income.transaction.date.formatDateToRelative()),
                         ],
                       ),
+                      onTap: () => goFormsPage(context: context, route: IncomeFormPage.route, entity: income),
                     );
                   },
                 ),
@@ -97,6 +111,7 @@ class ListTransactions extends StatelessWidget {
                               Text(transfer.transactionTo.date.formatDateToRelative()),
                             ],
                           ),
+                          onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),
                         ),
                         const Divider(),
                         ListTile(
@@ -115,6 +130,7 @@ class ListTransactions extends StatelessWidget {
                               Text(transfer.transactionFrom.date.formatDateToRelative()),
                             ],
                           ),
+                          onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),
                         ),
                       ],
                     );
@@ -127,5 +143,10 @@ class ListTransactions extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> goFormsPage({required BuildContext context, required String route, required ITransactionEntity entity}) async {
+    final FormResultNavigation? result = await context.pushNamed(route, extra: entity);
+    if (result != null) refreshTransactions();
   }
 }

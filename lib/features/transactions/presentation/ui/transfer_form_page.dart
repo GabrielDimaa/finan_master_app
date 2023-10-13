@@ -4,6 +4,7 @@ import 'package:finan_master_app/features/account/domain/enums/financial_institu
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/accounts_list_bottom_sheet.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transfer_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/states/transfer_state.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
@@ -29,7 +30,9 @@ import 'package:intl/intl.dart';
 class TransferFormPage extends StatefulWidget {
   static const route = 'transfer-form';
 
-  const TransferFormPage({Key? key}) : super(key: key);
+  final TransferEntity? transfer;
+
+  const TransferFormPage({Key? key, this.transfer}) : super(key: key);
 
   @override
   State<TransferFormPage> createState() => _TransferFormPageState();
@@ -39,7 +42,7 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
   final TransferNotifier notifier = GetIt.I.get<TransferNotifier>();
   final AccountsNotifier accountsNotifier = GetIt.I.get<AccountsNotifier>();
 
-  final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(true);
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController dateController = TextEditingController();
@@ -52,10 +55,10 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
 
     Future(() async {
       try {
-        initialLoadingNotifier.value = true;
-
         await accountsNotifier.findAll();
         if (accountsNotifier.value is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
+
+        if (widget.transfer != null) notifier.setTransfer(widget.transfer!);
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());
