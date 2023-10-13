@@ -16,7 +16,7 @@ class CategoryNotifier extends ValueNotifier<CategoryState> {
 
   CategoryEntity get category => value.category;
 
-  void updateCategory(CategoryEntity category) => value = value.updateCategory(category);
+  void setCategory(CategoryEntity category) => value = value.setCategory(category);
 
   void setType(CategoryTypeEnum? type) {
     value.category.type = type;

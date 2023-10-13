@@ -17,7 +17,7 @@ class IncomeNotifier extends ValueNotifier<IncomeState> {
 
   bool get isLoading => value is SavingIncomeState || value is DeletingIncomeState;
 
-  void updateExpense(IncomeEntity income) => value = value.updateIncome(income);
+  void setIncome(IncomeEntity income) => value = value.setIncome(income);
 
   void setCategory(String idCategory) {
     income.idCategory = idCategory;

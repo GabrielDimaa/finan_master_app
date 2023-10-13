@@ -7,7 +7,7 @@ sealed class CategoryState {
 
   factory CategoryState.start() => StartCategoryState();
 
-  CategoryState updateCategory(CategoryEntity category) => ChangedCategoryState(category: category);
+  CategoryState setCategory(CategoryEntity category) => ChangedCategoryState(category: category);
 
   CategoryState changedCategory() => ChangedCategoryState(category: category);
 

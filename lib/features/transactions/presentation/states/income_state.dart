@@ -7,7 +7,7 @@ sealed class IncomeState {
 
   factory IncomeState.start() => StartIncomeState();
 
-  IncomeState updateIncome(IncomeEntity income) => ChangedIncomeState(income: income);
+  IncomeState setIncome(IncomeEntity income) => ChangedIncomeState(income: income);
 
   IncomeState setSaving() => SavingIncomeState(income: income);
 

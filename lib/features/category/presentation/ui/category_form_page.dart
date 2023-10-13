@@ -36,7 +36,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> with ThemeContext {
   @override
   void initState() {
     super.initState();
-    if (widget.category != null) notifier.updateCategory(widget.category!);
+    if (widget.category != null) notifier.setCategory(widget.category!);
   }
 
   bool get isLoading => notifier.value is SavingCategoryState || notifier.value is DeletingCategoryState;

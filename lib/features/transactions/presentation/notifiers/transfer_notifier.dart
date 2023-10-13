@@ -17,7 +17,7 @@ class TransferNotifier extends ValueNotifier<TransferState> {
 
   bool get isLoading => value is SavingTransferState || value is DeletingTransferState;
 
-  void updateTransfer(TransferEntity transfer) => value = value.updateTransfer(transfer);
+  void setTransfer(TransferEntity transfer) => value = value.setTransfer(transfer);
 
   void setAccountFrom(String idAccount) {
     transfer.transactionFrom.idAccount = idAccount;

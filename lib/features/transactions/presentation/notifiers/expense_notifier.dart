@@ -17,7 +17,7 @@ class ExpenseNotifier extends ValueNotifier<ExpenseState> {
 
   bool get isLoading => value is SavingExpenseState || value is DeletingExpenseState;
 
-  void updateExpense(ExpenseEntity expense) => value = value.updateExpense(expense);
+  void setExpense(ExpenseEntity expense) => value = value.setExpense(expense);
 
   void setCategory(String idCategory) {
     expense.idCategory = idCategory;

@@ -7,7 +7,7 @@ sealed class ExpenseState {
 
   factory ExpenseState.start() => StartExpenseState();
 
-  ExpenseState updateExpense(ExpenseEntity expense) => ChangedExpenseState(expense: expense);
+  ExpenseState setExpense(ExpenseEntity expense) => ChangedExpenseState(expense: expense);
 
   ExpenseState changedExpense() => ChangedExpenseState(expense: expense);
 

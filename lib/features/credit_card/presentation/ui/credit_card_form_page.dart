@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
+import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/accounts_list_bottom_sheet.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/brand_card_enum.dart';
@@ -40,7 +41,7 @@ class CreditCardFormPage extends StatefulWidget {
 class _CreditCardFormPageState extends State<CreditCardFormPage> with ThemeContext {
   final CreditCardNotifier notifier = GetIt.I.get<CreditCardNotifier>();
   final AccountsNotifier accountsNotifier = GetIt.I.get<AccountsNotifier>();
-  final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(true);
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -50,11 +51,10 @@ class _CreditCardFormPageState extends State<CreditCardFormPage> with ThemeConte
 
     Future(() async {
       try {
-        initialLoadingNotifier.value = true;
+        await accountsNotifier.findAll();
+        if (accountsNotifier.value is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
 
         if (widget.creditCard != null) notifier.setCreditCard(widget.creditCard!);
-
-        await accountsNotifier.findAll();
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());

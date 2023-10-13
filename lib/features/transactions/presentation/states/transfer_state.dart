@@ -7,7 +7,7 @@ sealed class TransferState {
 
   factory TransferState.start() => StartTransferState();
 
-  TransferState updateTransfer(TransferEntity transfer) => ChangedTransferState(transfer: transfer);
+  TransferState setTransfer(TransferEntity transfer) => ChangedTransferState(transfer: transfer);
 
   TransferState setSaving() => SavingTransferState(transfer: transfer);
 
