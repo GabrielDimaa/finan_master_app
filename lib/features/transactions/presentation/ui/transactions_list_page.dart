@@ -64,9 +64,9 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
 
   @override
   Widget build(BuildContext context) {
-    return SliverScaffold(
-      scaffoldKey: scaffoldKey,
-      appBar: SliverAppBarSmall(
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: AppBar(
         leading: IconButton(
           tooltip: strings.menu,
           icon: const Icon(Icons.menu),

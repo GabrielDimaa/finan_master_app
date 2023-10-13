@@ -1,17 +1,6 @@
 import 'package:finan_master_app/shared/presentation/ui/components/linear_progress_indicator_app_bar.dart';
 import 'package:flutter/material.dart';
 
-class SliverAppBarSmall extends SliverAppBar {
-  const SliverAppBarSmall({
-    super.key,
-    super.title,
-    super.centerTitle,
-    super.actions,
-    super.leading = const BackButton(),
-    bool? loading,
-  }) : super(scrolledUnderElevation: 0, pinned: true, bottom: loading == true ? const LinearProgressIndicatorAppBar() : null);
-}
-
 class SliverAppBarMedium extends StatelessWidget {
   final Widget title;
   final bool? centerTitle;

@@ -83,14 +83,17 @@ class _AppState extends State<App> {
                 inputDecorationTheme: const InputDecorationTheme(
                   border: OutlineInputBorder(),
                 ),
+                appBarTheme: const AppBarTheme(
+                  scrolledUnderElevation: 0,
+                ),
               ),
               locale: locale,
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
             );
-          }
+          },
         );
-      }
+      },
     );
   }
 
