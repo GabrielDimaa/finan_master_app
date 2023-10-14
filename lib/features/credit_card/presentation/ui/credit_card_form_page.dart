@@ -28,7 +28,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class CreditCardFormPage extends StatefulWidget {
-  static const route = 'credit_card-form';
+  static const route = 'credit-card-form';
 
   final CreditCardEntity? creditCard;
 
