@@ -2,8 +2,6 @@ import 'package:finan_master_app/features/config/presentation/ui/components/lang
 import 'package:finan_master_app/features/config/presentation/ui/components/switch_theme_mode.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class ConfigPage extends StatefulWidget {

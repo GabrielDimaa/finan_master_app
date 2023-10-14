@@ -126,7 +126,7 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
   }
 
   @override
-  Future<T?> findOne({ITransactionExecutor? txn}) async => (await selectFull(limit: 1, txn: txn)).firstOrNull;
+  Future<T?> findOne({String? where, List<dynamic>? whereArgs, bool deleted = false, ITransactionExecutor? txn}) async => (await selectFull(limit: 1, txn: txn)).firstOrNull;
 
   @override
   Future<T?> findById(String id, {bool deleted = false, ITransactionExecutor? txn}) async => (await selectFull(id: id, deleted: deleted, limit: 1, txn: txn)).firstOrNull;
