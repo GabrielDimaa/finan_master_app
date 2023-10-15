@@ -92,7 +92,7 @@ class _CategoriesListBottomSheetState extends State<CategoriesListBottomSheet> w
   Future<void> goCategory() async {
     final FormResultNavigation<CategoryEntity>? result = await context.pushNamed(CategoryFormPage.route);
 
-    if (result?.isSave == true && result?.value != null) {
+    if (result?.isSave == true && result?.value != null && widget.categories.any((category) => category.type == result?.value?.type)) {
       widget.categories.add(result!.value!);
     }
   }

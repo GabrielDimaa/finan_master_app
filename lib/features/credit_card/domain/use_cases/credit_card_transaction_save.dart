@@ -15,7 +15,7 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
   @override
   Future<CreditCardTransactionEntity> save(CreditCardTransactionEntity entity) async {
     if (entity.description.trim().isEmpty) throw ValidationException(R.strings.uninformedDescription);
-    if (entity.amount >= 0) throw ValidationException(R.strings.greaterThanZero);
+    if (entity.amount <= 0) throw ValidationException(R.strings.greaterThanZero);
     if (entity.idCategory == null) throw ValidationException(R.strings.uninformedCategory);
     if (entity.idCreditCard == null) throw ValidationException(R.strings.uninformedCreditCard);
 
@@ -31,12 +31,12 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
       if (statement.invoiceClosingDate.isBefore(DateTime.now())) throw ValidationException(R.strings.notPossibleEditTransactionStatementClosed);
     }
 
-    CreditCardStatementEntity? statement = await _repository.findStatementByDate(entity.date);
+    CreditCardStatementEntity? statement = await _repository.findStatementByDate(date: entity.date, idCreditCard: creditCard.id);
 
     //Se não encontrar a fatura, significa que não foi criada ainda
     if (statement == null) {
       //Monta a fatura.
-      final dates = calculateClosingDateAndDueDate(invoiceClosingDay: creditCard.invoiceDueDay, invoiceDueDay: creditCard.invoiceClosingDay, baseDate: entity.date);
+      final dates = calculateClosingDateAndDueDate(invoiceClosingDay: creditCard.invoiceClosingDay, invoiceDueDay: creditCard.invoiceDueDay, baseDate: entity.date);
 
       statement = CreditCardStatementEntity(
         id: null,
@@ -68,11 +68,16 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
   }
 
   ({DateTime invoiceClosingDate, DateTime invoiceDueDate}) calculateClosingDateAndDueDate({required int invoiceClosingDay, required int invoiceDueDay, required DateTime baseDate}) {
-    final DateTime invoiceClosingDate = DateTime(baseDate.year, baseDate.month, invoiceClosingDay);
-    final DateTime invoiceDueDate = DateTime(baseDate.year, baseDate.month, invoiceDueDay);
+    DateTime invoiceClosingDate = DateTime(baseDate.year, baseDate.month, invoiceClosingDay, 23, 59, 59, 999);
+    DateTime invoiceDueDate = DateTime(baseDate.year, baseDate.month, invoiceDueDay, 23, 59, 59, 999);
 
-    if (invoiceDueDay > invoiceClosingDay) {
-      invoiceDueDate.addMonth(1);
+    if (invoiceClosingDate.isBefore(baseDate)) {
+      invoiceClosingDate = invoiceClosingDate.addMonth(1);
+      invoiceDueDate = invoiceDueDate.addMonth(1);
+    }
+
+    if (invoiceClosingDay > invoiceDueDay) {
+      invoiceDueDate = invoiceDueDate.addMonth(1);
     }
 
     return (invoiceClosingDate: invoiceClosingDate, invoiceDueDate: invoiceDueDate);

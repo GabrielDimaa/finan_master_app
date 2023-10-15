@@ -73,8 +73,12 @@ class CreditCardRepository implements ICreditCardRepository {
   }
 
   @override
-  Future<CreditCardStatementEntity?> findStatementByDate(DateTime date) async {
-    final CreditCardStatementModel? model = await _creditCardStatementDataSource.findOne(where: 'invoice_closing_date >= ?', whereArgs: [date.toIso8601String()]);
+  Future<CreditCardStatementEntity?> findStatementByDate({required DateTime date, required String idCreditCard}) async {
+    final CreditCardStatementModel? model = await _creditCardStatementDataSource.findOne(
+      where: '${_creditCardStatementDataSource.tableName}.invoice_closing_date >= ? AND ${_creditCardStatementDataSource.tableName}.id_credit_card = ?',
+      whereArgs: [date.toIso8601String(), idCreditCard],
+    );
+
     return model != null ? CreditCardStatementFactory.toEntity(model) : null;
   }
 }

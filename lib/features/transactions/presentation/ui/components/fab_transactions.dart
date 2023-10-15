@@ -1,3 +1,5 @@
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
@@ -40,7 +42,7 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
         ExpandableFabChild(
           icon: const Icon(Icons.credit_card_outlined),
           label: label(text: strings.cardExpense),
-          onPressed: () {},
+          onPressed: goCreditCardExpenseFormPage,
         ),
         ExpandableFabChild(
           icon: const Icon(Icons.move_up_outlined),
@@ -67,6 +69,15 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
     final FormResultNavigation<TransferEntity>? result = await context.pushNamed(TransferFormPage.route);
 
     if (result != null) await widget.notifier.refreshTransactions();
+  }
+
+  Future<void> goCreditCardExpenseFormPage() async {
+    await context.pushNamed(CreditCardExpensePage.route);
+
+    //TODO: Rever
+    // final FormResultNavigation<TransferEntity>? result = await context.pushNamed(CreditCardFormPage.route);
+
+    // if (result != null) await widget.notifier.refreshTransactions();
   }
 
   Widget label({required String text}) {

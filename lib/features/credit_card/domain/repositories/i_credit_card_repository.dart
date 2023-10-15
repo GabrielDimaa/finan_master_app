@@ -17,5 +17,5 @@ abstract interface class ICreditCardRepository {
 
   Future<CreditCardStatementEntity?> findStatementById(String id);
 
-  Future<CreditCardStatementEntity?> findStatementByDate(DateTime date);
+  Future<CreditCardStatementEntity?> findStatementByDate({required DateTime date, required String idCreditCard});
 }
