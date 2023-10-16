@@ -14,7 +14,7 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
   String get tableName => 'credit_card_statements';
 
   @override
-  String get orderByDefault => '$tableName.invoice_closing_date DESC';
+  String get orderByDefault => '$tableName.invoice_closing_date ASC';
 
   @override
   void createTable(IDatabaseLocalBatch batch) {

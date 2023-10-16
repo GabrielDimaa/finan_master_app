@@ -36,6 +36,8 @@ import 'package:finan_master_app/features/config/infra/repositories/config_repos
 import 'package:finan_master_app/features/config/presentation/notifiers/locale_notifier.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/theme_mode_notifier.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_repository.dart';
+import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_statement_repository.dart';
+import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_transaction_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_delete.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_save.dart';
@@ -44,6 +46,8 @@ import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_save.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_save.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/i_statement_dates.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/statement_dates.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_statement_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_transaction_local_data_source.dart';
@@ -51,6 +55,8 @@ import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credi
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_statement_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/repositories/credit_card_repository.dart';
+import 'package:finan_master_app/features/credit_card/infra/repositories/credit_card_statement_repository.dart';
+import 'package:finan_master_app/features/credit_card/infra/repositories/credit_card_transaction_repository.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_expense_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_cards_notifier.dart';
@@ -132,7 +138,9 @@ final class DependencyInjection {
     getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>()));
     getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryLocalDataSource>()));
     getIt.registerFactory<IConfigRepository>(() => ConfigRepository(cacheLocal: getIt.get<ICacheLocal>()));
-    getIt.registerFactory<ICreditCardRepository>(() => CreditCardRepository(creditCardDataSource: getIt.get<ICreditCardLocalDataSource>(), creditCardTransactionDataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), creditCardStatementDataSource: getIt.get<ICreditCardStatementLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
+    getIt.registerFactory<ICreditCardRepository>(() => CreditCardRepository(creditCardDataSource: getIt.get<ICreditCardLocalDataSource>()));
+    getIt.registerFactory<ICreditCardStatementRepository>(() => CreditCardStatementRepository(localDataSource: getIt.get<ICreditCardStatementLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
+    getIt.registerFactory<ICreditCardTransactionRepository>(() => CreditCardTransactionRepository(creditCardTransactionDataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), creditCardStatementDataSource: getIt.get<ICreditCardStatementLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
     getIt.registerFactory<IExpenseRepository>(() => ExpenseRepository(dbTransaction: databaseLocal.transactionInstance(), expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>()));
     getIt.registerFactory<IIncomeRepository>(() => IncomeRepository(dbTransaction: databaseLocal.transactionInstance(), incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>()));
     getIt.registerFactory<ITransactionRepository>(() => TransactionRepository(transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
@@ -152,11 +160,12 @@ final class DependencyInjection {
     getIt.registerFactory<ICreditCardDelete>(() => CreditCardDelete(repository: getIt.get<ICreditCardRepository>()));
     getIt.registerFactory<ICreditCardFind>(() => CreditCardFind(repository: getIt.get<ICreditCardRepository>()));
     getIt.registerFactory<ICreditCardSave>(() => CreditCardSave(repository: getIt.get<ICreditCardRepository>()));
-    getIt.registerFactory<ICreditCardTransactionSave>(() => CreditCardTransactionSave(repository: getIt.get<ICreditCardRepository>()));
+    getIt.registerFactory<ICreditCardTransactionSave>(() => CreditCardTransactionSave(statementDates: getIt.get<IStatementDates>(), repository: getIt.get<ICreditCardRepository>(), creditCardStatementRepository: getIt.get<ICreditCardStatementRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>()));
     getIt.registerFactory<IExpenseDelete>(() => ExpenseDelete(repository: getIt.get<IExpenseRepository>()));
     getIt.registerFactory<IExpenseSave>(() => ExpenseSave(repository: getIt.get<IExpenseRepository>()));
     getIt.registerFactory<IIncomeDelete>(() => IncomeDelete(repository: getIt.get<IIncomeRepository>()));
     getIt.registerFactory<IIncomeSave>(() => IncomeSave(repository: getIt.get<IIncomeRepository>()));
+    getIt.registerFactory<IStatementDates>(() => StatementDates());
     getIt.registerFactory<ITransactionFind>(() => TransactionFind(repository: getIt.get<ITransactionRepository>()));
     getIt.registerFactory<ITransferDelete>(() => TransferDelete(repository: getIt.get<ITransferRepository>()));
     getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>()));

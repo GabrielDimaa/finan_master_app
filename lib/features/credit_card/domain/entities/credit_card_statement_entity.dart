@@ -1,8 +1,8 @@
 import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
 class CreditCardStatementEntity extends Entity {
-  final DateTime invoiceClosingDate;
-  final DateTime invoiceDueDate;
+  DateTime invoiceClosingDate;
+  DateTime invoiceDueDate;
 
   final String idCreditCard;
 
