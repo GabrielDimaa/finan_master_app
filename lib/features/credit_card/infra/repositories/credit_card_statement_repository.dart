@@ -22,12 +22,18 @@ class CreditCardStatementRepository implements ICreditCardStatementRepository {
   }
 
   @override
-  Future<void> saveMany(List<CreditCardStatementEntity> statements) async {
-    await _dbTransaction.openTransaction((txn) async {
+  Future<void> saveMany(List<CreditCardStatementEntity> statements, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      await _dbTransaction.openTransaction((txn_) async {
+        for (final statement in statements) {
+          await _localDataSource.upsert(CreditCardStatementFactory.fromEntity(statement), txn: txn_);
+        }
+      });
+    } else {
       for (final statement in statements) {
         await _localDataSource.upsert(CreditCardStatementFactory.fromEntity(statement), txn: txn);
       }
-    });
+    }
   }
 
   @override
@@ -47,10 +53,11 @@ class CreditCardStatementRepository implements ICreditCardStatementRepository {
   }
 
   @override
-  Future<List<CreditCardStatementEntity>> findAllAfterDate({required DateTime date, required String idCreditCard}) async {
+  Future<List<CreditCardStatementEntity>> findAllAfterDate({required DateTime date, required String idCreditCard, ITransactionExecutor? txn}) async {
     final List<CreditCardStatementModel> models = await _localDataSource.findAll(
       where: '${_localDataSource.tableName}.statement_closing_date >= ? AND ${_localDataSource.tableName}.id_credit_card = ?',
       whereArgs: [date.toIso8601String(), idCreditCard],
+      txn: txn,
     );
 
     return models.map((model) => CreditCardStatementFactory.toEntity(model)).toList();

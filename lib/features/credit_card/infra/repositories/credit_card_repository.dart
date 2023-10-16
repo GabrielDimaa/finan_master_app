@@ -3,6 +3,7 @@ import 'package:finan_master_app/features/credit_card/domain/repositories/i_cred
 import 'package:finan_master_app/features/credit_card/helpers/factories/credit_card_factory.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_model.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 
 class CreditCardRepository implements ICreditCardRepository {
   final ICreditCardLocalDataSource _creditCardDataSource;
@@ -10,8 +11,8 @@ class CreditCardRepository implements ICreditCardRepository {
   CreditCardRepository({required ICreditCardLocalDataSource creditCardDataSource}) : _creditCardDataSource = creditCardDataSource;
 
   @override
-  Future<CreditCardEntity> save(CreditCardEntity entity) async {
-    final CreditCardModel creditCard = await _creditCardDataSource.upsert(CreditCardFactory.fromEntity(entity));
+  Future<CreditCardEntity> save(CreditCardEntity entity, {ITransactionExecutor? txn}) async {
+    final CreditCardModel creditCard = await _creditCardDataSource.upsert(CreditCardFactory.fromEntity(entity), txn: txn);
     return CreditCardFactory.toEntity(creditCard);
   }
 
