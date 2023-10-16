@@ -1,8 +1,8 @@
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_statement_entity.dart';
-import 'package:finan_master_app/features/credit_card/domain/use_cases/i_statement_dates.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_statement_dates.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 
-class StatementDates implements IStatementDates {
+class CreditCardStatementDates implements ICreditCardStatementDates {
   @override
   ({DateTime closingDate, DateTime dueDate}) generateDates({required int closingDay, required int dueDay, required DateTime baseDate}) {
     DateTime closingDate = DateTime(baseDate.year, baseDate.month, closingDay, 23, 59, 59, 999);

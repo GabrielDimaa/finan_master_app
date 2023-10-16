@@ -5,22 +5,22 @@ import 'package:finan_master_app/features/credit_card/domain/repositories/i_cred
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_statement_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_transaction_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_save.dart';
-import 'package:finan_master_app/features/credit_card/domain/use_cases/i_statement_dates.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_statement_dates.dart';
 import 'package:finan_master_app/shared/exceptions/exceptions.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class CreditCardTransactionSave implements ICreditCardTransactionSave {
-  final IStatementDates _statementDates;
+  final ICreditCardStatementDates _creditCardStatementDates;
   final ICreditCardRepository _repository;
   final ICreditCardStatementRepository _creditCardStatementRepository;
   final ICreditCardTransactionRepository _creditCardTransactionRepository;
 
   CreditCardTransactionSave({
-    required IStatementDates statementDates,
+    required ICreditCardStatementDates creditCardStatementDates,
     required ICreditCardRepository repository,
     required ICreditCardStatementRepository creditCardStatementRepository,
     required ICreditCardTransactionRepository creditCardTransactionRepository,
-  })  : _statementDates = statementDates,
+  })  : _creditCardStatementDates = creditCardStatementDates,
         _repository = repository,
         _creditCardStatementRepository = creditCardStatementRepository,
         _creditCardTransactionRepository = creditCardTransactionRepository;
@@ -47,7 +47,7 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
     CreditCardStatementEntity? statement = await _creditCardStatementRepository.findFirstAfterDate(date: entity.date, idCreditCard: creditCard.id);
 
     //Gera as datas de fechamento e vencimento da fatura com base na data da transação
-    final dates = _statementDates.generateDates(closingDay: creditCard.statementClosingDay, dueDay: creditCard.statementDueDay, baseDate: entity.date);
+    final dates = _creditCardStatementDates.generateDates(closingDay: creditCard.statementClosingDay, dueDay: creditCard.statementDueDay, baseDate: entity.date);
 
     //Se não existir nenhuma fatura superior a data da transação ou a fatura encontrada for de um mês posterior
     if (statement == null || statement.statementClosingDate.year != dates.closingDate.year || statement.statementClosingDate.month != dates.closingDate.month) {
