@@ -13,9 +13,9 @@ class CreditCardSave implements ICreditCardSave {
   Future<CreditCardEntity> save(CreditCardEntity entity) async {
     if (entity.description.trim().isEmpty) throw ValidationException(R.strings.uninformedDescription);
     if (entity.amountLimit <= 0) throw ValidationException(R.strings.greaterThanZero);
-    if (entity.invoiceClosingDay <= 0) throw ValidationException(R.strings.greaterThanZero);
-    if (entity.invoiceDueDay <= 0) throw ValidationException(R.strings.greaterThanZero);
-    if (entity.invoiceClosingDay > 31 || entity.invoiceDueDay > 31) throw ValidationException('${R.strings.lessThan} 31');
+    if (entity.statementClosingDay <= 0) throw ValidationException(R.strings.greaterThanZero);
+    if (entity.statementDueDay <= 0) throw ValidationException(R.strings.greaterThanZero);
+    if (entity.statementClosingDay > 31 || entity.statementDueDay > 31) throw ValidationException('${R.strings.lessThan} 31');
     if (entity.brand == null) return throw ValidationException(R.strings.uninformedCardBrand);
     if (entity.idAccount == null) return throw ValidationException(R.strings.uninformedAccount);
 

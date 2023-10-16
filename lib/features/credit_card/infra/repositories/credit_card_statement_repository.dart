@@ -39,7 +39,7 @@ class CreditCardStatementRepository implements ICreditCardStatementRepository {
   @override
   Future<CreditCardStatementEntity?> findFirstAfterDate({required DateTime date, required String idCreditCard}) async {
     final CreditCardStatementModel? model = await _localDataSource.findOne(
-      where: '${_localDataSource.tableName}.invoice_closing_date >= ? AND ${_localDataSource.tableName}.id_credit_card = ?',
+      where: '${_localDataSource.tableName}.statement_closing_date >= ? AND ${_localDataSource.tableName}.id_credit_card = ?',
       whereArgs: [date.toIso8601String(), idCreditCard],
     );
 
@@ -49,7 +49,7 @@ class CreditCardStatementRepository implements ICreditCardStatementRepository {
   @override
   Future<List<CreditCardStatementEntity>> findAllAfterDate({required DateTime date, required String idCreditCard}) async {
     final List<CreditCardStatementModel> models = await _localDataSource.findAll(
-      where: '${_localDataSource.tableName}.invoice_closing_date >= ? AND ${_localDataSource.tableName}.id_credit_card = ?',
+      where: '${_localDataSource.tableName}.statement_closing_date >= ? AND ${_localDataSource.tableName}.id_credit_card = ?',
       whereArgs: [date.toIso8601String(), idCreditCard],
     );
 

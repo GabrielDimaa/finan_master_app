@@ -26,20 +26,20 @@ class StatementDates implements IStatementDates {
 
     for (final statement in statements) {
       //Se a data de fechamento da fatura for igual ou anterior a data atual, não altera a fatura.
-      if (statement.invoiceClosingDate == dateNow || statement.invoiceClosingDate.isBefore(dateNow)) continue;
+      if (statement.statementClosingDate == dateNow || statement.statementClosingDate.isBefore(dateNow)) continue;
 
-      DateTime invoiceClosingDate = DateTime(statement.invoiceClosingDate.year, statement.invoiceClosingDate.month, closingDay);
-      DateTime invoiceDueDate = DateTime(statement.invoiceDueDate.year, statement.invoiceDueDate.month, dueDay);
+      DateTime statementClosingDate = DateTime(statement.statementClosingDate.year, statement.statementClosingDate.month, closingDay);
+      DateTime statementDueDate = DateTime(statement.statementDueDate.year, statement.statementDueDate.month, dueDay);
 
       //Se a nova data de fechamento da fatura for igual ou anterior a data atual, não altera a fatura.
-      if (invoiceClosingDate == dateNow || invoiceClosingDate.isBefore(dateNow)) continue;
+      if (statementClosingDate == dateNow || statementClosingDate.isBefore(dateNow)) continue;
 
-      if (invoiceDueDate.isBefore(invoiceClosingDate)) {
-        invoiceDueDate = invoiceDueDate.addMonth(1);
+      if (statementDueDate.isBefore(statementClosingDate)) {
+        statementDueDate = statementDueDate.addMonth(1);
       }
 
-      statement.invoiceClosingDate = invoiceClosingDate;
-      statement.invoiceDueDate = invoiceDueDate;
+      statement.statementClosingDate = statementClosingDate;
+      statement.statementDueDate = statementDueDate;
     }
 
     return statements;

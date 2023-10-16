@@ -9,8 +9,8 @@ abstract class CreditCardFactory {
       deletedAt: entity.deletedAt,
       description: entity.description,
       amountLimit: entity.amountLimit,
-      invoiceClosingDay: entity.invoiceClosingDay,
-      invoiceDueDay: entity.invoiceDueDay,
+      statementClosingDay: entity.statementClosingDay,
+      statementDueDay: entity.statementDueDay,
       brand: entity.brand!,
       idAccount: entity.idAccount!,
     );
@@ -23,8 +23,8 @@ abstract class CreditCardFactory {
       deletedAt: model.deletedAt,
       description: model.description,
       amountLimit: model.amountLimit,
-      invoiceClosingDay: model.invoiceClosingDay,
-      invoiceDueDay: model.invoiceDueDay,
+      statementClosingDay: model.statementClosingDay,
+      statementDueDay: model.statementDueDay,
       brand: model.brand,
       idAccount: model.idAccount,
     );

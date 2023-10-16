@@ -14,15 +14,15 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
   String get tableName => 'credit_card_statements';
 
   @override
-  String get orderByDefault => '$tableName.invoice_closing_date ASC';
+  String get orderByDefault => '$tableName.statement_closing_date ASC';
 
   @override
   void createTable(IDatabaseLocalBatch batch) {
     batch.execute('''
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
-        invoice_closing_date TEXT NOT NULL,
-        invoice_due_date TEXT NOT NULL,
+        statement_closing_date TEXT NOT NULL,
+        statement_due_date TEXT NOT NULL,
         id_credit_card TEXT NOT NULL REFERENCES credit_cards(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT
       );
     ''');
@@ -36,8 +36,8 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
       id: base.id,
       createdAt: base.createdAt,
       deletedAt: base.deletedAt,
-      invoiceClosingDate: DateTime.tryParse(map['${prefix}invoice_closing_date'].toString())!.toLocal(),
-      invoiceDueDate: DateTime.tryParse(map['${prefix}invoice_due_date'].toString())!.toLocal(),
+      statementClosingDate: DateTime.tryParse(map['${prefix}statement_closing_date'].toString())!.toLocal(),
+      statementDueDate: DateTime.tryParse(map['${prefix}statement_due_date'].toString())!.toLocal(),
       idCreditCard: map['${prefix}id_credit_card'],
       statementAmount: map['${prefix}statement_amount'],
       amountLimit: map['${prefix}amount_limit'],

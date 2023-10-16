@@ -1,8 +1,8 @@
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class CreditCardStatementModel extends Model {
-  final DateTime invoiceClosingDate;
-  final DateTime invoiceDueDate;
+  final DateTime statementClosingDate;
+  final DateTime statementDueDate;
 
   final String idCreditCard;
 
@@ -13,8 +13,8 @@ class CreditCardStatementModel extends Model {
     required super.id,
     required super.createdAt,
     required super.deletedAt,
-    required this.invoiceClosingDate,
-    required this.invoiceDueDate,
+    required this.statementClosingDate,
+    required this.statementDueDate,
     required this.idCreditCard,
     required this.statementAmount,
     required this.amountLimit,
@@ -26,8 +26,8 @@ class CreditCardStatementModel extends Model {
       id: id,
       createdAt: createdAt,
       deletedAt: deletedAt,
-      invoiceClosingDate: invoiceClosingDate,
-      invoiceDueDate: invoiceDueDate,
+      statementClosingDate: statementClosingDate,
+      statementDueDate: statementDueDate,
       idCreditCard: idCreditCard,
       statementAmount: statementAmount,
       amountLimit: amountLimit,
@@ -38,8 +38,8 @@ class CreditCardStatementModel extends Model {
   Map<String, dynamic> toMap() {
     return {
       ...baseMap(),
-      'invoice_closing_date': invoiceClosingDate.toIso8601String(),
-      'invoice_due_date': invoiceDueDate.toIso8601String(),
+      'statement_closing_date': statementClosingDate.toIso8601String(),
+      'statement_due_date': statementDueDate.toIso8601String(),
       'id_credit_card': idCreditCard,
     };
   }
