@@ -8,5 +8,5 @@ abstract interface class ICreditCardRepository {
 
   Future<List<CreditCardEntity>> findAll();
 
-  Future<CreditCardEntity?> findById(String id);
+  Future<CreditCardEntity?> findById(String id, {ITransactionExecutor? txn});
 }

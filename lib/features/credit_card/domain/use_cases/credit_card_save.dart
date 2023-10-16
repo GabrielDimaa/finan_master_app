@@ -36,13 +36,18 @@ class CreditCardSave implements ICreditCardSave {
 
     return _localDBTransactionRepository.openTransaction<CreditCardEntity>((txn) async {
       if (!entity.isNew) {
-        //Busca as fatura que estão em aberto
-        final List<CreditCardStatementEntity> statements = await _creditCardStatementRepository.findAllAfterDate(date: DateTime.now(), idCreditCard: entity.id, txn: txn);
+        final CreditCardEntity? creditCardSaved = await _repository.findById(entity.id, txn: txn);
+        if (creditCardSaved == null) throw ValidationException(R.strings.creditCardNotFound);
 
-        //Altera as datas das faturas em aberto
-        final List<CreditCardStatementEntity> statementsChanged = _creditCardStatementDates.changeDates(statements: statements, closingDay: entity.statementClosingDay, dueDay: entity.statementDueDay);
+        if (creditCardSaved.statementClosingDay != entity.statementClosingDay || creditCardSaved.statementDueDay != entity.statementDueDay) {
+          //Busca as fatura que estão em aberto
+          final List<CreditCardStatementEntity> statements = await _creditCardStatementRepository.findAllAfterDate(date: DateTime.now(), idCreditCard: entity.id, txn: txn);
 
-        await _creditCardStatementRepository.saveMany(statementsChanged, txn: txn);
+          //Altera as datas das faturas em aberto
+          final List<CreditCardStatementEntity> statementsChanged = _creditCardStatementDates.changeDates(statements: statements, closingDay: entity.statementClosingDay, dueDay: entity.statementDueDay);
+
+          await _creditCardStatementRepository.saveMany(statementsChanged, txn: txn);
+        }
       }
 
       return await _repository.save(entity, txn: txn);
