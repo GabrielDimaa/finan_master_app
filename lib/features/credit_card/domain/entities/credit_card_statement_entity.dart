@@ -9,6 +9,8 @@ class CreditCardStatementEntity extends Entity {
   final double statementAmount;
   final double amountLimit;
 
+  double get amountAvailable => amountLimit - statementAmount;
+
   CreditCardStatementEntity({
     required super.id,
     required super.createdAt,

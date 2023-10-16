@@ -68,7 +68,7 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
     if (statement.statementClosingDate.isBefore(DateTime.now())) throw ValidationException(R.strings.statementClosedInDateTransaction);
 
     //Se o valor da transação for superior ao limite disponível na fatura
-    if (entity.amount > statement.amountLimit) throw ValidationException(R.strings.transactionAmountExceedLimitStatement);
+    if (entity.amount > statement.amountAvailable) throw ValidationException(R.strings.transactionAmountExceedLimitStatement);
 
     //Associa a transação a uma fatura
     entity.idCreditCardStatement = statement.id;
