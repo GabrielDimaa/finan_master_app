@@ -42,7 +42,7 @@ extension CardBrandExtension on CardBrandEnum {
     CardBrandEnum.visa => 'Visa',
   };
 
-  Widget icon({double size = 36, Color? color}) {
+  Widget icon([double size = 36]) {
     return switch (this) {
       CardBrandEnum.alelo => SvgPicture.asset('assets/icons/card-brands/alelo.svg', height: size, width: size),
       CardBrandEnum.americanExpress => SvgPicture.asset('assets/icons/card-brands/americanexpress.svg', height: size, width: size),

@@ -53,7 +53,7 @@ class _BackupPageState extends State<BackupPage> with ThemeContext {
                   const Spacing.y(2),
                   Text(strings.backupTitleExplication, style: textTheme.titleMedium, textAlign: TextAlign.center),
                   const SizedBox(height: 4),
-                  Text(strings.backupSubtitleExplication, style: textTheme.bodyMedium, textAlign: TextAlign.center),
+                  Text(strings.backupSubtitleExplication, style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant), textAlign: TextAlign.center),
                   const Spacing.y(4),
                   FilledButton.icon(
                     onPressed: notifier.isLoading || notifier.isFinalized ? null : backup,
@@ -61,7 +61,11 @@ class _BackupPageState extends State<BackupPage> with ThemeContext {
                     label: notifier.isFinalized ? Text(strings.backupButtonFinalized) : Text(strings.backupButton),
                   ),
                   const Spacing.y(2),
-                  Text('${strings.lastBackupDate}: ${notifier.lastBackupDate?.format() ?? strings.unrealized}', style: textTheme.bodySmall, textAlign: TextAlign.center),
+                  Text(
+                    '${strings.lastBackupDate}: ${notifier.lastBackupDate?.format() ?? strings.unrealized}',
+                    style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             ),

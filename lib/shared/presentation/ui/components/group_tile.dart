@@ -24,7 +24,7 @@ class GroupTile extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, top: Spacing.space),
-            child: Text(title, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: enabled ? null : Theme.of(context).disabledColor)),
+            child: Text(title, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: enabled ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).disabledColor)),
           ),
           tile,
         ],
