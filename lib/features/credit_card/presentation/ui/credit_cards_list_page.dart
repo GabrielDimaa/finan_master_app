@@ -1,6 +1,7 @@
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_cards_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_cards_state.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_details_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
@@ -72,7 +73,7 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
                           title: Text(creditCard.description),
                           subtitle: Text('${strings.limit}: ${creditCard.amountLimit.money}'),
                           trailing: const Icon(Icons.chevron_right),
-                          onTap: () => goCreditCard(creditCard),
+                          onTap: () => goCreditCardDetails(creditCard),
                         ),
                         if (index == state.creditCards.length - 1) const SizedBox(height: 50),
                       ],
@@ -92,5 +93,10 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
     if (result == null) return;
 
     notifier.findAll();
+  }
+
+  Future<void> goCreditCardDetails(CreditCardEntity creditCard) async {
+    //TODO: Conferir uma forma pra atualizar tela.
+    await context.pushNamed(CreditCardDetailsPage.route, extra: creditCard);
   }
 }

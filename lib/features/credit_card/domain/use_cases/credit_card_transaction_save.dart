@@ -59,7 +59,8 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
         statementClosingDate: dates.closingDate,
         statementDueDate: dates.dueDate,
         idCreditCard: creditCard.id,
-        statementAmount: 0,
+        totalPaid: 0,
+        totalSpent: 0,
         amountLimit: creditCard.amountLimit,
       );
     }

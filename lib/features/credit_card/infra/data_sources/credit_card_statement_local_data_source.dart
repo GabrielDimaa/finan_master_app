@@ -39,7 +39,8 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
       statementClosingDate: DateTime.tryParse(map['${prefix}statement_closing_date'].toString())!.toLocal(),
       statementDueDate: DateTime.tryParse(map['${prefix}statement_due_date'].toString())!.toLocal(),
       idCreditCard: map['${prefix}id_credit_card'],
-      statementAmount: map['${prefix}statement_amount'],
+      totalPaid: map['${prefix}total_paid'],
+      totalSpent: map['${prefix}total_spent'],
       amountLimit: map['${prefix}amount_limit'],
     );
   }
@@ -69,7 +70,8 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
         SELECT
           $tableName.*,
           credit_cards.amount_limit as amount_limit,
-          COALESCE(SUM(credit_card_transactions.amount), 0.0) as statement_amount
+          COALESCE(SUM(CASE WHEN credit_card_transactions.amount < 0 THEN credit_card_transactions.amount ELSE 0.0 END), 0.0) AS total_paid,
+          COALESCE(SUM(CASE WHEN credit_card_transactions.amount > 0 THEN credit_card_transactions.amount ELSE 0.0 END), 0.0) AS total_spent
         FROM $tableName
         INNER JOIN credit_cards
           ON $tableName.id_credit_card = credit_cards.id

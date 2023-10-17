@@ -11,4 +11,6 @@ abstract interface class ICreditCardStatementRepository {
   Future<CreditCardStatementEntity?> findFirstAfterDate({required DateTime date, required String idCreditCard});
 
   Future<List<CreditCardStatementEntity>> findAllAfterDate({required DateTime date, required String idCreditCard, ITransactionExecutor? txn});
+
+  Future<CreditCardStatementEntity?> findFirstInPeriod({required DateTime startDate, required DateTime endDate, required String idCreditCard});
 }

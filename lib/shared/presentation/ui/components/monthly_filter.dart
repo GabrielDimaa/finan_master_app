@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MonthlyFilter extends StatefulWidget {
-  final DateTime startDate;
+  final DateTime initialDate;
   final void Function(DateTime date) onChange;
 
-  const MonthlyFilter({Key? key, required this.startDate, required this.onChange}) : super(key: key);
+  const MonthlyFilter({Key? key, required this.initialDate, required this.onChange}) : super(key: key);
 
   @override
   State<MonthlyFilter> createState() => _MonthlyFilterState();
@@ -16,6 +16,14 @@ class MonthlyFilter extends StatefulWidget {
 
 class _MonthlyFilterState extends State<MonthlyFilter> with ThemeContext {
   final DateTime dateNow = DateTime.now();
+
+  late DateTime dateTime;
+
+  @override
+  void initState() {
+    super.initState();
+    dateTime = widget.initialDate;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +35,8 @@ class _MonthlyFilterState extends State<MonthlyFilter> with ThemeContext {
           tooltip: strings.previous,
           icon: const Icon(Icons.chevron_left_outlined),
           onPressed: () {
-            widget.onChange(widget.startDate.subtractMonth(1));
+            dateTime = dateTime.subtractMonth(1);
+            widget.onChange(dateTime);
             setState(() {});
           },
         ),
@@ -36,8 +45,8 @@ class _MonthlyFilterState extends State<MonthlyFilter> with ThemeContext {
           constraints: const BoxConstraints(minWidth: 70),
           child: Column(
             children: [
-              Text(DateFormat('MMMM', strings.localeName).format(widget.startDate).toString()),
-              if (widget.startDate.year != dateNow.year) Text(widget.startDate.year.toString(), style: textTheme.labelSmall),
+              Text(DateFormat('MMMM', strings.localeName).format(dateTime).toString()),
+              if (dateTime.year != dateNow.year) Text(dateTime.year.toString(), style: textTheme.labelSmall),
             ],
           ),
         ),
@@ -46,7 +55,8 @@ class _MonthlyFilterState extends State<MonthlyFilter> with ThemeContext {
           tooltip: strings.next,
           icon: const Icon(Icons.chevron_right_outlined),
           onPressed: () {
-            widget.onChange(widget.startDate.addMonth(1));
+            dateTime = dateTime.addMonth(1);
+            widget.onChange(dateTime);
             setState(() {});
           },
         ),

@@ -62,4 +62,14 @@ class CreditCardStatementRepository implements ICreditCardStatementRepository {
 
     return models.map((model) => CreditCardStatementFactory.toEntity(model)).toList();
   }
+
+  @override
+  Future<CreditCardStatementEntity?> findFirstInPeriod({required DateTime startDate, required DateTime endDate, required String idCreditCard}) async {
+    final CreditCardStatementModel? model = await _localDataSource.findOne(
+      where: '${_localDataSource.tableName}.statement_closing_date BETWEEN ? AND ? AND ${_localDataSource.tableName}.id_credit_card = ?',
+      whereArgs: [startDate.toIso8601String(), endDate.toIso8601String(), idCreditCard],
+    );
+
+    return model != null ? CreditCardStatementFactory.toEntity(model) : null;
+  }
 }

@@ -34,7 +34,7 @@ class _FiltersTransactionsState extends State<FiltersTransactions> with ThemeCon
         ),
         const Spacing.y(),
         MonthlyFilter(
-          startDate: widget.notifier.startDate,
+          initialDate: widget.notifier.startDate,
           onChange: (DateTime date) => widget.notifier.findByPeriod(date.getInitialMonth(), date.getFinalMonth()),
         ),
       ],

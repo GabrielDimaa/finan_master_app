@@ -10,7 +10,8 @@ abstract class CreditCardStatementFactory {
       statementClosingDate: entity.statementClosingDate,
       statementDueDate: entity.statementDueDate,
       idCreditCard: entity.idCreditCard,
-      statementAmount: entity.statementAmount,
+      totalPaid: entity.totalPaid,
+      totalSpent: entity.totalSpent,
       amountLimit: entity.amountLimit,
     );
   }
@@ -23,7 +24,8 @@ abstract class CreditCardStatementFactory {
       statementClosingDate: model.statementClosingDate,
       statementDueDate: model.statementDueDate,
       idCreditCard: model.idCreditCard,
-      statementAmount: model.statementAmount,
+      totalPaid: model.totalPaid,
+      totalSpent: model.totalSpent,
       amountLimit: model.amountLimit,
     );
   }

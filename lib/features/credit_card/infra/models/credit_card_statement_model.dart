@@ -6,7 +6,8 @@ class CreditCardStatementModel extends Model {
 
   final String idCreditCard;
 
-  final double statementAmount;
+  final double totalPaid;
+  final double totalSpent;
   final double amountLimit;
 
   CreditCardStatementModel({
@@ -16,7 +17,8 @@ class CreditCardStatementModel extends Model {
     required this.statementClosingDate,
     required this.statementDueDate,
     required this.idCreditCard,
-    required this.statementAmount,
+    required this.totalPaid,
+    required this.totalSpent,
     required this.amountLimit,
   });
 
@@ -29,7 +31,8 @@ class CreditCardStatementModel extends Model {
       statementClosingDate: statementClosingDate,
       statementDueDate: statementDueDate,
       idCreditCard: idCreditCard,
-      statementAmount: statementAmount,
+      totalPaid: totalPaid,
+      totalSpent: totalSpent,
       amountLimit: amountLimit,
     );
   }
