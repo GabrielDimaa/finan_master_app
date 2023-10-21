@@ -5,6 +5,7 @@ import 'package:finan_master_app/features/category/presentation/notifiers/catego
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/categories_list_bottom_sheet.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
+import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_expense_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_cards_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_expense_state.dart';
@@ -33,9 +34,11 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class CreditCardExpensePage extends StatefulWidget {
+  final CreditCardTransactionEntity? creditCardExpense;
+
   static const route = 'credit-card-expense-form';
 
-  const CreditCardExpensePage({Key? key}) : super(key: key);
+  const CreditCardExpensePage({Key? key, this.creditCardExpense}) : super(key: key);
 
   @override
   State<CreditCardExpensePage> createState() => _CreditCardExpensePageState();
@@ -65,6 +68,8 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
 
         if (categoriesNotifier.value is ErrorCategoriesState) throw Exception((categoriesNotifier.value as ErrorCategoriesState).message);
         if (creditCardsNotifier.value is ErrorCreditCardsState) throw Exception((creditCardsNotifier.value as ErrorCreditCardsState).message);
+
+        if (widget.creditCardExpense != null) notifier.setCreditCardExpense(widget.creditCardExpense!);
 
         if (creditCardsNotifier.value.creditCards.length == 1) {
           notifier.creditCardExpense.idCreditCard = creditCardsNotifier.value.creditCards.first.id;

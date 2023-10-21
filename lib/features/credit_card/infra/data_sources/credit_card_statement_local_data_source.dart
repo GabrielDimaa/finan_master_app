@@ -70,8 +70,6 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
         whereListed.add('$tableName.${Model.deletedAtColumnName} IS NULL');
       }
 
-      whereListed.add("${creditCardTransactionLocalDataSource.tableName}.${Model.deletedAtColumnName} IS NULL");
-
       final String sql = '''
         SELECT
           -- Statements
@@ -96,15 +94,18 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
           ${creditCardTransactionLocalDataSource.tableName}.id_credit_card AS ${creditCardTransactionLocalDataSource.tableName}_id_credit_card,
           ${creditCardTransactionLocalDataSource.tableName}.id_credit_card_statement AS ${creditCardTransactionLocalDataSource.tableName}_id_credit_card_statement,
           ${creditCardTransactionLocalDataSource.tableName}.observation AS ${creditCardTransactionLocalDataSource.tableName}_observation
-        FROM $tableName
+        FROM (
+          SELECT $tableName.*
+          FROM $tableName
+          ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
+          ORDER BY ${orderBy ?? orderByDefault}
+          ${limit != null ? ' LIMIT $limit' : ''}
+          ${offset != null ? ' OFFSET $offset' : ''}
+        ) AS $tableName
         INNER JOIN credit_cards
           ON $tableName.id_credit_card = credit_cards.id
         LEFT JOIN ${creditCardTransactionLocalDataSource.tableName}
-          ON $tableName.id = ${creditCardTransactionLocalDataSource.tableName}.id_credit_card_statement
-        ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
-        ORDER BY ${orderBy ?? orderByDefault}
-        ${limit != null ? ' LIMIT $limit' : ''}
-        ${offset != null ? ' OFFSET $offset' : ''};
+          ON $tableName.id = ${creditCardTransactionLocalDataSource.tableName}.id_credit_card_statement AND ${creditCardTransactionLocalDataSource.tableName}.${Model.deletedAtColumnName} IS NULL;
       ''';
 
       final List<Map<String, dynamic>> results = await (txn ?? databaseLocal).raw(sql, DatabaseOperation.select, whereArgs);

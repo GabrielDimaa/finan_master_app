@@ -29,6 +29,10 @@ class CreditCardExpenseNotifier extends ValueNotifier<CreditCardExpenseState> {
     value = value.changedCreditCardExpense();
   }
 
+  void setCreditCardExpense(CreditCardTransactionEntity expense) {
+    value = value.setCreditCardExpense(expense);
+  }
+
   Future<void> save() async {
     try {
       value = value.setSaving();

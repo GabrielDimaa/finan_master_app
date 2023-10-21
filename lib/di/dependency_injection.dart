@@ -165,7 +165,7 @@ final class DependencyInjection {
     getIt.registerFactory<IConfigSave>(() => ConfigSave(repository: getIt.get<IConfigRepository>()));
     getIt.registerFactory<ICreditCardDelete>(() => CreditCardDelete(repository: getIt.get<ICreditCardRepository>()));
     getIt.registerFactory<ICreditCardFind>(() => CreditCardFind(repository: getIt.get<ICreditCardRepository>()));
-    getIt.registerFactory<ICreditCardSave>(() => CreditCardSave(creditCardStatementDates: getIt.get<ICreditCardStatementDates>(), repository: getIt.get<ICreditCardRepository>(), creditCardStatementRepository: getIt.get<ICreditCardStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<ICreditCardSave>(() => CreditCardSave(creditCardStatementDates: getIt.get<ICreditCardStatementDates>(), repository: getIt.get<ICreditCardRepository>(), creditCardStatementRepository: getIt.get<ICreditCardStatementRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
     getIt.registerFactory<ICreditCardStatementFind>(() => CreditCardStatementFind(repository: getIt.get<ICreditCardStatementRepository>()));
     getIt.registerFactory<ICreditCardTransactionSave>(() => CreditCardTransactionSave(creditCardStatementDates: getIt.get<ICreditCardStatementDates>(), repository: getIt.get<ICreditCardRepository>(), creditCardStatementRepository: getIt.get<ICreditCardStatementRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>()));
     getIt.registerFactory<IExpenseDelete>(() => ExpenseDelete(repository: getIt.get<IExpenseRepository>()));

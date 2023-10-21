@@ -8,6 +8,7 @@ import 'package:finan_master_app/features/category/presentation/ui/categories_li
 import 'package:finan_master_app/features/category/presentation/ui/category_form_page.dart';
 import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
+import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_details_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
@@ -87,7 +88,7 @@ sealed class AppRouter {
           parentNavigatorKey: _rootNavigatorKey,
           name: CreditCardExpensePage.route,
           path: '/${CreditCardExpensePage.route}',
-          builder: (_, GoRouterState state) => CreditCardExpensePage(),
+          builder: (_, GoRouterState state) => CreditCardExpensePage(creditCardExpense: state.extra as CreditCardTransactionEntity?),
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,
