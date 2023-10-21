@@ -75,8 +75,8 @@ final class DatabaseLocal implements IDatabaseLocal {
     IncomeLocalDataSource(databaseLocal: this, transactionDataSource: transactionDb).createTable(batch);
     TransferLocalDataSource(databaseLocal: this, transactionDataSource: transactionDb).createTable(batch);
     CreditCardLocalDataSource(databaseLocal: this).createTable(batch);
-    CreditCardStatementLocalDataSource(databaseLocal: this).createTable(batch);
-    CreditCardTransactionLocalDataSource(databaseLocal: this).createTable(batch);
+    final CreditCardTransactionLocalDataSource creditCardTransactionLocalDataSource = CreditCardTransactionLocalDataSource(databaseLocal: this)..createTable(batch);
+    CreditCardStatementLocalDataSource(databaseLocal: this, creditCardTransactionLocalDataSource: creditCardTransactionLocalDataSource).createTable(batch);
 
     await batch.commit();
   }

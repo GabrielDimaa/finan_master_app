@@ -26,14 +26,4 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
     final CreditCardTransactionModel transaction = await _creditCardTransactionDataSource.upsert(CreditCardTransactionFactory.fromEntity(entity));
     return CreditCardTransactionFactory.toEntity(transaction);
   }
-
-  @override
-  Future<CreditCardTransactionEntity> saveTransactionWithNewStatement({required CreditCardTransactionEntity entity, required CreditCardStatementEntity statement}) async {
-    final CreditCardTransactionModel model = await _dbTransaction.openTransaction<CreditCardTransactionModel>((txn) async {
-      await _creditCardStatementDataSource.upsert(CreditCardStatementFactory.fromEntity(statement), txn: txn);
-      return await _creditCardTransactionDataSource.upsert(CreditCardTransactionFactory.fromEntity(entity), txn: txn);
-    });
-
-    return CreditCardTransactionFactory.toEntity(model);
-  }
 }

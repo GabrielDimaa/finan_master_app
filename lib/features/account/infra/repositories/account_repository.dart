@@ -16,6 +16,12 @@ class AccountRepository implements IAccountRepository {
   }
 
   @override
+  Future<AccountEntity?> findById(String id) async {
+    final AccountModel? account = await _dataSource.findById(id);
+    return account != null ? AccountFactory.toEntity(account) : null;
+  }
+
+  @override
   Future<AccountEntity> save(AccountEntity entity) async {
     final AccountModel account = await _dataSource.upsert(AccountFactory.fromEntity(entity));
     return AccountFactory.toEntity(account);

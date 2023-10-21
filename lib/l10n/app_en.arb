@@ -2,6 +2,7 @@
   "account": "Account",
   "accountBalance": "Account balance",
   "accountDetails": "Account details",
+  "accountNotFound": "Account not found.",
   "accounts": "Accounts",
   "allFilter": "All",
   "amount": "Amount",

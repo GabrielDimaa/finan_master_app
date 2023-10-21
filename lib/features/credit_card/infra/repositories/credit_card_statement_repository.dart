@@ -1,32 +1,48 @@
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_statement_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_statement_repository.dart';
 import 'package:finan_master_app/features/credit_card/helpers/factories/credit_card_statement_factory.dart';
+import 'package:finan_master_app/features/credit_card/helpers/factories/credit_card_transaction_factory.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_statement_local_data_source.dart';
+import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_statement_model.dart';
+import 'package:finan_master_app/features/credit_card/infra/models/credit_card_transaction_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 
 class CreditCardStatementRepository implements ICreditCardStatementRepository {
   final ICreditCardStatementLocalDataSource _localDataSource;
+  final ICreditCardTransactionLocalDataSource _creditCardTransactionLocalDataSource;
   final IDatabaseLocalTransaction _dbTransaction;
 
   CreditCardStatementRepository({
     required ICreditCardStatementLocalDataSource localDataSource,
+    required ICreditCardTransactionLocalDataSource creditCardTransactionLocalDataSource,
     required IDatabaseLocalTransaction dbTransaction,
   })  : _localDataSource = localDataSource,
+        _creditCardTransactionLocalDataSource = creditCardTransactionLocalDataSource,
         _dbTransaction = dbTransaction;
 
   @override
   Future<CreditCardStatementEntity> save(CreditCardStatementEntity entity) async {
-    final CreditCardStatementModel model = await _localDataSource.upsert(CreditCardStatementFactory.fromEntity(entity));
+    final CreditCardStatementModel model = await _dbTransaction.openTransaction<CreditCardStatementModel>((txn) async {
+      final CreditCardStatementModel model = await _localDataSource.upsert(CreditCardStatementFactory.fromEntity(entity), txn: txn);
+
+      for (final transaction in entity.transactions) {
+        final CreditCardTransactionModel transactionModel = await _creditCardTransactionLocalDataSource.upsert(CreditCardTransactionFactory.fromEntity(transaction), txn: txn);
+        model.transactions.add(transactionModel);
+      }
+
+      return model;
+    });
+
     return CreditCardStatementFactory.toEntity(model);
   }
 
   @override
   Future<void> saveMany(List<CreditCardStatementEntity> statements, {ITransactionExecutor? txn}) async {
     if (txn == null) {
-      await _dbTransaction.openTransaction((txn_) async {
+      await _dbTransaction.openTransaction((newTxn) async {
         for (final statement in statements) {
-          await _localDataSource.upsert(CreditCardStatementFactory.fromEntity(statement), txn: txn_);
+          await _localDataSource.upsert(CreditCardStatementFactory.fromEntity(statement), txn: newTxn);
         }
       });
     } else {
@@ -34,6 +50,12 @@ class CreditCardStatementRepository implements ICreditCardStatementRepository {
         await _localDataSource.upsert(CreditCardStatementFactory.fromEntity(statement), txn: txn);
       }
     }
+  }
+
+  @override
+  Future<CreditCardStatementEntity> saveOnlyStatement(CreditCardStatementEntity entity) async {
+    final CreditCardStatementModel model = await _localDataSource.upsert(CreditCardStatementFactory.fromEntity(entity));
+    return CreditCardStatementFactory.toEntity(model);
   }
 
   @override

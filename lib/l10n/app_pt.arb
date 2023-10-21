@@ -2,6 +2,7 @@
   "account": "Conta",
   "accountBalance": "Saldo em conta",
   "accountDetails": "Detalhes da conta",
+  "accountNotFound": "Conta não encontrada.",
   "accounts": "Contas",
   "allFilter": "Todas",
   "amount": "Valor",

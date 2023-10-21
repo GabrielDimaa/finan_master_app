@@ -6,6 +6,8 @@ abstract interface class ICreditCardStatementRepository {
 
   Future<void> saveMany(List<CreditCardStatementEntity> statements, {ITransactionExecutor? txn});
 
+  Future<CreditCardStatementEntity> saveOnlyStatement(CreditCardStatementEntity entity);
+
   Future<CreditCardStatementEntity?> findById(String id);
 
   Future<CreditCardStatementEntity?> findFirstAfterDate({required DateTime date, required String idCreditCard});

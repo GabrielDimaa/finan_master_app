@@ -59,9 +59,8 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
         statementClosingDate: dates.closingDate,
         statementDueDate: dates.dueDate,
         idCreditCard: creditCard.id,
-        totalPaid: 0,
-        totalSpent: 0,
         amountLimit: creditCard.amountLimit,
+        transactions: [],
       );
     }
 
@@ -74,9 +73,13 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
     //Associa a transação a uma fatura
     entity.idCreditCardStatement = statement.id;
 
+    //Adiciona a transação na fatura
+    statement.transactions.add(entity);
+
     //Se for uma nova fatura, salva a transação com a fatura
     if (statement.isNew) {
-      return await _creditCardTransactionRepository.saveTransactionWithNewStatement(entity: entity, statement: statement);
+      final statementResult = await _creditCardStatementRepository.save(statement);
+      return statementResult.transactions.firstWhere((e) => e.id == entity.id);
     } else {
       return await _creditCardTransactionRepository.save(entity);
     }

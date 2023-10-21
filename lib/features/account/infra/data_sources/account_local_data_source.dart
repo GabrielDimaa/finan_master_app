@@ -64,7 +64,7 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       }
 
       if (id != null) {
-        whereListed.add('${Model.idColumnName} = ?');
+        whereListed.add('$tableName.${Model.idColumnName} = ?');
         whereArgs.add(id);
       }
 

@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/credit_card/infra/models/credit_card_transaction_model.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class CreditCardStatementModel extends Model {
@@ -5,10 +6,9 @@ class CreditCardStatementModel extends Model {
   final DateTime statementDueDate;
 
   final String idCreditCard;
-
-  final double totalPaid;
-  final double totalSpent;
   final double amountLimit;
+
+  final List<CreditCardTransactionModel> transactions;
 
   CreditCardStatementModel({
     required super.id,
@@ -17,9 +17,8 @@ class CreditCardStatementModel extends Model {
     required this.statementClosingDate,
     required this.statementDueDate,
     required this.idCreditCard,
-    required this.totalPaid,
-    required this.totalSpent,
     required this.amountLimit,
+    required this.transactions,
   });
 
   @override
@@ -31,9 +30,8 @@ class CreditCardStatementModel extends Model {
       statementClosingDate: statementClosingDate,
       statementDueDate: statementDueDate,
       idCreditCard: idCreditCard,
-      totalPaid: totalPaid,
-      totalSpent: totalSpent,
       amountLimit: amountLimit,
+      transactions: transactions.map((transaction) => transaction.clone()).toList(),
     );
   }
 

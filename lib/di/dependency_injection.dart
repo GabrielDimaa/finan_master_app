@@ -132,8 +132,8 @@ final class DependencyInjection {
     getIt.registerFactory<IAccountLocalDataSource>(() => AccountLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<ICategoryLocalDataSource>(() => CategoryLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<ICreditCardLocalDataSource>(() => CreditCardLocalDataSource(databaseLocal: databaseLocal));
-    getIt.registerFactory<ICreditCardStatementLocalDataSource>(() => CreditCardStatementLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<ICreditCardTransactionLocalDataSource>(() => CreditCardTransactionLocalDataSource(databaseLocal: databaseLocal));
+    getIt.registerFactory<ICreditCardStatementLocalDataSource>(() => CreditCardStatementLocalDataSource(databaseLocal: databaseLocal, creditCardTransactionLocalDataSource: getIt.get<ICreditCardTransactionLocalDataSource>()));
     getIt.registerFactory<IExpenseLocalDataSource>(() => ExpenseLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
     getIt.registerFactory<IIncomeLocalDataSource>(() => IncomeLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
     getIt.registerFactory<ITransactionLocalDataSource>(() => TransactionLocalDataSource(databaseLocal: databaseLocal));
@@ -145,7 +145,7 @@ final class DependencyInjection {
     getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryLocalDataSource>()));
     getIt.registerFactory<IConfigRepository>(() => ConfigRepository(cacheLocal: getIt.get<ICacheLocal>()));
     getIt.registerFactory<ICreditCardRepository>(() => CreditCardRepository(creditCardDataSource: getIt.get<ICreditCardLocalDataSource>()));
-    getIt.registerFactory<ICreditCardStatementRepository>(() => CreditCardStatementRepository(localDataSource: getIt.get<ICreditCardStatementLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
+    getIt.registerFactory<ICreditCardStatementRepository>(() => CreditCardStatementRepository(localDataSource: getIt.get<ICreditCardStatementLocalDataSource>(), creditCardTransactionLocalDataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
     getIt.registerFactory<ICreditCardTransactionRepository>(() => CreditCardTransactionRepository(creditCardTransactionDataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), creditCardStatementDataSource: getIt.get<ICreditCardStatementLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
     getIt.registerFactory<IExpenseRepository>(() => ExpenseRepository(dbTransaction: databaseLocal.transactionInstance(), expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>()));
     getIt.registerFactory<IIncomeRepository>(() => IncomeRepository(dbTransaction: databaseLocal.transactionInstance(), incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>()));
@@ -178,7 +178,7 @@ final class DependencyInjection {
     getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>()));
 
     //Notifiers
-    getIt.registerFactory<AccountNotifier>(() => AccountNotifier(accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>(), incomeSave: getIt.get<IIncomeSave>(), expenseSave: getIt.get<IExpenseSave>()));
+    getIt.registerFactory<AccountNotifier>(() => AccountNotifier(accountFind: getIt.get<IAccountFind>(), accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>(), incomeSave: getIt.get<IIncomeSave>(), expenseSave: getIt.get<IExpenseSave>()));
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<BackupNotifier>(() => BackupNotifier(backup: getIt.get<IBackup>()));
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));

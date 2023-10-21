@@ -15,6 +15,8 @@ sealed class AccountState {
 
   AccountState setDeleting() => DeletingAccountState(account: account);
 
+  AccountState setFinding() => FindingAccountState(account: account);
+
   AccountState setError(String message) => ErrorAccountState(message, account: account);
 }
 
@@ -44,6 +46,10 @@ class SavingAccountState extends AccountState {
 
 class DeletingAccountState extends AccountState {
   const DeletingAccountState({required super.account});
+}
+
+class FindingAccountState extends AccountState {
+  const FindingAccountState({required super.account});
 }
 
 class ErrorAccountState extends AccountState {

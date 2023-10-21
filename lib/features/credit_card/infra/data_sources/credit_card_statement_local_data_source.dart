@@ -1,4 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_statement_local_data_source.dart';
+import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_statement_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_operation.dart';
@@ -8,7 +10,12 @@ import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dar
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardStatementModel> implements ICreditCardStatementLocalDataSource {
-  CreditCardStatementLocalDataSource({required super.databaseLocal});
+  CreditCardStatementLocalDataSource({
+    required super.databaseLocal,
+    required ICreditCardTransactionLocalDataSource creditCardTransactionLocalDataSource,
+  }) : super(childrenRepositories: [creditCardTransactionLocalDataSource]);
+
+  ICreditCardTransactionLocalDataSource get creditCardTransactionLocalDataSource => childrenRepositories.firstWhere((child) => child is ICreditCardTransactionLocalDataSource) as ICreditCardTransactionLocalDataSource;
 
   @override
   String get tableName => 'credit_card_statements';
@@ -39,9 +46,8 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
       statementClosingDate: DateTime.tryParse(map['${prefix}statement_closing_date'].toString())!.toLocal(),
       statementDueDate: DateTime.tryParse(map['${prefix}statement_due_date'].toString())!.toLocal(),
       idCreditCard: map['${prefix}id_credit_card'],
-      totalPaid: map['${prefix}total_paid'],
-      totalSpent: map['${prefix}total_spent'],
       amountLimit: map['${prefix}amount_limit'],
+      transactions: [],
     );
   }
 
@@ -56,7 +62,7 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
       }
 
       if (id != null) {
-        whereListed.add('${Model.idColumnName} = ?');
+        whereListed.add('$tableName.${Model.idColumnName} = ?');
         whereArgs.add(id);
       }
 
@@ -64,21 +70,38 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
         whereListed.add('$tableName.${Model.deletedAtColumnName} IS NULL');
       }
 
-      whereListed.add('credit_card_transactions.${Model.deletedAtColumnName} IS NULL');
+      whereListed.add("${creditCardTransactionLocalDataSource.tableName}.${Model.deletedAtColumnName} IS NULL");
 
       final String sql = '''
         SELECT
-          $tableName.*,
-          credit_cards.amount_limit as amount_limit,
-          COALESCE(SUM(CASE WHEN credit_card_transactions.amount < 0 THEN credit_card_transactions.amount ELSE 0.0 END), 0.0) AS total_paid,
-          COALESCE(SUM(CASE WHEN credit_card_transactions.amount > 0 THEN credit_card_transactions.amount ELSE 0.0 END), 0.0) AS total_spent
+          -- Statements
+          $tableName.${Model.idColumnName} AS ${tableName}_${Model.idColumnName},
+          $tableName.${Model.createdAtColumnName} AS ${tableName}_${Model.createdAtColumnName},
+          $tableName.${Model.deletedAtColumnName} AS ${tableName}_${Model.deletedAtColumnName},
+          $tableName.statement_closing_date AS ${tableName}_statement_closing_date,
+          $tableName.statement_due_date AS ${tableName}_statement_due_date,
+          $tableName.id_credit_card AS ${tableName}_id_credit_card,
+          
+          -- Credit Card
+          credit_cards.amount_limit AS ${tableName}_amount_limit,
+          
+          -- Transactions
+          ${creditCardTransactionLocalDataSource.tableName}.${Model.idColumnName} AS ${creditCardTransactionLocalDataSource.tableName}_${Model.idColumnName},
+          ${creditCardTransactionLocalDataSource.tableName}.${Model.createdAtColumnName} AS ${creditCardTransactionLocalDataSource.tableName}_${Model.createdAtColumnName},
+          ${creditCardTransactionLocalDataSource.tableName}.${Model.deletedAtColumnName} AS ${creditCardTransactionLocalDataSource.tableName}_${Model.deletedAtColumnName},
+          ${creditCardTransactionLocalDataSource.tableName}.description AS ${creditCardTransactionLocalDataSource.tableName}_description,
+          ${creditCardTransactionLocalDataSource.tableName}.amount AS ${creditCardTransactionLocalDataSource.tableName}_amount,
+          ${creditCardTransactionLocalDataSource.tableName}.date AS ${creditCardTransactionLocalDataSource.tableName}_date,
+          ${creditCardTransactionLocalDataSource.tableName}.id_category AS ${creditCardTransactionLocalDataSource.tableName}_id_category,
+          ${creditCardTransactionLocalDataSource.tableName}.id_credit_card AS ${creditCardTransactionLocalDataSource.tableName}_id_credit_card,
+          ${creditCardTransactionLocalDataSource.tableName}.id_credit_card_statement AS ${creditCardTransactionLocalDataSource.tableName}_id_credit_card_statement,
+          ${creditCardTransactionLocalDataSource.tableName}.observation AS ${creditCardTransactionLocalDataSource.tableName}_observation
         FROM $tableName
         INNER JOIN credit_cards
           ON $tableName.id_credit_card = credit_cards.id
-        LEFT JOIN credit_card_transactions
-          ON $tableName.id = credit_card_transactions.id_credit_card_statement
+        LEFT JOIN ${creditCardTransactionLocalDataSource.tableName}
+          ON $tableName.id = ${creditCardTransactionLocalDataSource.tableName}.id_credit_card_statement
         ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
-        GROUP BY $tableName.${Model.idColumnName}
         ORDER BY ${orderBy ?? orderByDefault}
         ${limit != null ? ' LIMIT $limit' : ''}
         ${offset != null ? ' OFFSET $offset' : ''};
@@ -86,7 +109,24 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
 
       final List<Map<String, dynamic>> results = await (txn ?? databaseLocal).raw(sql, DatabaseOperation.select, whereArgs);
 
-      return results.map((e) => fromMap(e)).toList();
+      final List<CreditCardStatementModel> statements = [];
+
+      for (final result in results) {
+        CreditCardStatementModel? statement = statements.firstWhereOrNull((c) => c.id == result['${tableName}_${Model.idColumnName}']);
+
+        if (statement == null) {
+          statement = fromMap(result, prefix: '${tableName}_');
+          statements.add(statement);
+        }
+
+        if (result['${creditCardTransactionLocalDataSource.tableName}_${Model.idColumnName}'] != null) {
+          if (!statement.transactions.any((s) => s.id == result['${creditCardTransactionLocalDataSource.tableName}_${Model.idColumnName}'])) {
+            statement.transactions.add(creditCardTransactionLocalDataSource.fromMap(result, prefix: '${creditCardTransactionLocalDataSource.tableName}_'));
+          }
+        }
+      }
+
+      return statements;
     } on DatabaseLocalException catch (e, stackTrace) {
       throw throwable(e, stackTrace);
     }
