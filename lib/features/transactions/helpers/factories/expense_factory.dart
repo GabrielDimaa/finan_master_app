@@ -11,6 +11,7 @@ abstract class ExpenseFactory {
       description: entity.description,
       observation: entity.observation,
       idCategory: entity.idCategory!,
+      idCreditCardTransaction: entity.idCreditCardTransaction!,
       transaction: TransactionFactory.fromEntity(entity.transaction),
     );
   }
@@ -23,6 +24,7 @@ abstract class ExpenseFactory {
       description: model.description,
       observation: model.observation,
       idCategory: model.idCategory,
+      idCreditCardTransaction: model.idCreditCardTransaction,
       transaction: TransactionFactory.toEntity(model.transaction),
     );
   }

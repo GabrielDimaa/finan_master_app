@@ -27,6 +27,7 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
         ${baseColumnsSql()},
         description TEXT NOT NULL,
         id_category TEXT NOT NULL REFERENCES categories(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
+        id_credit_card_transaction TEXT REFERENCES credit_card_transactions(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         id_transaction TEXT NOT NULL REFERENCES ${_transactionDataSource.tableName}(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE CASCADE,
         observation TEXT
       );
@@ -44,6 +45,7 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
       description: map['${prefix}description'],
       observation: map['${prefix}observation'],
       idCategory: map['${prefix}id_category'],
+      idCreditCardTransaction: map['${prefix}id_credit_card_transaction'],
       transaction: _transactionDataSource.fromMap(map, prefix: '${_transactionDataSource.tableName}_'),
     );
   }
@@ -75,6 +77,7 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
           $tableName.${Model.deletedAtColumnName} AS ${tableName}_${Model.deletedAtColumnName},
           $tableName.description AS ${tableName}_description,
           $tableName.id_category AS ${tableName}_id_category,
+          $tableName.id_credit_card_transaction AS ${tableName}_id_credit_card_transaction,
           $tableName.id_transaction AS ${tableName}_id_transaction,
           $tableName.observation AS ${tableName}_observation,
           

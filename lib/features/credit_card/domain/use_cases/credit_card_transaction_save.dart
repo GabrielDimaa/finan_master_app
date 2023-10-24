@@ -61,6 +61,7 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
         idCreditCard: creditCard.id,
         amountLimit: creditCard.amountLimit,
         transactions: [],
+        paid: false,
       );
     }
 

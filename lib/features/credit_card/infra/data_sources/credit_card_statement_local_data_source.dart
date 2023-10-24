@@ -30,7 +30,8 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
         ${baseColumnsSql()},
         statement_closing_date TEXT NOT NULL,
         statement_due_date TEXT NOT NULL,
-        id_credit_card TEXT NOT NULL REFERENCES credit_cards(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT
+        id_credit_card TEXT NOT NULL REFERENCES credit_cards(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
+        paid INTEGER NOT NULL DEFAULT 0
       );
     ''');
   }
@@ -48,6 +49,7 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
       idCreditCard: map['${prefix}id_credit_card'],
       amountLimit: map['${prefix}amount_limit'],
       transactions: [],
+      paid: map['${prefix}paid'] == 1,
     );
   }
 
@@ -79,6 +81,7 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
           $tableName.statement_closing_date AS ${tableName}_statement_closing_date,
           $tableName.statement_due_date AS ${tableName}_statement_due_date,
           $tableName.id_credit_card AS ${tableName}_id_credit_card,
+          $tableName.paid AS ${tableName}_paid,
           
           -- Credit Card
           credit_cards.amount_limit AS ${tableName}_amount_limit,

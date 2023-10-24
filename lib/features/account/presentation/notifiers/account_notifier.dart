@@ -95,6 +95,7 @@ class AccountNotifier extends ValueNotifier<AccountState> {
             description: description,
             observation: null,
             idCategory: categoryOthersUuidExpense,
+            idCreditCardTransaction: null,
             transaction: null,
           );
 

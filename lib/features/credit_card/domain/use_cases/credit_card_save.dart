@@ -75,6 +75,7 @@ class CreditCardSave implements ICreditCardSave {
                 idCreditCard: entity.id,
                 amountLimit: entity.amountLimit,
                 transactions: [],
+                paid: false,
               );
 
               statementsChanged.add(statement);

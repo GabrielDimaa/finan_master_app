@@ -23,4 +23,19 @@ class CreditCardTransactionEntity extends Entity {
     required this.idCreditCardStatement,
     required this.observation,
   });
+
+  CreditCardTransactionEntity clone() {
+    return CreditCardTransactionEntity(
+      id: id,
+      createdAt: createdAt,
+      deletedAt: deletedAt,
+      description: description,
+      amount: amount,
+      date: date,
+      idCategory: idCategory,
+      idCreditCard: idCreditCard,
+      idCreditCardStatement: idCreditCardStatement,
+      observation: observation,
+    );
+  }
 }

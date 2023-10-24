@@ -4,11 +4,14 @@ import 'package:finan_master_app/features/account/presentation/states/accounts_s
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
+import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_statement_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/brand_card_enum.dart';
+import 'package:finan_master_app/features/credit_card/domain/enums/statement_status_enum.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_statement_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_statement_state.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/components/pay_statement_dialog.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/statement_status_widget.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
@@ -118,16 +121,6 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                             ],
                           ),
                         ),
-                        PopupMenuItem(
-                          onTap: () => WidgetsBinding.instance.addPostFrameCallback((_) => delete(context)),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.delete_outlined, size: 20),
-                              const Spacing.x(),
-                              Text(strings.delete),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   ],
@@ -193,7 +186,7 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
-                                                  StatementStatusWidget(status: creditCardStatementNotifier.status),
+                                                  StatementStatusWidget(status: state.creditCardStatement?.status ?? StatementStatusEnum.noMovements),
                                                   const Spacing.y(),
                                                   Text(strings.totalSpent, style: textTheme.labelLarge),
                                                   Text((state.creditCardStatement?.totalSpent ?? 0).money, style: textTheme.headlineLarge),
@@ -247,14 +240,15 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                                                     },
                                                   ),
                                                   const Spacing.y(2),
-                                                  SizedBox(
-                                                    width: double.infinity,
-                                                    child: FilledButton.icon(
-                                                      onPressed: payTheStatement,
-                                                      icon: const Icon(Icons.credit_score_outlined),
-                                                      label: Text(strings.payTheStatement),
+                                                  if ((state.creditCardStatement?.statementAmount ?? 0) > 0)
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      child: FilledButton.icon(
+                                                        onPressed: () => payStatement(state.creditCardStatement!),
+                                                        icon: const Icon(Icons.credit_score_outlined),
+                                                        label: Text(strings.payStatement),
+                                                      ),
                                                     ),
-                                                  ),
                                                 ],
                                               ),
                                             ),
@@ -337,9 +331,8 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
     }
   }
 
-  Future<void> payTheStatement() async {
-    // TODO: Implementar pagamento da fatura.
-    throw UnimplementedError();
+  Future<void> payStatement(CreditCardStatementEntity statement) async {
+    await PayStatementDialog.show(context: context, statement: statement);
   }
 
   Future<void> goCreditCardExpenseForm({required BuildContext context, CreditCardTransactionEntity? entity}) async {
@@ -352,11 +345,6 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
         idCreditCard: creditCardNotifier.creditCard.id,
       );
     }
-  }
-
-  Future<void> delete(BuildContext context) async {
-    // TODO: Implementar pagamento da fatura.
-    throw UnimplementedError();
   }
 
   ({DateTime closingDate, DateTime dueDate}) generateDates() {

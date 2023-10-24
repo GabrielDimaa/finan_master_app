@@ -20,15 +20,22 @@ class ExpenseRepository implements IExpenseRepository {
         _transactionLocalDataSource = transactionLocalDataSource;
 
   @override
-  Future<ExpenseEntity> save(ExpenseEntity entity) async {
+  Future<ExpenseEntity> save(ExpenseEntity entity, {ITransactionExecutor? txn}) async {
     final ExpenseModel model = ExpenseFactory.fromEntity(entity);
 
-    final ExpenseModel result = await _dbTransaction.openTransaction<ExpenseModel>((txn) async {
-      model.transaction = await _transactionLocalDataSource.upsert(model.transaction, txn: txn);
-      return await _expenseLocalDataSource.upsert(model, txn: txn);
-    });
+    if (txn == null) {
+      final ExpenseModel result = await _dbTransaction.openTransaction<ExpenseModel>((txn) async {
+        model.transaction = await _transactionLocalDataSource.upsert(model.transaction, txn: txn);
+        return await _expenseLocalDataSource.upsert(model, txn: txn);
+      });
 
-    return ExpenseFactory.toEntity(result);
+      return ExpenseFactory.toEntity(result);
+    } else {
+      model.transaction = await _transactionLocalDataSource.upsert(model.transaction, txn: txn);
+      final ExpenseModel result = await _expenseLocalDataSource.upsert(model, txn: txn);
+
+      return ExpenseFactory.toEntity(result);
+    }
   }
 
   @override

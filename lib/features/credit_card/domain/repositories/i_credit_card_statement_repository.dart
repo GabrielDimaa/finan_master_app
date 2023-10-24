@@ -6,7 +6,7 @@ abstract interface class ICreditCardStatementRepository {
 
   Future<void> saveMany(List<CreditCardStatementEntity> statements, {ITransactionExecutor? txn});
 
-  Future<CreditCardStatementEntity> saveOnlyStatement(CreditCardStatementEntity entity);
+  Future<CreditCardStatementEntity> saveOnlyStatement(CreditCardStatementEntity entity, {ITransactionExecutor? txn});
 
   Future<CreditCardStatementEntity?> findById(String id);
 

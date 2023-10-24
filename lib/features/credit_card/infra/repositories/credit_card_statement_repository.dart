@@ -53,8 +53,8 @@ class CreditCardStatementRepository implements ICreditCardStatementRepository {
   }
 
   @override
-  Future<CreditCardStatementEntity> saveOnlyStatement(CreditCardStatementEntity entity) async {
-    final CreditCardStatementModel model = await _localDataSource.upsert(CreditCardStatementFactory.fromEntity(entity));
+  Future<CreditCardStatementEntity> saveOnlyStatement(CreditCardStatementEntity entity, {ITransactionExecutor? txn}) async {
+    final CreditCardStatementModel model = await _localDataSource.upsert(CreditCardStatementFactory.fromEntity(entity), txn: txn);
     return CreditCardStatementFactory.toEntity(model);
   }
 

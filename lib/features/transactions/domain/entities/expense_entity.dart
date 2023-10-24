@@ -11,6 +11,8 @@ class ExpenseEntity extends Entity implements ITransactionEntity {
 
   String? idCategory;
 
+  String? idCreditCardTransaction;
+
   late TransactionEntity _transaction;
 
   TransactionEntity get transaction => _transaction;
@@ -35,6 +37,7 @@ class ExpenseEntity extends Entity implements ITransactionEntity {
     required this.description,
     required this.observation,
     required this.idCategory,
+    required this.idCreditCardTransaction,
     required TransactionEntity? transaction,
   }) {
     this.transaction = transaction ?? TransactionFactory.newEntity(TransactionTypeEnum.expense);
@@ -48,6 +51,7 @@ class ExpenseEntity extends Entity implements ITransactionEntity {
       description: description,
       observation: observation,
       idCategory: idCategory,
+      idCreditCardTransaction: idCreditCardTransaction,
       transaction: transaction,
     );
   }

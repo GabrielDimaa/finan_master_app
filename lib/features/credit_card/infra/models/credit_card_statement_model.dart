@@ -10,6 +10,8 @@ class CreditCardStatementModel extends Model {
 
   final List<CreditCardTransactionModel> transactions;
 
+  final bool paid;
+
   CreditCardStatementModel({
     required super.id,
     required super.createdAt,
@@ -19,6 +21,7 @@ class CreditCardStatementModel extends Model {
     required this.idCreditCard,
     required this.amountLimit,
     required this.transactions,
+    required this.paid,
   });
 
   @override
@@ -32,6 +35,7 @@ class CreditCardStatementModel extends Model {
       idCreditCard: idCreditCard,
       amountLimit: amountLimit,
       transactions: transactions.map((transaction) => transaction.clone()).toList(),
+      paid: paid,
     );
   }
 
@@ -42,6 +46,7 @@ class CreditCardStatementModel extends Model {
       'statement_closing_date': statementClosingDate.toIso8601String(),
       'statement_due_date': statementDueDate.toIso8601String(),
       'id_credit_card': idCreditCard,
+      'paid': paid ? 1 : 0,
     };
   }
 }

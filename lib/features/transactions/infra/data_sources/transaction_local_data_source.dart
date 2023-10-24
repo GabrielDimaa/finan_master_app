@@ -130,6 +130,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
           ${_expenseLocalDataSource.tableName}.${Model.deletedAtColumnName} AS ${_expenseLocalDataSource.tableName}_${Model.deletedAtColumnName},
           ${_expenseLocalDataSource.tableName}.description AS ${_expenseLocalDataSource.tableName}_description,
           ${_expenseLocalDataSource.tableName}.id_category AS ${_expenseLocalDataSource.tableName}_id_category,
+          ${_expenseLocalDataSource.tableName}.id_credit_card_transaction AS ${_expenseLocalDataSource.tableName}_id_credit_card_transaction,
           ${_expenseLocalDataSource.tableName}.id_transaction AS ${_expenseLocalDataSource.tableName}_id_transaction,
           ${_expenseLocalDataSource.tableName}.observation AS ${_expenseLocalDataSource.tableName}_observation,
           
@@ -139,6 +140,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
           NULL AS ${_incomeLocalDataSource.tableName}_${Model.deletedAtColumnName},
           NULL AS ${_incomeLocalDataSource.tableName}_description,
           NULL AS ${_incomeLocalDataSource.tableName}_id_category,
+          NULL AS ${_incomeLocalDataSource.tableName}_id_credit_card_transaction,
           NULL AS ${_incomeLocalDataSource.tableName}_id_transaction,
           NULL AS ${_incomeLocalDataSource.tableName}_observation,
           
@@ -191,6 +193,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
           NULL AS ${_expenseLocalDataSource.tableName}_${Model.deletedAtColumnName},
           NULL AS ${_expenseLocalDataSource.tableName}_description,
           NULL AS ${_expenseLocalDataSource.tableName}_id_category,
+          NULL AS ${_expenseLocalDataSource.tableName}_id_credit_card_transaction,
           NULL AS ${_expenseLocalDataSource.tableName}_id_transaction,
           NULL AS ${_expenseLocalDataSource.tableName}_observation,
         
@@ -200,6 +203,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
           ${_incomeLocalDataSource.tableName}.${Model.deletedAtColumnName} AS ${_incomeLocalDataSource.tableName}_${Model.deletedAtColumnName},
           ${_incomeLocalDataSource.tableName}.description AS ${_incomeLocalDataSource.tableName}_description,
           ${_incomeLocalDataSource.tableName}.id_category AS ${_incomeLocalDataSource.tableName}_id_category,
+          NULL AS ${_expenseLocalDataSource.tableName}_id_credit_card_transaction,
           ${_incomeLocalDataSource.tableName}.id_transaction AS ${_incomeLocalDataSource.tableName}_id_transaction,
           ${_incomeLocalDataSource.tableName}.observation AS ${_incomeLocalDataSource.tableName}_observation,
           
@@ -252,6 +256,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
           NULL AS ${_expenseLocalDataSource.tableName}_${Model.deletedAtColumnName},
           NULL AS ${_expenseLocalDataSource.tableName}_description,
           NULL AS ${_expenseLocalDataSource.tableName}_id_category,
+          NULL AS ${_expenseLocalDataSource.tableName}_id_credit_card_transaction,
           NULL AS ${_expenseLocalDataSource.tableName}_id_transaction,
           NULL AS ${_expenseLocalDataSource.tableName}_observation,
           
@@ -261,6 +266,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
           NULL AS ${_incomeLocalDataSource.tableName}_${Model.deletedAtColumnName},
           NULL AS ${_incomeLocalDataSource.tableName}_description,
           NULL AS ${_incomeLocalDataSource.tableName}_id_category,
+          NULL AS ${_incomeLocalDataSource.tableName}_id_credit_card_transaction,
           NULL AS ${_incomeLocalDataSource.tableName}_id_transaction,
           NULL AS ${_incomeLocalDataSource.tableName}_observation,
         

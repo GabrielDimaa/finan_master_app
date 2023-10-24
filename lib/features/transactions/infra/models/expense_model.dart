@@ -8,6 +8,8 @@ class ExpenseModel extends Model implements ITransactionModel {
 
   String idCategory;
 
+  String? idCreditCardTransaction;
+
   TransactionModel transaction;
 
   ExpenseModel({
@@ -17,6 +19,7 @@ class ExpenseModel extends Model implements ITransactionModel {
     required this.description,
     required this.observation,
     required this.idCategory,
+    required this.idCreditCardTransaction,
     required this.transaction,
   });
 
@@ -27,6 +30,7 @@ class ExpenseModel extends Model implements ITransactionModel {
       'description': description,
       'observation': observation,
       'id_category': idCategory,
+      'id_credit_card_transaction': idCreditCardTransaction,
       'id_transaction': transaction.id,
     };
   }
@@ -40,6 +44,7 @@ class ExpenseModel extends Model implements ITransactionModel {
       description: description,
       observation: observation,
       idCategory: idCategory,
+      idCreditCardTransaction: idCreditCardTransaction,
       transaction: transaction.clone(),
     );
   }

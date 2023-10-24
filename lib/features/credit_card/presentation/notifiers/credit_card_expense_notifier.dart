@@ -1,13 +1,16 @@
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_delete.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_save.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_expense_state.dart';
 import 'package:flutter/foundation.dart';
 
 class CreditCardExpenseNotifier extends ValueNotifier<CreditCardExpenseState> {
   final ICreditCardTransactionSave _creditCardTransactionSave;
+  final ICreditCardTransactionDelete _creditCardTransactionDelete;
 
-  CreditCardExpenseNotifier({required ICreditCardTransactionSave creditCardTransactionSave})
+  CreditCardExpenseNotifier({required ICreditCardTransactionSave creditCardTransactionSave, required ICreditCardTransactionDelete creditCardTransactionDelete})
       : _creditCardTransactionSave = creditCardTransactionSave,
+        _creditCardTransactionDelete = creditCardTransactionDelete,
         super(CreditCardExpenseState.start());
 
   CreditCardTransactionEntity get creditCardExpense => value.creditCardExpense;
@@ -44,6 +47,12 @@ class CreditCardExpenseNotifier extends ValueNotifier<CreditCardExpenseState> {
   }
 
   Future<void> delete() async {
-    throw UnimplementedError();
+    try {
+      value = value.setDeleting();
+      await _creditCardTransactionDelete.delete(creditCardExpense);
+      value = value.changedCreditCardExpense();
+    } catch (e) {
+      value = value.setError(e.toString());
+    }
   }
 }
