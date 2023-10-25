@@ -106,9 +106,10 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
           ${offset != null ? ' OFFSET $offset' : ''}
         ) AS $tableName
         INNER JOIN credit_cards
-          ON $tableName.id_credit_card = credit_cards.id
+          ON $tableName.id_credit_card = credit_cards.${Model.idColumnName}
         LEFT JOIN ${creditCardTransactionLocalDataSource.tableName}
-          ON $tableName.id = ${creditCardTransactionLocalDataSource.tableName}.id_credit_card_statement AND ${creditCardTransactionLocalDataSource.tableName}.${Model.deletedAtColumnName} IS NULL;
+          ON $tableName.${Model.idColumnName} = ${creditCardTransactionLocalDataSource.tableName}.id_credit_card_statement AND ${creditCardTransactionLocalDataSource.tableName}.${Model.deletedAtColumnName} IS NULL
+        ORDER BY $tableName.${Model.idColumnName}, ${creditCardTransactionLocalDataSource.tableName}.date DESC;
       ''';
 
       final List<Map<String, dynamic>> results = await (txn ?? databaseLocal).raw(sql, DatabaseOperation.select, whereArgs);

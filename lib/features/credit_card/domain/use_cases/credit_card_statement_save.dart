@@ -1,9 +1,12 @@
+import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_statement_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/statement_status_enum.dart';
+import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_statement_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_transaction_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_statement_save.dart';
+import 'package:finan_master_app/features/credit_card/helpers/factories/credit_card_transaction_factory.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
 import 'package:finan_master_app/shared/classes/constants.dart';
@@ -14,16 +17,19 @@ import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 class CreditCardStatementSave implements ICreditCardStatementSave {
   final ICreditCardStatementRepository _repository;
   final ICreditCardTransactionRepository _creditCardTransactionRepository;
+  final ICreditCardRepository _creditCardRepository;
   final IExpenseRepository _expenseRepository;
   final ILocalDBTransactionRepository _localDBTransactionRepository;
 
   CreditCardStatementSave({
     required ICreditCardStatementRepository repository,
     required ICreditCardTransactionRepository creditCardTransactionRepository,
+    required ICreditCardRepository creditCardRepository,
     required IExpenseRepository expenseRepository,
     required ILocalDBTransactionRepository localDBTransactionRepository,
   })  : _repository = repository,
         _creditCardTransactionRepository = creditCardTransactionRepository,
+        _creditCardRepository = creditCardRepository,
         _expenseRepository = expenseRepository,
         _localDBTransactionRepository = localDBTransactionRepository;
 
@@ -33,6 +39,8 @@ class CreditCardStatementSave implements ICreditCardStatementSave {
     if (creditCardStatement.status == StatementStatusEnum.paid) throw ValidationException(R.strings.statementAlreadyPaid);
     if (creditCardStatement.statementAmount <= 0) throw ValidationException(R.strings.statementGreaterThanZero);
     if (payValue > creditCardStatement.statementAmount) throw ValidationException(R.strings.paymentExceedStatementAmount);
+
+    final CreditCardEntity creditCard = await _creditCardRepository.findById(creditCardStatement.idCreditCard) ?? (throw ValidationException(R.strings.creditCardNotFound));
 
     final CreditCardStatementEntity creditCardStatementClone = creditCardStatement.clone();
 
@@ -51,8 +59,16 @@ class CreditCardStatementSave implements ICreditCardStatementSave {
         observation: null,
       );
 
-      creditCardTransaction = await _creditCardTransactionRepository.save(creditCardTransaction);
-      creditCardStatementClone.transactions.insert(0, creditCardTransaction);
+      final ExpenseEntity expense = CreditCardTransactionFactory.toExpenseEntity(creditCardTransaction)
+        ..amount = payValue
+        ..transaction.idAccount = creditCard.idAccount;
+
+      await _localDBTransactionRepository.openTransaction((txn) async {
+        creditCardTransaction = await _creditCardTransactionRepository.save(creditCardTransaction, txn: txn);
+        await _expenseRepository.save(expense, txn: txn);
+      });
+
+      creditCardStatementClone.transactions.add(creditCardTransaction);
       return creditCardStatementClone;
     }
 
@@ -63,18 +79,9 @@ class CreditCardStatementSave implements ICreditCardStatementSave {
       final List<ExpenseEntity> expenses = [];
 
       for (CreditCardTransactionEntity transaction in creditCardStatementClone.transactions) {
-        expenses.add(
-          ExpenseEntity(
-            id: null,
-            createdAt: null,
-            deletedAt: null,
-            description: transaction.description,
-            observation: transaction.observation,
-            idCategory: transaction.idCategory,
-            idCreditCardTransaction: transaction.id,
-            transaction: null,
-          ),
-        );
+        expenses.add(CreditCardTransactionFactory.toExpenseEntity(transaction)
+          ..amount = payValue
+          ..transaction.idAccount = creditCard.idAccount);
       }
 
       //Atualiza a fatura com status de "Paga"

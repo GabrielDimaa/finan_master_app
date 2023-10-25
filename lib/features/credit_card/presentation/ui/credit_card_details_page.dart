@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
@@ -161,11 +163,7 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                             initialDate: dateTimeFilter,
                             onChange: (DateTime date) async {
                               dateTimeFilter = date;
-                              await creditCardStatementNotifier.findByPeriod(
-                                startDate: date.getInitialMonth(),
-                                endDate: date.getFinalMonth(),
-                                idCreditCard: creditCardNotifier.creditCard.id,
-                              );
+                              await refreshStatement();
                             },
                           ),
                           const Spacing.y(1.5),
@@ -191,20 +189,37 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                                                   Text(strings.totalSpent, style: textTheme.labelLarge),
                                                   Text((state.creditCardStatement?.totalSpent ?? 0).money, style: textTheme.headlineLarge),
                                                   const Spacing.y(),
-                                                  Text('${strings.totalPaid}: ${(state.creditCardStatement?.totalPaid ?? 0).money}', style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurfaceVariant)),
+                                                  Text('${strings.totalPaid}: ${(state.creditCardStatement?.totalPaid ?? 0).abs().money}', style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurfaceVariant)),
                                                   Text('${strings.amountOutstanding}: ${(state.creditCardStatement?.statementAmount ?? 0).money}', style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurfaceVariant)),
                                                   Row(
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
                                                       Text(0.0.moneyWithoutSymbol),
+                                                      const Spacing.x(),
                                                       Flexible(
-                                                        child: Container(
+                                                        child: ConstrainedBox(
                                                           constraints: const BoxConstraints(maxWidth: 300),
-                                                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                                                          decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.primary : colorScheme.inversePrimary),
-                                                          height: 4,
+                                                          child: Stack(
+                                                            children: [
+                                                              Container(
+                                                                decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.inversePrimary : colorScheme.onBackground),
+                                                                height: 4,
+                                                              ),
+                                                              Builder(builder: (_) {
+                                                                final value = (state.creditCardStatement?.statementAmount ?? 0) / (state.creditCardStatement?.amountLimit ?? 1);
+                                                                return FractionallySizedBox(
+                                                                  widthFactor: min(max(value, 0.0), 1.0),
+                                                                  child: Container(
+                                                                    decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.primary : colorScheme.inversePrimary),
+                                                                    height: 4,
+                                                                  ),
+                                                                );
+                                                              }),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
+                                                      const Spacing.x(),
                                                       Text((state.creditCardStatement?.amountLimit ?? creditCardNotifier.creditCard.amountLimit).moneyWithoutSymbol),
                                                     ],
                                                   ),
@@ -282,7 +297,10 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                     children: [
-                                                      Text(transaction.amount.money, style: Theme.of(context).textTheme.labelLarge),
+                                                      Text(
+                                                        transaction.amount.money,
+                                                        style: Theme.of(context).textTheme.labelLarge?.copyWith(color: transaction.amount < 0 ? const Color(0XFF3CDE87) : null),
+                                                      ),
                                                       Text(transaction.date.formatDateToRelative()),
                                                     ],
                                                   ),
@@ -318,11 +336,7 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
     if (result?.isSave == true) {
       creditCardNotifier.setCreditCard(result!.value!);
       creditCardChanged = true;
-      await creditCardStatementNotifier.findByPeriod(
-        startDate: dateTimeFilter.getInitialMonth(),
-        endDate: dateTimeFilter.getFinalMonth(),
-        idCreditCard: creditCardNotifier.creditCard.id,
-      );
+      await refreshStatement();
     }
 
     if (result?.isDelete ?? false) {
@@ -332,19 +346,23 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
   }
 
   Future<void> payStatement(CreditCardStatementEntity statement) async {
-    await PayStatementDialog.show(context: context, statement: statement);
+    final CreditCardStatementEntity? result = await PayStatementDialog.show(context: context, statement: statement);
+    if (result != null) await refreshStatement();
   }
 
   Future<void> goCreditCardExpenseForm({required BuildContext context, CreditCardTransactionEntity? entity}) async {
-    final FormResultNavigation? result = await context.pushNamed(CreditCardExpensePage.route, extra: entity);
+    if (entity != null && entity.amount < 0) return;
 
-    if (result != null) {
-      await creditCardStatementNotifier.findByPeriod(
-        startDate: dateTimeFilter.getInitialMonth(),
-        endDate: dateTimeFilter.getFinalMonth(),
-        idCreditCard: creditCardNotifier.creditCard.id,
-      );
-    }
+    final FormResultNavigation? result = await context.pushNamed(CreditCardExpensePage.route, extra: entity);
+    if (result != null) await refreshStatement();
+  }
+
+  Future<void> refreshStatement() async {
+    await creditCardStatementNotifier.findByPeriod(
+      startDate: dateTimeFilter.getInitialMonth(),
+      endDate: dateTimeFilter.getFinalMonth(),
+      idCreditCard: creditCardNotifier.creditCard.id,
+    );
   }
 
   ({DateTime closingDate, DateTime dueDate}) generateDates() {

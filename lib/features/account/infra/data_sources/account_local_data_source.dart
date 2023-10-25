@@ -80,7 +80,7 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
           COALESCE(SUM(transactions.amount), 0.0) as transactions_amount
         FROM $tableName
         LEFT JOIN $transactionsTableName
-          ON $tableName.id = $transactionsTableName.id_account
+          ON $tableName.id = $transactionsTableName.id_account AND $transactionsTableName.${Model.deletedAtColumnName} IS NULL
         ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
         GROUP BY $tableName.${Model.idColumnName}, description
         ORDER BY ${orderBy ?? orderByDefault}

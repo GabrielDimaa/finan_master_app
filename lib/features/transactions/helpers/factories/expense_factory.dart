@@ -11,7 +11,7 @@ abstract class ExpenseFactory {
       description: entity.description,
       observation: entity.observation,
       idCategory: entity.idCategory!,
-      idCreditCardTransaction: entity.idCreditCardTransaction!,
+      idCreditCardTransaction: entity.idCreditCardTransaction,
       transaction: TransactionFactory.fromEntity(entity.transaction),
     );
   }

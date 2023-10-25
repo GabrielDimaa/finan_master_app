@@ -22,8 +22,8 @@ class PayStatementDialog extends StatefulWidget {
 
   const PayStatementDialog({Key? key, required this.statement}) : super(key: key);
 
-  static Future<void> show({required BuildContext context, required CreditCardStatementEntity statement}) async {
-    await showDialog(
+  static Future<CreditCardStatementEntity?> show({required BuildContext context, required CreditCardStatementEntity statement}) async {
+    return await showDialog(
       context: context,
       builder: (_) => PayStatementDialog(statement: statement),
     );
@@ -47,7 +47,11 @@ class _PayStatementDialogState extends State<PayStatementDialog> with ThemeConte
     super.initState();
     notifier.setStatement(widget.statement);
 
-    textController.text = notifier.creditCardStatement!.statementAmount.moneyWithoutSymbol;
+    textController.text = 0.0.moneyWithoutSymbol;
+
+    textController.addListener(() {
+      setState(() => payValue = textController.text.moneyToDouble());
+    });
   }
 
   @override
@@ -98,17 +102,14 @@ class _PayStatementDialogState extends State<PayStatementDialog> with ThemeConte
                   ),
                   const Spacing.y(),
                   TextFormField(
-                    autovalidateMode: AutovalidateMode.always,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     autofocus: true,
-                    decoration: InputDecoration(label: Text(strings.accountBalance), prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol),
+                    decoration: InputDecoration(label: Text(strings.value), prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol),
                     controller: textController,
                     validator: InputGreaterThanValueValidator().validate,
                     enabled: !isLoading,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.done,
-                    onChanged: (String value) {
-                      setState(() => payValue = value.moneyToDouble());
-                    },
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
                   ),
                 ],
@@ -123,9 +124,20 @@ class _PayStatementDialogState extends State<PayStatementDialog> with ThemeConte
   Future<void> save() async {
     try {
       await notifier.payStatement(payValue);
+
+      if (notifier.value is ErrorCreditCardStatementState) throw Exception((notifier.value as ErrorCreditCardStatementState).message);
+
+      if (!mounted) return;
+      context.pop(notifier.creditCardStatement);
     } catch (e) {
       if (!mounted) return;
       ErrorDialog.show(context, e.toString());
     }
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
   }
 }

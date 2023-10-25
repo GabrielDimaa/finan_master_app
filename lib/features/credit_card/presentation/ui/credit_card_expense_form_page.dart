@@ -57,8 +57,6 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
   void initState() {
     super.initState();
 
-    dateController.text = notifier.creditCardExpense.date.format();
-
     Future(() async {
       try {
         await Future.wait([
@@ -70,6 +68,8 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
         if (creditCardsNotifier.value is ErrorCreditCardsState) throw Exception((creditCardsNotifier.value as ErrorCreditCardsState).message);
 
         if (widget.creditCardExpense != null) notifier.setCreditCardExpense(widget.creditCardExpense!);
+
+        dateController.text = notifier.creditCardExpense.date.format();
 
         if (creditCardsNotifier.value.creditCards.length == 1) {
           notifier.creditCardExpense.idCreditCard = creditCardsNotifier.value.creditCards.first.id;
@@ -100,7 +100,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                     onPressed: save,
                     child: Text(strings.save),
                   ),
-                  if (!state.creditCardExpense.isNew)
+                  if (widget.creditCardExpense?.isNew != true)
                     IconButton(
                       tooltip: strings.delete,
                       onPressed: delete,
