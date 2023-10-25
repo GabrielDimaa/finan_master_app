@@ -1,9 +1,11 @@
 import 'package:finan_master_app/features/account/domain/repositories/i_account_repository.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/account_delete.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/account_find.dart';
+import 'package:finan_master_app/features/account/domain/use_cases/account_readjustment_transaction.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/account_save.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_delete.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_find.dart';
+import 'package:finan_master_app/features/account/domain/use_cases/i_account_readjustment_transaction.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_save.dart';
 import 'package:finan_master_app/features/account/infra/data_sources/account_local_data_source.dart';
 import 'package:finan_master_app/features/account/infra/data_sources/i_account_local_data_source.dart';
@@ -160,6 +162,7 @@ final class DependencyInjection {
     //Use cases
     getIt.registerFactory<IAccountDelete>(() => AccountDelete(repository: getIt.get<IAccountRepository>()));
     getIt.registerFactory<IAccountFind>(() => AccountFind(repository: getIt.get<IAccountRepository>()));
+    getIt.registerFactory<IAccountReadjustmentTransaction>(() => AccountReadjustmentTransaction(incomeSave: getIt.get<IIncomeSave>(), expenseSave: getIt.get<IExpenseSave>()));
     getIt.registerFactory<IAccountSave>(() => AccountSave(repository: getIt.get<IAccountRepository>()));
     getIt.registerFactory<IBackup>(() => Backup(repository: getIt.get<IBackupRepository>()));
     getIt.registerFactory<ICategoryDelete>(() => CategoryDelete(repository: getIt.get<ICategoryRepository>()));
@@ -184,7 +187,7 @@ final class DependencyInjection {
     getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>()));
 
     //Notifiers
-    getIt.registerFactory<AccountNotifier>(() => AccountNotifier(accountFind: getIt.get<IAccountFind>(), accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>(), incomeSave: getIt.get<IIncomeSave>(), expenseSave: getIt.get<IExpenseSave>()));
+    getIt.registerFactory<AccountNotifier>(() => AccountNotifier(accountFind: getIt.get<IAccountFind>(), accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>(), accountReadjustmentTransaction: getIt.get<IAccountReadjustmentTransaction>()));
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<BackupNotifier>(() => BackupNotifier(backup: getIt.get<IBackup>()));
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
