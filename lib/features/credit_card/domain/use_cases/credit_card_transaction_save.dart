@@ -42,6 +42,7 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
 
       //Não é possível editar uma transação de uma fatura fechada
       if (statement.statementClosingDate.isBefore(DateTime.now())) throw ValidationException(R.strings.notPossibleEditTransactionStatementClosed);
+      if (statement.paid) throw ValidationException(R.strings.notPossibleEditTransactionCreditCardPaid);
     }
 
     CreditCardStatementEntity? statement = await _creditCardStatementRepository.findFirstAfterDate(date: entity.date, idCreditCard: creditCard.id);

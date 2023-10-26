@@ -77,7 +77,7 @@ class ListTransactions extends StatelessWidget {
                       ),
                       onTap: () async {
                         try {
-                          if (expense.idCreditCardTransaction != null) throw Exception(R.strings.notPossibleEditTransactionCreditCard);
+                          if (expense.idCreditCardTransaction != null) throw Exception(R.strings.notPossibleEditTransactionCreditCardPaid);
                           await goFormsPage(context: context, route: ExpenseFormPage.route, entity: expense);
                         } catch (e) {
                           if (!context.mounted) return;

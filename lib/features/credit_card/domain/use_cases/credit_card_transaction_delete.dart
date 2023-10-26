@@ -23,6 +23,7 @@ class CreditCardTransactionDelete implements ICreditCardTransactionDelete {
 
     //Não é possível excluir uma transação de uma fatura fechada
     if (statement.statementClosingDate.isBefore(DateTime.now())) throw ValidationException(R.strings.notPossibleDeleteTransactionStatementClosed);
+    if (statement.paid) throw ValidationException(R.strings.notPossibleDeleteTransactionCreditCardPaid);
 
     await _repository.delete(entity);
   }
