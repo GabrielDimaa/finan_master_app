@@ -103,6 +103,7 @@
   "noCreditCardRegistered": "No credit card registered.",
   "noMovementsToPay": "No movements to pay.",
   "notPossibleShare": "It was not possible to share.",
+  "notPossibleEditTransactionCreditCard": "It is not possible to edit a credit card transaction that is already paid.",
   "notPossibleEditTransactionStatementClosed": "It's not possible to edit a transaction on a closed statement.",
   "notPossibleDeleteTransactionStatementClosed": "It's not possible to delete a transaction on a closed statement.",
   "noTransactionsRegistered": "No transactions registered.",

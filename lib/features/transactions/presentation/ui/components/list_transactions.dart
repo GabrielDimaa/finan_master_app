@@ -13,6 +13,9 @@ import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -59,11 +62,28 @@ class ListTransactions extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (expense.idCreditCardTransaction != null) ...[
+                                const Icon(Icons.credit_card_outlined, size: 20),
+                                const Spacing.x(),
+                              ],
+                              Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                            ],
+                          ),
                           Text(expense.transaction.date.formatDateToRelative()),
                         ],
                       ),
-                      onTap: () => goFormsPage(context: context, route: ExpenseFormPage.route, entity: expense),
+                      onTap: () async {
+                        try {
+                          if (expense.idCreditCardTransaction != null) throw Exception(R.strings.notPossibleEditTransactionCreditCard);
+                          await goFormsPage(context: context, route: ExpenseFormPage.route, entity: expense);
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          ErrorDialog.show(context, e.toString());
+                        }
+                      },
                     );
                   },
                 ),

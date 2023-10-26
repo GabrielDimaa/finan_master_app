@@ -16,6 +16,7 @@ import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/mask/mask_input_formatter.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_greater_than_value.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_required_validator.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/group_tile.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar.dart';
@@ -117,7 +118,7 @@ class _CreditCardFormPageState extends State<CreditCardFormPage> with ThemeConte
                                   label: Text(strings.limit),
                                   prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
                                 ),
-                                validator: InputRequiredValidator().validate,
+                                validator: InputGreaterThanValueValidator().validate,
                                 keyboardType: TextInputType.number,
                                 textInputAction: TextInputAction.next,
                                 enabled: !notifier.isLoading,

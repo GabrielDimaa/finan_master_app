@@ -16,7 +16,12 @@ class NavDrawer extends StatefulWidget {
 }
 
 class _NavDrawerState extends State<NavDrawer> with ThemeContext {
-  Map<int, NavigationDrawerDestination> get destinations => {CategoriesListPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.categories), icon: const Icon(Icons.category_outlined), selectedIcon: const Icon(Icons.category)), CreditCardsPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.creditCards), icon: const Icon(Icons.credit_card_outlined), selectedIcon: const Icon(Icons.credit_card)), AccountsListPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.accounts), icon: const Icon(Icons.account_balance_outlined), selectedIcon: const Icon(Icons.account_balance)), BackupPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.backup), icon: const Icon(Icons.backup_outlined), selectedIcon: const Icon(Icons.backup))};
+  Map<int, NavigationDrawerDestination> get destinations => {
+        CategoriesListPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.categories), icon: const Icon(Icons.category_outlined), selectedIcon: const Icon(Icons.category)),
+        CreditCardsPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.creditCards), icon: const Icon(Icons.credit_card_outlined), selectedIcon: const Icon(Icons.credit_card)),
+        AccountsListPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.accounts), icon: const Icon(Icons.account_balance_outlined), selectedIcon: const Icon(Icons.account_balance)),
+        BackupPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.backup), icon: const Icon(Icons.backup_outlined), selectedIcon: const Icon(Icons.backup)),
+      };
 
   void onDestinationSelected(int? index) {
     switch (index) {

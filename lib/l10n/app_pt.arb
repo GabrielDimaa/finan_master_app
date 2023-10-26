@@ -103,6 +103,7 @@
   "noCreditCardRegistered": "Nenhum cartão de crédito cadastrado.",
   "noMovementsToPay": "Nenhuma movimentação para pagar.",
   "notPossibleShare": "Não foi possível compartilhar.",
+  "notPossibleEditTransactionCreditCard": "Não é possível editar uma transação de cartão de crédito já paga.",
   "notPossibleEditTransactionStatementClosed": "Não é possível editar uma transação de uma fatura fechada.",
   "notPossibleDeleteTransactionStatementClosed": "Não é possível excluir uma transação de uma fatura fechada.",
   "noTransactionsRegistered": "Nenhuma transação cadastrada.",

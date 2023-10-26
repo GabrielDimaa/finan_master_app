@@ -197,25 +197,28 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                                                       Text(0.0.moneyWithoutSymbol),
                                                       const Spacing.x(),
                                                       Flexible(
-                                                        child: ConstrainedBox(
-                                                          constraints: const BoxConstraints(maxWidth: 300),
-                                                          child: Stack(
-                                                            children: [
-                                                              Container(
-                                                                decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.inversePrimary : colorScheme.onBackground),
-                                                                height: 4,
-                                                              ),
-                                                              Builder(builder: (_) {
-                                                                final value = (state.creditCardStatement?.statementAmount ?? 0) / (state.creditCardStatement?.amountLimit ?? 1);
-                                                                return FractionallySizedBox(
-                                                                  widthFactor: min(max(value, 0.0), 1.0),
-                                                                  child: Container(
-                                                                    decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.primary : colorScheme.inversePrimary),
-                                                                    height: 4,
-                                                                  ),
-                                                                );
-                                                              }),
-                                                            ],
+                                                        child: ClipRRect(
+                                                          borderRadius: BorderRadius.circular(4),
+                                                          child: ConstrainedBox(
+                                                            constraints: const BoxConstraints(maxWidth: 300),
+                                                            child: Stack(
+                                                              children: [
+                                                                Container(
+                                                                  decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.inversePrimary : colorScheme.onBackground),
+                                                                  height: 4,
+                                                                ),
+                                                                Builder(builder: (_) {
+                                                                  final value = (state.creditCardStatement?.statementAmount ?? 0) / (state.creditCardStatement?.amountLimit ?? 1);
+                                                                  return FractionallySizedBox(
+                                                                    widthFactor: min(max(value, 0.0), 1.0),
+                                                                    child: Container(
+                                                                      decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.primary : colorScheme.inversePrimary),
+                                                                      height: 4,
+                                                                    ),
+                                                                  );
+                                                                }),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ),
                                                       ),

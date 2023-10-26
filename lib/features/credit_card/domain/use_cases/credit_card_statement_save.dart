@@ -44,23 +44,23 @@ class CreditCardStatementSave implements ICreditCardStatementSave {
 
     final CreditCardStatementEntity creditCardStatementClone = creditCardStatement.clone();
 
+    CreditCardTransactionEntity creditCardTransaction = CreditCardTransactionEntity(
+      id: null,
+      createdAt: null,
+      deletedAt: null,
+      description: R.strings.statementPayment,
+      amount: payValue * (-1),
+      date: DateTime.now(),
+      idCategory: categoryOthersUuidExpense,
+      idCreditCard: creditCardStatementClone.idCreditCard,
+      idCreditCardStatement: creditCardStatementClone.id,
+      observation: null,
+    );
+
     //Se a fatura estiver em aberto
     if (creditCardStatementClone.status == StatementStatusEnum.outstanding) {
-      CreditCardTransactionEntity creditCardTransaction = CreditCardTransactionEntity(
-        id: null,
-        createdAt: null,
-        deletedAt: null,
-        description: R.strings.statementPayment,
-        amount: payValue * (-1),
-        date: DateTime.now(),
-        idCategory: categoryOthersUuidExpense,
-        idCreditCard: creditCardStatementClone.idCreditCard,
-        idCreditCardStatement: creditCardStatementClone.id,
-        observation: null,
-      );
-
       final ExpenseEntity expense = CreditCardTransactionFactory.toExpenseEntity(creditCardTransaction)
-        ..amount = payValue
+        ..amount = creditCardTransaction.amount
         ..transaction.idAccount = creditCard.idAccount;
 
       await _localDBTransactionRepository.openTransaction((txn) async {
@@ -74,13 +74,13 @@ class CreditCardStatementSave implements ICreditCardStatementSave {
 
     //Se a fatura estiver fechada ou vencida
     if (creditCardStatementClone.status == StatementStatusEnum.closed || creditCardStatementClone.status == StatementStatusEnum.overdue) {
-      if (payValue != creditCardStatement.statementAmount) throw ValidationException(R.strings.paymentExceedStatementAmount);
+      if (payValue != creditCardStatement.statementAmount) throw ValidationException(R.strings.paymentRequirementWhenClosedStatement);
 
       final List<ExpenseEntity> expenses = [];
 
       for (CreditCardTransactionEntity transaction in creditCardStatementClone.transactions) {
         expenses.add(CreditCardTransactionFactory.toExpenseEntity(transaction)
-          ..amount = payValue
+          ..amount = transaction.amount
           ..transaction.idAccount = creditCard.idAccount);
       }
 
@@ -90,12 +90,15 @@ class CreditCardStatementSave implements ICreditCardStatementSave {
       await _localDBTransactionRepository.openTransaction((txn) async {
         final expenseSaves = expenses.map((expense) => () => _expenseRepository.save(expense, txn: txn));
 
+        creditCardTransaction = await _creditCardTransactionRepository.save(creditCardTransaction, txn: txn);
+
         await Future.wait([
           _repository.saveOnlyStatement(creditCardStatementClone, txn: txn),
           ...expenseSaves.map((e) => e.call()),
         ]);
       });
 
+      creditCardStatementClone.transactions.add(creditCardTransaction);
       return creditCardStatementClone;
     }
 
