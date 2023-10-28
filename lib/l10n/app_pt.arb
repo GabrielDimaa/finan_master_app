@@ -109,6 +109,15 @@
   "notPossibleDeleteTransactionStatementClosed": "Não é possível excluir uma transação de uma fatura fechada.",
   "noTransactionsRegistered": "Nenhuma transação cadastrada.",
   "notPossibleToPayStatement": "O pagamento dessa fatura não pode ser realizado.",
+  "nSelected": "{count, plural, =1{1 selecionado} other{{count} selecionados}}",
+  "@nSelected": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
   "observation": "Observação",
   "openStatementAmount": "Valor da fatura aberta",
   "optional": "Opcional",

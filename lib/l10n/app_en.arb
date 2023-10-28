@@ -109,6 +109,15 @@
   "notPossibleDeleteTransactionStatementClosed": "It's not possible to delete a transaction on a closed statement.",
   "noTransactionsRegistered": "No transactions registered.",
   "notPossibleToPayStatement": "It is not possible to pay the statement.",
+  "nSelected": "{count, plural, other{{count} selected}}",
+  "@nSelected": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
   "observation": "Observation",
   "openStatementAmount": "Open statement amount",
   "optional": "Optional",
