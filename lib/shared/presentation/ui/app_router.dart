@@ -17,6 +17,7 @@ import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transactions_list_page.dart';
@@ -76,7 +77,7 @@ sealed class AppRouter {
           parentNavigatorKey: _rootNavigatorKey,
           name: TransferFormPage.route,
           path: '/${TransferFormPage.route}',
-          builder: (_, GoRouterState state) => const TransferFormPage(),
+          builder: (_, GoRouterState state) => TransferFormPage(transfer: state.extra as TransferEntity?),
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,

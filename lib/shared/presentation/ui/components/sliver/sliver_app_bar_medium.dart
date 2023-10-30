@@ -1,6 +1,6 @@
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/linear_progress_indicator_app_bar.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/mode_selectable.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_mode_selectable.dart';
 import 'package:flutter/material.dart';
 
 class SliverAppBarMedium extends StatefulWidget {
@@ -30,18 +30,18 @@ class _SliverAppBarMediumState extends State<SliverAppBarMedium> with ThemeConte
 
   @override
   Widget build(BuildContext context) {
-    final ModeSelectable? modeSelectable = ModeSelectable.of(context);
+    final ListModeSelectable? modeSelectable = ListModeSelectable.of(context);
 
     if (modeSelectable?.active == true) {
       return SliverAppBar.medium(
         scrolledUnderElevation: 0,
-        title: Text(strings.nSelected(modeSelectable?.countSelected ?? 0)),
+        title: Text(strings.nSelected(modeSelectable?.list.length ?? 0)),
         actions: [
           ...?widget.actionsInModeSelection,
           const Padding(padding: EdgeInsets.only(right: 8)),
         ],
         leading: IconButton(
-          onPressed: () => modeSelectable?.update(0),
+          onPressed: () => modeSelectable?.updateList([]),
           icon: Builder(
             builder: (context) {
               if (!animated) {

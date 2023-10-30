@@ -9,8 +9,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FiltersTransactions extends StatefulWidget {
   final TransactionsNotifier notifier;
+  final bool enabled;
 
-  const FiltersTransactions({Key? key, required this.notifier}) : super(key: key);
+  const FiltersTransactions({Key? key, required this.notifier, required this.enabled}) : super(key: key);
 
   @override
   State<FiltersTransactions> createState() => _FiltersTransactionsState();
@@ -30,12 +31,13 @@ class _FiltersTransactionsState extends State<FiltersTransactions> with ThemeCon
             ButtonSegment<CategoryTypeEnum>(value: CategoryTypeEnum.income, label: Text(CategoryTypeEnum.income.descriptionPlural)),
           ],
           selected: widget.notifier.filterType,
-          onSelectionChanged: widget.notifier.filterTransactions,
+          onSelectionChanged: widget.enabled ? widget.notifier.filterTransactions : null,
         ),
         const Spacing.y(),
         MonthlyFilter(
           initialDate: widget.notifier.startDate,
           onChange: (DateTime date) => widget.notifier.findByPeriod(date.getInitialMonth(), date.getFinalMonth()),
+          enabled: widget.enabled,
         ),
       ],
     );

@@ -10,7 +10,7 @@ import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_required_validator.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/group_tile.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar_medium.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_scaffold.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';

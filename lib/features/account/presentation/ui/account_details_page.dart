@@ -9,7 +9,7 @@ import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/confim_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar_medium.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_scaffold.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';

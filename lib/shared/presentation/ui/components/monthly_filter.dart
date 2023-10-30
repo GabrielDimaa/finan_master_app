@@ -7,8 +7,9 @@ import 'package:intl/intl.dart';
 class MonthlyFilter extends StatefulWidget {
   final DateTime initialDate;
   final void Function(DateTime date) onChange;
+  final bool enabled;
 
-  const MonthlyFilter({Key? key, required this.initialDate, required this.onChange}) : super(key: key);
+  const MonthlyFilter({Key? key, required this.initialDate, required this.onChange, this.enabled = true}) : super(key: key);
 
   @override
   State<MonthlyFilter> createState() => _MonthlyFilterState();
@@ -34,11 +35,13 @@ class _MonthlyFilterState extends State<MonthlyFilter> with ThemeContext {
         IconButton(
           tooltip: strings.previous,
           icon: const Icon(Icons.chevron_left_outlined),
-          onPressed: () {
-            dateTime = dateTime.subtractMonth(1);
-            widget.onChange(dateTime);
-            setState(() {});
-          },
+          onPressed: widget.enabled
+              ? () {
+                  dateTime = dateTime.subtractMonth(1);
+                  widget.onChange(dateTime);
+                  setState(() {});
+                }
+              : null,
         ),
         const Spacing.x(4),
         ConstrainedBox(
@@ -54,11 +57,13 @@ class _MonthlyFilterState extends State<MonthlyFilter> with ThemeContext {
         IconButton(
           tooltip: strings.next,
           icon: const Icon(Icons.chevron_right_outlined),
-          onPressed: () {
-            dateTime = dateTime.addMonth(1);
-            widget.onChange(dateTime);
-            setState(() {});
-          },
+          onPressed: widget.enabled
+              ? () {
+                  dateTime = dateTime.addMonth(1);
+                  widget.onChange(dateTime);
+                  setState(() {});
+                }
+              : null,
         ),
       ],
     );

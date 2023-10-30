@@ -1,4 +1,3 @@
-import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/mode_selectable.dart';
 import 'package:flutter/material.dart';
 
 class SliverScaffold extends StatefulWidget {
@@ -22,28 +21,20 @@ class SliverScaffold extends StatefulWidget {
 }
 
 class _SliverScaffoldState extends State<SliverScaffold> {
-  int countSelectedList = 0;
-
   @override
   Widget build(BuildContext context) {
-    return ModeSelectable(
-      countSelected: countSelectedList,
-      update: (int value) {
-        setState(() => countSelectedList = value);
-      },
-      child: Scaffold(
-        key: widget.scaffoldKey,
-        drawer: widget.drawer,
-        floatingActionButton: widget.floatingActionButton,
-        body: CustomScrollView(
-          slivers: [
-            SliverVisibility(
-              visible: widget.appBar != null,
-              sliver: widget.appBar ?? const SizedBox(),
-            ),
-            SliverToBoxAdapter(child: widget.body),
-          ],
-        ),
+    return Scaffold(
+      key: widget.scaffoldKey,
+      drawer: widget.drawer,
+      floatingActionButton: widget.floatingActionButton,
+      body: CustomScrollView(
+        slivers: [
+          SliverVisibility(
+            visible: widget.appBar != null,
+            sliver: widget.appBar ?? const SizedBox(),
+          ),
+          SliverToBoxAdapter(child: widget.body),
+        ],
       ),
     );
   }

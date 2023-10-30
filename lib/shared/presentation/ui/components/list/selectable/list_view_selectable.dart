@@ -1,11 +1,10 @@
-import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_tile_selectable.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/mode_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/item_selectable.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_mode_selectable.dart';
 import 'package:flutter/material.dart';
 
-class ListViewSelectable<T> extends StatelessWidget {
-  final List<ItemSelectable<T>> list;
-  final ListTileSelectable Function(ItemSelectable<T>) itemBuilder;
+class ListViewSelectable<T> extends StatefulWidget {
+  final List<T> list;
+  final Widget Function(ItemSelectable<T>) itemBuilder;
 
   final ScrollPhysics? physics;
   final bool shrinkWrap;
@@ -17,32 +16,59 @@ class ListViewSelectable<T> extends StatelessWidget {
   const ListViewSelectable.separated({super.key, required this.list, required this.itemBuilder, this.physics, this.shrinkWrap = false}) : separated = true;
 
   @override
+  State<ListViewSelectable<T>> createState() => _ListViewSelectableState<T>();
+}
+
+class _ListViewSelectableState<T> extends State<ListViewSelectable<T>> {
+  late List<ItemSelectable<T>> listSelectable;
+
+  @override
+  void initState() {
+    super.initState();
+    listSelectable = widget.list.map((e) => ItemSelectable(value: e)).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListViewModeSelection(
-      update: () => ModeSelectable.of(context)?.update(list.where((e) => e.selected).length),
+      update: () => ListModeSelectable.of(context)?.updateList(listSelectable.where((e) => e.selected).map((e) => e.value).toList()),
       child: Builder(
         builder: (_) {
-          if (ModeSelectable.of(context)?.active != true) {
-            for (var e in list) {
+          if (ListModeSelectable.of(context)?.active != true) {
+            for (var e in listSelectable) {
               e.selected = false;
             }
           }
 
-          if (separated) {
+          if (widget.separated) {
             return ListView.separated(
-              physics: physics,
-              shrinkWrap: shrinkWrap,
-              itemCount: list.length,
+              physics: widget.physics,
+              shrinkWrap: widget.shrinkWrap,
+              itemCount: listSelectable.length,
               separatorBuilder: (_, __) => const Divider(),
-              itemBuilder: (_, index) => itemBuilder(list[index]),
+              itemBuilder: (_, index) {
+                return Column(
+                  children: [
+                    widget.itemBuilder(listSelectable[index]),
+                    if (index == listSelectable.length - 1) const SizedBox(height: 50),
+                  ],
+                );
+              },
             );
           }
 
           return ListView.builder(
-            physics: physics,
-            shrinkWrap: shrinkWrap,
-            itemCount: list.length,
-            itemBuilder: (_, index) => itemBuilder(list[index]),
+            physics: widget.physics,
+            shrinkWrap: widget.shrinkWrap,
+            itemCount: listSelectable.length,
+            itemBuilder: (_, index) {
+              return Column(
+                children: [
+                  widget.itemBuilder(listSelectable[index]),
+                  if (index == listSelectable.length - 1) const SizedBox(height: 50),
+                ],
+              );
+            },
           );
         },
       ),

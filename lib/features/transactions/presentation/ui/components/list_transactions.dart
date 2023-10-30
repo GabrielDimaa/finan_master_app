@@ -15,12 +15,15 @@ import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/item_selectable.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_tile_selectable.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_view_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
-class ListTransactions extends StatelessWidget {
+class ListTransactions extends StatefulWidget {
   final TransactionsState state;
   final List<CategoryEntity> categories;
   final List<AccountEntity> accounts;
@@ -35,138 +38,137 @@ class ListTransactions extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<ListTransactions> createState() => _ListTransactionsState();
+}
+
+class _ListTransactionsState extends State<ListTransactions> {
+  @override
   Widget build(BuildContext context) {
-    return ListView.separated(
+    return ListViewSelectable.separated(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      separatorBuilder: (_, __) => const Divider(),
-      itemCount: state.transactions.length,
-      itemBuilder: (_, index) {
-        final ITransactionEntity transaction = state.transactions[index];
-
-        return Column(
-          children: [
-            switch (transaction) {
-              ExpenseEntity expense => Builder(
-                  builder: (_) {
-                    final category = categories.firstWhere((category) => category.id == expense.idCategory);
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Color(category.color.toColor()!),
-                        child: Icon(category.icon.parseIconData(), color: Colors.white),
-                      ),
-                      title: Text(expense.description),
-                      subtitle: Text(category.description),
-                      trailing: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (expense.idCreditCardTransaction != null) ...[
-                                const Icon(Icons.credit_card_outlined, size: 20),
-                                const Spacing.x(),
-                              ],
-                              Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                            ],
-                          ),
-                          Text(expense.transaction.date.formatDateToRelative()),
-                        ],
-                      ),
-                      onTap: () async {
-                        try {
-                          if (expense.idCreditCardTransaction != null) throw Exception(R.strings.notPossibleEditTransactionCreditCardPaid);
-                          await goFormsPage(context: context, route: ExpenseFormPage.route, entity: expense);
-                        } catch (e) {
-                          if (!context.mounted) return;
-                          ErrorDialog.show(context, e.toString());
-                        }
-                      },
-                    );
-                  },
+      list: widget.state.transactions,
+      itemBuilder: (ItemSelectable<ITransactionEntity> item) {
+        if (item.value is ExpenseEntity) {
+          final expense = item.value as ExpenseEntity;
+          final category = widget.categories.firstWhere((category) => category.id == expense.idCategory);
+          return ListTileSelectable<ITransactionEntity>(
+            value: item,
+            leading: CircleAvatar(
+              backgroundColor: Color(category.color.toColor()!),
+              child: Icon(category.icon.parseIconData(), color: Colors.white),
+            ),
+            title: Text(expense.description),
+            subtitle: Text(category.description),
+            trailing: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (expense.idCreditCardTransaction != null) ...[
+                      const Icon(Icons.credit_card_outlined, size: 20),
+                      const Spacing.x(),
+                    ],
+                    Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                  ],
                 ),
-              IncomeEntity income => Builder(
-                  builder: (_) {
-                    final category = categories.firstWhere((category) => category.id == income.idCategory);
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Color(category.color.toColor()!),
-                        child: Icon(category.icon.parseIconData(), color: Colors.white),
-                      ),
-                      title: Text(income.description),
-                      subtitle: Text(category.description),
-                      trailing: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(income.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
-                          Text(income.transaction.date.formatDateToRelative()),
-                        ],
-                      ),
-                      onTap: () => goFormsPage(context: context, route: IncomeFormPage.route, entity: income),
-                    );
-                  },
-                ),
-              TransferEntity transfer => Builder(
-                  builder: (_) {
-                    final account = accounts.firstWhere((account) => account.id == transfer.idAccount);
-                    return Column(
-                      children: [
-                        ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                            child: const Icon(Icons.move_up_outlined),
-                          ),
-                          title: Text(AppLocalizations.of(context)!.transfer),
-                          subtitle: Text(account.description),
-                          trailing: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(transfer.transactionTo.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
-                              Text(transfer.transactionTo.date.formatDateToRelative()),
-                            ],
-                          ),
-                          onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),
-                        ),
-                        const Divider(),
-                        ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                            child: const Icon(Icons.move_up_outlined),
-                          ),
-                          title: Text(AppLocalizations.of(context)!.transfer),
-                          subtitle: Text(account.description),
-                          trailing: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(transfer.transactionFrom.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                              Text(transfer.transactionFrom.date.formatDateToRelative()),
-                            ],
-                          ),
-                          onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              _ => const SizedBox.shrink(),
+                Text(expense.transaction.date.formatDateToRelative()),
+              ],
+            ),
+            onTap: () async {
+              try {
+                if (expense.idCreditCardTransaction != null) throw Exception(R.strings.notPossibleEditTransactionCreditCardPaid);
+                await goFormsPage(context: context, route: ExpenseFormPage.route, entity: expense);
+              } catch (e) {
+                if (!context.mounted) return;
+                ErrorDialog.show(context, e.toString());
+              }
             },
-            if (index == state.transactions.length - 1) const SizedBox(height: 50),
-          ],
-        );
+          );
+        }
+
+        if (item.value is IncomeEntity) {
+          final income = item.value as IncomeEntity;
+          final category = widget.categories.firstWhere((category) => category.id == income.idCategory);
+          return ListTileSelectable<ITransactionEntity>(
+            value: item,
+            leading: CircleAvatar(
+              backgroundColor: Color(category.color.toColor()!),
+              child: Icon(category.icon.parseIconData(), color: Colors.white),
+            ),
+            title: Text(income.description),
+            subtitle: Text(category.description),
+            trailing: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(income.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                Text(income.transaction.date.formatDateToRelative()),
+              ],
+            ),
+            onTap: () => goFormsPage(context: context, route: IncomeFormPage.route, entity: income),
+          );
+        }
+
+        if (item.value is TransferEntity) {
+          final transfer = item.value as TransferEntity;
+          final account = widget.accounts.firstWhere((account) => account.id == transfer.idAccount);
+          return Column(
+            children: [
+              ListTileSelectable<ITransactionEntity>(
+                value: item,
+                leading: CircleAvatar(
+                  backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                  child: const Icon(Icons.move_up_outlined),
+                ),
+                title: Text(AppLocalizations.of(context)!.transfer),
+                subtitle: Text(account.description),
+                trailing: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(transfer.transactionTo.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                    Text(transfer.transactionTo.date.formatDateToRelative()),
+                  ],
+                ),
+                onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),
+              ),
+              const Divider(),
+              ListTileSelectable<ITransactionEntity>(
+                value: item,
+                leading: CircleAvatar(
+                  backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                  child: const Icon(Icons.move_up_outlined),
+                ),
+                title: Text(AppLocalizations.of(context)!.transfer),
+                subtitle: Text(account.description),
+                trailing: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(transfer.transactionFrom.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                    Text(transfer.transactionFrom.date.formatDateToRelative()),
+                  ],
+                ),
+                onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),
+              ),
+            ],
+          );
+        }
+
+        return const SizedBox.shrink();
       },
     );
   }
 
   Future<void> goFormsPage({required BuildContext context, required String route, required ITransactionEntity entity}) async {
     final FormResultNavigation? result = await context.pushNamed(route, extra: entity);
-    if (result != null) refreshTransactions();
+    if (result != null) widget.refreshTransactions();
   }
 }

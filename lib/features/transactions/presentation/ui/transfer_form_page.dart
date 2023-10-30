@@ -9,6 +9,7 @@ import 'package:finan_master_app/features/transactions/presentation/notifiers/tr
 import 'package:finan_master_app/features/transactions/presentation/states/transfer_state.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
+import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
@@ -18,7 +19,7 @@ import 'package:finan_master_app/shared/presentation/ui/components/form/mask/mas
 import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_greater_than_value.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_required_validator.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/group_tile.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar_medium.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_scaffold.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
@@ -110,6 +111,7 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
                               child: Column(
                                 children: [
                                   TextFormField(
+                                    initialValue: state.transfer.amount.abs().moneyWithoutSymbol,
                                     decoration: InputDecoration(
                                       label: Text(strings.amount),
                                       prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,

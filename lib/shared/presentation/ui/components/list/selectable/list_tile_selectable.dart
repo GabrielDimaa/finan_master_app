@@ -1,10 +1,10 @@
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_view_selectable.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/mode_selectable.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_mode_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/item_selectable.dart';
 import 'package:flutter/material.dart';
 
-class ListTileSelectable extends StatelessWidget {
-  final ItemSelectable value;
+class ListTileSelectable<T> extends StatelessWidget {
+  final ItemSelectable<T> value;
 
   final Widget leading;
   final Widget title;
@@ -24,14 +24,24 @@ class ListTileSelectable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ModeSelectable? modeSelection = ModeSelectable.of(context);
+    final ListModeSelectable? modeSelection = ListModeSelectable.of(context);
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final ListViewModeSelection? listViewModeSelection = ListViewModeSelection.of(context);
 
     return ListTile(
-      leading: value.selected ? const CircleAvatar(child: Icon(Icons.check_outlined)) : leading,
+      leading: value.selected
+          ? CircleAvatar(
+              backgroundColor: colorScheme.primary,
+              child: Icon(
+                Icons.check_outlined,
+                color: colorScheme.onPrimary,
+              ),
+            )
+          : leading,
       title: title,
       subtitle: subtitle,
       trailing: trailing,
+      tileColor: value.selected ? colorScheme.secondaryContainer : null,
       onTap: modeSelection?.active == true ? () => update(context) : onTap,
       onLongPress: listViewModeSelection != null ? () => update(context) : null,
     );
