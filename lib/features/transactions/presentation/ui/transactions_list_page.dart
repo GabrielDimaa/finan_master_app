@@ -13,6 +13,8 @@ import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/app_bar_custom.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/date_picker.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/dialog/loading_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_mode_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
@@ -89,7 +91,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
           actionsInModeSelection: [
             IconButton(
               icon: const Icon(Icons.delete_outline),
-              onPressed: () {},
+              onPressed: deleteTransactions,
             ),
           ],
         ),
@@ -154,6 +156,18 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
     final DateTime? date = await showDatePickerDefault(context: context, initialDate: notifier.startDate);
     if (date != null) {
       await notifier.findByPeriod(date.getInitialMonth(), date.getFinalMonth());
+    }
+  }
+
+  Future<void> deleteTransactions() async {
+    try {
+      await LoadingDialog.show(context: context, message: strings.deletingTransactions, onAction: () => notifier.deleteTransactions(listSelectable));
+
+      setState(() => listSelectable = []);
+      await notifier.refreshTransactions();
+    } catch (e) {
+      if (!mounted) return;
+      ErrorDialog.show(context, e.toString());
     }
   }
 }

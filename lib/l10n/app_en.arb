@@ -61,6 +61,7 @@
   "delete": "Delete",
   "deleteAccount": "Delete account",
   "deleteAccountConfirmation": "Do you really want to delete this account?",
+  "deletingTransactions": "Deleting transactions...",
   "description": "Description",
   "dueDay": "Due day",
   "dueDate": "Due date",

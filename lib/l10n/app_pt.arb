@@ -61,6 +61,7 @@
   "delete": "Excluir",
   "deleteAccount": "Excluir conta",
   "deleteAccountConfirmation": "Deseja realmente excluir esta conta?",
+  "deletingTransactions": "Excluindo transações...",
   "description": "Descrição",
   "dueDay": "Dia vencimento",
   "dueDate": "Vencimento",

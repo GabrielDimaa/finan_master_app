@@ -8,7 +8,7 @@ extension DateTimeExtension on DateTime {
 
   DateTime getInitialMonth() => DateTime(year, month, 1);
 
-  DateTime getFinalMonth() => DateTime(year, month, getLastDayInMonth(), 23, 59, 59, 59);
+  DateTime getFinalMonth() => DateTime(year, month, getLastDayInMonth(), 23, 59, 59, 999);
 
   int getLastDayInMonth() => addMonth(1).copyWith(day: 1).subtract(const Duration(days: 1)).day;
 

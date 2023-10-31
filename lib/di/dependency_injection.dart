@@ -79,11 +79,13 @@ import 'package:finan_master_app/features/transactions/domain/use_cases/i_expens
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/income_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/income_save.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/transaction_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/transaction_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/transfer_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/transfer_save.dart';
@@ -183,6 +185,7 @@ final class DependencyInjection {
     getIt.registerFactory<IIncomeSave>(() => IncomeSave(repository: getIt.get<IIncomeRepository>()));
     getIt.registerFactory<ICreditCardStatementDates>(() => CreditCardStatementDates());
     getIt.registerFactory<ITransactionFind>(() => TransactionFind(repository: getIt.get<ITransactionRepository>()));
+    getIt.registerFactory<ITransactionDelete>(() => TransactionDelete(incomeRepository: getIt.get<IIncomeRepository>(), expenseRepository: getIt.get<IExpenseRepository>(), transferRepository: getIt.get<ITransferRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
     getIt.registerFactory<ITransferDelete>(() => TransferDelete(repository: getIt.get<ITransferRepository>()));
     getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>()));
 
@@ -200,7 +203,7 @@ final class DependencyInjection {
     getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>()));
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
-    getIt.registerFactory<TransactionsNotifier>(() => TransactionsNotifier(transactionFind: getIt.get<ITransactionFind>(), accountFind: getIt.get<IAccountFind>()));
+    getIt.registerFactory<TransactionsNotifier>(() => TransactionsNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<TransferNotifier>(() => TransferNotifier(transferSave: getIt.get<ITransferSave>(), transferDelete: getIt.get<ITransferDelete>()));
   }
 }

@@ -39,12 +39,17 @@ class ExpenseRepository implements IExpenseRepository {
   }
 
   @override
-  Future<void> delete(ExpenseEntity entity) async {
+  Future<void> delete(ExpenseEntity entity, {ITransactionExecutor? txn}) async {
     final ExpenseModel model = ExpenseFactory.fromEntity(entity);
 
-    await _dbTransaction.openTransaction((txn) async {
+    if (txn != null) {
       await _expenseLocalDataSource.delete(model, txn: txn);
       await _transactionLocalDataSource.delete(model.transaction, txn: txn);
-    });
+    } else {
+      await _dbTransaction.openTransaction((txn) async {
+        await _expenseLocalDataSource.delete(model, txn: txn);
+        await _transactionLocalDataSource.delete(model.transaction, txn: txn);
+      });
+    }
   }
 }

@@ -33,13 +33,19 @@ class TransferRepository implements ITransferRepository {
   }
 
   @override
-  Future<void> delete(TransferEntity entity) async {
+  Future<void> delete(TransferEntity entity, {ITransactionExecutor? txn}) async {
     final TransferModel model = TransferFactory.fromEntity(entity);
 
-    await _dbTransaction.openTransaction((txn) async {
-      await _transferLocalDataSource.upsert(model, txn: txn);
-      await _transactionLocalDataSource.upsert(model.transactionFrom, txn: txn);
-      await _transactionLocalDataSource.upsert(model.transactionTo, txn: txn);
-    });
+    if (txn != null) {
+      await _transferLocalDataSource.delete(model, txn: txn);
+      await _transactionLocalDataSource.delete(model.transactionFrom, txn: txn);
+      await _transactionLocalDataSource.delete(model.transactionTo, txn: txn);
+    } else {
+      await _dbTransaction.openTransaction((txn) async {
+        await _transferLocalDataSource.delete(model, txn: txn);
+        await _transactionLocalDataSource.delete(model.transactionFrom, txn: txn);
+        await _transactionLocalDataSource.delete(model.transactionTo, txn: txn);
+      });
+    }
   }
 }
