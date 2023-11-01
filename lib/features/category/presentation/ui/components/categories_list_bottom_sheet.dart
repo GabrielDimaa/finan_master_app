@@ -45,30 +45,42 @@ class _CategoriesListBottomSheetState extends State<CategoriesListBottomSheet> w
             Expanded(
               child: Material(
                 color: Colors.transparent,
-                child: ListView.separated(
-                  controller: scrollController,
-                  itemCount: widget.categories.length,
-                  separatorBuilder: (_, __) => const Divider(),
-                  itemBuilder: (_, index) {
-                    final CategoryEntity category = widget.categories[index];
-                    return RadioListTile<CategoryEntity>(
-                      title: Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: Color(category.color.toColor()!),
-                            child: Icon(category.icon.parseIconData(), color: Colors.white),
-                          ),
-                          const Spacing.x(),
-                          Expanded(child: Text(category.description)),
-                        ],
-                      ),
-                      controlAffinity: ListTileControlAffinity.trailing,
-                      toggleable: true,
-                      value: category,
-                      groupValue: category.id == widget.categorySelected?.id ? category : null,
-                      onChanged: (_) => context.pop(category),
-                    );
-                  },
+                child: Visibility(
+                  visible: widget.categories.isNotEmpty,
+                  replacement: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.manage_search_outlined, size: 36),
+                      const Spacing.y(),
+                      Text(strings.noCategoryRegistered),
+                    ],
+                  ),
+                  child: ListView.separated(
+                    controller: scrollController,
+                    itemCount: widget.categories.length,
+                    separatorBuilder: (_, __) => const Divider(),
+                    itemBuilder: (_, index) {
+                      final CategoryEntity category = widget.categories[index];
+                      return RadioListTile<CategoryEntity>(
+                        title: Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Color(category.color.toColor()!),
+                              child: Icon(category.icon.parseIconData(), color: Colors.white),
+                            ),
+                            const Spacing.x(),
+                            Expanded(child: Text(category.description)),
+                          ],
+                        ),
+                        controlAffinity: ListTileControlAffinity.trailing,
+                        toggleable: true,
+                        value: category,
+                        groupValue: category.id == widget.categorySelected?.id ? category : null,
+                        onChanged: (_) => context.pop(category),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

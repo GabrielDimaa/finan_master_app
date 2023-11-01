@@ -3,6 +3,7 @@ import 'package:finan_master_app/features/credit_card/presentation/ui/credit_car
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/draggable_bottom_sheet.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -42,21 +43,33 @@ class _CreditCardsListBottomSheetState extends State<CreditCardsListBottomSheet>
             Expanded(
               child: Material(
                 color: Colors.transparent,
-                child: ListView.separated(
-                  controller: scrollController,
-                  itemCount: widget.creditCards.length,
-                  separatorBuilder: (_, __) => const Divider(),
-                  itemBuilder: (_, index) {
-                    final CreditCardEntity creditCard = widget.creditCards[index];
-                    return RadioListTile<CreditCardEntity>(
-                      title: Text(creditCard.description),
-                      controlAffinity: ListTileControlAffinity.trailing,
-                      toggleable: true,
-                      value: creditCard,
-                      groupValue: creditCard.id == widget.creditCardSelected?.id ? creditCard : null,
-                      onChanged: (_) => context.pop(creditCard),
-                    );
-                  },
+                child: Visibility(
+                  visible: widget.creditCards.isNotEmpty,
+                  replacement: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.manage_search_outlined, size: 36),
+                      const Spacing.y(),
+                      Text(strings.noCreditCardRegistered),
+                    ],
+                  ),
+                  child: ListView.separated(
+                    controller: scrollController,
+                    itemCount: widget.creditCards.length,
+                    separatorBuilder: (_, __) => const Divider(),
+                    itemBuilder: (_, index) {
+                      final CreditCardEntity creditCard = widget.creditCards[index];
+                      return RadioListTile<CreditCardEntity>(
+                        title: Text(creditCard.description),
+                        controlAffinity: ListTileControlAffinity.trailing,
+                        toggleable: true,
+                        value: creditCard,
+                        groupValue: creditCard.id == widget.creditCardSelected?.id ? creditCard : null,
+                        onChanged: (_) => context.pop(creditCard),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

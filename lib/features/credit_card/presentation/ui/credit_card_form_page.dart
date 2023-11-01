@@ -248,7 +248,7 @@ class _CreditCardFormPageState extends State<CreditCardFormPage> with ThemeConte
     final AccountEntity? result = await AccountsListBottomSheet.show(
       context: context,
       accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == notifier.creditCard.idAccount),
-      accounts: accountsNotifier.value.accounts,
+      accounts: accountsNotifier.value.accounts.where((account) => account.financialInstitution != FinancialInstitutionEnum.wallet).toList(),
     );
 
     if (result == null) return;

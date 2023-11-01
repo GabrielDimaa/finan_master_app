@@ -44,27 +44,39 @@ class _AccountsListBottomSheetState extends State<AccountsListBottomSheet> with 
             Expanded(
               child: Material(
                 color: Colors.transparent,
-                child: ListView.separated(
-                  controller: scrollController,
-                  itemCount: widget.accounts.length,
-                  separatorBuilder: (_, __) => const Divider(),
-                  itemBuilder: (_, index) {
-                    final AccountEntity account = widget.accounts[index];
-                    return RadioListTile<AccountEntity>(
-                      title: Row(
-                        children: [
-                          account.financialInstitution!.icon(),
-                          const Spacing.x(),
-                          Expanded(child: Text(account.description)),
-                        ],
-                      ),
-                      controlAffinity: ListTileControlAffinity.trailing,
-                      toggleable: true,
-                      value: account,
-                      groupValue: account.id == widget.accountSelected?.id ? account : null,
-                      onChanged: (_) => context.pop(account),
-                    );
-                  },
+                child: Visibility(
+                  visible: widget.accounts.isNotEmpty,
+                  replacement: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.manage_search_outlined, size: 36),
+                      const Spacing.y(),
+                      Text(strings.noAccountsRegistered),
+                    ],
+                  ),
+                  child: ListView.separated(
+                    controller: scrollController,
+                    itemCount: widget.accounts.length,
+                    separatorBuilder: (_, __) => const Divider(),
+                    itemBuilder: (_, index) {
+                      final AccountEntity account = widget.accounts[index];
+                      return RadioListTile<AccountEntity>(
+                        title: Row(
+                          children: [
+                            account.financialInstitution!.icon(),
+                            const Spacing.x(),
+                            Expanded(child: Text(account.description)),
+                          ],
+                        ),
+                        controlAffinity: ListTileControlAffinity.trailing,
+                        toggleable: true,
+                        value: account,
+                        groupValue: account.id == widget.accountSelected?.id ? account : null,
+                        onChanged: (_) => context.pop(account),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
