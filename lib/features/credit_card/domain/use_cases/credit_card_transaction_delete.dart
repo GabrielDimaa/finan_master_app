@@ -21,10 +21,25 @@ class CreditCardTransactionDelete implements ICreditCardTransactionDelete {
     final CreditCardStatementEntity? statement = await _creditCardStatementRepository.findById(entity.idCreditCardStatement!);
     if (statement == null) throw ValidationException(R.strings.creditCardStatementNotFound);
 
-    //Não é possível excluir uma transação de uma fatura fechada
-    if (statement.statementClosingDate.isBefore(DateTime.now())) throw ValidationException(R.strings.notPossibleDeleteTransactionStatementClosed);
+    //Não é possível excluir uma transação de uma fatura paga
     if (statement.paid) throw ValidationException(R.strings.notPossibleDeleteTransactionCreditCardPaid);
 
     await _repository.delete(entity);
+  }
+
+  @override
+  Future<void> deleteMany(List<CreditCardTransactionEntity> entities) async {
+    final List<String> idsStatements = [];
+
+    for (final CreditCardTransactionEntity entity in entities) {
+      if (entity.idCreditCardStatement != null && !idsStatements.any((id) => entity.idCreditCardStatement == id)) {
+        idsStatements.add(entity.idCreditCardStatement!);
+      }
+    }
+
+    final List<CreditCardStatementEntity> statements = await _creditCardStatementRepository.findByIds(idsStatements);
+    if (statements.any((statement) => statement.paid)) throw ValidationException(R.strings.notPossibleDeleteTransactionCreditCardPaid);
+
+    await _repository.deleteMany(entities);
   }
 }

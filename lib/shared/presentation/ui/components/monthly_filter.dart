@@ -37,7 +37,7 @@ class _MonthlyFilterState extends State<MonthlyFilter> with ThemeContext {
           icon: const Icon(Icons.chevron_left_outlined),
           onPressed: widget.enabled
               ? () {
-                  dateTime = dateTime.subtractMonth(1);
+                  dateTime = dateTime.subtractMonths(1);
                   widget.onChange(dateTime);
                   setState(() {});
                 }
@@ -59,7 +59,7 @@ class _MonthlyFilterState extends State<MonthlyFilter> with ThemeContext {
           icon: const Icon(Icons.chevron_right_outlined),
           onPressed: widget.enabled
               ? () {
-                  dateTime = dateTime.addMonth(1);
+                  dateTime = dateTime.addMonths(1);
                   widget.onChange(dateTime);
                   setState(() {});
                 }

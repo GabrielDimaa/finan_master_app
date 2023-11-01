@@ -7,6 +7,7 @@ import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credi
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_statement_model.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_transaction_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
+import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class CreditCardStatementRepository implements ICreditCardStatementRepository {
   final ICreditCardStatementLocalDataSource _localDataSource;
@@ -62,6 +63,12 @@ class CreditCardStatementRepository implements ICreditCardStatementRepository {
   Future<CreditCardStatementEntity?> findById(String id) async {
     final CreditCardStatementModel? model = await _localDataSource.findById(id);
     return model != null ? CreditCardStatementFactory.toEntity(model) : null;
+  }
+
+  @override
+  Future<List<CreditCardStatementEntity>> findByIds(List<String> ids) async {
+    final List<CreditCardStatementModel> models = await _localDataSource.findAll(where: '${_localDataSource.tableName}.${Model.idColumnName} IN (${ids.map((e) => '?').join(', ')})', whereArgs: ids);
+    return models.map((model) => CreditCardStatementFactory.toEntity(model)).toList();
   }
 
   @override

@@ -6,5 +6,7 @@ abstract interface class ICreditCardTransactionRepository {
 
   Future<void> saveMany(List<CreditCardTransactionEntity> transactions, {ITransactionExecutor? txn});
 
-  Future<void> delete(CreditCardTransactionEntity entity);
+  Future<void> delete(CreditCardTransactionEntity entity, {ITransactionExecutor? txn});
+
+  Future<void> deleteMany(List<CreditCardTransactionEntity> entities);
 }

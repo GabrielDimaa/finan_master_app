@@ -10,6 +10,8 @@ abstract interface class ICreditCardStatementRepository {
 
   Future<CreditCardStatementEntity?> findById(String id);
 
+  Future<List<CreditCardStatementEntity>> findByIds(List<String> ids);
+
   Future<CreditCardStatementEntity?> findFirstAfterDate({required DateTime date, required String idCreditCard});
 
   Future<List<CreditCardStatementEntity>> findAllAfterDate({required DateTime date, required String idCreditCard, ITransactionExecutor? txn});

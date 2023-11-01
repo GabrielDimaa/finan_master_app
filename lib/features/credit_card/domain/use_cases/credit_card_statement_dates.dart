@@ -9,12 +9,12 @@ class CreditCardStatementDates implements ICreditCardStatementDates {
     DateTime dueDate = DateTime(baseDate.year, baseDate.month, dueDay, 23, 59, 59, 999);
 
     if (closingDate.isBefore(baseDate)) {
-      closingDate = closingDate.addMonth(1);
-      dueDate = dueDate.addMonth(1);
+      closingDate = closingDate.addMonths(1);
+      dueDate = dueDate.addMonths(1);
     }
 
     if (closingDay > dueDay) {
-      dueDate = dueDate.addMonth(1);
+      dueDate = dueDate.addMonths(1);
     }
 
     return (closingDate: closingDate, dueDate: dueDate);
@@ -44,19 +44,19 @@ class CreditCardStatementDates implements ICreditCardStatementDates {
 
       //Se a nova data de fechamento da fatura for igual ou anterior a data atual, adiciona ela para o próximo mês.
       if (isAddMonth || statementClosingDate == dateNow || statementClosingDate.isBefore(dateNow)) {
-        statementClosingDate = statementClosingDate.addMonth(1);
-        statementDueDate = statementDueDate.addMonth(1);
+        statementClosingDate = statementClosingDate.addMonths(1);
+        statementDueDate = statementDueDate.addMonths(1);
         isAddMonth = true;
       }
 
       if (statementDueDate.isBefore(statementClosingDate)) {
-        statementDueDate = statementDueDate.addMonth(1);
+        statementDueDate = statementDueDate.addMonths(1);
       }
 
       if (!isAddMonth) {
         //Diminui as datas em um mês e verifica se ainda é posterior a data de atual.
-        final DateTime statementClosingDateSubtract = statementClosingDate.subtractMonth(1);
-        final DateTime statementDueDateSubtract = statementDueDate.subtractMonth(1);
+        final DateTime statementClosingDateSubtract = statementClosingDate.subtractMonths(1);
+        final DateTime statementDueDateSubtract = statementDueDate.subtractMonths(1);
         if ((isSubtractMonth || index == 0) && statementClosingDateSubtract != dateNow && statementClosingDateSubtract.isAfter(dateNow)) {
           statementClosingDate = statementClosingDateSubtract;
           statementDueDate = statementDueDateSubtract;
