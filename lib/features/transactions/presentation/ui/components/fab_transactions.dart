@@ -70,14 +70,7 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
     if (result != null) await widget.notifier.refreshTransactions();
   }
 
-  Future<void> goCreditCardExpenseFormPage() async {
-    await context.pushNamed(CreditCardExpensePage.route);
-
-    //TODO: Rever
-    // final FormResultNavigation<TransferEntity>? result = await context.pushNamed(CreditCardFormPage.route);
-
-    // if (result != null) await widget.notifier.refreshTransactions();
-  }
+  Future<void> goCreditCardExpenseFormPage() => context.pushNamed(CreditCardExpensePage.route);
 
   Widget label({required String text}) {
     return Container(

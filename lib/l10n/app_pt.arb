@@ -1,6 +1,7 @@
 {
   "account": "Conta",
   "accountBalance": "Saldo em conta",
+  "accountsBalance": "Saldo em contas",
   "accountDetails": "Detalhes da conta",
   "accountNotFound": "Conta não encontrada.",
   "accounts": "Contas",
@@ -129,6 +130,7 @@
   "previous": "Anterior",
   "readjustBalance": "Reajustar saldo",
   "readjustmentTransaction": "Transação de reajuste",
+  "recentTransactions": "Transações recentes",
   "registeredData": "Dado já cadastrado.",
   "requiredField": "Campo obrigatório.",
   "save": "Salvar",

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_find.dart';
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
@@ -9,6 +10,8 @@ class AccountsNotifier extends ValueNotifier<AccountsState> {
   AccountsNotifier({required IAccountFind accountFind})
       : _accountFind = accountFind,
         super(AccountsState.start());
+
+  double get accountsBalance => value.accounts.map((account) => account.deletedAt == null && account.includeTotalBalance ? account.balance : 0).sum.toDouble();
 
   Future<void> findAll({bool deleted = false}) async {
     try {

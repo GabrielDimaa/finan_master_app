@@ -1,6 +1,7 @@
 {
   "account": "Account",
   "accountBalance": "Account balance",
+  "accountsBalance": "Account balances",
   "accountDetails": "Account details",
   "accountNotFound": "Account not found.",
   "accounts": "Accounts",
@@ -129,6 +130,7 @@
   "previous": "Previous",
   "readjustBalance": "Readjust balance",
   "readjustmentTransaction": "Readjustment transaction",
+  "recentTransactions": "Recent transactions",
   "registeredData": "Data already registered.",
   "requiredField": "Required field.",
   "save": "Save",

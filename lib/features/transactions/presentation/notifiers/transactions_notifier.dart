@@ -16,14 +16,17 @@ class TransactionsNotifier extends ValueNotifier<TransactionsState> {
   final ITransactionDelete _transactionDelete;
   final IAccountFind _accountFind;
 
-  TransactionsNotifier({required ITransactionFind transactionFind, required ITransactionDelete transactionDelete, required IAccountFind accountFind})
-      : _transactionFind = transactionFind,
+  TransactionsNotifier({
+    required ITransactionFind transactionFind,
+    required ITransactionDelete transactionDelete,
+    required IAccountFind accountFind,
+  })  : _transactionFind = transactionFind,
         _transactionDelete = transactionDelete,
         _accountFind = accountFind,
         super(TransactionsState.start()) {
     final DateTime dateNow = DateTime.now();
-    startDate = DateTime(dateNow.year, dateNow.month, 1);
-    endDate = DateTime(dateNow.year, dateNow.month, dateNow.getLastDayInMonth(), 23, 59, 59, 59);
+    startDate = dateNow.getInitialMonth();
+    endDate = dateNow.getFinalMonth();
   }
 
   TransactionsByPeriodEntity transactionsByPeriod = TransactionsByPeriodEntity(transactions: []);
