@@ -6,6 +6,7 @@ import 'package:finan_master_app/features/home/presentation/ui/components/list_r
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/states/transactions_state.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/fab_transactions.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
@@ -26,6 +27,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with ThemeContext {
   final TransactionsNotifier notifier = GetIt.I.get<TransactionsNotifier>();
+  final EventNotifier eventNotifier = GetIt.I.get<EventNotifier>();
   final CategoriesNotifier categoriesNotifier = GetIt.I.get<CategoriesNotifier>();
   final AccountsNotifier accountsNotifier = GetIt.I.get<AccountsNotifier>();
   final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(true);
@@ -49,6 +51,10 @@ class _HomePageState extends State<HomePage> with ThemeContext {
         if (categoriesNotifier is ErrorCategoriesState) throw Exception((categoriesNotifier.value as ErrorCategoriesState).message);
 
         if (accountsNotifier is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
+
+        eventNotifier.addListener(() {
+          if (eventNotifier.value == EventType.transactions) notifier.refreshTransactions();
+        });
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());

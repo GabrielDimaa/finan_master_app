@@ -15,7 +15,7 @@ class LoadingDialog extends StatelessWidget {
   static Future<void> show({
     required BuildContext context,
     required String message,
-    required Function onAction,
+    required Future<void> Function() onAction,
   }) async {
     try {
       showDialog(
@@ -24,7 +24,7 @@ class LoadingDialog extends StatelessWidget {
         builder: (_) => LoadingDialog(context: context, message: message),
       );
 
-      await onAction.call();
+      await onAction();
     } finally {
       if (context.mounted) context.pop();
     }

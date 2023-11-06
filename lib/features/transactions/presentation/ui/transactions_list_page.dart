@@ -9,6 +9,7 @@ import 'package:finan_master_app/features/transactions/presentation/ui/component
 import 'package:finan_master_app/features/transactions/presentation/ui/components/filters_transactions.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/list_transactions.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/totals_transactions.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/app_bar_custom.dart';
@@ -33,6 +34,7 @@ class TransactionsListPage extends StatefulWidget {
 
 class _TransactionsListPageState extends State<TransactionsListPage> with ThemeContext {
   final TransactionsNotifier notifier = GetIt.I.get<TransactionsNotifier>();
+  final EventNotifier eventNotifier = GetIt.I.get<EventNotifier>();
   final CategoriesNotifier categoriesNotifier = GetIt.I.get<CategoriesNotifier>();
   final AccountsNotifier accountsNotifier = GetIt.I.get<AccountsNotifier>();
 
@@ -163,8 +165,11 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
     try {
       await LoadingDialog.show(context: context, message: strings.deletingTransactions, onAction: () => notifier.deleteTransactions(listSelectable));
 
-      setState(() => listSelectable = []);
-      await notifier.refreshTransactions();
+      setState(() {
+        listSelectable = [];
+        notifier.refreshTransactions();
+        eventNotifier.notify(EventType.transactions);
+      });
     } catch (e) {
       if (!mounted) return;
       ErrorDialog.show(context, e.toString());
