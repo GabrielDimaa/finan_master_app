@@ -339,4 +339,77 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
 
     return listModels;
   }
+
+  @override
+  Future<List<ITransactionModel>> findIncomeByText(String text) async {
+    final String sql = '''
+      SELECT
+        -- Income
+        ${_incomeLocalDataSource.tableName}.${Model.idColumnName} AS ${_incomeLocalDataSource.tableName}_${Model.idColumnName},
+        ${_incomeLocalDataSource.tableName}.${Model.createdAtColumnName} AS ${_incomeLocalDataSource.tableName}_${Model.createdAtColumnName},
+        ${_incomeLocalDataSource.tableName}.${Model.deletedAtColumnName} AS ${_incomeLocalDataSource.tableName}_${Model.deletedAtColumnName},
+        ${_incomeLocalDataSource.tableName}.description AS ${_incomeLocalDataSource.tableName}_description,
+        ${_incomeLocalDataSource.tableName}.id_category AS ${_incomeLocalDataSource.tableName}_id_category,
+        ${_incomeLocalDataSource.tableName}.id_transaction AS ${_incomeLocalDataSource.tableName}_id_transaction,
+        ${_incomeLocalDataSource.tableName}.observation AS ${_incomeLocalDataSource.tableName}_observation,
+        
+        -- Transaction
+        $tableName.${Model.idColumnName} AS ${tableName}_${Model.idColumnName},
+        $tableName.${Model.createdAtColumnName} AS ${tableName}_${Model.createdAtColumnName},
+        $tableName.${Model.deletedAtColumnName} AS ${tableName}_${Model.deletedAtColumnName},
+        $tableName.amount AS ${tableName}_amount,
+        $tableName.type AS ${tableName}_type,
+        $tableName.date AS ${tableName}_date,
+        $tableName.id_account AS ${tableName}_id_account
+      FROM ${_incomeLocalDataSource.tableName}
+      INNER JOIN $tableName
+        ON $tableName.${Model.idColumnName} = ${_incomeLocalDataSource.tableName}.id_transaction
+      WHERE
+        $tableName.${Model.deletedAtColumnName} IS NULL AND
+        ${_incomeLocalDataSource.tableName}.description LIKE ?
+      GROUP BY lower(${_incomeLocalDataSource.tableName}.description)
+      LIMIT 10;
+    ''';
+
+    final List<Map<String, dynamic>> results = await databaseLocal.raw(sql, DatabaseOperation.select, ['%$text%']);
+
+    return results.map((result) => _incomeLocalDataSource.fromMap(result, prefix: '${_incomeLocalDataSource.tableName}_')).toList();
+  }
+
+  @override
+  Future<List<ITransactionModel>> findExpenseByText(String text) async {
+    final String sql = '''
+      SELECT
+        -- Expense
+        ${_expenseLocalDataSource.tableName}.${Model.idColumnName} AS ${_expenseLocalDataSource.tableName}_${Model.idColumnName},
+        ${_expenseLocalDataSource.tableName}.${Model.createdAtColumnName} AS ${_expenseLocalDataSource.tableName}_${Model.createdAtColumnName},
+        ${_expenseLocalDataSource.tableName}.${Model.deletedAtColumnName} AS ${_expenseLocalDataSource.tableName}_${Model.deletedAtColumnName},
+        ${_expenseLocalDataSource.tableName}.description AS ${_expenseLocalDataSource.tableName}_description,
+        ${_expenseLocalDataSource.tableName}.id_category AS ${_expenseLocalDataSource.tableName}_id_category,
+        ${_expenseLocalDataSource.tableName}.id_credit_card_transaction AS ${_expenseLocalDataSource.tableName}_id_credit_card_transaction,
+        ${_expenseLocalDataSource.tableName}.id_transaction AS ${_expenseLocalDataSource.tableName}_id_transaction,
+        ${_expenseLocalDataSource.tableName}.observation AS ${_expenseLocalDataSource.tableName}_observation,
+        
+        -- Transaction
+        $tableName.${Model.idColumnName} AS ${tableName}_${Model.idColumnName},
+        $tableName.${Model.createdAtColumnName} AS ${tableName}_${Model.createdAtColumnName},
+        $tableName.${Model.deletedAtColumnName} AS ${tableName}_${Model.deletedAtColumnName},
+        $tableName.amount AS ${tableName}_amount,
+        $tableName.type AS ${tableName}_type,
+        $tableName.date AS ${tableName}_date,
+        $tableName.id_account AS ${tableName}_id_account
+      FROM ${_expenseLocalDataSource.tableName}
+      INNER JOIN $tableName
+        ON $tableName.${Model.idColumnName} = ${_expenseLocalDataSource.tableName}.id_transaction
+      WHERE
+        $tableName.${Model.deletedAtColumnName} IS NULL AND
+        ${_expenseLocalDataSource.tableName}.description LIKE ?
+      GROUP BY lower(${_expenseLocalDataSource.tableName}.description)
+      LIMIT 10;
+    ''';
+
+    final List<Map<String, dynamic>> results = await databaseLocal.raw(sql, DatabaseOperation.select, ['%$text%']);
+
+    return results.map((result) => _expenseLocalDataSource.fromMap(result, prefix: '${_expenseLocalDataSource.tableName}_')).toList();
+  }
 }

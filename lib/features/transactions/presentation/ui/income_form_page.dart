@@ -9,6 +9,7 @@ import 'package:finan_master_app/features/category/domain/enums/category_type_en
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/categories_list_bottom_sheet.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/income_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/states/income_state.dart';
@@ -55,6 +56,9 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController dateController = TextEditingController();
 
+  List<IncomeEntity> transactionsOldAutoComplete = [];
+  late TextEditingValue textEditingValue;
+
   @override
   void initState() {
     super.initState();
@@ -72,6 +76,9 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
         if (accountsNotifier.value is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
 
         if (widget.income != null) notifier.setIncome(widget.income!);
+
+        textEditingValue = TextEditingValue(text: notifier.income.description);
+        dateController.text = notifier.income.transaction.date.format();
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());
@@ -133,13 +140,75 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
                               ),
                               const Spacing.y(),
-                              TextFormField(
-                                initialValue: state.income.description,
-                                decoration: InputDecoration(label: Text(strings.description)),
-                                textCapitalization: TextCapitalization.sentences,
-                                validator: InputRequiredValidator().validate,
-                                onSaved: (String? value) => state.income.description = value?.trim() ?? '',
-                                enabled: !notifier.isLoading,
+                              LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return Autocomplete<IncomeEntity>(
+                                    initialValue: textEditingValue,
+                                    displayStringForOption: (IncomeEntity option) => option.description,
+                                    fieldViewBuilder: (_, textController, focusNode, ___) {
+                                      return TextFormField(
+                                        decoration: InputDecoration(label: Text(strings.description)),
+                                        textCapitalization: TextCapitalization.sentences,
+                                        controller: textController,
+                                        focusNode: focusNode,
+                                        validator: InputRequiredValidator().validate,
+                                        onSaved: (String? value) => state.income.description = value?.trim() ?? '',
+                                        enabled: !notifier.isLoading,
+                                      );
+                                    },
+                                    optionsBuilder: (TextEditingValue textEditingValue) async {
+                                      if (textEditingValue.text.length <= 1) {
+                                        this.textEditingValue = textEditingValue;
+                                        return [];
+                                      }
+
+                                      if (textEditingValue.text == this.textEditingValue.text) return [];
+
+                                      transactionsOldAutoComplete = await notifier.findByText(textEditingValue.text);
+                                      this.textEditingValue = textEditingValue;
+                                      return transactionsOldAutoComplete;
+                                    },
+                                    onSelected: (ITransactionEntity selection) {
+                                      final IncomeEntity income = selection as IncomeEntity;
+                                      if (income.idCategory != null) notifier.setCategory(income.idCategory!);
+                                      if (income.transaction.idAccount != null) notifier.setAccount(income.transaction.idAccount!);
+                                      notifier.income.observation = income.observation;
+                                    },
+                                    optionsViewBuilder: (context, onSelected, options) {
+                                      return Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Material(
+                                          elevation: 12,
+                                          color: colorScheme.surfaceVariant,
+                                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4.0))),
+                                          child: SizedBox(
+                                            height: 80.0 * options.length,
+                                            width: constraints.biggest.width,
+                                            child: ListView.builder(
+                                              itemCount: options.length,
+                                              itemBuilder: (_, index) {
+                                                final IncomeEntity income = options.elementAt(index);
+                                                final category = categoriesNotifier.value.categories.firstWhereOrNull((category) => category.id == income.idCategory);
+                                                if (category == null) return const SizedBox.shrink();
+
+                                                return ListTile(
+                                                  leading: CircleAvatar(
+                                                    radius: 18,
+                                                    backgroundColor: Color(category.color.toColor()!),
+                                                    child: Icon(category.icon.parseIconData(), color: Colors.white),
+                                                  ),
+                                                  title: Text(income.description),
+                                                  subtitle: Text(category.description),
+                                                  onTap: () => onSelected(income),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
                               ),
                               const Spacing.y(),
                               TextFormField(

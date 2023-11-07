@@ -4,4 +4,8 @@ import 'package:finan_master_app/shared/infra/data_sources/i_local_data_source.d
 
 abstract interface class ITransactionLocalDataSource implements ILocalDataSource<TransactionModel> {
   Future<List<ITransactionModel>> findByPeriod({required DateTime startDate, required DateTime endDate});
+
+  Future<List<ITransactionModel>> findIncomeByText(String text);
+
+  Future<List<ITransactionModel>> findExpenseByText(String text);
 }

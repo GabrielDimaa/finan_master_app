@@ -10,6 +10,7 @@ import 'package:finan_master_app/features/category/presentation/notifiers/catego
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/categories_list_bottom_sheet.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/expense_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/states/expense_state.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
@@ -55,11 +56,12 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController dateController = TextEditingController();
 
+  List<ExpenseEntity> transactionsOldAutoComplete = [];
+  late TextEditingValue textEditingValue;
+
   @override
   void initState() {
     super.initState();
-
-    dateController.text = notifier.expense.transaction.date.format();
 
     Future(() async {
       try {
@@ -72,6 +74,9 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
         if (accountsNotifier.value is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
 
         if (widget.expense != null) notifier.setExpense(widget.expense!);
+
+        textEditingValue = TextEditingValue(text: notifier.expense.description);
+        dateController.text = notifier.expense.transaction.date.format();
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());
@@ -133,13 +138,75 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
                               ),
                               const Spacing.y(),
-                              TextFormField(
-                                initialValue: state.expense.description,
-                                decoration: InputDecoration(label: Text(strings.description)),
-                                textCapitalization: TextCapitalization.sentences,
-                                validator: InputRequiredValidator().validate,
-                                onSaved: (String? value) => state.expense.description = value?.trim() ?? '',
-                                enabled: !notifier.isLoading,
+                              LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return Autocomplete<ExpenseEntity>(
+                                    initialValue: textEditingValue,
+                                    displayStringForOption: (ExpenseEntity option) => option.description,
+                                    fieldViewBuilder: (_, textController, focusNode, ___) {
+                                      return TextFormField(
+                                        decoration: InputDecoration(label: Text(strings.description)),
+                                        textCapitalization: TextCapitalization.sentences,
+                                        controller: textController,
+                                        focusNode: focusNode,
+                                        validator: InputRequiredValidator().validate,
+                                        onSaved: (String? value) => state.expense.description = value?.trim() ?? '',
+                                        enabled: !notifier.isLoading,
+                                      );
+                                    },
+                                    optionsBuilder: (TextEditingValue textEditingValue) async {
+                                      if (textEditingValue.text.length <= 1) {
+                                        this.textEditingValue = textEditingValue;
+                                        return [];
+                                      }
+
+                                      if (textEditingValue.text == this.textEditingValue.text) return [];
+
+                                      transactionsOldAutoComplete = await notifier.findByText(textEditingValue.text);
+                                      this.textEditingValue = textEditingValue;
+                                      return transactionsOldAutoComplete;
+                                    },
+                                    onSelected: (ITransactionEntity selection) {
+                                      final ExpenseEntity expense = selection as ExpenseEntity;
+                                      if (expense.idCategory != null) notifier.setCategory(expense.idCategory!);
+                                      if (expense.transaction.idAccount != null) notifier.setAccount(expense.transaction.idAccount!);
+                                      notifier.expense.observation = expense.observation;
+                                    },
+                                    optionsViewBuilder: (context, onSelected, options) {
+                                      return Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Material(
+                                          elevation: 12,
+                                          color: colorScheme.surfaceVariant,
+                                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4.0))),
+                                          child: SizedBox(
+                                            height: 80.0 * options.length,
+                                            width: constraints.biggest.width,
+                                            child: ListView.builder(
+                                              itemCount: options.length,
+                                              itemBuilder: (_, index) {
+                                                final ExpenseEntity expense = options.elementAt(index);
+                                                final category = categoriesNotifier.value.categories.firstWhereOrNull((category) => category.id == expense.idCategory);
+                                                if (category == null) return const SizedBox.shrink();
+
+                                                return ListTile(
+                                                  leading: CircleAvatar(
+                                                    radius: 18,
+                                                    backgroundColor: Color(category.color.toColor()!),
+                                                    child: Icon(category.icon.parseIconData(), color: Colors.white),
+                                                  ),
+                                                  title: Text(expense.description),
+                                                  subtitle: Text(category.description),
+                                                  onTap: () => onSelected(expense),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
                               ),
                               const Spacing.y(),
                               TextFormField(
