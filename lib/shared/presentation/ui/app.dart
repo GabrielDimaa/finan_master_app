@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 
 const String appName = 'Finan Master';
+const Color primaryColor = Color(0xFF005BC0);
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -97,7 +98,7 @@ class _AppState extends State<App> {
     );
   }
 
-  ColorScheme get themeLight => ColorScheme.fromSeed(seedColor: const Color(0xFF005BC0), brightness: Brightness.light);
+  ColorScheme get themeLight => ColorScheme.fromSeed(seedColor: primaryColor, brightness: Brightness.light);
 
-  ColorScheme get themeDark => ColorScheme.fromSeed(seedColor: const Color(0xFF005BC0), brightness: Brightness.dark);
+  ColorScheme get themeDark => ColorScheme.fromSeed(seedColor: primaryColor, brightness: Brightness.dark);
 }

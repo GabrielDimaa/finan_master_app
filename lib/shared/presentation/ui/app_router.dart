@@ -34,7 +34,7 @@ sealed class AppRouter {
 
   static RouterConfig<Object> routerConfig() {
     return GoRouter(
-      navigatorKey: _rootNavigatorKey, //https://github.com/flutter/flutter/issues/113757#issuecomment-1518421380
+      navigatorKey: _rootNavigatorKey,
       initialLocation: '/${HomePage.route}',
       routes: [
         GoRoute(
