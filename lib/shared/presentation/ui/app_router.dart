@@ -3,6 +3,7 @@ import 'package:finan_master_app/features/account/presentation/ui/account_detail
 import 'package:finan_master_app/features/account/presentation/ui/account_form_page.dart';
 import 'package:finan_master_app/features/account/presentation/ui/accounts_list_page.dart';
 import 'package:finan_master_app/features/backup/presentation/ui/backup_page.dart';
+import 'package:finan_master_app/features/backup/presentation/ui/restore_backup_page.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/presentation/ui/categories_list_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/category_form_page.dart';
@@ -96,6 +97,12 @@ sealed class AppRouter {
           name: CreditCardDetailsPage.route,
           path: '/${CreditCardDetailsPage.route}',
           builder: (_, GoRouterState state) => CreditCardDetailsPage(creditCard: state.extra as CreditCardEntity),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: RestoreBackupPage.route,
+          path: '/${RestoreBackupPage.route}',
+          builder: (_, GoRouterState state) => const RestoreBackupPage(),
         ),
         StatefulShellRoute.indexedStack(
           parentNavigatorKey: _rootNavigatorKey,
