@@ -12,6 +12,7 @@ import 'package:finan_master_app/features/credit_card/domain/enums/brand_card_en
 import 'package:finan_master_app/features/credit_card/domain/enums/statement_status_enum.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_statement_notifier.dart';
+import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_statement_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/pay_statement_dialog.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/statement_status_widget.dart';
@@ -145,7 +146,9 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                   ),
                   body: Builder(
                     builder: (_) {
-                      if (initialLoading) return const SizedBox.shrink();
+                      if (initialLoading) return const CircularProgressIndicator();
+
+                      if (creditCardNotifier.value is! ChangedCreditCardState) return const SizedBox.shrink();
 
                       return SafeArea(
                         child: Column(
