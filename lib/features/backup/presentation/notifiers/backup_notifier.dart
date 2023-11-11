@@ -1,15 +1,18 @@
 import 'dart:io';
 
 import 'package:finan_master_app/features/backup/domain/use_cases/i_backup.dart';
+import 'package:finan_master_app/features/backup/domain/use_cases/i_restore_backup.dart';
 import 'package:finan_master_app/features/backup/presentation/states/backup_state.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:flutter/foundation.dart';
 
 class BackupNotifier extends ValueNotifier<BackupState> {
   final IBackup _backup;
+  final IRestoreBackup _restoreBackup;
 
-  BackupNotifier({required IBackup backup})
+  BackupNotifier({required IBackup backup, required IRestoreBackup restoreBackup})
       : _backup = backup,
+        _restoreBackup = restoreBackup,
         super(BackupState.start()) {
     loadLastBackupDate();
   }
@@ -38,6 +41,18 @@ class BackupNotifier extends ValueNotifier<BackupState> {
       final DateTime dateTime = DateTime.now();
       await _backup.saveLastBackupDate(dateTime);
       lastBackupDate = dateTime;
+
+      value = value.setFinalized();
+    } catch (e) {
+      value = value.setError(e.toString());
+    }
+  }
+
+  Future<void> restoreBackup() async {
+    try {
+      value = value.setLoading();
+
+      //TODO: implementar restauração de backup
 
       value = value.setFinalized();
     } catch (e) {
