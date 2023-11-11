@@ -153,6 +153,10 @@ class _ColorAndIconCategoryState extends State<ColorAndIconCategory> with ThemeC
     Icons.fastfood_outlined,
     Icons.school_outlined,
     Icons.more_outlined,
+    Icons.casino_outlined,
+    Icons.ssid_chart_outlined,
+    Icons.account_balance_outlined,
+    Icons.directions_car_filled_outlined,
   ];
 
   static const List<Color> colors = [
