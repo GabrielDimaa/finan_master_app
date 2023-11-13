@@ -7,6 +7,8 @@ import 'package:finan_master_app/shared/infra/data_sources/database_local/i_data
 abstract interface class IDatabaseLocal {
   Future<File> getFileDatabase();
 
+  Future<void> deleteFileDatabase();
+
   IDatabaseLocalBatch batch();
 
   IDatabaseLocalTransaction transactionInstance();

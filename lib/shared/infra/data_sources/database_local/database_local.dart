@@ -54,6 +54,19 @@ final class DatabaseLocal implements IDatabaseLocal {
     return File(path);
   }
 
+  @override
+  Future<void> deleteFileDatabase() async {
+    //A conexão deve ser fechada antes de obter o arquivo do banco de dados.
+    await database.close();
+
+    final String path = await _getPath();
+    final File fileDatabaseLocal = File(path);
+
+    if (await fileDatabaseLocal.exists()) await fileDatabaseLocal.delete();
+
+    await _loadDatabase();
+  }
+
   Future<void> _loadDatabase() async {
     if (Platform.isWindows) databaseFactoryOrNull = databaseFactoryFfi;
 

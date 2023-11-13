@@ -20,4 +20,7 @@ class CacheLocal implements ICacheLocal {
       _ => throw UnimplementedError(),
     };
   }
+
+  @override
+  Future<void> deleteAll() => _sharedPreferences.clear();
 }

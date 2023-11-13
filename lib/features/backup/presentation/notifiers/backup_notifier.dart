@@ -3,16 +3,19 @@ import 'dart:io';
 import 'package:finan_master_app/features/backup/domain/use_cases/i_backup.dart';
 import 'package:finan_master_app/features/backup/domain/use_cases/i_restore_backup.dart';
 import 'package:finan_master_app/features/backup/presentation/states/backup_state.dart';
+import 'package:finan_master_app/shared/domain/domain/i_delete_app_data.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:flutter/foundation.dart';
 
 class BackupNotifier extends ValueNotifier<BackupState> {
   final IBackup _backup;
   final IRestoreBackup _restoreBackup;
+  final IDeleteAppData _deleteAppData;
 
-  BackupNotifier({required IBackup backup, required IRestoreBackup restoreBackup})
+  BackupNotifier({required IBackup backup, required IRestoreBackup restoreBackup, required IDeleteAppData deleteAppData})
       : _backup = backup,
         _restoreBackup = restoreBackup,
+        _deleteAppData = deleteAppData,
         super(BackupState.start()) {
     loadLastBackupDate();
   }
@@ -51,9 +54,17 @@ class BackupNotifier extends ValueNotifier<BackupState> {
   Future<void> restoreBackup() async {
     try {
       value = value.setLoading();
+      await _restoreBackup.restore();
+      value = value.setFinalized();
+    } catch (e) {
+      value = value.setError(e.toString());
+    }
+  }
 
-      //TODO: implementar restauração de backup
-
+  Future<void> deleteAppData() async {
+    try {
+      value = value.setLoading();
+      await _deleteAppData.delete();
       value = value.setFinalized();
     } catch (e) {
       value = value.setError(e.toString());

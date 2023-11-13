@@ -118,4 +118,9 @@ class DatabaseLocalTransaction implements IDatabaseLocalTransaction, ITransactio
   Future<File> getFileDatabase() {
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> deleteFileDatabase() {
+    throw UnimplementedError();
+  }
 }
