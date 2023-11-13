@@ -104,6 +104,12 @@ sealed class AppRouter {
           path: '/${RestoreBackupPage.route}',
           builder: (_, GoRouterState state) => const RestoreBackupPage(),
         ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: BackupPage.route,
+          path: '/${BackupPage.route}',
+          builder: (_, __) => const BackupPage(),
+        ),
         StatefulShellRoute.indexedStack(
           parentNavigatorKey: _rootNavigatorKey,
           builder: (_, __, navigationShell) => NavBarRail(navigationShell: navigationShell),
@@ -134,12 +140,6 @@ sealed class AppRouter {
                   name: AccountsListPage.route,
                   path: '/${AccountsListPage.route}',
                   builder: (_, __) => const AccountsListPage(),
-                ),
-                GoRoute(
-                  parentNavigatorKey: _homeNavigatorKey,
-                  name: BackupPage.route,
-                  path: '/${BackupPage.route}',
-                  builder: (_, __) => const BackupPage(),
                 ),
               ],
             ),

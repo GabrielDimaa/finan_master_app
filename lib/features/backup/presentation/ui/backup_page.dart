@@ -4,7 +4,6 @@ import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/linear_progress_indicator_app_bar.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -32,16 +31,9 @@ class _BackupPageState extends State<BackupPage> with ThemeContext {
         return Scaffold(
           key: scaffoldKey,
           appBar: AppBar(
-            leading: IconButton(
-              tooltip: strings.menu,
-              icon: const Icon(Icons.menu),
-              onPressed: () => scaffoldKey.currentState?.openDrawer(),
-            ),
             title: Text(strings.backup),
-            centerTitle: true,
             bottom: state is LoadingBackupState ? const LinearProgressIndicatorAppBar() : null,
           ),
-          drawer: const NavDrawer(selectedIndex: BackupPage.indexDrawer),
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
