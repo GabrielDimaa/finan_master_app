@@ -96,7 +96,6 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
   }
 
   Future<void> goCreditCardDetails(CreditCardEntity creditCard) async {
-    //TODO: Conferir uma forma pra atualizar tela.
     await context.pushNamed(CreditCardDetailsPage.route, extra: creditCard);
   }
 }

@@ -301,6 +301,7 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                                                 ),
                                               ],
                                               ListViewSelectable.separated(
+                                                key: ObjectKey(state.creditCardStatement),
                                                 physics: const NeverScrollableScrollPhysics(),
                                                 shrinkWrap: true,
                                                 list: state.creditCardStatement?.transactions ?? <CreditCardTransactionEntity>[],

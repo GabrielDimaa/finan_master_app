@@ -28,4 +28,6 @@ extension DoubleExtension on double {
 
     return formattedNumber;
   }
+
+  double truncateFractionalDigits(int fractionalDigits) => (this * pow(10, fractionalDigits)).truncate() / pow(10, fractionalDigits);
 }

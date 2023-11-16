@@ -27,8 +27,6 @@ class TransferEntity extends Entity implements ITransactionEntity {
     _transactionTo.date = value;
   }
 
-  String? get idAccount => _transactionFrom.idAccount;
-
   @override
   double get amount => _transactionFrom.amount;
 

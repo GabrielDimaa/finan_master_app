@@ -45,6 +45,7 @@ class _ListTransactionsState extends State<ListTransactions> {
   @override
   Widget build(BuildContext context) {
     return ListViewSelectable.separated(
+      key: ObjectKey(widget.state),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       list: widget.state.transactions,
@@ -116,7 +117,6 @@ class _ListTransactionsState extends State<ListTransactions> {
 
         if (item.value is TransferEntity) {
           final transfer = item.value as TransferEntity;
-          final account = widget.accounts.firstWhere((account) => account.id == transfer.idAccount);
           return Column(
             children: [
               ListTileSelectable<ITransactionEntity>(
@@ -126,7 +126,12 @@ class _ListTransactionsState extends State<ListTransactions> {
                   child: const Icon(Icons.move_up_outlined),
                 ),
                 title: Text(AppLocalizations.of(context)!.transfer),
-                subtitle: Text(account.description),
+                subtitle: Builder(
+                  builder: (_) {
+                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.transactionTo.idAccount);
+                    return Text(account.description);
+                  }
+                ),
                 trailing: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -146,7 +151,12 @@ class _ListTransactionsState extends State<ListTransactions> {
                   child: const Icon(Icons.move_up_outlined),
                 ),
                 title: Text(AppLocalizations.of(context)!.transfer),
-                subtitle: Text(account.description),
+                subtitle: Builder(
+                  builder: (_) {
+                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.transactionFrom.idAccount);
+                    return Text(account.description);
+                  }
+                ),
                 trailing: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,

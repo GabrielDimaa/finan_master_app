@@ -11,6 +11,8 @@ import 'package:finan_master_app/features/credit_card/presentation/notifiers/cre
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_expense_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_cards_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_cards_list_bottom_sheet.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
@@ -53,6 +55,9 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController dateController = TextEditingController();
 
+  List<ExpenseEntity> transactionsOldAutoComplete = [];
+  late TextEditingValue textEditingValue;
+
   @override
   void initState() {
     super.initState();
@@ -70,6 +75,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
         if (widget.creditCardExpense != null) notifier.setCreditCardExpense(widget.creditCardExpense!);
 
         dateController.text = notifier.creditCardExpense.date.format();
+        textEditingValue = TextEditingValue(text: notifier.creditCardExpense.description);
 
         if (creditCardsNotifier.value.creditCards.length == 1) {
           notifier.creditCardExpense.idCreditCard = creditCardsNotifier.value.creditCards.first.id;
@@ -100,7 +106,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                     onPressed: save,
                     child: Text(strings.save),
                   ),
-                  if (widget.creditCardExpense?.isNew != true)
+                  if (!state.creditCardExpense.isNew)
                     IconButton(
                       tooltip: strings.delete,
                       onPressed: delete,
@@ -135,13 +141,74 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
                               ),
                               const Spacing.y(),
-                              TextFormField(
-                                initialValue: state.creditCardExpense.description,
-                                decoration: InputDecoration(label: Text(strings.description)),
-                                textCapitalization: TextCapitalization.sentences,
-                                validator: InputRequiredValidator().validate,
-                                onSaved: (String? value) => state.creditCardExpense.description = value?.trim() ?? '',
-                                enabled: !notifier.isLoading,
+                              LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return Autocomplete<ExpenseEntity>(
+                                    initialValue: textEditingValue,
+                                    displayStringForOption: (ExpenseEntity option) => option.description,
+                                    fieldViewBuilder: (_, textController, focusNode, ___) {
+                                      return TextFormField(
+                                        decoration: InputDecoration(label: Text(strings.description)),
+                                        textCapitalization: TextCapitalization.sentences,
+                                        controller: textController,
+                                        focusNode: focusNode,
+                                        validator: InputRequiredValidator().validate,
+                                        onSaved: (String? value) => state.creditCardExpense.description = value?.trim() ?? '',
+                                        enabled: !notifier.isLoading,
+                                      );
+                                    },
+                                    optionsBuilder: (TextEditingValue textEditingValue) async {
+                                      if (textEditingValue.text.length <= 1) {
+                                        this.textEditingValue = textEditingValue;
+                                        return [];
+                                      }
+
+                                      if (textEditingValue.text == this.textEditingValue.text) return [];
+
+                                      transactionsOldAutoComplete = await notifier.findByText(textEditingValue.text);
+                                      this.textEditingValue = textEditingValue;
+                                      return transactionsOldAutoComplete;
+                                    },
+                                    onSelected: (ITransactionEntity selection) {
+                                      final ExpenseEntity expense = selection as ExpenseEntity;
+                                      if (expense.idCategory != null) notifier.setCategory(expense.idCategory!);
+                                      notifier.creditCardExpense.observation = expense.observation;
+                                    },
+                                    optionsViewBuilder: (context, onSelected, options) {
+                                      return Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Material(
+                                          elevation: 12,
+                                          color: colorScheme.surfaceVariant,
+                                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4.0))),
+                                          child: SizedBox(
+                                            height: 80.0 * options.length,
+                                            width: constraints.biggest.width,
+                                            child: ListView.builder(
+                                              itemCount: options.length,
+                                              itemBuilder: (_, index) {
+                                                final ExpenseEntity expense = options.elementAt(index);
+                                                final category = categoriesNotifier.value.categories.firstWhereOrNull((category) => category.id == expense.idCategory);
+                                                if (category == null) return const SizedBox.shrink();
+
+                                                return ListTile(
+                                                  leading: CircleAvatar(
+                                                    radius: 18,
+                                                    backgroundColor: Color(category.color.toColor()!),
+                                                    child: Icon(category.icon.parseIconData(), color: Colors.white),
+                                                  ),
+                                                  title: Text(expense.description),
+                                                  subtitle: Text(category.description),
+                                                  onTap: () => onSelected(expense),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
                               ),
                               const Spacing.y(),
                               TextFormField(

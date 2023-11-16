@@ -209,7 +209,7 @@ final class DependencyInjection {
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
     getIt.registerFactory<CategoryNotifier>(() => CategoryNotifier(categorySave: getIt.get<ICategorySave>(), categoryDelete: getIt.get<ICategoryDelete>()));
     getIt.registerFactory<CreditCardNotifier>(() => CreditCardNotifier(creditCardSave: getIt.get<ICreditCardSave>(), creditCardDelete: getIt.get<ICreditCardDelete>()));
-    getIt.registerFactory<CreditCardExpenseNotifier>(() => CreditCardExpenseNotifier(creditCardTransactionSave: getIt.get<ICreditCardTransactionSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>()));
+    getIt.registerFactory<CreditCardExpenseNotifier>(() => CreditCardExpenseNotifier(creditCardTransactionSave: getIt.get<ICreditCardTransactionSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>(), transactionFind: getIt.get<ITransactionFind>()));
     getIt.registerFactory<CreditCardsNotifier>(() => CreditCardsNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
     getIt.registerFactory<CreditCardStatementNotifier>(() => CreditCardStatementNotifier(creditCardStatementFind: getIt.get<ICreditCardStatementFind>(), creditCardStatementSave: getIt.get<ICreditCardStatementSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>()));
     getIt.registerSingleton<EventNotifier>(EventNotifier());

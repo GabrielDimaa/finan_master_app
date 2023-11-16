@@ -9,7 +9,7 @@ sealed class TransactionsState {
 
   TransactionsState setLoading() => LoadingTransactionsState(transactions: transactions);
 
-  TransactionsState setTransactions(List<ITransactionEntity> transactions) => transactions.isEmpty ? EmptyTransactionsState(transactions: transactions) : ListTransactionsState(transactions: transactions);
+  TransactionsState setTransactions(List<ITransactionEntity> list) => list.isEmpty ? EmptyTransactionsState(transactions: list) : ListTransactionsState(transactions: list);
 
   TransactionsState setError(String message) => ErrorTransactionsState(message: message, transactions: transactions);
 }

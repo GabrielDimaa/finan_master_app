@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/statement_status_enum.dart';
 import 'package:finan_master_app/shared/domain/entities/entity.dart';
+import 'package:finan_master_app/shared/extensions/double_extension.dart';
 
 class CreditCardStatementEntity extends Entity {
   DateTime statementClosingDate;
@@ -20,9 +21,9 @@ class CreditCardStatementEntity extends Entity {
   double get totalPaid => transactions.map((transaction) => transaction.amount < 0 ? transaction.amount : 0).sum.toDouble();
 
   //totalPaid terá valor negativo, portanto, 1000 + (-100).
-  double get statementAmount => totalSpent + totalPaid;
+  double get statementAmount => (totalSpent + totalPaid).truncateFractionalDigits(2);
 
-  double get amountAvailable => amountLimit - statementAmount;
+  double get amountAvailable => (amountLimit - statementAmount).truncateFractionalDigits(2);
 
   StatementStatusEnum get status {
     final dateTimeNow = DateTime.now();

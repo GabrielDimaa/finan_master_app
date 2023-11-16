@@ -101,12 +101,12 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
     try {
       const String sql = '''
         SELECT
-          SUM(amount) + (SELECT SUM(initial_amount) FROM accounts WHERE include_total_balance = ?) AS balance
+          SUM(amount) + (SELECT SUM(initial_amount) FROM accounts) AS balance
         FROM transactions
         WHERE date <= ?;
       ''';
 
-      final List<Map<String, dynamic>> results = await databaseLocal.raw(sql, DatabaseOperation.select, [1, date.toIso8601String()]);
+      final List<Map<String, dynamic>> results = await databaseLocal.raw(sql, DatabaseOperation.select, [date.toIso8601String()]);
 
       return results.firstOrNull?['balance'] ?? 0;
     } on DatabaseLocalException catch (e, stackTrace) {

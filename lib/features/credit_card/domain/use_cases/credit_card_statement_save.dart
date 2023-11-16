@@ -12,6 +12,7 @@ import 'package:finan_master_app/features/transactions/domain/repositories/i_exp
 import 'package:finan_master_app/shared/classes/constants.dart';
 import 'package:finan_master_app/shared/domain/repositories/i_local_db_transaction_repository.dart';
 import 'package:finan_master_app/shared/exceptions/exceptions.dart';
+import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class CreditCardStatementSave implements ICreditCardStatementSave {
@@ -74,7 +75,7 @@ class CreditCardStatementSave implements ICreditCardStatementSave {
 
     //Se a fatura estiver fechada ou vencida
     if (creditCardStatementClone.status == StatementStatusEnum.closed || creditCardStatementClone.status == StatementStatusEnum.overdue) {
-      if (payValue != creditCardStatement.statementAmount) throw ValidationException(R.strings.paymentRequirementWhenClosedStatement);
+      if (payValue != creditCardStatement.statementAmount.truncateFractionalDigits(2)) throw ValidationException(R.strings.paymentRequirementWhenClosedStatement);
 
       final List<ExpenseEntity> expenses = [];
 
