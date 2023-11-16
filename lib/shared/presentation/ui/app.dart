@@ -72,7 +72,8 @@ class _AppState extends State<App> {
                 ),
                 segmentedButtonTheme: const SegmentedButtonThemeData(
                   style: ButtonStyle(
-                    padding: MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.symmetric(vertical: 20)),
+                    fixedSize: MaterialStatePropertyAll<Size>(Size.fromHeight(40)),
+                    padding: MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.symmetric(horizontal: 12)),
                   ),
                 ),
                 dividerTheme: const DividerThemeData(

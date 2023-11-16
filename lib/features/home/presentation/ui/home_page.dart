@@ -97,7 +97,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                           children: [
                             const Spacing.y(),
                             Card(
-                              margin: const EdgeInsets.symmetric(horizontal: 30),
+                              margin: const EdgeInsets.symmetric(horizontal: 16),
                               elevation: 0,
                               color: colorScheme.primary.withAlpha(12),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
@@ -114,6 +114,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                                       Text(accountsNotifier.accountsBalance.money, style: textTheme.headlineLarge),
                                       const Spacing.y(2),
                                       ButtonBar(
+                                        buttonPadding: EdgeInsets.zero,
                                         alignment: MainAxisAlignment.spaceBetween,
                                         overflowButtonSpacing: 12,
                                         children: [
@@ -121,19 +122,19 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Container(
-                                                padding: const EdgeInsets.all(10),
+                                                padding: const EdgeInsets.all(8),
                                                 decoration: BoxDecoration(
                                                   color: const Color(0xFF3CDE87).withAlpha(30),
                                                   borderRadius: BorderRadius.circular(8),
                                                 ),
                                                 child: const Icon(Icons.arrow_upward_outlined, color: Color(0xFF3CDE87)),
                                               ),
-                                              const Spacing.x(),
+                                              const Spacing.x(0.5),
                                               Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text(strings.incomes, style: textTheme.labelSmall),
-                                                  Text(notifier.transactionsByPeriod.amountsIncome.money, style: textTheme.titleMedium),
+                                                  Text(notifier.transactionsByPeriod.amountsIncome.money, style: textTheme.labelLarge),
                                                 ],
                                               ),
                                             ],
@@ -142,19 +143,19 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Container(
-                                                padding: const EdgeInsets.all(10),
+                                                padding: const EdgeInsets.all(8),
                                                 decoration: BoxDecoration(
                                                   color: const Color(0xFFFF5454).withAlpha(30),
                                                   borderRadius: BorderRadius.circular(8),
                                                 ),
                                                 child: const Icon(Icons.arrow_downward_outlined, color: Color(0xFFFF5454)),
                                               ),
-                                              const Spacing.x(),
+                                              const Spacing.x(0.5),
                                               Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text(strings.expenses, style: textTheme.labelSmall),
-                                                  Text(notifier.transactionsByPeriod.amountsExpense.abs().money, style: textTheme.titleMedium),
+                                                  Text(notifier.transactionsByPeriod.amountsExpense.abs().money, style: textTheme.labelLarge),
                                                 ],
                                               ),
                                             ],
@@ -178,7 +179,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                             Visibility(
                               visible: state.transactions.isNotEmpty,
                               replacement: SizedBox(
-                                width: MediaQuery.sizeOf(context).width / 2,
+                                width: MediaQuery.sizeOf(context).width / 1.5,
                                 child: NoContentWidget(
                                   child: Text(strings.noTransactionsRegistered),
                                 ),
