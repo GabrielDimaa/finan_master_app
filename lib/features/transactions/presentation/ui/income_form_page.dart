@@ -185,6 +185,8 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                                             height: 80.0 * options.length,
                                             width: constraints.biggest.width,
                                             child: ListView.builder(
+                                              physics: const BouncingScrollPhysics(),
+                                              padding: EdgeInsets.zero,
                                               itemCount: options.length,
                                               itemBuilder: (_, index) {
                                                 final IncomeEntity income = options.elementAt(index);
@@ -192,6 +194,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                                                 if (category == null) return const SizedBox.shrink();
 
                                                 return ListTile(
+                                                  dense: true,
                                                   leading: CircleAvatar(
                                                     radius: 18,
                                                     backgroundColor: Color(category.color.toColor()!),

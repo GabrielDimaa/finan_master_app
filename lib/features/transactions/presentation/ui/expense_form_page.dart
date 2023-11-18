@@ -183,6 +183,8 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                             height: 80.0 * options.length,
                                             width: constraints.biggest.width,
                                             child: ListView.builder(
+                                              physics: const BouncingScrollPhysics(),
+                                              padding: EdgeInsets.zero,
                                               itemCount: options.length,
                                               itemBuilder: (_, index) {
                                                 final ExpenseEntity expense = options.elementAt(index);
@@ -190,6 +192,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                                 if (category == null) return const SizedBox.shrink();
 
                                                 return ListTile(
+                                                  dense: true,
                                                   leading: CircleAvatar(
                                                     radius: 18,
                                                     backgroundColor: Color(category.color.toColor()!),
