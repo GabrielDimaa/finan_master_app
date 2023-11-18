@@ -92,11 +92,9 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        if (creditCardChanged) context.pop(FormResultNavigation.save(creditCardNotifier.creditCard));
-        return Future.value(true);
-      },
+    return PopScope(
+      canPop: !creditCardChanged,
+      onPopInvoked: (_) => context.pop(FormResultNavigation.save(creditCardNotifier.creditCard)),
       child: ValueListenableBuilder(
         valueListenable: initialLoadingNotifier,
         builder: (_, initialLoading, __) {

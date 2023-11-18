@@ -43,11 +43,9 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        if (accountChanged) context.pop(FormResultNavigation.save(notifier.account));
-        return Future.value(true);
-      },
+    return PopScope(
+      canPop: !accountChanged,
+      onPopInvoked: (_) => context.pop(FormResultNavigation.save(notifier.account)),
       child: ValueListenableBuilder(
         valueListenable: notifier,
         builder: (_, state, __) {

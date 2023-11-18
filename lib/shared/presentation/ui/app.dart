@@ -43,7 +43,6 @@ class _AppState extends State<App> {
               routerConfig: routerConfig,
               themeMode: themeMode,
               theme: ThemeData(
-                useMaterial3: true,
                 fontFamily: 'Roboto',
                 colorScheme: themeMode == ThemeMode.dark ? themeDark : themeLight,
                 filledButtonTheme: FilledButtonThemeData(
