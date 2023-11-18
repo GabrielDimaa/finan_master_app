@@ -22,6 +22,7 @@ class _NavDrawerState extends State<NavDrawer> with ThemeContext {
       };
 
   void onDestinationSelected(int? index) {
+    context.pop();
     switch (index) {
       case CategoriesListPage.indexDrawer:
         context.goNamed(CategoriesListPage.route);
