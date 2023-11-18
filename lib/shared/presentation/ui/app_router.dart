@@ -36,7 +36,7 @@ sealed class AppRouter {
   static RouterConfig<Object> routerConfig() {
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
-      initialLocation: '/${HomePage.route}',
+      initialLocation: '/${SplashPage.route}',
       routes: [
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,
@@ -169,5 +169,20 @@ sealed class AppRouter {
         ),
       ],
     );
+  }
+}
+
+extension GoRouterExtension on BuildContext {
+  Future<void> navigateNamed(
+    String name, {
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    Object? extra,
+  }) async {
+    while (canPop()) {
+      pop();
+    }
+
+    pushReplacementNamed(name);
   }
 }

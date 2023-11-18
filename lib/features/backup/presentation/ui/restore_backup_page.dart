@@ -1,13 +1,13 @@
 import 'package:finan_master_app/features/backup/presentation/notifiers/backup_notifier.dart';
 import 'package:finan_master_app/features/backup/presentation/states/backup_state.dart';
-import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
+import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/linear_progress_indicator_app_bar.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:go_router/go_router.dart';
 
 class RestoreBackupPage extends StatefulWidget {
   static const String route = 'restore-backup';
@@ -72,6 +72,9 @@ class _RestoreBackupPageState extends State<RestoreBackupPage> with ThemeContext
     try {
       await notifier.restoreBackup();
       if (notifier.value is ErrorBackupState) throw Exception((notifier.value as ErrorBackupState).message);
+
+      if (!mounted) return;
+      context.navigateNamed(SplashPage.route);
     } catch (e) {
       if (!mounted) return;
       await ErrorDialog.show(context, e.toString());
@@ -84,7 +87,7 @@ class _RestoreBackupPageState extends State<RestoreBackupPage> with ThemeContext
       if (notifier.value is ErrorBackupState) throw Exception((notifier.value as ErrorBackupState).message);
 
       if (!mounted) return;
-      context.goNamed(HomePage.route);
+      context.navigateNamed(SplashPage.route);
     } catch (e) {
       if (!mounted) return;
       await ErrorDialog.show(context, e.toString());

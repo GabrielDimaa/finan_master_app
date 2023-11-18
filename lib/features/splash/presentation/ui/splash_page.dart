@@ -1,8 +1,11 @@
+import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashPage extends StatefulWidget {
   static const route = 'splash';
@@ -14,6 +17,12 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> with ThemeContext {
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) => context.goNamed(HomePage.route));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
