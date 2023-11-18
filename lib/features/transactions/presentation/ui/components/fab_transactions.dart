@@ -8,9 +8,11 @@ import 'package:finan_master_app/features/transactions/presentation/ui/income_fo
 import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab_child.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class FabTransactions extends StatefulWidget {
@@ -23,6 +25,8 @@ class FabTransactions extends StatefulWidget {
 }
 
 class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
+  final EventNotifier eventNotifier = GetIt.I.get<EventNotifier>();
+
   @override
   Widget build(BuildContext context) {
     return ExpandableFab(
@@ -55,19 +59,28 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
   Future<void> goExpenseFormPage() async {
     final FormResultNavigation<ExpenseEntity>? result = await context.pushNamed(ExpenseFormPage.route);
 
-    if (result != null) await widget.notifier.refreshTransactions();
+    if (result != null) {
+      await widget.notifier.refreshTransactions();
+      eventNotifier.notify(EventType.transactions);
+    }
   }
 
   Future<void> goIncomeFormPage() async {
     final FormResultNavigation<IncomeEntity>? result = await context.pushNamed(IncomeFormPage.route);
 
-    if (result != null) await widget.notifier.refreshTransactions();
+    if (result != null) {
+      await widget.notifier.refreshTransactions();
+      eventNotifier.notify(EventType.transactions);
+    }
   }
 
   Future<void> goTransferFormPage() async {
     final FormResultNavigation<TransferEntity>? result = await context.pushNamed(TransferFormPage.route);
 
-    if (result != null) await widget.notifier.refreshTransactions();
+    if (result != null) {
+      await widget.notifier.refreshTransactions();
+      eventNotifier.notify(EventType.transactions);
+    }
   }
 
   Future<void> goCreditCardExpenseFormPage() => context.pushNamed(CreditCardExpensePage.route);
