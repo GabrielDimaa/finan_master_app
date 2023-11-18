@@ -43,10 +43,7 @@ class TransactionsNotifier extends ValueNotifier<TransactionsState> {
       this.startDate = startDate;
       this.endDate = endDate;
 
-      transactionsByPeriod = await _transactionFind.findByPeriod(startDate, endDate);
-      monthlyBalanceCumulative = await _accountFind.findBalanceUntilDate(endDate);
-
-      filterTransactions(filterType);
+      await _load();
     } catch (e) {
       value = value.setError(e.toString());
     }
@@ -63,7 +60,14 @@ class TransactionsNotifier extends ValueNotifier<TransactionsState> {
     value = value.setTransactions(transactionsByPeriod.transactions.where((transaction) => transaction.categoryType == type.first).toList());
   }
 
-  Future<void> refreshTransactions() => findByPeriod(startDate, endDate);
+  Future<void> onRefresh() => _load();
 
   Future<void> deleteTransactions(List<ITransactionEntity> transactions) => _transactionDelete.deleteTransactions(transactions);
+
+  Future<void> _load() async {
+    transactionsByPeriod = await _transactionFind.findByPeriod(startDate, endDate);
+    monthlyBalanceCumulative = await _accountFind.findBalanceUntilDate(endDate);
+
+    filterTransactions(filterType);
+  }
 }

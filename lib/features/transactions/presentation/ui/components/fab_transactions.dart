@@ -60,7 +60,7 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
     final FormResultNavigation<ExpenseEntity>? result = await context.pushNamed(ExpenseFormPage.route);
 
     if (result != null) {
-      await widget.notifier.refreshTransactions();
+      await widget.notifier.onRefresh();
       eventNotifier.notify(EventType.transactions);
     }
   }
@@ -69,7 +69,7 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
     final FormResultNavigation<IncomeEntity>? result = await context.pushNamed(IncomeFormPage.route);
 
     if (result != null) {
-      await widget.notifier.refreshTransactions();
+      await widget.notifier.onRefresh();
       eventNotifier.notify(EventType.transactions);
     }
   }
@@ -78,7 +78,7 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
     final FormResultNavigation<TransferEntity>? result = await context.pushNamed(TransferFormPage.route);
 
     if (result != null) {
-      await widget.notifier.refreshTransactions();
+      await widget.notifier.onRefresh();
       eventNotifier.notify(EventType.transactions);
     }
   }

@@ -104,8 +104,9 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
         ),
         body: SafeArea(
           child: RefreshIndicator(
-            onRefresh: notifier.refreshTransactions,
+            onRefresh: notifier.onRefresh,
             child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               child: ValueListenableBuilder(
                 valueListenable: notifier,
                 builder: (_, TransactionsState state, __) {
@@ -137,7 +138,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                                   state: state,
                                   categories: categoriesNotifier.value.categories,
                                   accounts: accountsNotifier.value.accounts,
-                                  refreshTransactions: notifier.refreshTransactions,
+                                  refreshTransactions: notifier.onRefresh,
                                 ),
                               ],
                             ),
@@ -167,7 +168,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
 
       setState(() {
         listSelectable = [];
-        notifier.refreshTransactions();
+        notifier.onRefresh();
         eventNotifier.notify(EventType.transactions);
       });
     } catch (e) {

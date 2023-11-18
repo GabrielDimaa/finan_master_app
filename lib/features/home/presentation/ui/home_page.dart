@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
   final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(true);
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey animatedSwitcher = GlobalKey();
 
   @override
   void initState() {
@@ -90,6 +91,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                 return RefreshIndicator(
                   onRefresh: refresh,
                   child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     child: ValueListenableBuilder(
                       valueListenable: notifier,
                       builder: (_, state, __) {
@@ -111,7 +113,18 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                                     children: [
                                       Text(strings.accountsBalance, style: textTheme.labelMedium),
                                       const Spacing.y(0.5),
-                                      Text(accountsNotifier.accountsBalance.money, style: textTheme.headlineLarge),
+                                      AnimatedSwitcher(
+                                        key: animatedSwitcher,
+                                        duration: const Duration(milliseconds: 5000),
+                                        child: Builder(
+                                          builder: (context) {
+                                            return Text(
+                                              accountsNotifier.accountsBalance.money,
+                                              style: textTheme.headlineLarge,
+                                            );
+                                          }
+                                        ),
+                                      ),
                                       const Spacing.y(2),
                                       ButtonBar(
                                         buttonPadding: EdgeInsets.zero,
@@ -207,8 +220,8 @@ class _HomePageState extends State<HomePage> with ThemeContext {
 
   Future<void> refresh() async {
     await Future.wait([
-      notifier.refreshTransactions(),
-      accountsNotifier.findAll(deleted: true),
+      notifier.onRefresh(),
+      accountsNotifier.onRefresh(deleted: true),
     ]);
   }
 }

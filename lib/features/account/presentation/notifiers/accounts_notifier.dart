@@ -23,4 +23,9 @@ class AccountsNotifier extends ValueNotifier<AccountsState> {
       value = value.setError(e.toString());
     }
   }
+
+  Future<void> onRefresh({bool deleted = false}) async {
+    final List<AccountEntity> accounts = await _accountFind.findAll(deleted: deleted);
+    value = value.setAccounts(accounts);
+  }
 }
