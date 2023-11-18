@@ -256,7 +256,8 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
     return await AccountsListBottomSheet.show(
       context: context,
       accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == idAccount),
-      accounts: accountsNotifier.value.accounts,
+      accounts: accountsNotifier.value.accounts.where((account) => account.deletedAt == null).toList(),
+      onAccountCreated: (AccountEntity account) => accountsNotifier.value.accounts.add(account),
     );
   }
 

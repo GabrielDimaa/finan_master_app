@@ -68,8 +68,8 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
     Future(() async {
       try {
         await Future.wait([
-          categoriesNotifier.findAll(type: CategoryTypeEnum.income),
-          accountsNotifier.findAll(),
+          categoriesNotifier.findAll(type: CategoryTypeEnum.income, deleted: true),
+          accountsNotifier.findAll(deleted: true),
         ]);
 
         if (categoriesNotifier.value is ErrorCategoriesState) throw Exception((categoriesNotifier.value as ErrorCategoriesState).message);
@@ -341,7 +341,8 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
     final CategoryEntity? result = await CategoriesListBottomSheet.show(
       context: context,
       categorySelected: categoriesNotifier.value.categories.firstWhereOrNull((category) => category.id == notifier.income.idCategory),
-      categories: categoriesNotifier.value.categories,
+      categories: categoriesNotifier.value.categories.where((category) => category.deletedAt == null).toList(),
+      onCategoryCreated: (CategoryEntity category) => categoriesNotifier.value.categories.add(category),
     );
 
     if (result == null) return;
@@ -355,7 +356,8 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
     final AccountEntity? result = await AccountsListBottomSheet.show(
       context: context,
       accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == notifier.income.transaction.idAccount),
-      accounts: accountsNotifier.value.accounts,
+      accounts: accountsNotifier.value.accounts.where((account) => account.deletedAt == null).toList(),
+      onAccountCreated: (AccountEntity account) => accountsNotifier.value.accounts.add(account),
     );
 
     if (result == null) return;

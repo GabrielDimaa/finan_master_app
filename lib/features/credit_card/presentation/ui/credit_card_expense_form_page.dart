@@ -65,8 +65,8 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
     Future(() async {
       try {
         await Future.wait([
-          categoriesNotifier.findAll(type: CategoryTypeEnum.expense),
-          creditCardsNotifier.findAll(),
+          categoriesNotifier.findAll(type: CategoryTypeEnum.expense, deleted: true),
+          creditCardsNotifier.findAll(deleted: true),
         ]);
 
         if (categoriesNotifier.value is ErrorCategoriesState) throw Exception((categoriesNotifier.value as ErrorCategoriesState).message);
@@ -77,7 +77,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
         dateController.text = notifier.creditCardExpense.date.format();
         textEditingValue = TextEditingValue(text: notifier.creditCardExpense.description);
 
-        if (creditCardsNotifier.value.creditCards.length == 1) {
+        if (creditCardsNotifier.value.creditCards.where((creditCard) => creditCard.deletedAt == null).length == 1) {
           notifier.creditCardExpense.idCreditCard = creditCardsNotifier.value.creditCards.first.id;
         }
       } catch (e) {
@@ -341,7 +341,8 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
     final CategoryEntity? result = await CategoriesListBottomSheet.show(
       context: context,
       categorySelected: categoriesNotifier.value.categories.firstWhereOrNull((category) => category.id == notifier.creditCardExpense.idCategory),
-      categories: categoriesNotifier.value.categories,
+      categories: categoriesNotifier.value.categories.where((category) => category.deletedAt == null).toList(),
+      onCategoryCreated: (CategoryEntity category) => categoriesNotifier.value.categories.add(category),
     );
 
     if (result == null) return;
@@ -355,7 +356,8 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
     final CreditCardEntity? result = await CreditCardsListBottomSheet.show(
       context: context,
       creditCardSelected: creditCardsNotifier.value.creditCards.firstWhereOrNull((creditCard) => creditCard.id == notifier.creditCardExpense.idCreditCard),
-      creditCards: creditCardsNotifier.value.creditCards,
+      creditCards: creditCardsNotifier.value.creditCards.where((creditCard) => creditCard.deletedAt == null).toList(),
+      onCreditCardCreated: (CreditCardEntity creditCard) => creditCardsNotifier.value.creditCards.add(creditCard),
     );
 
     if (result == null) return;

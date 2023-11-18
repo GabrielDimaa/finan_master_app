@@ -12,17 +12,23 @@ import 'package:go_router/go_router.dart';
 class CategoriesListBottomSheet extends StatefulWidget {
   final CategoryEntity? categorySelected;
   final List<CategoryEntity> categories;
+  final void Function(CategoryEntity)? onCategoryCreated;
 
-  const CategoriesListBottomSheet({Key? key, required this.categorySelected, required this.categories}) : super(key: key);
+  const CategoriesListBottomSheet({Key? key, required this.categorySelected, required this.categories, this.onCategoryCreated}) : super(key: key);
 
-  static Future<CategoryEntity?> show({required BuildContext context, required CategoryEntity? categorySelected, required List<CategoryEntity> categories}) async {
+  static Future<CategoryEntity?> show({
+    required BuildContext context,
+    required CategoryEntity? categorySelected,
+    required List<CategoryEntity> categories,
+    void Function(CategoryEntity)? onCategoryCreated,
+  }) async {
     return await showModalBottomSheet(
       context: context,
       showDragHandle: true,
       enableDrag: true,
       useSafeArea: true,
       isScrollControlled: true,
-      builder: (_) => CategoriesListBottomSheet(categorySelected: categorySelected, categories: categories),
+      builder: (_) => CategoriesListBottomSheet(categorySelected: categorySelected, categories: categories, onCategoryCreated: onCategoryCreated),
     );
   }
 
@@ -106,6 +112,7 @@ class _CategoriesListBottomSheetState extends State<CategoriesListBottomSheet> w
 
     if (result?.isSave == true && result?.value != null && widget.categories.any((category) => category.type == result?.value?.type)) {
       widget.categories.add(result!.value!);
+      widget.onCategoryCreated?.call(result.value!);
     }
   }
 }

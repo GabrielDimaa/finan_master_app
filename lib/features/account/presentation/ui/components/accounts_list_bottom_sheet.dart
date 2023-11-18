@@ -11,17 +11,28 @@ import 'package:go_router/go_router.dart';
 class AccountsListBottomSheet extends StatefulWidget {
   final AccountEntity? accountSelected;
   final List<AccountEntity> accounts;
+  final void Function(AccountEntity)? onAccountCreated;
 
-  const AccountsListBottomSheet({Key? key, required this.accountSelected, required this.accounts}) : super(key: key);
+  const AccountsListBottomSheet({
+    Key? key,
+    required this.accountSelected,
+    required this.accounts,
+    this.onAccountCreated,
+  }) : super(key: key);
 
-  static Future<AccountEntity?> show({required BuildContext context, required AccountEntity? accountSelected, required List<AccountEntity> accounts}) async {
+  static Future<AccountEntity?> show({
+    required BuildContext context,
+    required AccountEntity? accountSelected,
+    required List<AccountEntity> accounts,
+    void Function(AccountEntity)? onAccountCreated,
+  }) async {
     return await showModalBottomSheet(
       context: context,
       showDragHandle: true,
       enableDrag: true,
       useSafeArea: true,
       isScrollControlled: true,
-      builder: (_) => AccountsListBottomSheet(accountSelected: accountSelected, accounts: accounts),
+      builder: (_) => AccountsListBottomSheet(accountSelected: accountSelected, accounts: accounts, onAccountCreated: onAccountCreated),
     );
   }
 
@@ -102,6 +113,7 @@ class _AccountsListBottomSheetState extends State<AccountsListBottomSheet> with 
 
     if (result?.isSave == true && result?.value != null) {
       widget.accounts.add(result!.value!);
+      widget.onAccountCreated?.call(result.value!);
     }
   }
 }

@@ -10,17 +10,23 @@ import 'package:go_router/go_router.dart';
 class CreditCardsListBottomSheet extends StatefulWidget {
   final CreditCardEntity? creditCardSelected;
   final List<CreditCardEntity> creditCards;
+  final void Function(CreditCardEntity)? onCreditCardCreated;
 
-  const CreditCardsListBottomSheet({Key? key, required this.creditCardSelected, required this.creditCards}) : super(key: key);
+  const CreditCardsListBottomSheet({Key? key, required this.creditCardSelected, required this.creditCards, this.onCreditCardCreated}) : super(key: key);
 
-  static Future<CreditCardEntity?> show({required BuildContext context, required CreditCardEntity? creditCardSelected, required List<CreditCardEntity> creditCards}) async {
+  static Future<CreditCardEntity?> show({
+    required BuildContext context,
+    required CreditCardEntity? creditCardSelected,
+    required List<CreditCardEntity> creditCards,
+    void Function(CreditCardEntity)? onCreditCardCreated,
+  }) async {
     return await showModalBottomSheet(
       context: context,
       showDragHandle: true,
       enableDrag: true,
       useSafeArea: true,
       isScrollControlled: true,
-      builder: (_) => CreditCardsListBottomSheet(creditCardSelected: creditCardSelected, creditCards: creditCards),
+      builder: (_) => CreditCardsListBottomSheet(creditCardSelected: creditCardSelected, creditCards: creditCards, onCreditCardCreated: onCreditCardCreated),
     );
   }
 
@@ -95,6 +101,7 @@ class _CreditCardsListBottomSheetState extends State<CreditCardsListBottomSheet>
 
     if (result?.isSave == true && result?.value != null) {
       widget.creditCards.add(result!.value!);
+      widget.onCreditCardCreated?.call(result.value!);
     }
   }
 }
