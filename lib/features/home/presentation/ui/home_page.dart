@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
         if (accountsNotifier is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
 
         eventNotifier.addListener(() {
-          if (eventNotifier.value == EventType.transactions) notifier.refreshTransactions();
+          if (eventNotifier.value == EventType.transactions) refresh();
         });
       } catch (e) {
         if (!mounted) return;
@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                 if (loading) return const Center(child: CircularProgressIndicator());
 
                 return RefreshIndicator(
-                  onRefresh: notifier.refreshTransactions,
+                  onRefresh: refresh,
                   child: SingleChildScrollView(
                     child: ValueListenableBuilder(
                       valueListenable: notifier,
@@ -203,5 +203,12 @@ class _HomePageState extends State<HomePage> with ThemeContext {
         );
       },
     );
+  }
+
+  Future<void> refresh() async {
+    await Future.wait([
+      notifier.refreshTransactions(),
+      accountsNotifier.findAll(deleted: true),
+    ]);
   }
 }

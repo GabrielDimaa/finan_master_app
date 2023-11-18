@@ -103,22 +103,22 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
           child: FabTransactions(notifier: notifier),
         ),
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: ValueListenableBuilder(
-              valueListenable: notifier,
-              builder: (_, TransactionsState state, __) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Spacing.y(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: FiltersTransactions(notifier: notifier, enabled: listSelectable.isEmpty),
-                    ),
-                    const Spacing.y(),
-                    RefreshIndicator(
-                      onRefresh: notifier.refreshTransactions,
-                      child: AnimatedSwitcher(
+          child: RefreshIndicator(
+            onRefresh: notifier.refreshTransactions,
+            child: SingleChildScrollView(
+              child: ValueListenableBuilder(
+                valueListenable: notifier,
+                builder: (_, TransactionsState state, __) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Spacing.y(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: FiltersTransactions(notifier: notifier, enabled: listSelectable.isEmpty),
+                      ),
+                      const Spacing.y(),
+                      AnimatedSwitcher(
                         duration: const Duration(milliseconds: 500),
                         child: switch (state) {
                           StartTransactionsState _ => const SizedBox.shrink(),
@@ -143,10 +143,10 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                             ),
                         },
                       ),
-                    ),
-                  ],
-                );
-              },
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),
