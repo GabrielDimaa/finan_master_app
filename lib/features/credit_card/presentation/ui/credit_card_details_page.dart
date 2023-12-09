@@ -144,7 +144,7 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                   ),
                   body: Builder(
                     builder: (_) {
-                      if (initialLoading) return const CircularProgressIndicator();
+                      if (initialLoading) return const Center(child: CircularProgressIndicator());
 
                       if (creditCardNotifier.value is! ChangedCreditCardState) return const SizedBox.shrink();
 
