@@ -71,7 +71,7 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
         await Future.wait([
           accountNotifier.findById(widget.creditCard.idAccount!),
           categoriesNotifier.findAll(deleted: true),
-          creditCardStatementNotifier.findByPeriod(startDate: dateTimeFilter.getInitialMonth(), endDate: dateTimeFilter.getFinalMonth(), idCreditCard: widget.creditCard.id),
+          findStatementInitial(),
         ]);
 
         if (accountNotifier.value is ErrorAccountsState) throw Exception((accountNotifier.value as ErrorAccountsState).message);
@@ -351,6 +351,14 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
         },
       ),
     );
+  }
+
+  Future<void> findStatementInitial() async {
+    await creditCardStatementNotifier.findByPeriod(startDate: dateTimeFilter.getInitialMonth(), endDate: dateTimeFilter.getFinalMonth(), idCreditCard: widget.creditCard.id);
+    if (creditCardStatementNotifier.creditCardStatement?.paid == true) {
+      dateTimeFilter = dateTimeFilter.addMonths(1);
+      await creditCardStatementNotifier.findByPeriod(startDate: dateTimeFilter.getInitialMonth(), endDate: dateTimeFilter.getFinalMonth(), idCreditCard: widget.creditCard.id);
+    }
   }
 
   Future<void> goCreditCardForm(BuildContext context) async {
