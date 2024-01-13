@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
@@ -182,7 +184,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                                           color: colorScheme.surfaceVariant,
                                           shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4.0))),
                                           child: SizedBox(
-                                            height: 80.0 * options.length,
+                                            height: min(160, 80.0 * options.length),
                                             width: constraints.biggest.width,
                                             child: ListView.builder(
                                               physics: const BouncingScrollPhysics(),
