@@ -13,6 +13,7 @@ import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/item_selectable.dart';
@@ -21,6 +22,7 @@ import 'package:finan_master_app/shared/presentation/ui/components/list/selectab
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class ListTransactions extends StatefulWidget {
@@ -42,6 +44,8 @@ class ListTransactions extends StatefulWidget {
 }
 
 class _ListTransactionsState extends State<ListTransactions> {
+  final EventNotifier eventNotifier = GetIt.I.get<EventNotifier>();
+
   @override
   Widget build(BuildContext context) {
     return ListViewSelectable.separated(
@@ -130,7 +134,7 @@ class _ListTransactionsState extends State<ListTransactions> {
                   builder: (_) {
                     final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.transactionTo.idAccount);
                     return Text(account.description);
-                  }
+                  },
                 ),
                 trailing: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -155,7 +159,7 @@ class _ListTransactionsState extends State<ListTransactions> {
                   builder: (_) {
                     final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.transactionFrom.idAccount);
                     return Text(account.description);
-                  }
+                  },
                 ),
                 trailing: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -179,6 +183,9 @@ class _ListTransactionsState extends State<ListTransactions> {
 
   Future<void> goFormsPage({required BuildContext context, required String route, required ITransactionEntity entity}) async {
     final FormResultNavigation? result = await context.pushNamed(route, extra: entity);
-    if (result != null) widget.refreshTransactions();
+    if (result == null) return;
+
+    widget.refreshTransactions();
+    eventNotifier.notify(EventType.transactions);
   }
 }
