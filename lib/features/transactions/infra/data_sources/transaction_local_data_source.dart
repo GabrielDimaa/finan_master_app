@@ -368,6 +368,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
         $tableName.${Model.deletedAtColumnName} IS NULL AND
         ${_incomeLocalDataSource.tableName}.description LIKE ?
       GROUP BY lower(${_incomeLocalDataSource.tableName}.description)
+      ORDER BY $orderByDefault
       LIMIT 10;
     ''';
 
@@ -405,6 +406,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
         $tableName.${Model.deletedAtColumnName} IS NULL AND
         ${_expenseLocalDataSource.tableName}.description LIKE ?
       GROUP BY lower(${_expenseLocalDataSource.tableName}.description)
+      ORDER BY $orderByDefault
       LIMIT 10;
     ''';
 
