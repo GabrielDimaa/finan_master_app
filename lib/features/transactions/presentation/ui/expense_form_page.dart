@@ -75,7 +75,12 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
         if (categoriesNotifier.value is ErrorCategoriesState) throw Exception((categoriesNotifier.value as ErrorCategoriesState).message);
         if (accountsNotifier.value is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
 
-        if (widget.expense != null) notifier.setExpense(widget.expense!);
+        if (widget.expense != null) {
+          notifier.setExpense(widget.expense!);
+        } else {
+          final AccountEntity? account = accountsNotifier.value.accounts.firstOrNull;
+          if (account != null) notifier.setAccount(account.id);
+        }
 
         textEditingValue = TextEditingValue(text: notifier.expense.description);
         dateController.text = notifier.expense.transaction.date.format();

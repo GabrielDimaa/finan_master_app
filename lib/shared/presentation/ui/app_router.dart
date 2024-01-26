@@ -15,6 +15,8 @@ import 'package:finan_master_app/features/credit_card/presentation/ui/credit_car
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_cards_list_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
+import 'package:finan_master_app/features/reports/presentation/ui/report_categories_page.dart';
+import 'package:finan_master_app/features/reports/presentation/ui/reports_page.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
@@ -31,6 +33,7 @@ sealed class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _homeNavigatorKey = GlobalKey<NavigatorState>();
   static final _transactionsNavigatorKey = GlobalKey<NavigatorState>();
+  static final _reportsNavigatorKey = GlobalKey<NavigatorState>();
   static final _configNavigatorKey = GlobalKey<NavigatorState>();
 
   static RouterConfig<Object> routerConfig() {
@@ -110,6 +113,12 @@ sealed class AppRouter {
           path: '/${BackupPage.route}',
           builder: (_, __) => const BackupPage(),
         ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: ReportCategoriesPage.route,
+          path: '/${ReportCategoriesPage.route}',
+          builder: (_, __) => const ReportCategoriesPage(),
+        ),
         StatefulShellRoute.indexedStack(
           parentNavigatorKey: _rootNavigatorKey,
           builder: (_, __, navigationShell) => NavBarRail(navigationShell: navigationShell),
@@ -151,6 +160,17 @@ sealed class AppRouter {
                   name: TransactionsListPage.route,
                   path: '/${TransactionsListPage.route}',
                   builder: (_, __) => const TransactionsListPage(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              navigatorKey: _reportsNavigatorKey,
+              routes: [
+                GoRoute(
+                  parentNavigatorKey: _reportsNavigatorKey,
+                  name: ReportsPage.route,
+                  path: '/${ReportsPage.route}',
+                  builder: (_, __) => const ReportsPage(),
                 ),
               ],
             ),

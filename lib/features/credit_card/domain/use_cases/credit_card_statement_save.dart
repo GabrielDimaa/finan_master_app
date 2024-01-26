@@ -61,7 +61,7 @@ class CreditCardStatementSave implements ICreditCardStatementSave {
     //Se a fatura estiver em aberto
     if (creditCardStatementClone.status == StatementStatusEnum.outstanding) {
       final ExpenseEntity expense = CreditCardTransactionFactory.toExpenseEntity(creditCardTransaction)
-        ..amount = creditCardTransaction.amount
+        ..amount = creditCardTransaction.amount.abs()
         ..transaction.idAccount = creditCard.idAccount;
 
       await _localDBTransactionRepository.openTransaction((txn) async {

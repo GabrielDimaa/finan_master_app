@@ -10,7 +10,6 @@ import 'package:get_it/get_it.dart';
 
 class BackupPage extends StatefulWidget {
   static const String route = 'backup';
-  static const int indexDrawer = 3;
 
   const BackupPage({Key? key}) : super(key: key);
 
@@ -21,15 +20,12 @@ class BackupPage extends StatefulWidget {
 class _BackupPageState extends State<BackupPage> with ThemeContext {
   final BackupNotifier notifier = GetIt.I.get<BackupNotifier>();
 
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: notifier,
       builder: (_, state, __) {
         return Scaffold(
-          key: scaffoldKey,
           appBar: AppBar(
             title: Text(strings.backup),
             bottom: state is LoadingBackupState ? const LinearProgressIndicatorAppBar() : null,

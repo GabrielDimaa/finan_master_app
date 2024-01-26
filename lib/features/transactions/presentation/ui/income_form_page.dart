@@ -77,7 +77,12 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
         if (categoriesNotifier.value is ErrorCategoriesState) throw Exception((categoriesNotifier.value as ErrorCategoriesState).message);
         if (accountsNotifier.value is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
 
-        if (widget.income != null) notifier.setIncome(widget.income!);
+        if (widget.income != null) {
+          notifier.setIncome(widget.income!);
+        } else {
+          final AccountEntity? account = accountsNotifier.value.accounts.firstOrNull;
+          if (account != null) notifier.setAccount(account.id);
+        }
 
         textEditingValue = TextEditingValue(text: notifier.income.description);
         dateController.text = notifier.income.transaction.date.format();

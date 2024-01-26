@@ -17,21 +17,9 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
 
   static const String separator = '~!@#%^&*()?';
 
-  String baseColumnsSql() {
-    return '''
-      ${Model.idColumnName} TEXT NOT NULL PRIMARY KEY,
-      ${Model.createdAtColumnName} TEXT NOT NULL,
-      ${Model.deletedAtColumnName} TEXT
-    ''';
-  }
+  String baseColumnsSql() => LocalDataSourceUtils.baseColumnsSql();
 
-  ({String id, DateTime? createdAt, DateTime? deletedAt}) baseFromMap(Map<String, dynamic> map, {String prefix = ''}) {
-    return (
-      id: map['$prefix${Model.idColumnName}'],
-      createdAt: DateTime.tryParse(map['$prefix${Model.createdAtColumnName}'].toString())?.toLocal(),
-      deletedAt: DateTime.tryParse(map['$prefix${Model.deletedAtColumnName}'].toString())?.toLocal(),
-    );
-  }
+  ({String id, DateTime? createdAt, DateTime? deletedAt}) baseFromMap(Map<String, dynamic> map, {String prefix = ''}) => LocalDataSourceUtils.baseFromMap(map, prefix: prefix);
 
   String get orderByDefault => '${Model.createdAtColumnName} ASC';
 
@@ -167,7 +155,27 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
     }
   }
 
-  LocalDataSourceException throwable(DatabaseLocalException e, StackTrace stackTrace) {
+  LocalDataSourceException throwable(DatabaseLocalException e, StackTrace stackTrace) => LocalDataSourceUtils.throwable(e, stackTrace);
+}
+
+abstract class LocalDataSourceUtils {
+  static String baseColumnsSql() {
+    return '''
+      ${Model.idColumnName} TEXT NOT NULL PRIMARY KEY,
+      ${Model.createdAtColumnName} TEXT NOT NULL,
+      ${Model.deletedAtColumnName} TEXT
+    ''';
+  }
+
+  static ({String id, DateTime? createdAt, DateTime? deletedAt}) baseFromMap(Map<String, dynamic> map, {String prefix = ''}) {
+    return (
+    id: map['$prefix${Model.idColumnName}'],
+    createdAt: DateTime.tryParse(map['$prefix${Model.createdAtColumnName}'].toString())?.toLocal(),
+    deletedAt: DateTime.tryParse(map['$prefix${Model.deletedAtColumnName}'].toString())?.toLocal(),
+    );
+  }
+
+  static LocalDataSourceException throwable(DatabaseLocalException e, StackTrace stackTrace) {
     if (e.code == 2067) return LocalDataSourceException(R.strings.registeredData, e.code, stackTrace);
 
     final List<String> clearMessages = [
