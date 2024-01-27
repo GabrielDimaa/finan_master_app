@@ -62,7 +62,7 @@ class _ReportCategoriesChartState extends State<ReportCategoriesChart> with Them
                       }
                       touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
 
-                      if (event is FlTapUpEvent && touchedIndex >= 0) {
+                      if ((event is FlTapUpEvent || event is FlTapDownEvent)  && touchedIndex >= 0) {
                         expansionTileControllers[touchedIndex].expand();
                         Scrollable.ensureVisible(
                           globalKeys[touchedIndex].currentContext!,
@@ -77,12 +77,15 @@ class _ReportCategoriesChartState extends State<ReportCategoriesChart> with Them
             ),
           ),
           const Spacing.y(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(strings.total),
-              Text(widget.total.money, style: textTheme.titleSmall),
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(strings.total),
+                Text(widget.total.money, style: textTheme.titleSmall),
+              ],
+            ),
           ),
           const Spacing.y(),
           ListView.builder(
@@ -108,11 +111,13 @@ class _ReportCategoriesChartState extends State<ReportCategoriesChart> with Them
                 children: entity.transactions.map((ITransactionEntity transaction) {
                   return switch (transaction) {
                     ExpenseEntity expense => ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                         title: Text(expense.description),
                         subtitle: Text(expense.date.format()),
                         trailing: Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
                       ),
                     IncomeEntity income => ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                         title: Text(income.description),
                         subtitle: Text(income.date.format()),
                         trailing: Text(income.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
