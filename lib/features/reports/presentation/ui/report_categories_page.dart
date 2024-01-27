@@ -1,6 +1,6 @@
 import 'package:finan_master_app/features/reports/presentation/notifiers/report_categories_notifier.dart';
 import 'package:finan_master_app/features/reports/presentation/states/report_categories_state.dart';
-import 'package:finan_master_app/features/reports/presentation/ui/components/chart_report_categories.dart';
+import 'package:finan_master_app/features/reports/presentation/ui/components/report_categories_chart.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
@@ -50,12 +50,12 @@ class _ReportCategoriesPageState extends State<ReportCategoriesPage> with ThemeC
                       Visibility(
                         visible: notifier.reportCategoriesExpenses.isNotEmpty,
                         replacement: NoContentWidget(child: Text(strings.noTransactionsRegistered)),
-                        child: ChartReportCategories(entities: notifier.reportCategoriesExpenses, total: notifier.totalExpenses),
+                        child: ReportCategoriesChart(entities: notifier.reportCategoriesExpenses, total: notifier.totalExpenses),
                       ),
                       Visibility(
                         visible: notifier.reportCategoriesIncomes.isNotEmpty,
                         replacement: NoContentWidget(child: Text(strings.noTransactionsRegistered)),
-                        child: ChartReportCategories(entities: notifier.reportCategoriesIncomes, total: notifier.totalIncomes),
+                        child: ReportCategoriesChart(entities: notifier.reportCategoriesIncomes, total: notifier.totalIncomes),
                       ),
                     ],
                   ),

@@ -10,17 +10,17 @@ import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart'
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class ChartReportCategories extends StatefulWidget {
+class ReportCategoriesChart extends StatefulWidget {
   final List<ReportCategoryEntity> entities;
   final double total;
 
-  const ChartReportCategories({Key? key, required this.entities, required this.total}) : super(key: key);
+  const ReportCategoriesChart({Key? key, required this.entities, required this.total}) : super(key: key);
 
   @override
-  State<ChartReportCategories> createState() => _ChartReportCategoriesState();
+  State<ReportCategoriesChart> createState() => _ReportCategoriesChartState();
 }
 
-class _ChartReportCategoriesState extends State<ChartReportCategories> with ThemeContext {
+class _ReportCategoriesChartState extends State<ReportCategoriesChart> with ThemeContext {
   List<GlobalObjectKey> globalKeys = [];
   List<ExpansionTileController> expansionTileControllers = [];
 
