@@ -76,7 +76,15 @@ class _ReportCategoriesChartState extends State<ReportCategoriesChart> with Them
               ),
             ),
           ),
-          const Spacing.y(2),
+          const Spacing.y(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(strings.total),
+              Text(widget.total.money, style: textTheme.titleSmall),
+            ],
+          ),
+          const Spacing.y(),
           ListView.builder(
             shrinkWrap: true,
             padding: EdgeInsets.zero,

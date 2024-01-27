@@ -30,7 +30,7 @@ import 'package:finan_master_app/shared/presentation/ui/components/list/selectab
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_mode_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_tile_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_view_selectable.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/monthly_filter.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/filters/monthly_filter.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar_medium.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_scaffold.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';

@@ -9,5 +9,5 @@ class ReportCategoriesFind implements IReportCategoriesFind {
   ReportCategoriesFind({required IReportCategoriesRepository repository}) : _repository = repository;
 
   @override
-  Future<List<ReportCategoryEntity>> findByPeriod({required DateTime startDate, required DateTime endDate, required CategoryTypeEnum type}) => _repository.findByPeriod(startDate: startDate, endDate: endDate, type: type);
+  Future<List<ReportCategoryEntity>> findByPeriod({required DateTime? startDate, required DateTime? endDate, required CategoryTypeEnum type}) => _repository.findByPeriod(startDate: startDate, endDate: endDate, type: type);
 }

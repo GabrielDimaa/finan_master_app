@@ -11,7 +11,7 @@ class ReportCategoriesRepository implements IReportCategoriesRepository {
   ReportCategoriesRepository({required IReportCategoriesDataSource dataSource}) : _dataSource = dataSource;
 
   @override
-  Future<List<ReportCategoryEntity>> findByPeriod({required DateTime startDate, required DateTime endDate, required CategoryTypeEnum type}) async {
+  Future<List<ReportCategoryEntity>> findByPeriod({required DateTime? startDate, required DateTime? endDate, required CategoryTypeEnum type}) async {
     late final List<ReportCategoryModel> result;
 
     if (type == CategoryTypeEnum.income) {

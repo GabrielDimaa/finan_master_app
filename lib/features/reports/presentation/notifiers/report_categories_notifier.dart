@@ -18,7 +18,7 @@ class ReportCategoriesNotifier extends ValueNotifier<ReportCategoriesState> {
   double get totalIncomes => reportCategoriesIncomes.map((e) => e.amount).sum;
   double get totalExpenses => reportCategoriesExpenses.map((e) => e.amount).sum;
 
-  Future<void> findByPeriod(DateTime startDate, DateTime endDate) async {
+  Future<void> findByPeriod(DateTime? startDate, DateTime? endDate) async {
     try {
       value = value.setLoading();
 

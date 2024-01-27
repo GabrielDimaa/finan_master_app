@@ -17,6 +17,7 @@ import 'package:finan_master_app/shared/infra/data_sources/database_local/databa
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class ReportCategoriesDataSource implements IReportCategoriesDataSource {
   late final IDatabaseLocal _databaseLocal;
@@ -34,8 +35,23 @@ class ReportCategoriesDataSource implements IReportCategoriesDataSource {
   }
 
   @override
-  Future<List<ReportCategoryModel>> findIncomesByPeriod(DateTime startDate, DateTime endDate) async {
+  Future<List<ReportCategoryModel>> findIncomesByPeriod(DateTime? startDate, DateTime? endDate) async {
     try {
+      final List<String> where = ['${_transactionDataSource.tableName}.${Model.deletedAtColumnName} IS NULL'];
+      final List<dynamic> whereArgs = [];
+
+      if (startDate != null && endDate != null && startDate.isAfter(endDate)) throw Exception(R.strings.errorStartDateAfterEndDate);
+
+      if (startDate != null) {
+        where.add('${_transactionDataSource.tableName}.date >= ?');
+        whereArgs.add(startDate.toIso8601String());
+      }
+
+      if (endDate != null) {
+        where.add('${_transactionDataSource.tableName}.date <= ?');
+        whereArgs.add(endDate.toIso8601String());
+      }
+
       final String sql = '''
         SELECT
           -- Income
@@ -69,11 +85,11 @@ class ReportCategoriesDataSource implements IReportCategoriesDataSource {
           ON ${_incomeDataSource.tableName}.id_transaction = ${_transactionDataSource.tableName}.id
         INNER JOIN ${_categoryDataSource.tableName}
           ON ${_categoryDataSource.tableName}.id = ${_incomeDataSource.tableName}.id_category
-        WHERE ${_transactionDataSource.tableName}.${Model.deletedAtColumnName} IS NULL AND ${_transactionDataSource.tableName}.date BETWEEN ? AND ?
+        ${where.isNotEmpty ? 'WHERE ${where.join(' AND ')}' : ''}
         ORDER BY ${_categoryDataSource.tableName}.description, ${_transactionDataSource.tableName}.date, ${_incomeDataSource.tableName}.description;
       ''';
 
-      final List<Map<String, dynamic>> results = await _databaseLocal.raw(sql, DatabaseOperation.select, [startDate.toIso8601String(), endDate.toIso8601String()]);
+      final List<Map<String, dynamic>> results = await _databaseLocal.raw(sql, DatabaseOperation.select, whereArgs);
 
       final List<ReportCategoryModel> list = [];
 
@@ -97,8 +113,23 @@ class ReportCategoriesDataSource implements IReportCategoriesDataSource {
   }
 
   @override
-  Future<List<ReportCategoryModel>> findExpensesByPeriod(DateTime startDate, DateTime endDate) async {
+  Future<List<ReportCategoryModel>> findExpensesByPeriod(DateTime? startDate, DateTime? endDate) async {
     try {
+      final List<String> where = ['${_transactionDataSource.tableName}.${Model.deletedAtColumnName} IS NULL'];
+      final List<dynamic> whereArgs = [];
+
+      if (startDate != null && endDate != null && startDate.isAfter(endDate)) throw Exception(R.strings.errorStartDateAfterEndDate);
+
+      if (startDate != null) {
+        where.add('${_transactionDataSource.tableName}.date >= ?');
+        whereArgs.add(startDate.toIso8601String());
+      }
+
+      if (endDate != null) {
+        where.add('${_transactionDataSource.tableName}.date <= ?');
+        whereArgs.add(endDate.toIso8601String());
+      }
+
       final String sql = '''
         SELECT
           -- Expense
@@ -133,11 +164,11 @@ class ReportCategoriesDataSource implements IReportCategoriesDataSource {
           ON ${_expenseDataSource.tableName}.id_transaction = ${_transactionDataSource.tableName}.id
         INNER JOIN ${_categoryDataSource.tableName}
           ON ${_categoryDataSource.tableName}.id = ${_expenseDataSource.tableName}.id_category
-        WHERE ${_transactionDataSource.tableName}.${Model.deletedAtColumnName} IS NULL AND ${_transactionDataSource.tableName}.date BETWEEN ? AND ?
+        ${where.isNotEmpty ? 'WHERE ${where.join(' AND ')}' : ''}
         ORDER BY ${_categoryDataSource.tableName}.description, ${_transactionDataSource.tableName}.date, ${_expenseDataSource.tableName}.description;
       ''';
 
-      final List<Map<String, dynamic>> results = await _databaseLocal.raw(sql, DatabaseOperation.select, [startDate.toIso8601String(), endDate.toIso8601String()]);
+      final List<Map<String, dynamic>> results = await _databaseLocal.raw(sql, DatabaseOperation.select, whereArgs);
 
       final List<ReportCategoryModel> list = [];
 

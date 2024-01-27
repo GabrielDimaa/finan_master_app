@@ -11,3 +11,12 @@ Future<DateTime?> showDatePickerDefault({required BuildContext context, DateTime
     lastDate: _lastDate,
   );
 }
+
+Future<DateTimeRange?> showDateRangePickerDefault({required BuildContext context, DateTimeRange? initialDateRange}) {
+  return showDateRangePicker(
+    context: context,
+    firstDate: _firstDate,
+    lastDate: _lastDate,
+    initialDateRange: initialDateRange ?? DateTimeRange(start: DateTime.now(), end: DateTime.now()),
+  );
+}
