@@ -6,6 +6,7 @@ import 'package:finan_master_app/features/credit_card/presentation/ui/credit_car
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,7 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
           builder: (_, CreditCardsState state, __) {
             return switch (state) {
               LoadingCreditCardsState _ => const Center(child: CircularProgressIndicator()),
-              ErrorCreditCardsState _ => Text(state.message),
+              ErrorCreditCardsState _ => MessageErrorWidget(state.message),
               EmptyCreditCardsState _ => NoContentWidget(child: Text(strings.noCreditCardRegistered)),
               StartCreditCardsState _ => const SizedBox.shrink(),
               ListCreditCardsState state => ListView.separated(

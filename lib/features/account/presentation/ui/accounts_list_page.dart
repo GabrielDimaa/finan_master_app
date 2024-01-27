@@ -6,6 +6,7 @@ import 'package:finan_master_app/features/account/presentation/ui/account_form_p
 import 'package:finan_master_app/features/account/presentation/ui/components/account_list_tile.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,7 @@ class _AccountsListPageState extends State<AccountsListPage> with ThemeContext {
           builder: (_, AccountsState state, __) {
             return switch (state) {
               LoadingAccountsState _ => const Center(child: CircularProgressIndicator()),
-              ErrorAccountsState _ => Text(state.message),
+              ErrorAccountsState _ => MessageErrorWidget(state.message),
               EmptyAccountsState _ => NoContentWidget(child: Text(strings.noAccountsRegistered)),
               StartAccountsState _ => const SizedBox.shrink(),
               ListAccountsState state => ListView.separated(

@@ -17,6 +17,7 @@ import 'package:finan_master_app/shared/presentation/ui/components/dialog/date_p
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/loading_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_mode_selectable.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
@@ -124,7 +125,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
                         child: switch (state) {
                           StartTransactionsState _ => const SizedBox.shrink(),
                           LoadingTransactionsState _ => const Center(child: CircularProgressIndicator()),
-                          ErrorTransactionsState _ => Text(state.message),
+                          ErrorTransactionsState _ => MessageErrorWidget(state.message),
                           EmptyTransactionsState _ => NoContentWidget(child: Text(strings.noTransactionsRegistered)),
                           ListTransactionsState _ => Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,

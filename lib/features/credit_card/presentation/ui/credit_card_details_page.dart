@@ -31,6 +31,7 @@ import 'package:finan_master_app/shared/presentation/ui/components/list/selectab
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_tile_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_view_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/filters/monthly_filter.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar_medium.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_scaffold.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
@@ -191,7 +192,7 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                                 return AnimatedSwitcher(
                                   duration: const Duration(milliseconds: 500),
                                   child: switch (state) {
-                                    ErrorCreditCardStatementState error => Text(error.message),
+                                    ErrorCreditCardStatementState error => MessageErrorWidget(error.message),
                                     FilteringCreditCardStatementState _ => const CircularProgressIndicator(),
                                     ChangedCreditCardStatementState _ => Builder(
                                         builder: (_) {
