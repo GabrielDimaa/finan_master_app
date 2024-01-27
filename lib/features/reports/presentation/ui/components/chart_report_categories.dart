@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/reports/domain/entities/report_category_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
@@ -22,7 +23,20 @@ class ChartReportCategories extends StatefulWidget {
 }
 
 class _ChartReportCategoriesState extends State<ChartReportCategories> with ThemeContext {
+  List<GlobalObjectKey> globalKeys = [];
+  List<ExpansionTileController> expansionTileControllers = [];
+
   int touchedIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+
+    for (final entity in widget.entities) {
+      globalKeys.add(GlobalObjectKey(entity));
+      expansionTileControllers.add(ExpansionTileController());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +55,23 @@ class _ChartReportCategoriesState extends State<ChartReportCategories> with Them
                 centerSpaceRadius: 40,
                 sections: sections(),
                 pieTouchData: PieTouchData(
-                  touchCallback: (FlTouchEvent event, PieTouchResponse? pieTouchResponse) {
+                  enabled: true,
+                  touchCallback: (FlTouchEvent event, PieTouchResponse? pieTouchResponse) async {
                     setState(() {
                       if (!event.isInterestedForInteractions || pieTouchResponse == null || pieTouchResponse.touchedSection == null) {
                         touchedIndex = -1;
                         return;
                       }
                       touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+
+                      if (event is FlTapUpEvent && touchedIndex >= 0) {
+                        expansionTileControllers[touchedIndex].expand();
+                        Scrollable.ensureVisible(
+                          globalKeys[touchedIndex].currentContext!,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeInOut,
+                        );
+                      }
                     });
                   },
                 ),
@@ -63,6 +87,8 @@ class _ChartReportCategoriesState extends State<ChartReportCategories> with Them
             itemBuilder: (_, index) {
               final ReportCategoryEntity entity = widget.entities[index];
               return ExpansionTile(
+                key: globalKeys[index],
+                controller: expansionTileControllers[index],
                 leading: Container(
                   width: 16,
                   height: 16,
