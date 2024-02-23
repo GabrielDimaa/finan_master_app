@@ -79,20 +79,17 @@ class _ReportCategoriesPageState extends State<ReportCategoriesPage> with ThemeC
   }
 
   Future<void> filters() async {
-    DateTime? dateInitial;
-    DateTime? dateFinal;
-
     await ReportFiltersBottomSheet.show(
       context: context,
-      filter: () => notifier.findByPeriod(dateInitial, dateFinal),
+      filter: () => notifier.findByPeriod(notifier.dateInitialFilter, notifier.dateFinalFilter),
       children: [
         DatePeriodFilter(
           periods: DatePeriodEnum.values,
           onSelected: (DateTime? dateTimeInitial, DateTime? dateTimeFinal) {
-            dateInitial = dateTimeInitial;
-            dateFinal = dateTimeFinal;
+            notifier.dateInitialFilter = dateTimeInitial;
+            notifier.dateFinalFilter = dateTimeFinal;
           },
-          periodSelected: DatePeriodEnum.oneMonth,
+          dateRange: DateTimeRange(start: notifier.dateInitialFilter ?? DatePeriodEnum.oneMonth.getDateTime().start, end: notifier.dateFinalFilter ?? DatePeriodEnum.oneMonth.getDateTime().end),
         ),
       ],
     );

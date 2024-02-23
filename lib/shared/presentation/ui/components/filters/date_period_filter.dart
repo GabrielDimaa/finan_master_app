@@ -8,10 +8,18 @@ import 'package:flutter/material.dart';
 class DatePeriodFilter extends StatefulWidget {
   final List<DatePeriodEnum> periods;
   final void Function(DateTime? dateTimeInitial, DateTime? dateTimeFinal) onSelected;
+  final DateTimeRange? dateRange;
   final DatePeriodEnum? periodSelected;
   final bool enabled;
 
-  const DatePeriodFilter({super.key, required this.periods, required this.onSelected, this.periodSelected, this.enabled = true});
+  const DatePeriodFilter({
+    super.key,
+    required this.periods,
+    required this.onSelected,
+    this.dateRange,
+    this.periodSelected,
+    this.enabled = true,
+  }) : assert ((dateRange == null && periodSelected == null) || (dateRange != null) != (periodSelected != null));
 
   @override
   State<DatePeriodFilter> createState() => _DatePeriodFilterState();
@@ -21,15 +29,20 @@ class _DatePeriodFilterState extends State<DatePeriodFilter> with ThemeContext {
   DateTime? dateTimeInitial;
   DateTime? dateTimeFinal;
 
-  DatePeriodEnum? get periodSelected => dateTimeInitial == null || dateTimeFinal == null ? null : DatePeriodEnum.getByDateTime(dateTimeInitial!, dateTimeFinal!);
+  DatePeriodEnum? get periodSelected => dateTimeInitial == null || dateTimeFinal == null ? null : DatePeriodEnum.getByDateRange(DateTimeRange(start: dateTimeInitial!, end: dateTimeFinal!));
 
   @override
   void initState() {
     super.initState();
 
-    final result = (widget.periodSelected ?? widget.periods.first).getDateTime();
-    dateTimeInitial = result.dateTimeInitial;
-    dateTimeFinal = result.dateTimeFinal;
+    if (widget.dateRange != null) {
+      dateTimeInitial = widget.dateRange!.start;
+      dateTimeFinal = widget.dateRange!.end;
+    } else {
+      final DateTimeRange dateRange = (widget.periodSelected ?? widget.periods.first).getDateTime();
+      dateTimeInitial = dateRange.start;
+      dateTimeFinal = dateRange.end;
+    }
   }
 
   @override
@@ -49,10 +62,12 @@ class _DatePeriodFilterState extends State<DatePeriodFilter> with ThemeContext {
                 selected: periodSelected == period,
                 backgroundColor: Colors.transparent,
                 label: Text(period.description),
-                onSelected: widget.enabled ?(_) {
-                  final result = period.getDateTime();
-                  onSelect(result.dateTimeInitial, result.dateTimeFinal);
-                } : null,
+                onSelected: widget.enabled
+                    ? (_) {
+                        final DateTimeRange result = period.getDateTime();
+                        onSelect(result.start, result.end);
+                      }
+                    : null,
               ),
             );
           }).toList(),
@@ -69,11 +84,13 @@ class _DatePeriodFilterState extends State<DatePeriodFilter> with ThemeContext {
               onPressed: widget.enabled ? () => onSelect(null, null) : null,
             ),
           ),
-          onTap: widget.enabled ? () async {
-            final DateTimeRange? dateRange = await showDateRangePickerDefault(context: context);
-            if (dateRange == null) return;
-            onSelect(dateRange.start, dateRange.end);
-          } : null,
+          onTap: widget.enabled
+              ? () async {
+                  final DateTimeRange? dateRange = await showDateRangePickerDefault(context: context);
+                  if (dateRange == null) return;
+                  onSelect(dateRange.start, dateRange.end);
+                }
+              : null,
         ),
       ],
     );

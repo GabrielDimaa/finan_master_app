@@ -1,5 +1,6 @@
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
+import 'package:flutter/material.dart';
 
 enum DatePeriodEnum {
   today,
@@ -9,30 +10,30 @@ enum DatePeriodEnum {
   sixMonth,
   oneYear;
 
-  ({DateTime dateTimeInitial, DateTime dateTimeFinal}) getDateTime() {
+  DateTimeRange getDateTime() {
     final DateTime now = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
     return switch (this) {
-      DatePeriodEnum.today => (dateTimeInitial: now, dateTimeFinal: now.copyWith(hour: 23, minute: 59, second: 59, millisecond: 999)),
-      DatePeriodEnum.sevenDays => (dateTimeInitial: now.subtract(const Duration(days: 7)), dateTimeFinal: now.copyWith(hour: 23, minute: 59, second: 59, millisecond: 999)),
-      DatePeriodEnum.oneMonth => (dateTimeInitial: now.getInitialMonth(), dateTimeFinal: now.getFinalMonth()),
-      DatePeriodEnum.threeMonth => (dateTimeInitial: now.getInitialMonth().subtractMonths(3), dateTimeFinal: now.getFinalMonth()),
-      DatePeriodEnum.sixMonth => (dateTimeInitial: now.getInitialMonth().subtractMonths(6), dateTimeFinal: now.getFinalMonth()),
-      DatePeriodEnum.oneYear => (dateTimeInitial: now.getInitialMonth().subtractMonths(12), dateTimeFinal: now.getFinalMonth()),
+      DatePeriodEnum.today => DateTimeRange(start: now, end: now.copyWith(hour: 23, minute: 59, second: 59, millisecond: 999)),
+      DatePeriodEnum.sevenDays => DateTimeRange(start: now.subtract(const Duration(days: 7)), end: now.copyWith(hour: 23, minute: 59, second: 59, millisecond: 999)),
+      DatePeriodEnum.oneMonth => DateTimeRange(start: now.getInitialMonth(), end: now.getFinalMonth()),
+      DatePeriodEnum.threeMonth => DateTimeRange(start: now.getInitialMonth().subtractMonths(3), end: now.getFinalMonth()),
+      DatePeriodEnum.sixMonth => DateTimeRange(start: now.getInitialMonth().subtractMonths(6), end: now.getFinalMonth()),
+      DatePeriodEnum.oneYear => DateTimeRange(start: now.getInitialMonth().subtractMonths(12), end: now.getFinalMonth()),
     };
   }
 
-  static DatePeriodEnum? getByDateTime(DateTime dateTimeInitial, DateTime dateTimeFinal) {
+  static DatePeriodEnum? getByDateRange(DateTimeRange dateRange) {
     final DateTime now = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-    if (dateTimeInitial.compareTo(now) == 0 && dateTimeFinal.compareTo(now.copyWith(hour: 23, minute: 59, second: 59, millisecond: 999)) == 0) return today;
-    if (dateTimeInitial.compareTo(now.subtract(const Duration(days: 7))) == 0 && dateTimeFinal.compareTo(now.copyWith(hour: 23, minute: 59, second: 59, millisecond: 999)) == 0) return sevenDays;
+    if (dateRange.start.compareTo(now) == 0 && dateRange.end.compareTo(now.copyWith(hour: 23, minute: 59, second: 59, millisecond: 999)) == 0) return today;
+    if (dateRange.start.compareTo(now.subtract(const Duration(days: 7))) == 0 && dateRange.end.compareTo(now.copyWith(hour: 23, minute: 59, second: 59, millisecond: 999)) == 0) return sevenDays;
 
-    if (dateTimeFinal.compareTo(now.getFinalMonth()) == 0) {
-      if (dateTimeInitial.compareTo(now.getInitialMonth()) == 0) return oneMonth;
-      if (dateTimeInitial.compareTo(now.getInitialMonth().subtractMonths(3)) == 0) return threeMonth;
-      if (dateTimeInitial.compareTo(now.getInitialMonth().subtractMonths(6)) == 0) return sixMonth;
-      if (dateTimeInitial.compareTo(now.getInitialMonth().subtractMonths(12)) == 0) return oneYear;
+    if (dateRange.end.compareTo(now.getFinalMonth()) == 0) {
+      if (dateRange.start.compareTo(now.getInitialMonth()) == 0) return oneMonth;
+      if (dateRange.start.compareTo(now.getInitialMonth().subtractMonths(3)) == 0) return threeMonth;
+      if (dateRange.start.compareTo(now.getInitialMonth().subtractMonths(6)) == 0) return sixMonth;
+      if (dateRange.start.compareTo(now.getInitialMonth().subtractMonths(12)) == 0) return oneYear;
     }
 
     return null;
