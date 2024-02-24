@@ -78,7 +78,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
         if (widget.expense != null) {
           notifier.setExpense(widget.expense!);
         } else {
-          final AccountEntity? account = accountsNotifier.value.accounts.firstOrNull;
+          final AccountEntity? account = accountsNotifier.value.accounts.where((account) => account.deletedAt == null).singleOrNull;
           if (account != null) notifier.setAccount(account.id);
         }
 

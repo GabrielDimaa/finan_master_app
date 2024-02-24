@@ -80,7 +80,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
         if (widget.income != null) {
           notifier.setIncome(widget.income!);
         } else {
-          final AccountEntity? account = accountsNotifier.value.accounts.firstOrNull;
+          final AccountEntity? account = accountsNotifier.value.accounts.where((account) => account.deletedAt == null).singleOrNull;
           if (account != null) notifier.setAccount(account.id);
         }
 

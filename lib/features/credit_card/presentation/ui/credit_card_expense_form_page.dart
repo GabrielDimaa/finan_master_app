@@ -79,9 +79,8 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
         dateController.text = notifier.creditCardExpense.date.format();
         textEditingValue = TextEditingValue(text: notifier.creditCardExpense.description);
 
-        if (creditCardsNotifier.value.creditCards.where((creditCard) => creditCard.deletedAt == null).length == 1) {
-          notifier.creditCardExpense.idCreditCard = creditCardsNotifier.value.creditCards.first.id;
-        }
+        final CreditCardEntity? creditCard = creditCardsNotifier.value.creditCards.where((creditCard) => creditCard.deletedAt == null).singleOrNull;
+        if (creditCard != null) notifier.creditCardExpense.idCreditCard = creditCardsNotifier.value.creditCards.first.id;
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());
