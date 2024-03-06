@@ -15,6 +15,7 @@ import 'package:finan_master_app/features/credit_card/presentation/ui/credit_car
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_cards_list_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
+import 'package:finan_master_app/features/introduction/presentation/ui/introduction_page.dart';
 import 'package:finan_master_app/features/reports/presentation/ui/report_categories_page.dart';
 import 'package:finan_master_app/features/reports/presentation/ui/reports_page.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
@@ -46,6 +47,12 @@ sealed class AppRouter {
           name: SplashPage.route,
           path: '/${SplashPage.route}',
           builder: (_, __) => const SplashPage(),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: IntroductionPage.route,
+          path: '/${IntroductionPage.route}',
+          builder: (_, __) => const IntroductionPage(),
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,
