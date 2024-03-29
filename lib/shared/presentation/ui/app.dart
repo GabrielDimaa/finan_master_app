@@ -83,6 +83,7 @@ class _AppState extends State<App> {
                 ),
                 inputDecorationTheme: const InputDecorationTheme(
                   border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(16),
                 ),
                 appBarTheme: const AppBarTheme(
                   scrolledUnderElevation: 0,
