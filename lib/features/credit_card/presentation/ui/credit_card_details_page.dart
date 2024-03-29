@@ -373,7 +373,7 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
 
     if (result?.isDelete ?? false) {
       if (!mounted) return;
-      context.pop(FormResultNavigation<CreditCardEntity>.delete());
+      this.context.pop(FormResultNavigation<CreditCardEntity>.delete());
     }
   }
 

@@ -7,7 +7,9 @@ import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/mask/mask_input_formatter.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_greater_than_value.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_greater_than_value_validator.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_required_validator.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_validators.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/linear_progress_indicator_app_bar.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/gestures.dart';
@@ -106,7 +108,7 @@ class _PayStatementDialogState extends State<PayStatementDialog> with ThemeConte
                     autofocus: true,
                     decoration: InputDecoration(label: Text(strings.value), prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol),
                     controller: textController,
-                    validator: InputGreaterThanValueValidator().validate,
+                    validator: InputValidators([InputRequiredValidator(), InputGreaterThanValueValidator(0)]).validate,
                     enabled: !isLoading,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.done,

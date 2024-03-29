@@ -1,15 +1,15 @@
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/form/validators/i_input_validator.dart';
 
-class InputGreaterThanValueValidator {
+class InputGreaterThanValueValidator implements IInputValidator {
   final double value;
 
-  InputGreaterThanValueValidator([this.value = 0]);
+  InputGreaterThanValueValidator(this.value);
 
+  @override
   String? validate(String? value) {
-    if (value == null || value.isEmpty) return R.strings.requiredField;
-
-    final double? valueNum = double.tryParse(value.replaceAll(".", "").replaceAll(",", "."));
+    final double? valueNum = double.tryParse(value?.replaceAll('.', '').replaceAll(',', '.') ?? '');
 
     if (valueNum == null) return R.strings.invalidValue;
 
