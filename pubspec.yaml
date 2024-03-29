@@ -41,6 +41,7 @@ flutter:
     - assets/images/
     - assets/icons/banks/
     - assets/icons/card-brands/
+    - assets/icons/
 
   fonts:
     - family: Roboto

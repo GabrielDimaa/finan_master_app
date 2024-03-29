@@ -1,9 +1,12 @@
 import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
+import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class IntroductionPage extends StatefulWidget {
   static const route = 'introduction';
@@ -30,6 +33,7 @@ class _IntroductionPageState extends State<IntroductionPage> with ThemeContext {
               Expanded(
                 child: Center(
                   child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -100,7 +104,7 @@ class _IntroductionPageState extends State<IntroductionPage> with ThemeContext {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: FilledButton.tonal(
-                  onPressed: signup,
+                  onPressed: login,
                   child: Text(strings.login),
                 ),
               ),
@@ -139,7 +143,7 @@ class _IntroductionPageState extends State<IntroductionPage> with ThemeContext {
     );
   }
 
-  Future<void> signup() async {}
+  void signup() => context.goNamed(SignupPage.route);
 
-  Future<void> login() async {}
+  void login() => context.goNamed(LoginPage.route);
 }

@@ -2,6 +2,8 @@ import 'package:finan_master_app/features/account/domain/entities/account_entity
 import 'package:finan_master_app/features/account/presentation/ui/account_details_page.dart';
 import 'package:finan_master_app/features/account/presentation/ui/account_form_page.dart';
 import 'package:finan_master_app/features/account/presentation/ui/accounts_list_page.dart';
+import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
+import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
 import 'package:finan_master_app/features/backup/presentation/ui/backup_page.dart';
 import 'package:finan_master_app/features/backup/presentation/ui/restore_backup_page.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
@@ -30,6 +32,8 @@ import 'package:finan_master_app/shared/presentation/ui/components/navigation/na
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../features/auth/presentation/ui/signup_password_page.dart';
+
 sealed class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _homeNavigatorKey = GlobalKey<NavigatorState>();
@@ -53,6 +57,24 @@ sealed class AppRouter {
           name: IntroductionPage.route,
           path: '/${IntroductionPage.route}',
           builder: (_, __) => const IntroductionPage(),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: LoginPage.route,
+          path: '/${LoginPage.route}',
+          builder: (_, __) => const LoginPage(),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: SignupPage.route,
+          path: '/${SignupPage.route}',
+          builder: (_, __) => const SignupPage(),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: SignupPasswordPage.route,
+          path: '/${SignupPasswordPage.route}',
+          builder: (_, __) => const SignupPasswordPage(),
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,
