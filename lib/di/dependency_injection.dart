@@ -12,6 +12,11 @@ import 'package:finan_master_app/features/account/infra/data_sources/i_account_l
 import 'package:finan_master_app/features/account/infra/repositories/account_repository.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
+import 'package:finan_master_app/features/auth/domain/repositories/i_auth_repository.dart';
+import 'package:finan_master_app/features/auth/domain/use_cases/i_login_auth.dart';
+import 'package:finan_master_app/features/auth/domain/use_cases/login_auth.dart';
+import 'package:finan_master_app/features/auth/infra/repositories/auth_repository.dart';
+import 'package:finan_master_app/features/auth/presentation/notifiers/login_notifier.dart';
 import 'package:finan_master_app/features/backup/domain/repositories/i_backup_repository.dart';
 import 'package:finan_master_app/features/backup/domain/use_cases/backup.dart';
 import 'package:finan_master_app/features/backup/domain/use_cases/i_backup.dart';
@@ -45,6 +50,7 @@ import 'package:finan_master_app/features/credit_card/domain/repositories/i_cred
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_delete.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_save.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_statement_dates.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_statement_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_statement_save.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_transaction_delete.dart';
@@ -52,12 +58,11 @@ import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_ca
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_delete.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_save.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_statement_dates.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_statement_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_statement_save.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_delete.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_save.dart';
-import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_statement_dates.dart';
-import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_statement_dates.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_statement_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_transaction_local_data_source.dart';
@@ -117,19 +122,25 @@ import 'package:finan_master_app/features/transactions/presentation/notifiers/tr
 import 'package:finan_master_app/shared/domain/domain/delete_app_data.dart';
 import 'package:finan_master_app/shared/domain/domain/i_delete_app_data.dart';
 import 'package:finan_master_app/shared/domain/repositories/i_delete_app_data_repository.dart';
-import 'package:finan_master_app/shared/infra/drivers/file_picker/file_picker_driver.dart';
-import 'package:finan_master_app/shared/infra/drivers/file_picker/i_file_picker_driver.dart';
-import 'package:finan_master_app/shared/infra/repositories/delete_app_data_repository.dart';
-import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/domain/repositories/i_local_db_transaction_repository.dart';
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/cache_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/i_cache_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
+import 'package:finan_master_app/shared/infra/drivers/auth/auth_driver.dart';
+import 'package:finan_master_app/shared/infra/drivers/auth/i_auth_driver.dart';
+import 'package:finan_master_app/shared/infra/drivers/file_picker/file_picker_driver.dart';
+import 'package:finan_master_app/shared/infra/drivers/file_picker/i_file_picker_driver.dart';
 import 'package:finan_master_app/shared/infra/drivers/share/i_share_driver.dart';
 import 'package:finan_master_app/shared/infra/drivers/share/share_driver.dart';
+import 'package:finan_master_app/shared/infra/repositories/delete_app_data_repository.dart';
 import 'package:finan_master_app/shared/infra/repositories/local_db_transaction_repository.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
+import 'package:finan_master_app/shared/presentation/ui/app.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final class DependencyInjection {
@@ -142,19 +153,36 @@ final class DependencyInjection {
   Future<void> setup() async {
     final GetIt getIt = GetIt.instance;
 
+    //Data Sources
+    late final DatabaseLocal databaseLocal;
+    late final SharedPreferences sharedPreferences;
+    await Future.wait([
+      Firebase.initializeApp(
+        name: appName,
+        options: const FirebaseOptions(
+          apiKey: String.fromEnvironment('FIREBASE_API_KEY'),
+          appId: String.fromEnvironment('FIREBASE_APP_ID'),
+          messagingSenderId: String.fromEnvironment('FIREBASE_MESSAGING_SENDER_ID'),
+          projectId: String.fromEnvironment('FIREBASE_PROJECT_ID'),
+          storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET'),
+        ),
+      ),
+      Future(() async => databaseLocal = await DatabaseLocal.getInstance()),
+      Future(() async => sharedPreferences = await SharedPreferences.getInstance()),
+    ]);
+
     //Drivers
     getIt.registerFactory<IFilePickerDriver>(() => FilePickerDriver());
     getIt.registerFactory<IShareDriver>(() => ShareDriver());
-
-    //Data Sources
-    final DatabaseLocal databaseLocal = await DatabaseLocal.getInstance();
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    getIt.registerSingleton<FirebaseAuth>(FirebaseAuth.instance);
+    getIt.registerSingleton<GoogleSignIn>(GoogleSignIn());
 
     getIt.registerSingleton<IDatabaseLocal>(databaseLocal);
     getIt.registerSingleton<SharedPreferences>(sharedPreferences);
     getIt.registerFactory<ICacheLocal>(() => CacheLocal(sharedPreferences: sharedPreferences));
 
     getIt.registerFactory<IAccountLocalDataSource>(() => AccountLocalDataSource(databaseLocal: databaseLocal));
+    getIt.registerFactory<IAuthDriver>(() => AuthDriver(firebaseAuth: getIt.get<FirebaseAuth>(), googleSignIn: getIt.get<GoogleSignIn>()));
     getIt.registerFactory<ICategoryLocalDataSource>(() => CategoryLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<ICreditCardLocalDataSource>(() => CreditCardLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<ICreditCardTransactionLocalDataSource>(() => CreditCardTransactionLocalDataSource(databaseLocal: databaseLocal));
@@ -167,6 +195,7 @@ final class DependencyInjection {
 
     //Repositories
     getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>()));
+    getIt.registerFactory<IAuthRepository>(() => AuthRepository(authDriver: getIt.get<IAuthDriver>()));
     getIt.registerFactory<IBackupRepository>(() => BackupRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>(), shareDriver: getIt.get<IShareDriver>(), filePickerDriver: getIt.get<IFilePickerDriver>()));
     getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryLocalDataSource>()));
     getIt.registerFactory<IConfigRepository>(() => ConfigRepository(cacheLocal: getIt.get<ICacheLocal>()));
@@ -205,6 +234,7 @@ final class DependencyInjection {
     getIt.registerFactory<IIncomeDelete>(() => IncomeDelete(repository: getIt.get<IIncomeRepository>()));
     getIt.registerFactory<IIncomeSave>(() => IncomeSave(repository: getIt.get<IIncomeRepository>()));
     getIt.registerFactory<ICreditCardStatementDates>(() => CreditCardStatementDates());
+    getIt.registerFactory<ILoginAuth>(() => LoginAuth(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<IReportCategoriesFind>(() => ReportCategoriesFind(repository: getIt.get<IReportCategoriesRepository>()));
     getIt.registerFactory<IRestoreBackup>(() => RestoreBackup(repository: getIt.get<IBackupRepository>()));
     getIt.registerFactory<ITransactionFind>(() => TransactionFind(repository: getIt.get<ITransactionRepository>()));
@@ -226,9 +256,14 @@ final class DependencyInjection {
     getIt.registerFactory<ExpenseNotifier>(() => ExpenseNotifier(expenseSave: getIt.get<IExpenseSave>(), expenseDelete: getIt.get<IExpenseDelete>(), transactionFind: getIt.get<ITransactionFind>()));
     getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), transactionFind: getIt.get<ITransactionFind>()));
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
+    getIt.registerFactory<LoginNotifier>(() => LoginNotifier(loginAuth: getIt.get<ILoginAuth>()));
     getIt.registerFactory<ReportCategoriesNotifier>(() => ReportCategoriesNotifier(getIt.get<IReportCategoriesFind>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<TransactionsNotifier>(() => TransactionsNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<TransferNotifier>(() => TransferNotifier(transferSave: getIt.get<ITransferSave>(), transferDelete: getIt.get<ITransferDelete>()));
   }
+}
+
+abstract class DI {
+  static get<T extends Object>() => GetIt.I.get<T>();
 }
