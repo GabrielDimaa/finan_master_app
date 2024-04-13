@@ -1,6 +1,6 @@
-import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_view_selectable.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_mode_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/item_selectable.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_mode_selectable.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_view_selectable.dart';
 import 'package:flutter/material.dart';
 
 class ListTileSelectable<T> extends StatelessWidget {

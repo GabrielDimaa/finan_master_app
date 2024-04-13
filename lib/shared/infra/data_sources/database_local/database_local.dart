@@ -14,8 +14,8 @@ import 'package:finan_master_app/shared/infra/data_sources/database_local/databa
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_transaction.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_operation.dart';
-import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
