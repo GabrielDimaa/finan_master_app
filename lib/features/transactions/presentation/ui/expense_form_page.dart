@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
@@ -34,7 +35,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -50,9 +50,9 @@ class ExpenseFormPage extends StatefulWidget {
 }
 
 class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
-  final ExpenseNotifier notifier = GetIt.I.get<ExpenseNotifier>();
-  final CategoriesNotifier categoriesNotifier = GetIt.I.get<CategoriesNotifier>();
-  final AccountsNotifier accountsNotifier = GetIt.I.get<AccountsNotifier>();
+  final ExpenseNotifier notifier = DI.get<ExpenseNotifier>();
+  final CategoriesNotifier categoriesNotifier = DI.get<CategoriesNotifier>();
+  final AccountsNotifier accountsNotifier = DI.get<AccountsNotifier>();
 
   final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(true);
 

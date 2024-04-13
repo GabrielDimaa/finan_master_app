@@ -1,3 +1,4 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
@@ -22,7 +23,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/list/selectab
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class ListTransactions extends StatefulWidget {
@@ -44,7 +44,7 @@ class ListTransactions extends StatefulWidget {
 }
 
 class _ListTransactionsState extends State<ListTransactions> {
-  final EventNotifier eventNotifier = GetIt.I.get<EventNotifier>();
+  final EventNotifier eventNotifier = DI.get<EventNotifier>();
 
   @override
   Widget build(BuildContext context) {

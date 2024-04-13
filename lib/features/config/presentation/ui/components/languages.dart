@@ -1,4 +1,5 @@
 import 'package:diacritic/diacritic.dart';
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/locale_notifier.dart';
 import 'package:finan_master_app/shared/extensions/locale_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -6,7 +7,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/draggable_bot
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class Languages extends StatefulWidget {
@@ -28,7 +28,7 @@ class Languages extends StatefulWidget {
 }
 
 class _LanguagesState extends State<Languages> with ThemeContext {
-  final LocaleNotifier notifier = GetIt.I.get<LocaleNotifier>();
+  final LocaleNotifier notifier = DI.get<LocaleNotifier>();
 
   final List<Locale> locales = AppLocalizations.supportedLocales.toList()..sort((a, b) => removeDiacritics(a.getDisplayLanguage()).compareTo(removeDiacritics(b.getDisplayLanguage())));
 

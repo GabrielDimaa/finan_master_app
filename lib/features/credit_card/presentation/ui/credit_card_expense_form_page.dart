@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
@@ -34,7 +35,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -50,9 +50,9 @@ class CreditCardExpensePage extends StatefulWidget {
 }
 
 class _CreditCardExpensePageState extends State<CreditCardExpensePage> with ThemeContext {
-  final CreditCardExpenseNotifier notifier = GetIt.I.get<CreditCardExpenseNotifier>();
-  final CategoriesNotifier categoriesNotifier = GetIt.I.get<CategoriesNotifier>();
-  final CreditCardsNotifier creditCardsNotifier = GetIt.I.get<CreditCardsNotifier>();
+  final CreditCardExpenseNotifier notifier = DI.get<CreditCardExpenseNotifier>();
+  final CategoriesNotifier categoriesNotifier = DI.get<CategoriesNotifier>();
+  final CreditCardsNotifier creditCardsNotifier = DI.get<CreditCardsNotifier>();
   final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(true);
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();

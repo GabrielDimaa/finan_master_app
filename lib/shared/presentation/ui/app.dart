@@ -1,9 +1,9 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/locale_notifier.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/theme_mode_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:get_it/get_it.dart';
 
 const String appName = 'Finan Master';
 const Color primaryColor = Color(0xFF005BC0);
@@ -11,8 +11,8 @@ const Color primaryColor = Color(0xFF005BC0);
 class App extends StatefulWidget {
   const App({super.key});
 
-  static final ThemeModeNotifier themeNotifier = GetIt.I.get<ThemeModeNotifier>();
-  static final LocaleNotifier localeNotifier = GetIt.I.get<LocaleNotifier>();
+  static final ThemeModeNotifier themeNotifier = DI.get<ThemeModeNotifier>();
+  static final LocaleNotifier localeNotifier = DI.get<LocaleNotifier>();
 
   @override
   State<App> createState() => _AppState();

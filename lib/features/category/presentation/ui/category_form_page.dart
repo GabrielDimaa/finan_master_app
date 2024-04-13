@@ -1,3 +1,4 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/category_notifier.dart';
@@ -14,7 +15,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_scaffold.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class CategoryFormPage extends StatefulWidget {
@@ -29,7 +29,7 @@ class CategoryFormPage extends StatefulWidget {
 }
 
 class _CategoryFormPageState extends State<CategoryFormPage> with ThemeContext {
-  final CategoryNotifier notifier = GetIt.I.get<CategoryNotifier>();
+  final CategoryNotifier notifier = DI.get<CategoryNotifier>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
@@ -26,17 +27,16 @@ import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/loading_dialog.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/filters/monthly_filter.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/item_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_mode_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_tile_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_view_selectable.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/filters/monthly_filter.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar_medium.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_scaffold.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class CreditCardDetailsPage extends StatefulWidget {
@@ -51,10 +51,10 @@ class CreditCardDetailsPage extends StatefulWidget {
 }
 
 class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with ThemeContext {
-  final CreditCardNotifier creditCardNotifier = GetIt.I.get<CreditCardNotifier>();
-  final AccountNotifier accountNotifier = GetIt.I.get<AccountNotifier>();
-  final CategoriesNotifier categoriesNotifier = GetIt.I.get<CategoriesNotifier>();
-  final CreditCardStatementNotifier creditCardStatementNotifier = GetIt.I.get<CreditCardStatementNotifier>();
+  final CreditCardNotifier creditCardNotifier = DI.get<CreditCardNotifier>();
+  final AccountNotifier accountNotifier = DI.get<AccountNotifier>();
+  final CategoriesNotifier categoriesNotifier = DI.get<CategoriesNotifier>();
+  final CreditCardStatementNotifier creditCardStatementNotifier = DI.get<CreditCardStatementNotifier>();
   final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(true);
 
   bool creditCardChanged = false;

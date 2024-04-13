@@ -1,3 +1,4 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_statement_entity.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_statement_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_statement_state.dart';
@@ -15,7 +16,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart'
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -36,7 +36,7 @@ class PayStatementDialog extends StatefulWidget {
 }
 
 class _PayStatementDialogState extends State<PayStatementDialog> with ThemeContext {
-  final CreditCardStatementNotifier notifier = GetIt.I.get<CreditCardStatementNotifier>();
+  final CreditCardStatementNotifier notifier = DI.get<CreditCardStatementNotifier>();
 
   final TextEditingController textController = TextEditingController();
 

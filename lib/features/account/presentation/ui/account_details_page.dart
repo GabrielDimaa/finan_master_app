@@ -1,3 +1,4 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
@@ -13,7 +14,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_scaffold.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class AccountDetailsPage extends StatefulWidget {
@@ -28,7 +28,7 @@ class AccountDetailsPage extends StatefulWidget {
 }
 
 class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeContext {
-  final AccountNotifier notifier = GetIt.I.get<AccountNotifier>();
+  final AccountNotifier notifier = DI.get<AccountNotifier>();
 
   bool accountChanged = false;
 

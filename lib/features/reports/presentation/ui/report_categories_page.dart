@@ -1,3 +1,4 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/reports/presentation/enums/date_period_enum.dart';
 import 'package:finan_master_app/features/reports/presentation/notifiers/report_categories_notifier.dart';
 import 'package:finan_master_app/features/reports/presentation/states/report_categories_state.dart';
@@ -9,7 +10,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/filters/date_
 import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 class ReportCategoriesPage extends StatefulWidget {
   static const String route = 'report-categories';
@@ -21,7 +21,7 @@ class ReportCategoriesPage extends StatefulWidget {
 }
 
 class _ReportCategoriesPageState extends State<ReportCategoriesPage> with ThemeContext {
-  final ReportCategoriesNotifier notifier = GetIt.I.get<ReportCategoriesNotifier>();
+  final ReportCategoriesNotifier notifier = DI.get<ReportCategoriesNotifier>();
 
   List<Tab> get tabs => [Tab(text: strings.expenses), Tab(text: strings.incomes)];
 

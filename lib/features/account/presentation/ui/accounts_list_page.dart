@@ -1,3 +1,4 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
@@ -10,7 +11,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/message_error
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class AccountsListPage extends StatefulWidget {
@@ -24,7 +24,7 @@ class AccountsListPage extends StatefulWidget {
 }
 
 class _AccountsListPageState extends State<AccountsListPage> with ThemeContext {
-  final AccountsNotifier notifier = GetIt.I.get<AccountsNotifier>();
+  final AccountsNotifier notifier = DI.get<AccountsNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 

@@ -1,3 +1,4 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/backup/presentation/notifiers/backup_notifier.dart';
 import 'package:finan_master_app/features/backup/presentation/states/backup_state.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
@@ -7,7 +8,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_
 import 'package:finan_master_app/shared/presentation/ui/components/linear_progress_indicator_app_bar.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 class RestoreBackupPage extends StatefulWidget {
   static const String route = 'restore-backup';
@@ -19,7 +19,7 @@ class RestoreBackupPage extends StatefulWidget {
 }
 
 class _RestoreBackupPageState extends State<RestoreBackupPage> with ThemeContext {
-  final BackupNotifier notifier = GetIt.I.get<BackupNotifier>();
+  final BackupNotifier notifier = DI.get<BackupNotifier>();
 
   @override
   Widget build(BuildContext context) {

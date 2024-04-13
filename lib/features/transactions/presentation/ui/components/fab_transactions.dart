@@ -1,3 +1,4 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
@@ -12,7 +13,6 @@ import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.da
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab_child.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class FabTransactions extends StatefulWidget {
@@ -25,7 +25,7 @@ class FabTransactions extends StatefulWidget {
 }
 
 class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
-  final EventNotifier eventNotifier = GetIt.I.get<EventNotifier>();
+  final EventNotifier eventNotifier = DI.get<EventNotifier>();
 
   @override
   Widget build(BuildContext context) {

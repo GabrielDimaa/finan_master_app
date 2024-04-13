@@ -1,3 +1,4 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/enums/adjustment_option_enum.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
@@ -13,7 +14,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/form/validato
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -35,7 +35,7 @@ class ReadjustBalance extends StatefulWidget {
 }
 
 class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
-  final AccountNotifier notifier = GetIt.I.get<AccountNotifier>();
+  final AccountNotifier notifier = DI.get<AccountNotifier>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 

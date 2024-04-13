@@ -1,3 +1,4 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
@@ -6,15 +7,14 @@ import 'package:finan_master_app/features/home/presentation/ui/components/list_r
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/states/transactions_state.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/fab_transactions.dart';
-import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = 'home';
@@ -26,10 +26,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with ThemeContext {
-  final TransactionsNotifier notifier = GetIt.I.get<TransactionsNotifier>();
-  final EventNotifier eventNotifier = GetIt.I.get<EventNotifier>();
-  final CategoriesNotifier categoriesNotifier = GetIt.I.get<CategoriesNotifier>();
-  final AccountsNotifier accountsNotifier = GetIt.I.get<AccountsNotifier>();
+  final TransactionsNotifier notifier = DI.get<TransactionsNotifier>();
+  final EventNotifier eventNotifier = DI.get<EventNotifier>();
+  final CategoriesNotifier categoriesNotifier = DI.get<CategoriesNotifier>();
+  final AccountsNotifier accountsNotifier = DI.get<AccountsNotifier>();
   final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(true);
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
