@@ -3,7 +3,7 @@ abstract class IAuthDriver {
 
   Future<void> loginWithEmailAndPassword({required String email, required String password});
 
-  Future<void> loginWithGoogle();
+  Future<String?> loginWithGoogle();
 
   Future<void> sendVerificationEmail(String userId);
 

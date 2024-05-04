@@ -1,5 +1,7 @@
-abstract interface class IAuthRepository {
-  Future<void> loginWithEmailAndPassword({required String email, required String password});
+import 'package:finan_master_app/features/auth/domain/entities/auth_entity.dart';
 
-  Future<void> loginWithGoogle();
+abstract interface class IAuthRepository {
+  Future<void> loginWithEmailAndPassword(AuthEntity entity);
+
+  Future<void> loginWithGoogle(AuthEntity entity);
 }

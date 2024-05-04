@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/auth/infra/models/auth_model.dart';
 import 'package:finan_master_app/features/user_account/infra/models/user_account_model.dart';
 import 'package:finan_master_app/shared/classes/connectivity_network.dart';
 import 'package:finan_master_app/shared/infra/drivers/auth/auth_exception.dart';
@@ -45,7 +46,7 @@ class AuthDriver implements IAuthDriver {
   }
 
   @override
-  Future<void> loginWithGoogle() async {
+  Future<String?> loginWithGoogle() async {
     try {
       await ConnectivityNetwork.hasInternet();
 
@@ -55,8 +56,12 @@ class AuthDriver implements IAuthDriver {
       if (account != null) {
         final GoogleSignInAuthentication authentication = await account.authentication;
         final AuthCredential credential = GoogleAuthProvider.credential(accessToken: authentication.accessToken, idToken: authentication.idToken);
-        final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
+        await _firebaseAuth.signInWithCredential(credential);
+
+        return _firebaseAuth.currentUser?.email ?? (throw Exception(R.strings.userNotFound));
       }
+
+      return null;
     } on FirebaseAuthException catch (e) {
       throw e.getError();
     }

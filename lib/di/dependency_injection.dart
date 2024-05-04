@@ -15,6 +15,8 @@ import 'package:finan_master_app/features/account/presentation/notifiers/account
 import 'package:finan_master_app/features/auth/domain/repositories/i_auth_repository.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/i_login_auth.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/login_auth.dart';
+import 'package:finan_master_app/features/auth/infra/data_sources/auth_local_data_source.dart';
+import 'package:finan_master_app/features/auth/infra/data_sources/i_auth_local_data_source.dart';
 import 'package:finan_master_app/features/auth/infra/repositories/auth_repository.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/login_notifier.dart';
 import 'package:finan_master_app/features/backup/domain/repositories/i_backup_repository.dart';
@@ -182,6 +184,7 @@ final class DependencyInjection {
     getIt.registerFactory<ICacheLocal>(() => CacheLocal(sharedPreferences: sharedPreferences));
 
     getIt.registerFactory<IAccountLocalDataSource>(() => AccountLocalDataSource(databaseLocal: databaseLocal));
+    getIt.registerFactory<IAuthLocalDataSource>(() => AuthLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<IAuthDriver>(() => AuthDriver(firebaseAuth: getIt.get<FirebaseAuth>(), googleSignIn: getIt.get<GoogleSignIn>()));
     getIt.registerFactory<ICategoryLocalDataSource>(() => CategoryLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<ICreditCardLocalDataSource>(() => CreditCardLocalDataSource(databaseLocal: databaseLocal));
@@ -195,7 +198,7 @@ final class DependencyInjection {
 
     //Repositories
     getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>()));
-    getIt.registerFactory<IAuthRepository>(() => AuthRepository(authDriver: getIt.get<IAuthDriver>()));
+    getIt.registerFactory<IAuthRepository>(() => AuthRepository(dataSource: getIt.get<IAuthLocalDataSource>(), authDriver: getIt.get<IAuthDriver>()));
     getIt.registerFactory<IBackupRepository>(() => BackupRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>(), shareDriver: getIt.get<IShareDriver>(), filePickerDriver: getIt.get<IFilePickerDriver>()));
     getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryLocalDataSource>()));
     getIt.registerFactory<IConfigRepository>(() => ConfigRepository(cacheLocal: getIt.get<ICacheLocal>()));

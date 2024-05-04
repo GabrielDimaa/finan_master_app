@@ -4,3 +4,4 @@ const String transactionsTableName = 'transactions';
 const String expensesTableName = 'expenses';
 const String incomesTableName = 'incomes';
 const String transfersTableName = 'transfers';
+const String authTableName = 'auth';

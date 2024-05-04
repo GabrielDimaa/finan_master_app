@@ -1,4 +1,6 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
+import 'package:finan_master_app/features/auth/domain/enums/auth_type.dart';
+import 'package:finan_master_app/features/auth/helpers/auth_factory.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/login_notifier.dart';
 import 'package:finan_master_app/features/auth/presentation/states/login_state.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
@@ -64,7 +66,7 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
                           textInputAction: TextInputAction.next,
                           enabled: !notifier.isLoading,
                           validator: InputValidators([InputRequiredValidator(), InputEmailValidator()]).validate,
-                          onSaved: (String? value) => state.loginEntity.email = value?.trim(),
+                          onSaved: (String? value) => state.entity.email = value?.trim() ?? '',
                         ),
                         const Spacing.y(2),
                         TextFormField(
@@ -85,7 +87,7 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
                           enabled: !notifier.isLoading,
                           obscureText: !showPassword,
                           validator: InputRequiredValidator().validate,
-                          onSaved: (String? value) => state.loginEntity.password = value?.trim(),
+                          onSaved: (String? value) => state.entity.password = value?.trim(),
                         ),
                         const Spacing.y(),
                         Align(
@@ -98,7 +100,7 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
                         const Spacing.y(),
                         FilledButton(
                           onPressed: login,
-                          child: notifier.isLoading ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator()) : Text(strings.loginButtonName),
+                          child: notifier.value is LoggingWithEmailAndPasswordState ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary)) : Text(strings.loginButtonName),
                         ),
                         const Spacing.y(),
                         Row(
@@ -115,8 +117,8 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
                         FilledButton.icon(
                           style: FilledButton.styleFrom(backgroundColor: colorScheme.onInverseSurface, foregroundColor: colorScheme.inverseSurface),
                           onPressed: loginWithGoogle,
-                          icon: notifier.isLoading ? const SizedBox.shrink() : SvgPicture.asset('assets/icons/google.svg', width: 22, height: 22),
-                          label: notifier.isLoading ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator()) : Text(strings.loginWithGoogle),
+                          icon: notifier.value is LoggingWithGoogleState ? const SizedBox.shrink() : SvgPicture.asset('assets/icons/google.svg', width: 22, height: 22),
+                          label: notifier.value is LoggingWithGoogleState ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator()) : Text(strings.loginWithGoogle),
                         ),
                         const Spacing.y(4),
                         Row(
