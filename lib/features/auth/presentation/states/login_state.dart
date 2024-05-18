@@ -1,5 +1,5 @@
 import 'package:finan_master_app/features/auth/domain/entities/auth_entity.dart';
-import 'package:finan_master_app/features/auth/helpers/auth_factory.dart';
+import 'package:finan_master_app/features/auth/helpers/factories/auth_factory.dart';
 
 sealed class LoginState {
   final AuthEntity entity;

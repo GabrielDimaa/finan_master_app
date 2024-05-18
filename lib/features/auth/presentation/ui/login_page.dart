@@ -1,9 +1,8 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
-import 'package:finan_master_app/features/auth/domain/enums/auth_type.dart';
-import 'package:finan_master_app/features/auth/helpers/auth_factory.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/login_notifier.dart';
 import 'package:finan_master_app/features/auth/presentation/states/login_state.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
+import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_email_validator.dart';
@@ -150,9 +149,11 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
       if (formKey.currentState?.validate() == true) {
         formKey.currentState!.save();
 
-        await notifier.login();
-
+        await notifier.loginWithEmailAndPassword();
         if (notifier.value is ErrorLoginState) throw Exception((notifier.value as ErrorLoginState).message);
+
+        if (!mounted) return;
+        context.goNamed(HomePage.route);
       } else {
         setState(() => autovalidateMode = AutovalidateMode.always);
       }
@@ -167,6 +168,10 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
       if (notifier.isLoading) return;
 
       await notifier.loginWithGoogle();
+      if (notifier.value is ErrorLoginState) throw Exception((notifier.value as ErrorLoginState).message);
+
+      if (!mounted) return;
+      context.goNamed(HomePage.route);
     } catch (e) {
       if (!mounted) return;
       await ErrorDialog.show(context, e.toString());

@@ -20,7 +20,8 @@ class LoginAuth implements ILoginAuth {
     }
 
     if (entity.type == AuthType.google) {
-      await _repository.loginWithGoogle(entity);
+      final AuthEntity? auth = await _repository.loginWithGoogle(entity);
+      if (auth == null) throw OperationException();
     }
   }
 }

@@ -11,6 +11,7 @@ import 'package:finan_master_app/features/transactions/infra/data_sources/i_tran
 import 'package:finan_master_app/features/transactions/infra/data_sources/income_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/transfer_local_data_source.dart';
+import 'package:finan_master_app/features/user_account/infra/data_sources/user_account_local_data_source.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_transaction.dart';
@@ -92,6 +93,7 @@ final class DatabaseLocal implements IDatabaseLocal {
     final CreditCardTransactionLocalDataSource creditCardTransactionLocalDataSource = CreditCardTransactionLocalDataSource(databaseLocal: this)..createTable(batch);
     CreditCardStatementLocalDataSource(databaseLocal: this, creditCardTransactionLocalDataSource: creditCardTransactionLocalDataSource).createTable(batch);
     AuthLocalDataSource(databaseLocal: this).createTable(batch);
+    UserAccountLocalDataSource(databaseLocal: this).createTable(batch);
 
     await batch.commit();
   }

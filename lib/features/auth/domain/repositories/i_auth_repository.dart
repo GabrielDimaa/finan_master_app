@@ -1,7 +1,12 @@
 import 'package:finan_master_app/features/auth/domain/entities/auth_entity.dart';
+import 'package:finan_master_app/features/auth/domain/entities/signup_entity.dart';
 
 abstract interface class IAuthRepository {
-  Future<void> loginWithEmailAndPassword(AuthEntity entity);
+  Future<AuthEntity> loginWithEmailAndPassword(AuthEntity entity);
 
-  Future<void> loginWithGoogle(AuthEntity entity);
+  Future<AuthEntity?> loginWithGoogle(AuthEntity entity);
+
+  Future<SignupEntity> signupWithEmailAndPassword(SignupEntity entity);
+
+  Future<SignupEntity?> signupWithGoogle();
 }

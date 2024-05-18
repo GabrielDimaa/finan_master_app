@@ -1,7 +1,8 @@
+import 'package:finan_master_app/features/auth/domain/enums/auth_type.dart';
 import 'package:finan_master_app/features/auth/infra/models/auth_model.dart';
+import 'package:finan_master_app/features/auth/infra/models/signup_model.dart';
 import 'package:finan_master_app/features/user_account/infra/models/user_account_model.dart';
 import 'package:finan_master_app/shared/classes/connectivity_network.dart';
-import 'package:finan_master_app/shared/infra/drivers/auth/auth_exception.dart';
 import 'package:finan_master_app/shared/infra/drivers/auth/i_auth_driver.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,16 +18,46 @@ class AuthDriver implements IAuthDriver {
         _googleSignIn = googleSignIn;
 
   @override
-  Future<void> createUserWithEmailAndPassword() async {
+  Future<void> signupWithEmailAndPassword({required String email, required String password}) async {
     try {
       await ConnectivityNetwork.hasInternet();
 
-      final UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: '', password: '');
+      await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
 
-      User? user = _firebaseAuth.currentUser;
-      if (user == null) throw Exception();
+      final User user = _firebaseAuth.currentUser ?? (throw Exception(R.strings.failedToAuthenticate));
 
       await sendVerificationEmail(user.uid);
+    } on FirebaseAuthException catch (e) {
+      throw e.getError();
+    }
+  }
+
+  @override
+  Future<SignupModel?> signupWithGoogle() async {
+    try {
+      final ({GoogleSignInAccount account, UserCredential userCredential})? result = await _signInWithGoogle();
+
+      if (result == null) return null;
+
+      final AuthModel authModel = AuthModel(
+        id: result.userCredential.user?.uid ?? (throw Exception(R.strings.failedToAuthenticate)),
+        createdAt: null,
+        deletedAt: null,
+        email: result.account.email,
+        emailVerified: true,
+        password: null,
+        type: AuthType.google,
+      );
+
+      final UserAccountModel userAccount = UserAccountModel(
+        id: const Uuid().v1(),
+        createdAt: DateTime.now(),
+        deletedAt: null,
+        name: result.account.displayName ?? result.account.email,
+        email: result.account.email,
+      );
+
+      return SignupModel(auth: authModel, userAccount: userAccount);
     } on FirebaseAuthException catch (e) {
       throw e.getError();
     }
@@ -46,22 +77,21 @@ class AuthDriver implements IAuthDriver {
   }
 
   @override
-  Future<String?> loginWithGoogle() async {
+  Future<AuthModel?> loginWithGoogle() async {
     try {
-      await ConnectivityNetwork.hasInternet();
+      final ({GoogleSignInAccount account, UserCredential userCredential})? result = await _signInWithGoogle();
 
-      if (await _googleSignIn.isSignedIn()) await _googleSignIn.signOut();
-      final GoogleSignInAccount? account = await _googleSignIn.signIn();
+      if (result == null) return null;
 
-      if (account != null) {
-        final GoogleSignInAuthentication authentication = await account.authentication;
-        final AuthCredential credential = GoogleAuthProvider.credential(accessToken: authentication.accessToken, idToken: authentication.idToken);
-        await _firebaseAuth.signInWithCredential(credential);
-
-        return _firebaseAuth.currentUser?.email ?? (throw Exception(R.strings.userNotFound));
-      }
-
-      return null;
+      return AuthModel(
+        id: result.userCredential.user?.uid ?? (throw Exception(R.strings.failedToAuthenticate)),
+        createdAt: DateTime.now(),
+        deletedAt: null,
+        email: result.account.email,
+        emailVerified: true,
+        password: null,
+        type: AuthType.google,
+      );
     } on FirebaseAuthException catch (e) {
       throw e.getError();
     }
@@ -90,6 +120,48 @@ class AuthDriver implements IAuthDriver {
       return _firebaseAuth.currentUser!.emailVerified;
     } on FirebaseAuthException catch (e) {
       throw e.getError();
+    }
+  }
+
+  Future<({GoogleSignInAccount account, UserCredential userCredential})?> _signInWithGoogle() async {
+    await ConnectivityNetwork.hasInternet();
+
+    if (await _googleSignIn.isSignedIn()) await _googleSignIn.signOut();
+    final GoogleSignInAccount? account = await _googleSignIn.signIn();
+
+    if (account == null) return null;
+
+    final GoogleSignInAuthentication authentication = await account.authentication;
+
+    final UserCredential userCredential = await _firebaseAuth.signInWithCredential(GoogleAuthProvider.credential(accessToken: authentication.accessToken, idToken: authentication.idToken));
+
+    return (account: account, userCredential: userCredential);
+  }
+}
+
+extension _FirebaseAuthExceptionExtension on FirebaseAuthException {
+  Exception getError() {
+    switch (code.toLowerCase()) {
+      case "auth/user-not-found":
+      case "user-not-found":
+        return Exception(R.strings.userNotFound);
+      case "auth/wrong-password":
+      case "wrong-password":
+        return Exception(R.strings.incorrectPassword);
+      case "auth/invalid-email":
+      case "invalid-email":
+        return Exception(R.strings.emailInvalid);
+      case "auth/email-already-in-use":
+      case "email-already-in-use":
+        return Exception(R.strings.emailInUse);
+      case "auth/account-exists-with-different-credential":
+      case "account-exists-with-different-credential":
+        return Exception(R.strings.userNotFound);
+      case "auth/invalid-credential":
+      case "invalid-credential":
+        return Exception(R.strings.userNotFound);
+      default:
+        return Exception(message);
     }
   }
 }

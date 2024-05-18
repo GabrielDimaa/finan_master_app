@@ -39,7 +39,7 @@ abstract class AuthFactory {
     );
   }
 
-  static AuthEntity withGoogle({required String email}) {
+  static AuthEntity withGoogle({String email = ''}) {
     return AuthEntity(
       id: null,
       createdAt: null,

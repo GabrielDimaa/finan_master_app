@@ -1,5 +1,5 @@
 import 'package:finan_master_app/features/auth/domain/use_cases/i_login_auth.dart';
-import 'package:finan_master_app/features/auth/helpers/auth_factory.dart';
+import 'package:finan_master_app/features/auth/helpers/factories/auth_factory.dart';
 import 'package:finan_master_app/features/auth/presentation/states/login_state.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -12,7 +12,7 @@ class LoginNotifier extends ValueNotifier<LoginState> {
 
   bool get isLoading => value is LoggingWithEmailAndPasswordState || value is LoggingWithGoogleState;
 
-  Future<void> login() async {
+  Future<void> loginWithEmailAndPassword() async {
     try {
       value = value.setLoggingWithEmailAndPassword();
 

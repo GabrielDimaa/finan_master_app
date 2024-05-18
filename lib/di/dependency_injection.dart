@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finan_master_app/features/account/domain/repositories/i_account_repository.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/account_delete.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/account_find.dart';
@@ -14,11 +15,14 @@ import 'package:finan_master_app/features/account/presentation/notifiers/account
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
 import 'package:finan_master_app/features/auth/domain/repositories/i_auth_repository.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/i_login_auth.dart';
+import 'package:finan_master_app/features/auth/domain/use_cases/i_signup_auth.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/login_auth.dart';
+import 'package:finan_master_app/features/auth/domain/use_cases/signup_auth.dart';
 import 'package:finan_master_app/features/auth/infra/data_sources/auth_local_data_source.dart';
 import 'package:finan_master_app/features/auth/infra/data_sources/i_auth_local_data_source.dart';
 import 'package:finan_master_app/features/auth/infra/repositories/auth_repository.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/login_notifier.dart';
+import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
 import 'package:finan_master_app/features/backup/domain/repositories/i_backup_repository.dart';
 import 'package:finan_master_app/features/backup/domain/use_cases/backup.dart';
 import 'package:finan_master_app/features/backup/domain/use_cases/i_backup.dart';
@@ -121,6 +125,10 @@ import 'package:finan_master_app/features/transactions/presentation/notifiers/ex
 import 'package:finan_master_app/features/transactions/presentation/notifiers/income_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transfer_notifier.dart';
+import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_cloud_data_source.dart';
+import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_local_data_source.dart';
+import 'package:finan_master_app/features/user_account/infra/data_sources/user_account_cloud_data_source.dart';
+import 'package:finan_master_app/features/user_account/infra/data_sources/user_account_local_data_source.dart';
 import 'package:finan_master_app/shared/domain/domain/delete_app_data.dart';
 import 'package:finan_master_app/shared/domain/domain/i_delete_app_data.dart';
 import 'package:finan_master_app/shared/domain/repositories/i_delete_app_data_repository.dart';
@@ -176,6 +184,7 @@ final class DependencyInjection {
     //Drivers
     getIt.registerFactory<IFilePickerDriver>(() => FilePickerDriver());
     getIt.registerFactory<IShareDriver>(() => ShareDriver());
+    getIt.registerSingleton<FirebaseFirestore>(FirebaseFirestore.instance);
     getIt.registerSingleton<FirebaseAuth>(FirebaseAuth.instance);
     getIt.registerSingleton<GoogleSignIn>(GoogleSignIn());
 
@@ -195,10 +204,12 @@ final class DependencyInjection {
     getIt.registerFactory<IReportCategoriesDataSource>(() => ReportCategoriesDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<ITransactionLocalDataSource>(() => TransactionLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<ITransferLocalDataSource>(() => TransferLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
+    getIt.registerFactory<IUserAccountLocalDataSource>(() => UserAccountLocalDataSource(databaseLocal: databaseLocal));
+    getIt.registerFactory<IUserAccountCloudDataSource>(() => UserAccountCloudDataSource(firestore: getIt.get<FirebaseFirestore>()));
 
     //Repositories
     getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>()));
-    getIt.registerFactory<IAuthRepository>(() => AuthRepository(dataSource: getIt.get<IAuthLocalDataSource>(), authDriver: getIt.get<IAuthDriver>()));
+    getIt.registerFactory<IAuthRepository>(() => AuthRepository(authDataSource: getIt.get<IAuthLocalDataSource>(), userAccountLocalDataSource: getIt.get<IUserAccountLocalDataSource>(), userAccountCloudDataSource: getIt.get<IUserAccountCloudDataSource>(), authDriver: getIt.get<IAuthDriver>(), databaseLocalTransaction: databaseLocal.transactionInstance()));
     getIt.registerFactory<IBackupRepository>(() => BackupRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>(), shareDriver: getIt.get<IShareDriver>(), filePickerDriver: getIt.get<IFilePickerDriver>()));
     getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryLocalDataSource>()));
     getIt.registerFactory<IConfigRepository>(() => ConfigRepository(cacheLocal: getIt.get<ICacheLocal>()));
@@ -240,6 +251,7 @@ final class DependencyInjection {
     getIt.registerFactory<ILoginAuth>(() => LoginAuth(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<IReportCategoriesFind>(() => ReportCategoriesFind(repository: getIt.get<IReportCategoriesRepository>()));
     getIt.registerFactory<IRestoreBackup>(() => RestoreBackup(repository: getIt.get<IBackupRepository>()));
+    getIt.registerFactory<ISignupAuth>(() => SignupAuth(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<ITransactionFind>(() => TransactionFind(repository: getIt.get<ITransactionRepository>()));
     getIt.registerFactory<ITransactionDelete>(() => TransactionDelete(incomeRepository: getIt.get<IIncomeRepository>(), expenseRepository: getIt.get<IExpenseRepository>(), transferRepository: getIt.get<ITransferRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
     getIt.registerFactory<ITransferDelete>(() => TransferDelete(repository: getIt.get<ITransferRepository>()));
@@ -261,6 +273,7 @@ final class DependencyInjection {
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<LoginNotifier>(() => LoginNotifier(loginAuth: getIt.get<ILoginAuth>()));
     getIt.registerFactory<ReportCategoriesNotifier>(() => ReportCategoriesNotifier(getIt.get<IReportCategoriesFind>()));
+    getIt.registerFactory<SignupNotifier>(() => SignupNotifier(signupAuth: getIt.get<ISignupAuth>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<TransactionsNotifier>(() => TransactionsNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<TransferNotifier>(() => TransferNotifier(transferSave: getIt.get<ITransferSave>(), transferDelete: getIt.get<ITransferDelete>()));

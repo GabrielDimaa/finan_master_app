@@ -14,6 +14,7 @@ dependencies:
     sdk: flutter
 
   carousel_slider: ^4.2.1
+  cloud_firestore: ^4.17.3
   collection: ^1.17.1
   diacritic: ^0.1.4
   file_picker: ^6.1.1
