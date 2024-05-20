@@ -9,4 +9,6 @@ abstract interface class IAuthRepository {
   Future<SignupEntity> signupWithEmailAndPassword(SignupEntity entity);
 
   Future<SignupEntity?> signupWithGoogle();
+
+  Future<bool> checkIsLogged();
 }

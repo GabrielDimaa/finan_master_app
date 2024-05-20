@@ -33,7 +33,7 @@ class AuthLocalDataSource extends LocalDataSource<AuthModel> implements IAuthLoc
       createdAt: base.createdAt,
       deletedAt: base.deletedAt,
       email: map['${prefix}email'],
-      emailVerified: map['${prefix}email_verified'],
+      emailVerified: map['${prefix}email_verified'] == 1,
       password: map['${prefix}password'],
       type: AuthType.getByValue(map['${prefix}type']),
     );

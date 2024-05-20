@@ -21,7 +21,7 @@ class LoginAuth implements ILoginAuth {
 
     if (entity.type == AuthType.google) {
       final AuthEntity? auth = await _repository.loginWithGoogle(entity);
-      if (auth == null) throw OperationException();
+      if (auth == null) throw OperationCanceledException();
     }
   }
 }

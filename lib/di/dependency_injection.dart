@@ -14,6 +14,8 @@ import 'package:finan_master_app/features/account/infra/repositories/account_rep
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
 import 'package:finan_master_app/features/auth/domain/repositories/i_auth_repository.dart';
+import 'package:finan_master_app/features/auth/domain/use_cases/auth_find.dart';
+import 'package:finan_master_app/features/auth/domain/use_cases/i_auth_find.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/i_login_auth.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/i_signup_auth.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/login_auth.dart';
@@ -89,6 +91,7 @@ import 'package:finan_master_app/features/reports/infra/data_sources/i_report_ca
 import 'package:finan_master_app/features/reports/infra/data_sources/report_categories_data_source.dart';
 import 'package:finan_master_app/features/reports/infra/repositories/report_categories_repository.dart';
 import 'package:finan_master_app/features/reports/presentation/notifiers/report_categories_notifier.dart';
+import 'package:finan_master_app/features/splash/presentation/notifiers/splash_notifier.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_income_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_transaction_repository.dart';
@@ -229,6 +232,7 @@ final class DependencyInjection {
     getIt.registerFactory<IAccountFind>(() => AccountFind(repository: getIt.get<IAccountRepository>()));
     getIt.registerFactory<IAccountReadjustmentTransaction>(() => AccountReadjustmentTransaction(incomeSave: getIt.get<IIncomeSave>(), expenseSave: getIt.get<IExpenseSave>()));
     getIt.registerFactory<IAccountSave>(() => AccountSave(repository: getIt.get<IAccountRepository>()));
+    getIt.registerFactory<IAuthFind>(() => AuthFind(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<IBackup>(() => Backup(repository: getIt.get<IBackupRepository>()));
     getIt.registerFactory<ICategoryDelete>(() => CategoryDelete(repository: getIt.get<ICategoryRepository>()));
     getIt.registerFactory<ICategoryFind>(() => CategoryFind(repository: getIt.get<ICategoryRepository>()));
@@ -274,6 +278,7 @@ final class DependencyInjection {
     getIt.registerFactory<LoginNotifier>(() => LoginNotifier(loginAuth: getIt.get<ILoginAuth>()));
     getIt.registerFactory<ReportCategoriesNotifier>(() => ReportCategoriesNotifier(getIt.get<IReportCategoriesFind>()));
     getIt.registerFactory<SignupNotifier>(() => SignupNotifier(signupAuth: getIt.get<ISignupAuth>()));
+    getIt.registerFactory<SplashNotifier>(() => SplashNotifier(authFind: getIt.get<IAuthFind>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<TransactionsNotifier>(() => TransactionsNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<TransferNotifier>(() => TransferNotifier(transferSave: getIt.get<ITransferSave>(), transferDelete: getIt.get<ITransferDelete>()));

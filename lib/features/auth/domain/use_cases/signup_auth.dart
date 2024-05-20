@@ -23,7 +23,7 @@ class SignupAuth implements ISignupAuth {
     }
 
     if (entity.auth.type == AuthType.google) {
-      await _authRepository.signupWithGoogle() ?? (throw OperationException());
+      await _authRepository.signupWithGoogle() ?? (throw OperationCanceledException());
     }
   }
 }

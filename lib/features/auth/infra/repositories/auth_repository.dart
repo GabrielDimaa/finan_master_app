@@ -98,9 +98,17 @@ class AuthRepository implements IAuthRepository {
 
     await _databaseLocalTransaction.openTransaction((txn) async {
       await Future.wait([
-        _authDataSource.insert(model),
-        _userAccountLocalDataSource.insert(userAccount),
+        _authDataSource.insert(model, txn: txn),
+        _userAccountLocalDataSource.insert(userAccount, txn: txn),
       ]);
     });
+  }
+
+  @override
+  Future<bool> checkIsLogged() async {
+    final bool isLogged = await _authDriver.checkIsLogged();
+    final AuthModel? model = await _authDataSource.findOne();
+
+    return isLogged && model != null;
   }
 }

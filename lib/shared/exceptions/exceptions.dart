@@ -9,10 +9,10 @@ class ValidationException implements Exception {
   String toString() => message;
 }
 
-class OperationException implements Exception {
+class OperationCanceledException implements Exception {
   final String message;
 
-  OperationException({String? message}) : message = message ?? R.strings.operationCanceled;
+  OperationCanceledException({String? message}) : message = message ?? R.strings.operationCanceled;
 
   @override
   String toString() => message;

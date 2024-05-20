@@ -137,6 +137,9 @@ class AuthDriver implements IAuthDriver {
 
     return (account: account, userCredential: userCredential);
   }
+
+  @override
+  Future<bool> checkIsLogged() => Future.value(_firebaseAuth.currentUser != null);
 }
 
 extension _FirebaseAuthExceptionExtension on FirebaseAuthException {
