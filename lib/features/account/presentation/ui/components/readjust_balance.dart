@@ -176,6 +176,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                             TextFormField(
                               decoration: InputDecoration(label: Text(strings.transactionDescription)),
                               textInputAction: TextInputAction.done,
+                              textCapitalization: TextCapitalization.sentences,
                               enabled: !notifier.isLoading && readjustmentOption.value == ReadjustmentOptionEnum.createTransaction,
                               onSaved: (String? value) => transactionDescription = value,
                             ),

@@ -57,6 +57,7 @@ class _SignupPageState extends State<SignupPage> with ThemeContext {
                       ),
                       keyboardType: TextInputType.name,
                       textInputAction: TextInputAction.next,
+                      textCapitalization: TextCapitalization.sentences,
                       validator: InputRequiredValidator().validate,
                       onSaved: (String? value) => notifier.value.entity.userAccount.name = value?.trim() ?? '',
                     ),
