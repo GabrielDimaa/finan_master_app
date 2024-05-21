@@ -3,9 +3,9 @@ sealed class EmailVerificationState {
 
   factory EmailVerificationState.start() => const StartEmailVerificationState();
 
-  EmailVerificationState setResendEmailState() => const ResendEmail();
+  EmailVerificationState setResendEmailState() => const ResendEmailVerificationState();
 
-  EmailVerificationState setResendingEmailState() => const ResendingEmail();
+  EmailVerificationState setResendingEmailState() => const ResendingEmailVerificationState();
 
   EmailVerificationState setCompletingRegistrationState() => const CompletingRegistrationState();
 
@@ -16,12 +16,12 @@ class StartEmailVerificationState extends EmailVerificationState {
   const StartEmailVerificationState();
 }
 
-class ResendEmail extends EmailVerificationState {
-  const ResendEmail();
+class ResendEmailVerificationState extends EmailVerificationState {
+  const ResendEmailVerificationState();
 }
 
-class ResendingEmail extends EmailVerificationState {
-  const ResendingEmail();
+class ResendingEmailVerificationState extends EmailVerificationState {
+  const ResendingEmailVerificationState();
 }
 
 class CompletingRegistrationState extends EmailVerificationState {

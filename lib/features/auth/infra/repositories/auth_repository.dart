@@ -115,10 +115,7 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<bool> existsEmail(String email) {
-    // TODO: implement existsEmail
-    throw UnimplementedError();
-  }
+  Future<bool> emailAlreadyExists(String email) async => (await _userAccountCloudDataSource.getByEmail(email)) != null;
 
   @override
   Future<void> sendEmailVerification() => _authDriver.sendVerificationEmail();

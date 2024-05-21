@@ -78,7 +78,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> with Them
                               constraints: const BoxConstraints(minWidth: 180),
                               child: Builder(
                                 builder: (_) {
-                                  if (state is ResendingEmail) {
+                                  if (state is ResendingEmailVerificationState) {
                                     return FilledButton.tonal(
                                       onPressed: null,
                                       child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onSecondaryContainer)),
@@ -117,6 +117,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> with Them
 
   Future<void> resendEmail() async {
     try {
+      if (notifier.isLoading) return;
+
       await notifier.resendEmail();
       if (notifier.value is ErrorEmailVerificationState) throw Exception((notifier.value as ErrorEmailVerificationState).message);
 
@@ -129,6 +131,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> with Them
 
   Future<void> completeRegistration() async {
     try {
+      if (notifier.isLoading) return;
+
       await notifier.completeRegistration();
       if (notifier.value is ErrorEmailVerificationState) throw Exception((notifier.value as ErrorEmailVerificationState).message);
 

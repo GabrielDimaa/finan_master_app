@@ -5,7 +5,7 @@ abstract interface class ISignupAuth {
 
   Future<void> sendEmailVerification();
 
-  Future<bool> existsEmail(String email);
+  Future<bool> emailAlreadyExists(String email);
 
   Future<bool> checkEmailVerified();
 

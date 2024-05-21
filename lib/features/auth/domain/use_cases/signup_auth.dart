@@ -19,6 +19,9 @@ class SignupAuth implements ISignupAuth {
       if (entity.userAccount.email.trim().isEmpty || entity.auth.email.trim().isEmpty) throw ValidationException(R.strings.uninformedEmail);
       if (entity.auth.password == null || entity.auth.password!.trim().isEmpty) throw ValidationException(R.strings.uninformedPassword);
 
+      final bool emailAlreadyExists = await _repository.emailAlreadyExists(entity.userAccount.email.trim());
+      if (emailAlreadyExists) throw ValidationException(R.strings.emailInUse);
+
       await _repository.signupWithEmailAndPassword(entity);
     }
 
@@ -28,7 +31,7 @@ class SignupAuth implements ISignupAuth {
   }
 
   @override
-  Future<bool> existsEmail(String email) => _repository.existsEmail(email);
+  Future<bool> emailAlreadyExists(String email) => _repository.emailAlreadyExists(email);
 
   @override
   Future<void> sendEmailVerification() => _repository.sendEmailVerification();

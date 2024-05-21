@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:finan_master_app/features/auth/domain/use_cases/i_signup_auth.dart';
 import 'package:finan_master_app/features/auth/presentation/states/email_verification_state.dart';
-import 'package:finan_master_app/features/auth/presentation/states/login_state.dart';
 import 'package:flutter/cupertino.dart';
 
 class EmailVerificationNotifier extends ValueNotifier<EmailVerificationState> {
@@ -12,7 +11,7 @@ class EmailVerificationNotifier extends ValueNotifier<EmailVerificationState> {
       : _signupAuth = signupAuth,
         super(EmailVerificationState.start());
 
-  bool get isLoading => value is LoggingWithEmailAndPasswordState || value is LoggingWithGoogleState;
+  bool get isLoading => value is CompletingRegistrationState || value is ResendingEmailVerificationState;
 
   Future<void> resendEmail() async {
     try {

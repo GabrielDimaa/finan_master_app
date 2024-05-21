@@ -1,4 +1,5 @@
 import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
+import 'package:finan_master_app/features/auth/presentation/states/signup_state.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/email_verification_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
@@ -42,78 +43,86 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
       builder: (_, state, __) {
         return Scaffold(
           body: SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Spacing.y(4),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(strings.password, style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w500)),
-                  ),
-                  const Spacing.y(4),
-                  Form(
-                    key: formKey,
-                    autovalidateMode: autovalidateMode,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        TextFormField(
-                          decoration: InputDecoration(
-                            label: Text(strings.password),
-                            prefixIcon: const Icon(Icons.lock_outline),
-                            suffixIcon: ExcludeFocus(
-                              child: IconButton(
-                                onPressed: setShowPassword,
-                                icon: Visibility(
-                                  visible: !showPassword,
-                                  replacement: const Icon(Icons.visibility_outlined),
-                                  child: const Icon(Icons.visibility_off_outlined),
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Spacing.y(4),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(strings.password, style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w500)),
+                      ),
+                      const Spacing.y(4),
+                      Form(
+                        key: formKey,
+                        autovalidateMode: autovalidateMode,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            TextFormField(
+                              decoration: InputDecoration(
+                                label: Text(strings.password),
+                                prefixIcon: const Icon(Icons.lock_outline),
+                                suffixIcon: ExcludeFocus(
+                                  child: IconButton(
+                                    onPressed: setShowPassword,
+                                    icon: Visibility(
+                                      visible: !showPassword,
+                                      replacement: const Icon(Icons.visibility_outlined),
+                                      child: const Icon(Icons.visibility_off_outlined),
+                                    ),
+                                  ),
                                 ),
                               ),
+                              enabled: !notifier.isLoading,
+                              controller: passwordController,
+                              keyboardType: TextInputType.visiblePassword,
+                              textInputAction: TextInputAction.next,
+                              obscureText: !showPassword,
+                              validator: InputValidators([InputRequiredValidator(), InputPasswordValidator()]).validate,
+                              onSaved: (String? value) => notifier.value.entity.auth.password = value?.trim() ?? '',
                             ),
-                          ),
-                          enabled: !notifier.isLoading,
-                          controller: passwordController,
-                          keyboardType: TextInputType.visiblePassword,
-                          textInputAction: TextInputAction.next,
-                          obscureText: !showPassword,
-                          validator: InputValidators([InputRequiredValidator(), InputPasswordValidator()]).validate,
-                          onSaved: (String? value) => notifier.value.entity.auth.password = value?.trim() ?? '',
-                        ),
-                        const Spacing.y(2),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            label: Text(strings.confirmPassword),
-                            prefixIcon: const Icon(Icons.lock_outline),
-                            suffixIcon: ExcludeFocus(
-                              child: IconButton(
-                                onPressed: setShowConfirmPassword,
-                                icon: Visibility(
-                                  visible: !showConfirmPassword,
-                                  replacement: const Icon(Icons.visibility_outlined),
-                                  child: const Icon(Icons.visibility_off_outlined),
+                            const Spacing.y(2),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                label: Text(strings.confirmPassword),
+                                prefixIcon: const Icon(Icons.lock_outline),
+                                suffixIcon: ExcludeFocus(
+                                  child: IconButton(
+                                    onPressed: setShowConfirmPassword,
+                                    icon: Visibility(
+                                      visible: !showConfirmPassword,
+                                      replacement: const Icon(Icons.visibility_outlined),
+                                      child: const Icon(Icons.visibility_off_outlined),
+                                    ),
+                                  ),
                                 ),
                               ),
+                              enabled: !notifier.isLoading,
+                              keyboardType: TextInputType.visiblePassword,
+                              textInputAction: TextInputAction.done,
+                              obscureText: !showConfirmPassword,
+                              validator: (String? value) => InputValidators([InputRequiredValidator(), InputConfirmPasswordValidator(passwordController.text)]).validate(value),
                             ),
-                          ),
-                          enabled: !notifier.isLoading,
-                          keyboardType: TextInputType.visiblePassword,
-                          textInputAction: TextInputAction.done,
-                          obscureText: !showConfirmPassword,
-                          validator: InputValidators([InputRequiredValidator(), InputConfirmPasswordValidator(passwordController.text)]).validate,
+                            const Spacing.y(3),
+                            FilledButton(
+                              onPressed: signup,
+                              child: notifier.isLoading ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary)) : Text(strings.signup),
+                            ),
+                          ],
                         ),
-                        const Spacing.y(3),
-                        FilledButton(
-                          onPressed: signup,
-                          child: notifier.isLoading ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary)) : Text(strings.signup),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 4, top: 4),
+                  child: BackButton(),
+                ),
+              ],
             ),
           ),
         );
@@ -123,10 +132,13 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
 
   Future<void> signup() async {
     try {
+      if (notifier.isLoading) return;
+
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
 
         await notifier.signupWithEmailAndPassword();
+        if (notifier.value is ErrorSignupState) throw Exception((notifier.value as ErrorSignupState).message);
 
         if (!mounted) return;
         context.goNamed(EmailVerificationPage.route);

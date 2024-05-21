@@ -128,7 +128,7 @@ class _SignupPageState extends State<SignupPage> with ThemeContext {
       if (formKey.currentState?.validate() == true) {
         formKey.currentState!.save();
 
-        context.goNamed(SignupPasswordPage.route, extra: notifier);
+        context.pushNamed(SignupPasswordPage.route, extra: notifier);
       } else {
         setState(() => autovalidateMode = AutovalidateMode.always);
       }
