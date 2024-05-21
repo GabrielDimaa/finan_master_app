@@ -10,5 +10,13 @@ abstract interface class IAuthRepository {
 
   Future<SignupEntity?> signupWithGoogle();
 
-  Future<bool> checkIsLogged();
+  Future<AuthEntity?> find();
+
+  Future<void> sendEmailVerification();
+
+  Future<bool> checkEmailVerified();
+
+  Future<bool> existsEmail(String email);
+
+  Future<void> saveEmailVerified(bool isEmailVerified);
 }

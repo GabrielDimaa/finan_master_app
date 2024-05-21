@@ -3,6 +3,7 @@ import 'package:finan_master_app/features/account/presentation/ui/account_detail
 import 'package:finan_master_app/features/account/presentation/ui/account_form_page.dart';
 import 'package:finan_master_app/features/account/presentation/ui/accounts_list_page.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
+import 'package:finan_master_app/features/auth/presentation/ui/email_verification_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
 import 'package:finan_master_app/features/backup/presentation/ui/backup_page.dart';
@@ -76,6 +77,12 @@ sealed class AppRouter {
           name: SignupPasswordPage.route,
           path: '/${SignupPasswordPage.route}',
           builder: (_, GoRouterState state) => SignupPasswordPage(notifier: state.extra as SignupNotifier),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: EmailVerificationPage.route,
+          path: '/${EmailVerificationPage.route}',
+          builder: (_, __) => const EmailVerificationPage(),
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,

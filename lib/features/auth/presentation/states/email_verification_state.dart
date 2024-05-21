@@ -1,0 +1,37 @@
+sealed class EmailVerificationState {
+  const EmailVerificationState();
+
+  factory EmailVerificationState.start() => const StartEmailVerificationState();
+
+  EmailVerificationState setResendEmailState() => const ResendEmail();
+
+  EmailVerificationState setResendingEmailState() => const ResendingEmail();
+
+  EmailVerificationState setCompletingRegistrationState() => const CompletingRegistrationState();
+
+  EmailVerificationState setError(Object error) => ErrorEmailVerificationState(error);
+}
+
+class StartEmailVerificationState extends EmailVerificationState {
+  const StartEmailVerificationState();
+}
+
+class ResendEmail extends EmailVerificationState {
+  const ResendEmail();
+}
+
+class ResendingEmail extends EmailVerificationState {
+  const ResendingEmail();
+}
+
+class CompletingRegistrationState extends EmailVerificationState {
+  const CompletingRegistrationState();
+}
+
+class ErrorEmailVerificationState extends EmailVerificationState {
+  final Object error;
+
+  String get message => error.toString().replaceAll('Exception: ', '');
+
+  ErrorEmailVerificationState(this.error);
+}

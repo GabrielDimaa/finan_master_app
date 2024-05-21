@@ -10,9 +10,9 @@ abstract class IAuthDriver {
 
   Future<AuthModel?> loginWithGoogle();
 
-  Future<void> sendVerificationEmail(String userId);
+  Future<void> sendVerificationEmail();
 
-  Future<bool> checkEmailVerified(String userId);
+  Future<bool> checkEmailVerified();
 
   Future<bool> checkIsLogged();
 }

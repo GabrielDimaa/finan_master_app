@@ -3,4 +3,6 @@ import 'package:finan_master_app/shared/infra/data_sources/i_local_data_source.d
 
 abstract interface class IAuthLocalDataSource implements ILocalDataSource<AuthModel> {
   Future<void> deleteAll();
+
+  Future<void> saveEmailVerified(bool isEmailVerified);
 }

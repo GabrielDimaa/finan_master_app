@@ -2,4 +2,12 @@ import 'package:finan_master_app/features/auth/domain/entities/signup_entity.dar
 
 abstract interface class ISignupAuth {
   Future<void> signup(SignupEntity entity);
+
+  Future<void> sendEmailVerification();
+
+  Future<bool> existsEmail(String email);
+
+  Future<bool> checkEmailVerified();
+
+  Future<void> completeRegistration();
 }

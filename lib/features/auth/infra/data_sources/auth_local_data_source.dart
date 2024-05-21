@@ -41,4 +41,7 @@ class AuthLocalDataSource extends LocalDataSource<AuthModel> implements IAuthLoc
 
   @override
   Future<void> deleteAll() => databaseLocal.delete(tableName);
+
+  @override
+  Future<void> saveEmailVerified(bool isEmailVerified) => databaseLocal.update(tableName, {'email_verified': isEmailVerified ? 1 : 0});
 }

@@ -105,10 +105,27 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<bool> checkIsLogged() async {
+  Future<AuthEntity?> find() async {
     final bool isLogged = await _authDriver.checkIsLogged();
     final AuthModel? model = await _authDataSource.findOne();
 
-    return isLogged && model != null;
+    if (!isLogged || model == null) return null;
+
+    return AuthFactory.toEntity(model);
   }
+
+  @override
+  Future<bool> existsEmail(String email) {
+    // TODO: implement existsEmail
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> sendEmailVerification() => _authDriver.sendVerificationEmail();
+
+  @override
+  Future<bool> checkEmailVerified() => _authDriver.checkEmailVerified();
+
+  @override
+  Future<void> saveEmailVerified(bool isEmailVerified) => _authDataSource.saveEmailVerified(isEmailVerified);
 }

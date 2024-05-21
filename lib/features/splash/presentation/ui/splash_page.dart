@@ -1,4 +1,5 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
+import 'package:finan_master_app/features/auth/presentation/ui/email_verification_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/introduction/presentation/ui/introduction_page.dart';
@@ -33,11 +34,17 @@ class _SplashPageState extends State<SplashPage> with ThemeContext {
       if (!mounted) return;
       if (notifier.value is ErrorSplashState) return;
 
-      if (notifier.userIsLogged) {
-        context.goNamed(HomePage.route);
-      } else {
+      if (notifier.auth == null) {
         context.goNamed(IntroductionPage.route);
+        return;
       }
+
+      if (!notifier.auth!.emailVerified) {
+        context.goNamed(EmailVerificationPage.route);
+        return;
+      }
+
+      context.goNamed(HomePage.route);
     });
   }
 

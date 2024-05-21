@@ -50,7 +50,10 @@
   "closingDay": "Dia fechamento",
   "closureDate": "Fechamento",
   "color": "Cor",
+  "completeRegistration": "Concluir cadastro",
   "confirm": "Confirmar",
+  "confirmEmail": "Confirmar email",
+  "confirmEmailExplication": "Enviamos uma confirmação para seu endereço de email.\nLocalize-o na sua caixa de entrada e siga o procedimento.",
   "confirmPassword": "Confirme sua senha",
   "continueButton": "Continuar",
   "createAccount": "Criar conta",
@@ -77,6 +80,7 @@
   "email": "Email",
   "emailInvalid": "Email inválido.",
   "emailInUse": "Email já está em uso.",
+  "emailNotVerified": "Email não verificado.",
   "errorStartDateAfterEndDate": "A data inicial deve ser anterior a data final.",
   "expense": "Despesa",
   "expenses": "Despesas",
@@ -170,11 +174,21 @@
   "registeredData": "Dado já cadastrado.",
   "reports": "Relatórios",
   "reset": "Redefinir",
+  "resendEmail": "Reenviar email",
   "resetDataTitle": "Redefinir seus dados no sistema",
   "restoreBackup": "Restaurar backup",
   "restoreBackupExplication": "Restaure um backup para substituir seus dados atuais pelos dados do backup.",
   "requiredField": "Campo obrigatório.",
   "save": "Salvar",
+  "seconds": "{count, plural, =1{1 segundo} other{{count} segundos}}",
+  "@nSeconds": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
   "selectAccount": "Selecionar conta",
   "selectBrand": "Selecionar bandeira",
   "selectCategory": "Selecionar categoria",

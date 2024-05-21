@@ -6,9 +6,9 @@ import 'package:finan_master_app/shared/exceptions/exceptions.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class SignupAuth implements ISignupAuth {
-  final IAuthRepository _authRepository;
+  final IAuthRepository _repository;
 
-  SignupAuth({required IAuthRepository repository}) : _authRepository = repository;
+  SignupAuth({required IAuthRepository repository}) : _repository = repository;
 
   @override
   Future<void> signup(SignupEntity entity) async {
@@ -19,11 +19,29 @@ class SignupAuth implements ISignupAuth {
       if (entity.userAccount.email.trim().isEmpty || entity.auth.email.trim().isEmpty) throw ValidationException(R.strings.uninformedEmail);
       if (entity.auth.password == null || entity.auth.password!.trim().isEmpty) throw ValidationException(R.strings.uninformedPassword);
 
-      await _authRepository.signupWithEmailAndPassword(entity);
+      await _repository.signupWithEmailAndPassword(entity);
     }
 
     if (entity.auth.type == AuthType.google) {
-      await _authRepository.signupWithGoogle() ?? (throw OperationCanceledException());
+      await _repository.signupWithGoogle() ?? (throw OperationCanceledException());
     }
+  }
+
+  @override
+  Future<bool> existsEmail(String email) => _repository.existsEmail(email);
+
+  @override
+  Future<void> sendEmailVerification() => _repository.sendEmailVerification();
+
+  @override
+  Future<bool> checkEmailVerified() => _repository.checkEmailVerified();
+
+  @override
+  Future<void> completeRegistration() async {
+    final bool isEmailVerified = await checkEmailVerified();
+
+    if (!isEmailVerified) throw ValidationException(R.strings.emailNotVerified);
+
+    await _repository.saveEmailVerified(isEmailVerified);
   }
 }

@@ -24,9 +24,9 @@ class AuthDriver implements IAuthDriver {
 
       await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
 
-      final User user = _firebaseAuth.currentUser ?? (throw Exception(R.strings.failedToAuthenticate));
+      _firebaseAuth.currentUser ?? (throw Exception(R.strings.failedToAuthenticate));
 
-      await sendVerificationEmail(user.uid);
+      await sendVerificationEmail();
     } on FirebaseAuthException catch (e) {
       throw e.getError();
     }
@@ -98,11 +98,11 @@ class AuthDriver implements IAuthDriver {
   }
 
   @override
-  Future<void> sendVerificationEmail(String userId) async {
+  Future<void> sendVerificationEmail() async {
     try {
       await ConnectivityNetwork.hasInternet();
 
-      if (_firebaseAuth.currentUser == null) throw Exception();
+      if (_firebaseAuth.currentUser == null) throw Exception(R.strings.failedToAuthenticate);
       await _firebaseAuth.currentUser?.sendEmailVerification();
     } on FirebaseAuthException catch (e) {
       throw e.getError();
@@ -110,13 +110,13 @@ class AuthDriver implements IAuthDriver {
   }
 
   @override
-  Future<bool> checkEmailVerified(String userId) async {
+  Future<bool> checkEmailVerified() async {
     try {
       await ConnectivityNetwork.hasInternet();
 
-      if (_firebaseAuth.currentUser == null) throw Exception();
-      await _firebaseAuth.currentUser!.reload();
+      if (_firebaseAuth.currentUser == null) throw Exception(R.strings.failedToAuthenticate);
 
+      await _firebaseAuth.currentUser!.reload();
       return _firebaseAuth.currentUser!.emailVerified;
     } on FirebaseAuthException catch (e) {
       throw e.getError();

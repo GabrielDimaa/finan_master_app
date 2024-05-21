@@ -50,7 +50,10 @@
   "closingDay": "Closing day",
   "closureDate": "Closure date",
   "color": "Color",
+  "completeRegistration": "Complete registration",
   "confirm": "Confirm",
+  "confirmEmail": "Confirm email",
+  "confirmEmailExplication": "We have sent a confirmation to your email address.\nLocate it in your inbox and follow the procedure.",
   "confirmPassword": "Confirm password",
   "continueButton": "Continue",
   "createAccount": "Create account",
@@ -77,6 +80,7 @@
   "email": "Email",
   "emailInvalid": "Invalid email.",
   "emailInUse": "Email already in use.",
+  "emailNotVerified": "Email not verified.",
   "errorStartDateAfterEndDate": "The start date cannot be after the end date.",
   "expense": "Expense",
   "expenses": "Expenses",
@@ -170,11 +174,21 @@
   "registeredData": "Data already registered.",
   "reports": "Reports",
   "reset": "Reset",
+  "resendEmail": "Resend email",
   "resetDataTitle": "Reset your data on the system",
   "restoreBackup": "Restore backup",
   "restoreBackupExplication": "Restore a backup to replace your current data with the backup data.",
   "requiredField": "Required field.",
   "save": "Save",
+  "seconds": "{count, plural, =1{1 second} other{{count} seconds}}",
+  "@nSeconds": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
   "selectAccount": "Select account",
   "selectBrand": "Select brand",
   "selectCategory": "Select category",

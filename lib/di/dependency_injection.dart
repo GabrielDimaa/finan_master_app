@@ -23,6 +23,7 @@ import 'package:finan_master_app/features/auth/domain/use_cases/signup_auth.dart
 import 'package:finan_master_app/features/auth/infra/data_sources/auth_local_data_source.dart';
 import 'package:finan_master_app/features/auth/infra/data_sources/i_auth_local_data_source.dart';
 import 'package:finan_master_app/features/auth/infra/repositories/auth_repository.dart';
+import 'package:finan_master_app/features/auth/presentation/notifiers/email_verification_notifier.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/login_notifier.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
 import 'package:finan_master_app/features/backup/domain/repositories/i_backup_repository.dart';
@@ -272,6 +273,7 @@ final class DependencyInjection {
     getIt.registerFactory<CreditCardsNotifier>(() => CreditCardsNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
     getIt.registerFactory<CreditCardStatementNotifier>(() => CreditCardStatementNotifier(creditCardStatementFind: getIt.get<ICreditCardStatementFind>(), creditCardStatementSave: getIt.get<ICreditCardStatementSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>()));
     getIt.registerSingleton<EventNotifier>(EventNotifier());
+    getIt.registerSingleton<EmailVerificationNotifier>(EmailVerificationNotifier(signupAuth: getIt.get<ISignupAuth>()));
     getIt.registerFactory<ExpenseNotifier>(() => ExpenseNotifier(expenseSave: getIt.get<IExpenseSave>(), expenseDelete: getIt.get<IExpenseDelete>(), transactionFind: getIt.get<ITransactionFind>()));
     getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), transactionFind: getIt.get<ITransactionFind>()));
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));

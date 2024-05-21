@@ -1,5 +1,5 @@
 import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
+import 'package:finan_master_app/features/auth/presentation/ui/email_verification_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_confirm_password_validator.dart';
@@ -63,12 +63,14 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
                           decoration: InputDecoration(
                             label: Text(strings.password),
                             prefixIcon: const Icon(Icons.lock_outline),
-                            suffixIcon: IconButton(
-                              onPressed: setShowPassword,
-                              icon: Visibility(
-                                visible: !showPassword,
-                                replacement: const Icon(Icons.visibility_outlined),
-                                child: const Icon(Icons.visibility_off_outlined),
+                            suffixIcon: ExcludeFocus(
+                              child: IconButton(
+                                onPressed: setShowPassword,
+                                icon: Visibility(
+                                  visible: !showPassword,
+                                  replacement: const Icon(Icons.visibility_outlined),
+                                  child: const Icon(Icons.visibility_off_outlined),
+                                ),
                               ),
                             ),
                           ),
@@ -85,12 +87,14 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
                           decoration: InputDecoration(
                             label: Text(strings.confirmPassword),
                             prefixIcon: const Icon(Icons.lock_outline),
-                            suffixIcon: IconButton(
-                              onPressed: setShowConfirmPassword,
-                              icon: Visibility(
-                                visible: !showConfirmPassword,
-                                replacement: const Icon(Icons.visibility_outlined),
-                                child: const Icon(Icons.visibility_off_outlined),
+                            suffixIcon: ExcludeFocus(
+                              child: IconButton(
+                                onPressed: setShowConfirmPassword,
+                                icon: Visibility(
+                                  visible: !showConfirmPassword,
+                                  replacement: const Icon(Icons.visibility_outlined),
+                                  child: const Icon(Icons.visibility_off_outlined),
+                                ),
                               ),
                             ),
                           ),
@@ -125,7 +129,7 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
         await notifier.signupWithEmailAndPassword();
 
         if (!mounted) return;
-        context.goNamed(HomePage.route);
+        context.goNamed(EmailVerificationPage.route);
       } else {
         setState(() => autovalidateMode = AutovalidateMode.always);
       }
