@@ -5,6 +5,7 @@ import 'package:finan_master_app/features/account/presentation/ui/accounts_list_
 import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/email_verification_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
+import 'package:finan_master_app/features/auth/presentation/ui/reset_password_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
 import 'package:finan_master_app/features/backup/presentation/ui/backup_page.dart';
 import 'package:finan_master_app/features/backup/presentation/ui/restore_backup_page.dart';
@@ -83,6 +84,12 @@ sealed class AppRouter {
           name: EmailVerificationPage.route,
           path: '/${EmailVerificationPage.route}',
           builder: (_, __) => const EmailVerificationPage(),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: ResetPasswordPage.route,
+          path: '/${ResetPasswordPage.route}',
+          builder: (_, __) => const ResetPasswordPage(),
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,

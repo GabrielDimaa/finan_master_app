@@ -110,6 +110,17 @@ class AuthDriver implements IAuthDriver {
   }
 
   @override
+  Future<void> sendEmailResetPassword(String email) async {
+    try {
+      await ConnectivityNetwork.hasInternet();
+
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw e.getError();
+    }
+  }
+
+  @override
   Future<bool> checkEmailVerified() async {
     try {
       await ConnectivityNetwork.hasInternet();
@@ -122,6 +133,9 @@ class AuthDriver implements IAuthDriver {
       throw e.getError();
     }
   }
+
+  @override
+  Future<bool> checkIsLogged() => Future.value(_firebaseAuth.currentUser != null);
 
   Future<({GoogleSignInAccount account, UserCredential userCredential})?> _signInWithGoogle() async {
     await ConnectivityNetwork.hasInternet();
@@ -137,9 +151,6 @@ class AuthDriver implements IAuthDriver {
 
     return (account: account, userCredential: userCredential);
   }
-
-  @override
-  Future<bool> checkIsLogged() => Future.value(_firebaseAuth.currentUser != null);
 }
 
 extension _FirebaseAuthExceptionExtension on FirebaseAuthException {

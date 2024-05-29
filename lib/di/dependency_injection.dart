@@ -17,14 +17,17 @@ import 'package:finan_master_app/features/auth/domain/repositories/i_auth_reposi
 import 'package:finan_master_app/features/auth/domain/use_cases/auth_find.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/i_auth_find.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/i_login_auth.dart';
+import 'package:finan_master_app/features/auth/domain/use_cases/i_reset_password.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/i_signup_auth.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/login_auth.dart';
+import 'package:finan_master_app/features/auth/domain/use_cases/reset_password.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/signup_auth.dart';
 import 'package:finan_master_app/features/auth/infra/data_sources/auth_local_data_source.dart';
 import 'package:finan_master_app/features/auth/infra/data_sources/i_auth_local_data_source.dart';
 import 'package:finan_master_app/features/auth/infra/repositories/auth_repository.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/email_verification_notifier.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/login_notifier.dart';
+import 'package:finan_master_app/features/auth/presentation/notifiers/reset_password_notifier.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
 import 'package:finan_master_app/features/backup/domain/repositories/i_backup_repository.dart';
 import 'package:finan_master_app/features/backup/domain/use_cases/backup.dart';
@@ -255,6 +258,7 @@ final class DependencyInjection {
     getIt.registerFactory<ICreditCardStatementDates>(() => CreditCardStatementDates());
     getIt.registerFactory<ILoginAuth>(() => LoginAuth(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<IReportCategoriesFind>(() => ReportCategoriesFind(repository: getIt.get<IReportCategoriesRepository>()));
+    getIt.registerFactory<IResetPassword>(() => ResetPassword(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<IRestoreBackup>(() => RestoreBackup(repository: getIt.get<IBackupRepository>()));
     getIt.registerFactory<ISignupAuth>(() => SignupAuth(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<ITransactionFind>(() => TransactionFind(repository: getIt.get<ITransactionRepository>()));
@@ -279,6 +283,7 @@ final class DependencyInjection {
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<LoginNotifier>(() => LoginNotifier(loginAuth: getIt.get<ILoginAuth>()));
     getIt.registerFactory<ReportCategoriesNotifier>(() => ReportCategoriesNotifier(getIt.get<IReportCategoriesFind>()));
+    getIt.registerFactory<ResetPasswordNotifier>(() => ResetPasswordNotifier(getIt.get<IResetPassword>()));
     getIt.registerFactory<SignupNotifier>(() => SignupNotifier(signupAuth: getIt.get<ISignupAuth>()));
     getIt.registerFactory<SplashNotifier>(() => SplashNotifier(authFind: getIt.get<IAuthFind>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));

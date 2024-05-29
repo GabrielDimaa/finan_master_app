@@ -92,18 +92,6 @@ class AuthRepository implements IAuthRepository {
     );
   }
 
-  Future<void> _saveAuthAndUserAccount({required AuthModel model, required UserAccountModel userAccount}) async {
-    await _authDataSource.deleteAll();
-    await _userAccountLocalDataSource.deleteAll();
-
-    await _databaseLocalTransaction.openTransaction((txn) async {
-      await Future.wait([
-        _authDataSource.insert(model, txn: txn),
-        _userAccountLocalDataSource.insert(userAccount, txn: txn),
-      ]);
-    });
-  }
-
   @override
   Future<AuthEntity?> find() async {
     final bool isLogged = await _authDriver.checkIsLogged();
@@ -121,8 +109,23 @@ class AuthRepository implements IAuthRepository {
   Future<void> sendEmailVerification() => _authDriver.sendVerificationEmail();
 
   @override
+  Future<void> sendEmailResetPassword(String email) => _authDriver.sendEmailResetPassword(email);
+
+  @override
   Future<bool> checkEmailVerified() => _authDriver.checkEmailVerified();
 
   @override
   Future<void> saveEmailVerified(bool isEmailVerified) => _authDataSource.saveEmailVerified(isEmailVerified);
+
+  Future<void> _saveAuthAndUserAccount({required AuthModel model, required UserAccountModel userAccount}) async {
+    await _authDataSource.deleteAll();
+    await _userAccountLocalDataSource.deleteAll();
+
+    await _databaseLocalTransaction.openTransaction((txn) async {
+      await Future.wait([
+        _authDataSource.insert(model, txn: txn),
+        _userAccountLocalDataSource.insert(userAccount, txn: txn),
+      ]);
+    });
+  }
 }

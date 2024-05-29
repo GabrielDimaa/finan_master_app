@@ -12,6 +12,8 @@ abstract class IAuthDriver {
 
   Future<void> sendVerificationEmail();
 
+  Future<void> sendEmailResetPassword(String email);
+
   Future<bool> checkEmailVerified();
 
   Future<bool> checkIsLogged();

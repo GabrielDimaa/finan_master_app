@@ -14,6 +14,8 @@ abstract interface class IAuthRepository {
 
   Future<void> sendEmailVerification();
 
+  Future<void> sendEmailResetPassword(String email);
+
   Future<bool> checkEmailVerified();
 
   Future<bool> emailAlreadyExists(String email);

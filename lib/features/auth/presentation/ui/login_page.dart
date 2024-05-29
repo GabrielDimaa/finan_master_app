@@ -1,6 +1,7 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/login_notifier.dart';
 import 'package:finan_master_app/features/auth/presentation/states/login_state.dart';
+import 'package:finan_master_app/features/auth/presentation/ui/reset_password_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -182,7 +183,8 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
     try {
       if (notifier.isLoading) return;
 
-      throw UnimplementedError();
+      if (!mounted) return;
+      context.pushNamed(ResetPasswordPage.route);
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
     }
