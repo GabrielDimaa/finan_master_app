@@ -6,7 +6,6 @@ import 'package:finan_master_app/features/transactions/domain/entities/income_en
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_save.dart';
 import 'package:finan_master_app/shared/classes/constants.dart';
-import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class AccountReadjustmentTransaction implements IAccountReadjustmentTransaction {
   final IIncomeSave _incomeSave;
