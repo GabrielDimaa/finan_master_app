@@ -93,16 +93,16 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: !creditCardChanged,
-      onPopInvoked: (_) => context.pop(FormResultNavigation.save(creditCardNotifier.creditCard)),
-      child: ValueListenableBuilder(
-        valueListenable: initialLoadingNotifier,
-        builder: (_, initialLoading, __) {
-          return ValueListenableBuilder(
-            valueListenable: creditCardNotifier,
-            builder: (_, __, ___) {
-              return ListModeSelectable(
+    return ValueListenableBuilder(
+      valueListenable: initialLoadingNotifier,
+      builder: (_, initialLoading, __) {
+        return ValueListenableBuilder(
+          valueListenable: creditCardNotifier,
+          builder: (_, __, ___) {
+            return PopScope(
+              canPop: !creditCardChanged,
+              onPopInvoked: (_) => context.pop(FormResultNavigation.save(creditCardNotifier.creditCard)),
+              child: ListModeSelectable(
                 list: listSelectable,
                 updateList: (List value) => setState(() => listSelectable = value.cast<CreditCardTransactionEntity>()),
                 child: SliverScaffold(
@@ -346,11 +346,11 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                     },
                   ),
                 ),
-              );
-            },
-          );
-        },
-      ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

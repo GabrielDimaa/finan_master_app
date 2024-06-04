@@ -43,13 +43,13 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: !accountChanged,
-      onPopInvoked: (_) => context.pop(FormResultNavigation.save(notifier.account)),
-      child: ValueListenableBuilder(
-        valueListenable: notifier,
-        builder: (_, state, __) {
-          return SliverScaffold(
+    return ValueListenableBuilder(
+      valueListenable: notifier,
+      builder: (_, state, __) {
+        return PopScope(
+          canPop: !accountChanged,
+          onPopInvoked: (_) => context.pop(FormResultNavigation.save(notifier.account)),
+          child: SliverScaffold(
             appBar: SliverAppBarMedium(
               title: Text(strings.accountDetails),
               loading: isLoading,
@@ -122,7 +122,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
                     ],
                   ),
                 ),
-                const Divider(),
+                // const Divider(),
                 // Padding(
                 //   padding: const EdgeInsets.all(16),
                 //   child: Row(
@@ -152,9 +152,9 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
                 // const Divider(),
               ],
             ),
-          );
-        }
-      ),
+          ),
+        );
+      }
     );
   }
 

@@ -39,7 +39,16 @@ class _ConfirmReadjustBalanceDialogState extends State<ConfirmReadjustBalanceDia
           Text(message, textAlign: TextAlign.center),
           if (widget.option == ReadjustmentOptionEnum.changeInitialAmount) ...[
             const Spacing.y(),
-            Text('${widget.accountEntity.initialAmount.moneyWithoutSymbol}  >  ${(widget.accountEntity.initialAmount + widget.value).moneyWithoutSymbol}'),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(text: '${strings.from} '),
+                  TextSpan(text: widget.accountEntity.initialAmount.moneyWithoutSymbol, style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                  TextSpan(text: ' ${strings.to.toLowerCase()} '),
+                  TextSpan(text: (widget.accountEntity.initialAmount + widget.value).moneyWithoutSymbol, style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
           ],
         ],
       ),

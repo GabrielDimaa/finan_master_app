@@ -66,13 +66,15 @@ class AccountNotifier extends ValueNotifier<AccountState> {
     try {
       value = value.setSaving();
 
+      late final AccountEntity accountSaved;
+
       if (option == ReadjustmentOptionEnum.changeInitialAmount) {
-        final AccountEntity accountSaved = await _accountSave.changeInitialAmount(entity: account, readjustmentValue: readjustmentValue);
-        value = value.setAccount(accountSaved);
+        accountSaved = await _accountSave.changeInitialAmount(entity: account, readjustmentValue: readjustmentValue);
       } else {
-        await _accountReadjustmentTransaction.createTransaction(account: account, readjustmentValue: readjustmentValue, description: description);
-        value = value.changedAccount();
+        accountSaved = await _accountReadjustmentTransaction.createTransaction(account: account, readjustmentValue: readjustmentValue, description: description);
       }
+
+      value = value.setAccount(accountSaved);
     } catch (e) {
       value = value.setError(e.toString());
     }
