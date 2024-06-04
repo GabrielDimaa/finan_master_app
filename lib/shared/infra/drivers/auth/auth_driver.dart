@@ -4,6 +4,7 @@ import 'package:finan_master_app/features/auth/infra/models/signup_model.dart';
 import 'package:finan_master_app/features/user_account/infra/models/user_account_model.dart';
 import 'package:finan_master_app/shared/classes/connectivity_network.dart';
 import 'package:finan_master_app/shared/infra/drivers/auth/i_auth_driver.dart';
+import 'package:finan_master_app/shared/infra/drivers/crypt/i_crypt_aes.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,17 +13,21 @@ import 'package:uuid/uuid.dart';
 class AuthDriver implements IAuthDriver {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
+  final ICryptAES _cryptAES;
 
-  AuthDriver({required FirebaseAuth firebaseAuth, required GoogleSignIn googleSignIn})
+  AuthDriver({required FirebaseAuth firebaseAuth, required GoogleSignIn googleSignIn, required ICryptAES cryptAES})
       : _firebaseAuth = firebaseAuth,
-        _googleSignIn = googleSignIn;
+        _googleSignIn = googleSignIn,
+        _cryptAES = cryptAES;
 
   @override
   Future<void> signupWithEmailAndPassword({required String email, required String password}) async {
     try {
       await ConnectivityNetwork.hasInternet();
 
-      await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+      final String passwordDecrypted = _cryptAES.decrypt(password);
+
+      await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: passwordDecrypted);
 
       _firebaseAuth.currentUser ?? (throw Exception(R.strings.failedToAuthenticate));
 
@@ -68,7 +73,9 @@ class AuthDriver implements IAuthDriver {
     try {
       await ConnectivityNetwork.hasInternet();
 
-      await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+      final String passwordDecrypted = _cryptAES.decrypt(password);
+
+      await _firebaseAuth.signInWithEmailAndPassword(email: email, password: passwordDecrypted);
 
       if (_firebaseAuth.currentUser == null) throw Exception(R.strings.userNotFound);
     } on FirebaseAuthException catch (e) {

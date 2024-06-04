@@ -146,6 +146,8 @@ import 'package:finan_master_app/shared/infra/data_sources/database_local/databa
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
 import 'package:finan_master_app/shared/infra/drivers/auth/auth_driver.dart';
 import 'package:finan_master_app/shared/infra/drivers/auth/i_auth_driver.dart';
+import 'package:finan_master_app/shared/infra/drivers/crypt/crypt_aes.dart';
+import 'package:finan_master_app/shared/infra/drivers/crypt/i_crypt_aes.dart';
 import 'package:finan_master_app/shared/infra/drivers/file_picker/file_picker_driver.dart';
 import 'package:finan_master_app/shared/infra/drivers/file_picker/i_file_picker_driver.dart';
 import 'package:finan_master_app/shared/infra/drivers/share/i_share_driver.dart';
@@ -191,6 +193,7 @@ final class DependencyInjection {
     //Drivers
     getIt.registerFactory<IFilePickerDriver>(() => FilePickerDriver());
     getIt.registerFactory<IShareDriver>(() => ShareDriver());
+    getIt.registerFactory<ICryptAES>(() => CryptAES());
     getIt.registerSingleton<FirebaseFirestore>(FirebaseFirestore.instance);
     getIt.registerSingleton<FirebaseAuth>(FirebaseAuth.instance);
     getIt.registerSingleton<GoogleSignIn>(GoogleSignIn());
@@ -201,7 +204,7 @@ final class DependencyInjection {
 
     getIt.registerFactory<IAccountLocalDataSource>(() => AccountLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<IAuthLocalDataSource>(() => AuthLocalDataSource(databaseLocal: databaseLocal));
-    getIt.registerFactory<IAuthDriver>(() => AuthDriver(firebaseAuth: getIt.get<FirebaseAuth>(), googleSignIn: getIt.get<GoogleSignIn>()));
+    getIt.registerFactory<IAuthDriver>(() => AuthDriver(firebaseAuth: getIt.get<FirebaseAuth>(), googleSignIn: getIt.get<GoogleSignIn>(), cryptAES: getIt.get<ICryptAES>()));
     getIt.registerFactory<ICategoryLocalDataSource>(() => CategoryLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<ICreditCardLocalDataSource>(() => CreditCardLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<ICreditCardTransactionLocalDataSource>(() => CreditCardTransactionLocalDataSource(databaseLocal: databaseLocal));
@@ -216,7 +219,7 @@ final class DependencyInjection {
 
     //Repositories
     getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>()));
-    getIt.registerFactory<IAuthRepository>(() => AuthRepository(authDataSource: getIt.get<IAuthLocalDataSource>(), userAccountLocalDataSource: getIt.get<IUserAccountLocalDataSource>(), userAccountCloudDataSource: getIt.get<IUserAccountCloudDataSource>(), authDriver: getIt.get<IAuthDriver>(), databaseLocalTransaction: databaseLocal.transactionInstance()));
+    getIt.registerFactory<IAuthRepository>(() => AuthRepository(authDataSource: getIt.get<IAuthLocalDataSource>(), userAccountLocalDataSource: getIt.get<IUserAccountLocalDataSource>(), userAccountCloudDataSource: getIt.get<IUserAccountCloudDataSource>(), authDriver: getIt.get<IAuthDriver>(), databaseLocalTransaction: databaseLocal.transactionInstance(), cryptAES: getIt.get<ICryptAES>()));
     getIt.registerFactory<IBackupRepository>(() => BackupRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>(), shareDriver: getIt.get<IShareDriver>(), filePickerDriver: getIt.get<IFilePickerDriver>()));
     getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryLocalDataSource>()));
     getIt.registerFactory<IConfigRepository>(() => ConfigRepository(cacheLocal: getIt.get<ICacheLocal>()));

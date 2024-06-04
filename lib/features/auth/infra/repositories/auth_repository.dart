@@ -11,6 +11,7 @@ import 'package:finan_master_app/features/user_account/infra/data_sources/i_user
 import 'package:finan_master_app/features/user_account/infra/models/user_account_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/infra/drivers/auth/i_auth_driver.dart';
+import 'package:finan_master_app/shared/infra/drivers/crypt/i_crypt_aes.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class AuthRepository implements IAuthRepository {
@@ -19,6 +20,7 @@ class AuthRepository implements IAuthRepository {
   final IUserAccountCloudDataSource _userAccountCloudDataSource;
   final IAuthDriver _authDriver;
   final IDatabaseLocalTransaction _databaseLocalTransaction;
+  final ICryptAES _cryptAES;
 
   AuthRepository({
     required IAuthLocalDataSource authDataSource,
@@ -26,16 +28,20 @@ class AuthRepository implements IAuthRepository {
     required IUserAccountCloudDataSource userAccountCloudDataSource,
     required IAuthDriver authDriver,
     required IDatabaseLocalTransaction databaseLocalTransaction,
+    required ICryptAES cryptAES,
   })  : _authDataSource = authDataSource,
         _userAccountLocalDataSource = userAccountLocalDataSource,
         _userAccountCloudDataSource = userAccountCloudDataSource,
         _authDriver = authDriver,
-        _databaseLocalTransaction = databaseLocalTransaction;
+        _databaseLocalTransaction = databaseLocalTransaction,
+        _cryptAES = cryptAES;
 
   @override
   Future<AuthEntity> loginWithEmailAndPassword(AuthEntity entity) async {
     await _authDataSource.deleteAll();
     await _userAccountLocalDataSource.deleteAll();
+
+    entity.password = _cryptAES.encrypt(entity.password!);
 
     final AuthModel model = AuthFactory.fromEntity(entity);
 
@@ -62,6 +68,8 @@ class AuthRepository implements IAuthRepository {
 
   @override
   Future<SignupEntity> signupWithEmailAndPassword(SignupEntity entity) async {
+    entity.auth.password = _cryptAES.encrypt(entity.auth.password!);
+
     AuthModel model = AuthFactory.fromEntity(entity.auth);
     UserAccountModel userAccountModel = UserAccountFactory.fromEntity(entity.userAccount);
 
