@@ -4,6 +4,7 @@
   "accountsBalance": "Account balances",
   "accountDetails": "Account details",
   "accountNotFound": "Account not found.",
+  "accountUsedCreditCard": "This account is being used by a credit card.",
   "accounts": "Accounts",
   "allFilter": "All",
   "alreadyHaveAccount": "Already have an account?",

@@ -218,7 +218,7 @@ final class DependencyInjection {
     getIt.registerFactory<IUserAccountCloudDataSource>(() => UserAccountCloudDataSource(firestore: getIt.get<FirebaseFirestore>()));
 
     //Repositories
-    getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>()));
+    getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>(), creditCardLocalDataSource: getIt.get<ICreditCardLocalDataSource>()));
     getIt.registerFactory<IAuthRepository>(() => AuthRepository(authDataSource: getIt.get<IAuthLocalDataSource>(), userAccountLocalDataSource: getIt.get<IUserAccountLocalDataSource>(), userAccountCloudDataSource: getIt.get<IUserAccountCloudDataSource>(), authDriver: getIt.get<IAuthDriver>(), databaseLocalTransaction: databaseLocal.transactionInstance(), cryptAES: getIt.get<ICryptAES>()));
     getIt.registerFactory<IBackupRepository>(() => BackupRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>(), shareDriver: getIt.get<IShareDriver>(), filePickerDriver: getIt.get<IFilePickerDriver>()));
     getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryLocalDataSource>()));

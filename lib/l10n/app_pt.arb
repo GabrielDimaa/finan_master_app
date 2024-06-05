@@ -4,6 +4,7 @@
   "accountsBalance": "Saldo em contas",
   "accountDetails": "Detalhes da conta",
   "accountNotFound": "Conta não encontrada.",
+  "accountUsedCreditCard": "Esta conta está sendo utilizada por um cartão de crédito.",
   "accounts": "Contas",
   "allFilter": "Todas",
   "alreadyHaveAccount": "Já tem uma conta?",
