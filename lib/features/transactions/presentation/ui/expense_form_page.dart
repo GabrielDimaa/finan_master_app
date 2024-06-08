@@ -177,7 +177,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                     onSelected: (ITransactionEntity selection) {
                                       final ExpenseEntity expense = selection as ExpenseEntity;
                                       if (expense.idCategory != null) notifier.setCategory(expense.idCategory!);
-                                      if (expense.transaction.idAccount != null) notifier.setAccount(expense.transaction.idAccount!);
+                                      if (categoriesNotifier.value.categories.any((c) => c.id == expense.transaction.idAccount && c.deletedAt == null)) notifier.setAccount(expense.transaction.idAccount!);
                                       notifier.expense.observation = expense.observation;
                                     },
                                     optionsViewBuilder: (context, onSelected, options) {

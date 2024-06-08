@@ -179,7 +179,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                                     onSelected: (ITransactionEntity selection) {
                                       final IncomeEntity income = selection as IncomeEntity;
                                       if (income.idCategory != null) notifier.setCategory(income.idCategory!);
-                                      if (income.transaction.idAccount != null) notifier.setAccount(income.transaction.idAccount!);
+                                      if (categoriesNotifier.value.categories.any((c) => c.id == income.transaction.idAccount && c.deletedAt == null)) notifier.setAccount(income.transaction.idAccount!);
                                       notifier.income.observation = income.observation;
                                     },
                                     optionsViewBuilder: (context, onSelected, options) {
