@@ -5,51 +5,50 @@ import 'package:finan_master_app/features/transactions/infra/data_sources/i_expe
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/expense_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 
 class ExpenseRepository implements IExpenseRepository {
   final IDatabaseLocalTransaction _dbTransaction;
   final IExpenseLocalDataSource _expenseLocalDataSource;
   final ITransactionLocalDataSource _transactionLocalDataSource;
+  final EventNotifier _eventNotifier;
 
   ExpenseRepository({
     required IDatabaseLocalTransaction dbTransaction,
     required IExpenseLocalDataSource expenseLocalDataSource,
     required ITransactionLocalDataSource transactionLocalDataSource,
+    required EventNotifier eventNotifier,
   })  : _dbTransaction = dbTransaction,
         _expenseLocalDataSource = expenseLocalDataSource,
-        _transactionLocalDataSource = transactionLocalDataSource;
+        _transactionLocalDataSource = transactionLocalDataSource,
+        _eventNotifier = eventNotifier;
 
   @override
   Future<ExpenseEntity> save(ExpenseEntity entity, {ITransactionExecutor? txn}) async {
+    if (txn == null) return await _dbTransaction.openTransaction<ExpenseEntity>((txn) => save(entity, txn: txn));
+
     final ExpenseModel model = ExpenseFactory.fromEntity(entity);
 
-    if (txn == null) {
-      final ExpenseModel result = await _dbTransaction.openTransaction<ExpenseModel>((txn) async {
-        model.transaction = await _transactionLocalDataSource.upsert(model.transaction, txn: txn);
-        return await _expenseLocalDataSource.upsert(model, txn: txn);
-      });
+    model.transaction = await _transactionLocalDataSource.upsert(model.transaction, txn: txn);
+    final ExpenseModel result = await _expenseLocalDataSource.upsert(model, txn: txn);
 
-      return ExpenseFactory.toEntity(result);
-    } else {
-      model.transaction = await _transactionLocalDataSource.upsert(model.transaction, txn: txn);
-      final ExpenseModel result = await _expenseLocalDataSource.upsert(model, txn: txn);
+    _eventNotifier.notify(EventType.transactions);
 
-      return ExpenseFactory.toEntity(result);
-    }
+    return ExpenseFactory.toEntity(result);
   }
 
   @override
   Future<void> delete(ExpenseEntity entity, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      await _dbTransaction.openTransaction<void>((txn) => delete(entity, txn: txn));
+      return;
+    }
+
     final ExpenseModel model = ExpenseFactory.fromEntity(entity);
 
-    if (txn != null) {
-      await _expenseLocalDataSource.delete(model, txn: txn);
-      await _transactionLocalDataSource.delete(model.transaction, txn: txn);
-    } else {
-      await _dbTransaction.openTransaction((txn) async {
-        await _expenseLocalDataSource.delete(model, txn: txn);
-        await _transactionLocalDataSource.delete(model.transaction, txn: txn);
-      });
-    }
+    await _expenseLocalDataSource.delete(model, txn: txn);
+    await _transactionLocalDataSource.delete(model.transaction, txn: txn);
+
+    _eventNotifier.notify(EventType.transactions);
   }
 }

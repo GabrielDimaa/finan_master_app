@@ -44,8 +44,6 @@ class ListTransactions extends StatefulWidget {
 }
 
 class _ListTransactionsState extends State<ListTransactions> {
-  final EventNotifier eventNotifier = DI.get<EventNotifier>();
-
   @override
   Widget build(BuildContext context) {
     return ListViewSelectable.separated(
@@ -186,6 +184,5 @@ class _ListTransactionsState extends State<ListTransactions> {
     if (result == null) return;
 
     widget.refreshTransactions();
-    eventNotifier.notify(EventType.transactions);
   }
 }

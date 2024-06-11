@@ -222,6 +222,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
     await Future.wait([
       notifier.onRefresh(),
       accountsNotifier.onRefresh(deleted: true),
+      categoriesNotifier.onRefresh(deleted: true),
     ]);
   }
 }

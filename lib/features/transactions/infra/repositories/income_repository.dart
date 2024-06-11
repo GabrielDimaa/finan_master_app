@@ -5,19 +5,23 @@ import 'package:finan_master_app/features/transactions/infra/data_sources/i_inco
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/income_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 
 class IncomeRepository implements IIncomeRepository {
   final IDatabaseLocalTransaction _dbTransaction;
   final IIncomeLocalDataSource _incomeLocalDataSource;
   final ITransactionLocalDataSource _transactionLocalDataSource;
+  final EventNotifier _eventNotifier;
 
   IncomeRepository({
     required IDatabaseLocalTransaction dbTransaction,
     required IIncomeLocalDataSource incomeLocalDataSource,
     required ITransactionLocalDataSource transactionLocalDataSource,
+    required EventNotifier eventNotifier,
   })  : _dbTransaction = dbTransaction,
         _incomeLocalDataSource = incomeLocalDataSource,
-        _transactionLocalDataSource = transactionLocalDataSource;
+        _transactionLocalDataSource = transactionLocalDataSource,
+        _eventNotifier = eventNotifier;
 
   @override
   Future<IncomeEntity> save(IncomeEntity entity) async {
@@ -28,21 +32,23 @@ class IncomeRepository implements IIncomeRepository {
       return await _incomeLocalDataSource.upsert(model, txn: txn);
     });
 
+    _eventNotifier.notify(EventType.transactions);
+
     return IncomeFactory.toEntity(result);
   }
 
   @override
   Future<void> delete(IncomeEntity entity, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      await _dbTransaction.openTransaction<void>((txn) => delete(entity, txn: txn));
+      return;
+    }
+
     final IncomeModel model = IncomeFactory.fromEntity(entity);
 
-    if (txn != null) {
-      await _incomeLocalDataSource.delete(model, txn: txn);
-      await _transactionLocalDataSource.delete(model.transaction, txn: txn);
-    } else {
-      await _dbTransaction.openTransaction((txn) async {
-        await _incomeLocalDataSource.delete(model, txn: txn);
-        await _transactionLocalDataSource.delete(model.transaction, txn: txn);
-      });
-    }
+    await _incomeLocalDataSource.delete(model, txn: txn);
+    await _transactionLocalDataSource.delete(model.transaction, txn: txn);
+
+    _eventNotifier.notify(EventType.transactions);
   }
 }

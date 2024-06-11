@@ -35,7 +35,6 @@ class TransactionsListPage extends StatefulWidget {
 
 class _TransactionsListPageState extends State<TransactionsListPage> with ThemeContext {
   final TransactionsNotifier notifier = DI.get<TransactionsNotifier>();
-  final EventNotifier eventNotifier = DI.get<EventNotifier>();
   final CategoriesNotifier categoriesNotifier = DI.get<CategoriesNotifier>();
   final AccountsNotifier accountsNotifier = DI.get<AccountsNotifier>();
 
@@ -170,7 +169,6 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
       setState(() {
         listSelectable = [];
         notifier.onRefresh();
-        eventNotifier.notify(EventType.transactions);
       });
     } catch (e) {
       if (!mounted) return;

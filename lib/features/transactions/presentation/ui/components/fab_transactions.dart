@@ -25,8 +25,6 @@ class FabTransactions extends StatefulWidget {
 }
 
 class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
-  final EventNotifier eventNotifier = DI.get<EventNotifier>();
-
   @override
   Widget build(BuildContext context) {
     return ExpandableFab(
@@ -59,28 +57,19 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
   Future<void> goExpenseFormPage() async {
     final FormResultNavigation<ExpenseEntity>? result = await context.pushNamed(ExpenseFormPage.route);
 
-    if (result != null) {
-      await widget.notifier.onRefresh();
-      eventNotifier.notify(EventType.transactions);
-    }
+    if (result != null) await widget.notifier.onRefresh();
   }
 
   Future<void> goIncomeFormPage() async {
     final FormResultNavigation<IncomeEntity>? result = await context.pushNamed(IncomeFormPage.route);
 
-    if (result != null) {
-      await widget.notifier.onRefresh();
-      eventNotifier.notify(EventType.transactions);
-    }
+    if (result != null) await widget.notifier.onRefresh();
   }
 
   Future<void> goTransferFormPage() async {
     final FormResultNavigation<TransferEntity>? result = await context.pushNamed(TransferFormPage.route);
 
-    if (result != null) {
-      await widget.notifier.onRefresh();
-      eventNotifier.notify(EventType.transactions);
-    }
+    if (result != null) await widget.notifier.onRefresh();
   }
 
   Future<void> goCreditCardExpenseFormPage() => context.pushNamed(CreditCardExpensePage.route);
