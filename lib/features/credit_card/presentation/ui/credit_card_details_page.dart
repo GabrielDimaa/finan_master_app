@@ -223,7 +223,7 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                                                               child: Stack(
                                                                 children: [
                                                                   Container(
-                                                                    decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.inversePrimary : colorScheme.onBackground),
+                                                                    decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.inversePrimary : colorScheme.onSurface),
                                                                     height: 4,
                                                                   ),
                                                                   Builder(builder: (_) {

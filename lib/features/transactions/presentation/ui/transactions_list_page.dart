@@ -12,7 +12,6 @@ import 'package:finan_master_app/features/transactions/presentation/ui/component
 import 'package:finan_master_app/features/transactions/presentation/ui/components/totals_transactions.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
-import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/app_bar_custom.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/date_picker.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';

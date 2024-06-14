@@ -187,7 +187,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                                         alignment: Alignment.topLeft,
                                         child: Material(
                                           elevation: 12,
-                                          color: colorScheme.surfaceVariant,
+                                          color: colorScheme.surfaceContainerHighest,
                                           shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4.0))),
                                           child: SizedBox(
                                             height: min(160, 80.0 * options.length),

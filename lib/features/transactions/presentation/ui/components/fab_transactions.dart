@@ -1,4 +1,3 @@
-import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
@@ -9,7 +8,6 @@ import 'package:finan_master_app/features/transactions/presentation/ui/income_fo
 import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
-import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab_child.dart';
 import 'package:flutter/material.dart';
