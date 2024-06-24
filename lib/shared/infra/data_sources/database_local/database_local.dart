@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:finan_master_app/features/account/infra/data_sources/account_local_data_source.dart';
+import 'package:finan_master_app/features/account/infra/data_sources/i_account_local_data_source.dart';
 import 'package:finan_master_app/features/auth/infra/data_sources/auth_local_data_source.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/category_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_statement_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_transaction_local_data_source.dart';
+import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_statement_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/expense_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/income_local_data_source.dart';
@@ -89,9 +91,9 @@ final class DatabaseLocal implements IDatabaseLocal {
     ExpenseLocalDataSource(databaseLocal: this, transactionDataSource: transactionDb).createTable(batch);
     IncomeLocalDataSource(databaseLocal: this, transactionDataSource: transactionDb).createTable(batch);
     TransferLocalDataSource(databaseLocal: this, transactionDataSource: transactionDb).createTable(batch);
-    CreditCardLocalDataSource(databaseLocal: this).createTable(batch);
     final CreditCardTransactionLocalDataSource creditCardTransactionLocalDataSource = CreditCardTransactionLocalDataSource(databaseLocal: this)..createTable(batch);
-    CreditCardStatementLocalDataSource(databaseLocal: this, creditCardTransactionLocalDataSource: creditCardTransactionLocalDataSource).createTable(batch);
+    final ICreditCardStatementLocalDataSource creditCardStatementLocalDataSource = CreditCardStatementLocalDataSource(databaseLocal: this, creditCardTransactionLocalDataSource: creditCardTransactionLocalDataSource)..createTable(batch);
+    CreditCardLocalDataSource(databaseLocal: this, creditCardStatementLocalDataSource: creditCardStatementLocalDataSource).createTable(batch);
     AuthLocalDataSource(databaseLocal: this).createTable(batch);
     UserAccountLocalDataSource(databaseLocal: this).createTable(batch);
 

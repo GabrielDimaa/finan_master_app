@@ -15,10 +15,10 @@ import 'package:finan_master_app/features/category/presentation/ui/category_form
 import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
-import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_details_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/old_credit_card_details_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
-import 'package:finan_master_app/features/credit_card/presentation/ui/credit_cards_list_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_cards_details_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/introduction/presentation/ui/introduction_page.dart';
 import 'package:finan_master_app/features/reports/presentation/ui/report_categories_page.dart';

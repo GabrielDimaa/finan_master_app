@@ -1,4 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_transaction_model.dart';
+import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class CreditCardStatementModel extends Model {
@@ -6,11 +8,17 @@ class CreditCardStatementModel extends Model {
   final DateTime statementDueDate;
 
   final String idCreditCard;
-  final double amountLimit;
 
   final List<CreditCardTransactionModel> transactions;
 
   final bool paid;
+
+  double get totalSpent => transactions.map((transaction) => transaction.amount > 0 ? transaction.amount : 0).sum.toDouble();
+
+  double get totalPaid => transactions.map((transaction) => transaction.amount < 0 ? transaction.amount : 0).sum.toDouble();
+
+  //totalPaid terá valor negativo, portanto, 1000 + (-100).
+  double get statementAmount => (totalSpent + totalPaid).truncateFractionalDigits(2);
 
   CreditCardStatementModel({
     required super.id,
@@ -19,7 +27,6 @@ class CreditCardStatementModel extends Model {
     required this.statementClosingDate,
     required this.statementDueDate,
     required this.idCreditCard,
-    required this.amountLimit,
     required this.transactions,
     required this.paid,
   });
@@ -33,7 +40,6 @@ class CreditCardStatementModel extends Model {
       statementClosingDate: statementClosingDate,
       statementDueDate: statementDueDate,
       idCreditCard: idCreditCard,
-      amountLimit: amountLimit,
       transactions: transactions.map((transaction) => transaction.clone()).toList(),
       paid: paid,
     );

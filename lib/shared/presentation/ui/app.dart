@@ -88,6 +88,7 @@ class _AppState extends State<App> {
                 appBarTheme: const AppBarTheme(
                   scrolledUnderElevation: 0,
                 ),
+                cardTheme: const CardTheme(elevation: 0),
               ),
               locale: locale,
               localizationsDelegates: AppLocalizations.localizationsDelegates,

@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/account/infra/models/account_simple.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_model.dart';
 
@@ -13,10 +14,11 @@ abstract class CreditCardFactory {
       statementDueDay: entity.statementDueDay,
       brand: entity.brand!,
       idAccount: entity.idAccount!,
+      amountLimitUtilized: entity.amountLimitUtilized,
     );
   }
 
-  static CreditCardEntity toEntity(CreditCardModel model) {
+  static CreditCardEntity toEntity({required CreditCardModel model, required AccountSimpleModel accountModel}) {
     return CreditCardEntity(
       id: model.id,
       createdAt: model.createdAt,
@@ -27,6 +29,9 @@ abstract class CreditCardFactory {
       statementDueDay: model.statementDueDay,
       brand: model.brand,
       idAccount: model.idAccount,
+      descriptionAccount: accountModel.description,
+      financialInstitutionAccount: accountModel.financialInstitution,
+      amountLimitUtilized: model.amountLimitUtilized,
     );
   }
 }

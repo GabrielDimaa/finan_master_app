@@ -1,12 +1,21 @@
+import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/brand_card_enum.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_local_data_source.dart';
+import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_statement_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_model.dart';
+import 'package:finan_master_app/features/credit_card/infra/models/credit_card_statement_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> implements ICreditCardLocalDataSource {
-  CreditCardLocalDataSource({required super.databaseLocal});
+  final ICreditCardStatementLocalDataSource _creditCardStatementLocalDataSource;
+
+  CreditCardLocalDataSource({
+    required super.databaseLocal,
+    required ICreditCardStatementLocalDataSource creditCardStatementLocalDataSource,
+  }) : _creditCardStatementLocalDataSource = creditCardStatementLocalDataSource;
 
   @override
   String get tableName => 'credit_cards';
@@ -43,6 +52,27 @@ class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> impleme
       statementDueDay: map['${prefix}statement_due_day'],
       brand: CardBrandEnum.getByValue(map['${prefix}brand'])!,
       idAccount: map['${prefix}id_account'],
+      //É carregado este valor separadamente
+      amountLimitUtilized: 0,
     );
+  }
+
+  @override
+  Future<List<CreditCardModel>> selectFull({String? id, bool deleted = false, String? where, List? whereArgs, String? orderBy, int? offset, int? limit, ITransactionExecutor? txn}) async {
+    final List<CreditCardModel> creditCards = await super.selectFull(id: id, deleted: deleted, where: where, whereArgs: whereArgs, orderBy: orderBy, offset: offset, limit: limit, txn: txn);
+
+    if (creditCards.isEmpty) return [];
+
+    final List<CreditCardStatementModel> statements = await _creditCardStatementLocalDataSource.findAll(
+      where: 'id_credit_card IN (${creditCards.map((_) => '?').join(', ')}) AND paid = 0',
+      whereArgs: creditCards.map((e) => e.id).toList(),
+      txn: txn,
+    );
+
+    for (final creditCard in creditCards) {
+      creditCard.amountLimitUtilized = statements.where((statement) => statement.idCreditCard == creditCard.id).map((statement) => statement.statementAmount).sum;
+    }
+
+    return creditCards;
   }
 }

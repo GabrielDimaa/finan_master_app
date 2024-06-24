@@ -36,7 +36,7 @@ class CreditCardStatementSave implements ICreditCardStatementSave {
 
   @override
   Future<CreditCardStatementEntity> payStatement({required CreditCardStatementEntity creditCardStatement, required double payValue}) async {
-    if (creditCardStatement.status == StatementStatusEnum.noMovements) throw ValidationException(R.strings.noMovementsToPay);
+    if (creditCardStatement.totalSpent == 0) throw ValidationException(R.strings.noMovementsToPay);
     if (creditCardStatement.status == StatementStatusEnum.paid) throw ValidationException(R.strings.statementAlreadyPaid);
     if (creditCardStatement.statementAmount <= 0) throw ValidationException(R.strings.statementGreaterThanZero);
     if (payValue > creditCardStatement.statementAmount) throw ValidationException(R.strings.paymentExceedStatementAmount);

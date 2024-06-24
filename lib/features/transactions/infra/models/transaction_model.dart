@@ -2,11 +2,11 @@ import 'package:finan_master_app/features/transactions/domain/enums/transaction_
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class TransactionModel extends Model {
-  double amount;
-  TransactionTypeEnum type;
-  DateTime date;
+  final double amount;
+  final TransactionTypeEnum type;
+  final DateTime date;
 
-  String idAccount;
+  final String idAccount;
 
   TransactionModel({
     required super.id,

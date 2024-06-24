@@ -1,6 +1,7 @@
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/account/infra/data_sources/i_account_local_data_source.dart';
 import 'package:finan_master_app/features/account/infra/models/account_model.dart';
+import 'package:finan_master_app/features/account/infra/models/account_simple.dart';
 import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_operation.dart';
@@ -113,4 +114,18 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       throw throwable(e, stackTrace);
     }
   }
+
+  @override
+  Future<List<AccountSimpleModel>> getAllSimplesByIds(List<String> ids) async {
+    try {
+      final List<Map<String, dynamic>> results = await databaseLocal.query(tableName, where: '${Model.idColumnName} IN (${ids.map((e) => '?').join(', ')})', whereArgs: ids);
+
+      return results.map((e) => AccountSimpleModel(id: e['id'], description: e['description'], financialInstitution: FinancialInstitutionEnum.getByValue(e['financial_institution'])!)).toList();
+    } on DatabaseLocalException catch (e, stackTrace) {
+      throw throwable(e, stackTrace);
+    }
+  }
+
+  @override
+  Future<AccountSimpleModel?> getSimpleById(String id) async => (await getAllSimplesByIds([id])).firstOrNull;
 }

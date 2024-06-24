@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/brand_card_enum.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_delete.dart';
@@ -20,8 +21,11 @@ class CreditCardNotifier extends ValueNotifier<CreditCardState> {
 
   void setCreditCard(CreditCardEntity creditCard) => value = value.setCreditCard(creditCard);
 
-  void setAccount(String idAccount) {
-    creditCard.idAccount = idAccount;
+  void setAccount(AccountEntity account) {
+    creditCard.idAccount = account.id;
+    creditCard.descriptionAccount = account.description;
+    creditCard.financialInstitutionAccount = account.financialInstitution;
+
     value = value.changedCreditCard();
   }
 

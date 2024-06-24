@@ -6,7 +6,6 @@ enum StatementStatusEnum {
   overdue,
   closed,
   outstanding,
-  noMovements
 }
 
 extension StatementStatusExtension on StatementStatusEnum {
@@ -15,14 +14,12 @@ extension StatementStatusExtension on StatementStatusEnum {
         StatementStatusEnum.overdue => R.strings.statementOverdue,
         StatementStatusEnum.closed => R.strings.statementClosed,
         StatementStatusEnum.outstanding => R.strings.statementOutstanding,
-        StatementStatusEnum.noMovements => R.strings.statementNoMovements
       };
 
   Color get color => switch (this) {
         StatementStatusEnum.paid => const Color(0xFF3AD377),
         StatementStatusEnum.overdue => const Color(0xFFEF575B),
-        StatementStatusEnum.closed => const Color(0xFFB7A567),
-        StatementStatusEnum.outstanding => const Color(0xFF8388FF),
-        StatementStatusEnum.noMovements => const Color(0xFF727272)
+        StatementStatusEnum.closed => const Color(0xFFDCC830),
+        StatementStatusEnum.outstanding => const Color(0xFF3C65F6),
       };
 }

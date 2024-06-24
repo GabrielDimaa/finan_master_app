@@ -10,8 +10,6 @@ class CreditCardStatementEntity extends Entity {
 
   final String idCreditCard;
 
-  final double amountLimit;
-
   List<CreditCardTransactionEntity> transactions = [];
 
   bool paid;
@@ -23,14 +21,19 @@ class CreditCardStatementEntity extends Entity {
   //totalPaid terá valor negativo, portanto, 1000 + (-100).
   double get statementAmount => (totalSpent + totalPaid).truncateFractionalDigits(2);
 
-  double get amountAvailable => (amountLimit - statementAmount).truncateFractionalDigits(2);
-
   StatementStatusEnum get status {
     final dateTimeNow = DateTime.now();
-    if (totalPaid == 0 && totalSpent == 0) return StatementStatusEnum.noMovements;
+
     if (paid) return StatementStatusEnum.paid;
-    if ((dateTimeNow == statementClosingDate || dateTimeNow.isAfter(statementClosingDate)) && (dateTimeNow == statementDueDate || dateTimeNow.isBefore(statementDueDate))) return StatementStatusEnum.closed;
+
+    if (dateTimeNow == statementClosingDate || dateTimeNow.isAfter(statementClosingDate)) {
+      if (totalSpent == 0) return StatementStatusEnum.paid;
+
+      if (dateTimeNow == statementDueDate || dateTimeNow.isBefore(statementDueDate)) return StatementStatusEnum.closed;
+    }
+
     if (dateTimeNow.isAfter(statementDueDate)) return StatementStatusEnum.overdue;
+
     return StatementStatusEnum.outstanding;
   }
 
@@ -41,7 +44,6 @@ class CreditCardStatementEntity extends Entity {
     required this.statementClosingDate,
     required this.statementDueDate,
     required this.idCreditCard,
-    required this.amountLimit,
     required this.transactions,
     required this.paid,
   });
@@ -54,7 +56,6 @@ class CreditCardStatementEntity extends Entity {
       statementClosingDate: statementClosingDate,
       statementDueDate: statementDueDate,
       idCreditCard: idCreditCard,
-      amountLimit: amountLimit,
       transactions: transactions.map((transaction) => transaction.clone()).toList(),
       paid: paid,
     );

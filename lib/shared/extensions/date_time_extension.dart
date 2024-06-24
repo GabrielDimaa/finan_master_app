@@ -51,5 +51,7 @@ extension DateTimeExtension on DateTime {
     return DateFormat('d MMM', AppLocale().locale.languageCode).format(this).replaceAll(".", "").toUpperCase();
   }
 
+  String formatMMMM() => DateFormat.MMMM(AppLocale().locale.languageCode).format(this);
+
   bool isSameDay(DateTime date1, DateTime date2) => date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
 }

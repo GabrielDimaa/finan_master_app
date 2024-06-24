@@ -2,4 +2,6 @@ import 'package:finan_master_app/features/credit_card/domain/entities/credit_car
 
 abstract interface class ICreditCardStatementFind {
   Future<CreditCardStatementEntity?> findFirstInPeriod({required DateTime startDate, required DateTime endDate, required String idCreditCard});
+
+  Future<List<CreditCardStatementEntity>> findAllAfterDate({required DateTime date, required String idCreditCard});
 }

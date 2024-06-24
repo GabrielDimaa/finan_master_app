@@ -47,7 +47,6 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
       statementClosingDate: DateTime.tryParse(map['${prefix}statement_closing_date'].toString())!.toLocal(),
       statementDueDate: DateTime.tryParse(map['${prefix}statement_due_date'].toString())!.toLocal(),
       idCreditCard: map['${prefix}id_credit_card'],
-      amountLimit: map['${prefix}amount_limit'],
       transactions: [],
       paid: map['${prefix}paid'] == 1,
     );
@@ -82,9 +81,6 @@ class CreditCardStatementLocalDataSource extends LocalDataSource<CreditCardState
           $tableName.statement_due_date AS ${tableName}_statement_due_date,
           $tableName.id_credit_card AS ${tableName}_id_credit_card,
           $tableName.paid AS ${tableName}_paid,
-          
-          -- Credit Card
-          credit_cards.amount_limit AS ${tableName}_amount_limit,
           
           -- Transactions
           ${creditCardTransactionLocalDataSource.tableName}.${Model.idColumnName} AS ${creditCardTransactionLocalDataSource.tableName}_${Model.idColumnName},

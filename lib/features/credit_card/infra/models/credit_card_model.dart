@@ -2,12 +2,14 @@ import 'package:finan_master_app/features/credit_card/domain/enums/brand_card_en
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class CreditCardModel extends Model {
-  String description;
-  double amountLimit;
-  int statementClosingDay;
-  int statementDueDay;
-  CardBrandEnum brand;
-  String idAccount;
+  final String description;
+  final double amountLimit;
+  final int statementClosingDay;
+  final int statementDueDay;
+  final CardBrandEnum brand;
+  final String idAccount;
+
+  double amountLimitUtilized;
 
   CreditCardModel({
     required super.id,
@@ -19,6 +21,7 @@ class CreditCardModel extends Model {
     required this.statementDueDay,
     required this.brand,
     required this.idAccount,
+    required this.amountLimitUtilized,
   });
 
   @override
@@ -33,6 +36,7 @@ class CreditCardModel extends Model {
       statementDueDay: statementDueDay,
       brand: brand,
       idAccount: idAccount,
+      amountLimitUtilized: amountLimitUtilized,
     );
   }
 

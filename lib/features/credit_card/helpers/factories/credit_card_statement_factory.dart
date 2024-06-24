@@ -11,7 +11,6 @@ abstract class CreditCardStatementFactory {
       statementClosingDate: entity.statementClosingDate,
       statementDueDate: entity.statementDueDate,
       idCreditCard: entity.idCreditCard,
-      amountLimit: entity.amountLimit,
       transactions: entity.transactions.map((transaction) => CreditCardTransactionFactory.fromEntity(transaction)).toList(),
       paid: entity.paid,
     );
@@ -25,7 +24,6 @@ abstract class CreditCardStatementFactory {
       statementClosingDate: model.statementClosingDate,
       statementDueDate: model.statementDueDate,
       idCreditCard: model.idCreditCard,
-      amountLimit: model.amountLimit,
       transactions: model.transactions.map((transaction) => CreditCardTransactionFactory.toEntity(transaction)).toList(),
       paid: model.paid,
     );

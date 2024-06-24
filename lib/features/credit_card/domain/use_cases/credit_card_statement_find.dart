@@ -9,4 +9,7 @@ class CreditCardStatementFind implements ICreditCardStatementFind {
 
   @override
   Future<CreditCardStatementEntity?> findFirstInPeriod({required DateTime startDate, required DateTime endDate, required String idCreditCard}) => _repository.findFirstInPeriod(startDate: startDate, endDate: endDate, idCreditCard: idCreditCard);
+
+  @override
+  Future<List<CreditCardStatementEntity>> findAllAfterDate({required DateTime date, required String idCreditCard}) => _repository.findAllAfterDate(date: date, idCreditCard: idCreditCard);
 }

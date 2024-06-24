@@ -109,6 +109,7 @@ class _CreditCardFormPageState extends State<CreditCardFormPage> with ThemeConte
                                 decoration: InputDecoration(label: Text(strings.description)),
                                 validator: InputRequiredValidator().validate,
                                 textInputAction: TextInputAction.next,
+                                textCapitalization: TextCapitalization.sentences,
                                 enabled: !notifier.isLoading,
                                 onSaved: (String? value) => state.creditCard.description = value ?? '',
                               ),
@@ -255,6 +256,6 @@ class _CreditCardFormPageState extends State<CreditCardFormPage> with ThemeConte
 
     if (result == null) return;
 
-    notifier.setAccount(result.id);
+    notifier.setAccount(result);
   }
 }

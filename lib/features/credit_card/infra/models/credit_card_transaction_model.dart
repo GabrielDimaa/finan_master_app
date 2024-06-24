@@ -1,15 +1,15 @@
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class CreditCardTransactionModel extends Model {
-  String description;
-  double amount;
-  DateTime date;
-  String idCategory;
+  final String description;
+  final double amount;
+  final DateTime date;
+  final String idCategory;
 
-  String idCreditCard;
-  String idCreditCardStatement;
+  final String idCreditCard;
+  final String idCreditCardStatement;
 
-  String? observation;
+  final String? observation;
 
   CreditCardTransactionModel({
     required super.id,

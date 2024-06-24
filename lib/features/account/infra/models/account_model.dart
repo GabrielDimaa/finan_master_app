@@ -2,10 +2,10 @@ import 'package:finan_master_app/features/account/domain/enums/financial_institu
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class AccountModel extends Model {
-  String description;
-  double initialAmount;
-  FinancialInstitutionEnum financialInstitution;
-  bool includeTotalBalance;
+  final String description;
+  final double initialAmount;
+  final FinancialInstitutionEnum financialInstitution;
+  final bool includeTotalBalance;
 
   final double transactionsAmount;
 

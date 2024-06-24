@@ -2,10 +2,10 @@ import 'package:finan_master_app/features/category/domain/enums/category_type_en
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class CategoryModel extends Model {
-  String description;
-  CategoryTypeEnum type;
-  String color;
-  int icon;
+  final String description;
+  final CategoryTypeEnum type;
+  final String color;
+  final int icon;
 
   CategoryModel({
     required super.id,

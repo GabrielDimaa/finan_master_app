@@ -2,8 +2,6 @@ import 'dart:math';
 
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
-import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
-import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
@@ -52,7 +50,6 @@ class CreditCardDetailsPage extends StatefulWidget {
 
 class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with ThemeContext {
   final CreditCardNotifier creditCardNotifier = DI.get<CreditCardNotifier>();
-  final AccountNotifier accountNotifier = DI.get<AccountNotifier>();
   final CategoriesNotifier categoriesNotifier = DI.get<CategoriesNotifier>();
   final CreditCardStatementNotifier creditCardStatementNotifier = DI.get<CreditCardStatementNotifier>();
   final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(true);
@@ -70,12 +67,9 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
     Future(() async {
       try {
         await Future.wait([
-          accountNotifier.findById(widget.creditCard.idAccount!),
           categoriesNotifier.findAll(deleted: true),
           findStatementInitial(),
         ]);
-
-        if (accountNotifier.value is ErrorAccountsState) throw Exception((accountNotifier.value as ErrorAccountsState).message);
 
         if (categoriesNotifier.value is ErrorCategoriesState) throw Exception((categoriesNotifier.value as ErrorCategoriesState).message);
 
@@ -161,9 +155,9 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    accountNotifier.value.account.financialInstitution!.icon(24),
+                                    creditCardNotifier.value.creditCard.financialInstitutionAccount!.icon(24),
                                     const Spacing.x(),
-                                    Text(accountNotifier.value.account.description),
+                                    Text(creditCardNotifier.value.creditCard.descriptionAccount),
                                   ],
                                 ),
                                 Row(
@@ -203,52 +197,52 @@ class _CreditCardDetailsPageState extends State<CreditCardDetailsPage> with Them
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.center,
                                                   children: [
-                                                    StatementStatusWidget(status: state.creditCardStatement?.status ?? StatementStatusEnum.noMovements),
+                                                    StatementStatusWidget(status: state.creditCardStatement?.status ?? StatementStatusEnum.outstanding),
                                                     const Spacing.y(),
                                                     Text(strings.totalSpent, style: textTheme.labelLarge),
                                                     Text((state.creditCardStatement?.totalSpent ?? 0).money, style: textTheme.headlineLarge),
                                                     const Spacing.y(),
                                                     Text('${strings.totalPaid}: ${(state.creditCardStatement?.totalPaid ?? 0).abs().money}', style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurfaceVariant)),
                                                     Text('${strings.amountOutstanding}: ${(state.creditCardStatement?.statementAmount ?? 0).money}', style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(0.0.moneyWithoutSymbol),
-                                                        const Spacing.x(),
-                                                        Flexible(
-                                                          child: ClipRRect(
-                                                            borderRadius: BorderRadius.circular(4),
-                                                            child: ConstrainedBox(
-                                                              constraints: const BoxConstraints(maxWidth: 300),
-                                                              child: Stack(
-                                                                children: [
-                                                                  Container(
-                                                                    decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.inversePrimary : colorScheme.onSurface),
-                                                                    height: 4,
-                                                                  ),
-                                                                  Builder(builder: (_) {
-                                                                    final value = (state.creditCardStatement?.statementAmount ?? 0) / (state.creditCardStatement?.amountLimit ?? 1);
-                                                                    return FractionallySizedBox(
-                                                                      widthFactor: min(max(value, 0.0), 1.0),
-                                                                      child: Container(
-                                                                        decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.primary : colorScheme.inversePrimary),
-                                                                        height: 4,
-                                                                      ),
-                                                                    );
-                                                                  }),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const Spacing.x(),
-                                                        Text((state.creditCardStatement?.amountLimit ?? creditCardNotifier.creditCard.amountLimit).moneyWithoutSymbol),
-                                                      ],
-                                                    ),
-                                                    Text(
-                                                      '${strings.availableLimit}: ${(state.creditCardStatement?.amountAvailable ?? creditCardNotifier.creditCard.amountLimit).money}',
-                                                      style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurfaceVariant),
-                                                    ),
+                                                    // Row(
+                                                    //   mainAxisAlignment: MainAxisAlignment.center,
+                                                    //   children: [
+                                                    //     Text(0.0.moneyWithoutSymbol),
+                                                    //     const Spacing.x(),
+                                                    //     Flexible(
+                                                    //       child: ClipRRect(
+                                                    //         borderRadius: BorderRadius.circular(4),
+                                                    //         child: ConstrainedBox(
+                                                    //           constraints: const BoxConstraints(maxWidth: 300),
+                                                    //           child: Stack(
+                                                    //             children: [
+                                                    //               Container(
+                                                    //                 decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.inversePrimary : colorScheme.onSurface),
+                                                    //                 height: 4,
+                                                    //               ),
+                                                    //               Builder(builder: (_) {
+                                                    //                 final value = (state.creditCardStatement?.statementAmount ?? 0) / (state.creditCardStatement?.amountLimit ?? 1);
+                                                    //                 return FractionallySizedBox(
+                                                    //                   widthFactor: min(max(value, 0.0), 1.0),
+                                                    //                   child: Container(
+                                                    //                     decoration: BoxDecoration(color: colorScheme.brightness == Brightness.light ? colorScheme.primary : colorScheme.inversePrimary),
+                                                    //                     height: 4,
+                                                    //                   ),
+                                                    //                 );
+                                                    //               }),
+                                                    //             ],
+                                                    //           ),
+                                                    //         ),
+                                                    //       ),
+                                                    //     ),
+                                                    //     const Spacing.x(),
+                                                    //     Text((state.creditCardStatement?.amountLimit ?? creditCardNotifier.creditCard.amountLimit).moneyWithoutSymbol),
+                                                    //   ],
+                                                    // ),
+                                                    // Text(
+                                                    //   '${strings.availableLimit}: ${(state.creditCardStatement?.amountAvailable ?? creditCardNotifier.creditCard.amountLimit).money}',
+                                                    //   style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurfaceVariant),
+                                                    // ),
                                                     const Spacing.y(),
                                                     Builder(
                                                       builder: (_) {
