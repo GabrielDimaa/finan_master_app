@@ -26,8 +26,8 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
         description TEXT NOT NULL,
-        id_category TEXT NOT NULL REFERENCES categories(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
-        id_credit_card_transaction TEXT REFERENCES credit_card_transactions(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
+        id_category TEXT NOT NULL REFERENCES $categoriesTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
+        id_credit_card_transaction TEXT REFERENCES $creditCardTransactionsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         id_transaction TEXT NOT NULL REFERENCES ${_transactionDataSource.tableName}(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE CASCADE,
         observation TEXT
       );

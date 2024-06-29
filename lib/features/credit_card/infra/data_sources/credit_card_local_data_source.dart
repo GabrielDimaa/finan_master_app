@@ -34,7 +34,7 @@ class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> impleme
         bill_closing_day INTEGER NOT NULL,
         bill_due_day INTEGER NOT NULL,
         brand INTEGER NOT NULL,
-        id_account TEXT NOT NULL REFERENCES accounts(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT
+        id_account TEXT NOT NULL REFERENCES $accountsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT
       );
     ''');
   }

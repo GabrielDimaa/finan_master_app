@@ -31,7 +31,7 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
         ${baseColumnsSql()},
         bill_closing_date TEXT NOT NULL,
         bill_due_date TEXT NOT NULL,
-        id_credit_card TEXT NOT NULL REFERENCES credit_cards(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
+        id_credit_card TEXT NOT NULL REFERENCES $creditCardsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         paid INTEGER NOT NULL DEFAULT 0
       );
     ''');

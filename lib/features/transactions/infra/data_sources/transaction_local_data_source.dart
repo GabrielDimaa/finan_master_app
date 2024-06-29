@@ -44,7 +44,7 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
         amount REAL NOT NULL,
         type INTEGER NOT NULL,
         date TEXT NOT NULL,
-        id_account TEXT NOT NULL REFERENCES accounts(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT
+        id_account TEXT NOT NULL REFERENCES $accountsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT
       );
     ''');
   }
