@@ -57,7 +57,7 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
         if (creditCardSelectedNotifier.value.creditCard.isNew) {
           billsNotifier.setStatements([]);
         } else {
-          billsNotifier.findAllAfterDate(date: DateTime.now().getInitialMonth(), idCreditCard: creditCardSelectedNotifier.value.creditCard.id);
+          billsNotifier.findAllAfterDate(date: DateTime.now().getInitialMonth().subtractMonths(1), idCreditCard: creditCardSelectedNotifier.value.creditCard.id);
         }
       });
 
@@ -317,6 +317,8 @@ class _BillState extends State<_Bill> with ThemeContext {
   void initState() {
     super.initState();
 
+    widget.billNotifier.value.statements.removeWhere((e) => e.paid && e.statementClosingDate.isBefore(DateTime(DateTime.now().year, DateTime.now().month)));
+
     final DateTime billFirst = widget.billNotifier.value.statements.firstOrNull?.statementClosingDate ?? DateTime(DateTime.now().year, DateTime.now().month, widget.creditCard.statementClosingDay);
     final DateTime billLast = widget.billNotifier.value.statements.lastOrNull?.statementClosingDate ?? billFirst;
 
@@ -392,7 +394,7 @@ class _BillState extends State<_Bill> with ThemeContext {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(bill.statementClosingDate.formatMMMM().capitalizeFirstLetter()),
-                          Text(bill.statementAmount.money, style: textTheme.titleMedium),
+                          Text(bill.totalSpent.money, style: textTheme.titleMedium),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
