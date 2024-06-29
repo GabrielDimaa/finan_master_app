@@ -204,6 +204,8 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
 
       await notifier.delete();
 
+      if (notifier.value is ErrorAccountState) throw Exception((notifier.value as ErrorAccountState).message);
+
       if (!mounted) return;
       context.pop(FormResultNavigation<AccountEntity>.delete());
     } catch (e) {
