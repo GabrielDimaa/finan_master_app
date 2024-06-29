@@ -15,7 +15,7 @@ import 'package:finan_master_app/features/category/presentation/ui/category_form
 import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
-import 'package:finan_master_app/features/credit_card/presentation/ui/old_credit_card_details_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_bill_details_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_cards_details_page.dart';
@@ -141,9 +141,9 @@ sealed class AppRouter {
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,
-          name: CreditCardDetailsPage.route,
-          path: '/${CreditCardDetailsPage.route}',
-          builder: (_, GoRouterState state) => CreditCardDetailsPage(creditCard: state.extra as CreditCardEntity),
+          name: CreditCardBillDetailsPage.route,
+          path: '/${CreditCardBillDetailsPage.route}',
+          builder: (_, GoRouterState state) => CreditCardBillDetailsPage(args: state.extra as CreditCardBillDetailsArgsPage),
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,

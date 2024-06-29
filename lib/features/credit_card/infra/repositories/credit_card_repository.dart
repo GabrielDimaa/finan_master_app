@@ -51,7 +51,7 @@ class CreditCardRepository implements ICreditCardRepository {
 
     return model != null ? CreditCardFactory.toEntity(
       model: model,
-      accountModel: await _accountDataSource.getSimpleById(model.idAccount) ?? (throw Exception(R.strings.accountNotFound)),
+      accountModel: await _accountDataSource.getSimpleById(model.idAccount, txn: txn) ?? (throw Exception(R.strings.accountNotFound)),
     ) : null;
   }
 }

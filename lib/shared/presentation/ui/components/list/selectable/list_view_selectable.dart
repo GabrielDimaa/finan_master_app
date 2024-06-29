@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 class ListViewSelectable<T> extends StatefulWidget {
   final List<T> list;
   final Widget Function(ItemSelectable<T>) itemBuilder;
-
   final ScrollPhysics? physics;
   final bool shrinkWrap;
+  final EdgeInsets? padding;
 
   final bool separated;
 
-  const ListViewSelectable.builder({super.key, required this.list, required this.itemBuilder, this.physics, this.shrinkWrap = false}) : separated = false;
+  const ListViewSelectable.builder({super.key, required this.list, required this.itemBuilder, this.physics, this.shrinkWrap = false, this.padding}) : separated = false;
 
-  const ListViewSelectable.separated({super.key, required this.list, required this.itemBuilder, this.physics, this.shrinkWrap = false}) : separated = true;
+  const ListViewSelectable.separated({super.key, required this.list, required this.itemBuilder, this.physics, this.shrinkWrap = false, this.padding}) : separated = true;
 
   @override
   State<ListViewSelectable<T>> createState() => _ListViewSelectableState<T>();
@@ -44,31 +44,19 @@ class _ListViewSelectableState<T> extends State<ListViewSelectable<T>> {
             return ListView.separated(
               physics: widget.physics,
               shrinkWrap: widget.shrinkWrap,
+              padding: widget.padding,
               itemCount: listSelectable.length,
               separatorBuilder: (_, __) => const Divider(),
-              itemBuilder: (_, index) {
-                return Column(
-                  children: [
-                    widget.itemBuilder(listSelectable[index]),
-                    if (index == listSelectable.length - 1) const SizedBox(height: 50),
-                  ],
-                );
-              },
+              itemBuilder: (_, index) => widget.itemBuilder(listSelectable[index]),
             );
           }
 
           return ListView.builder(
             physics: widget.physics,
             shrinkWrap: widget.shrinkWrap,
+            padding: widget.padding,
             itemCount: listSelectable.length,
-            itemBuilder: (_, index) {
-              return Column(
-                children: [
-                  widget.itemBuilder(listSelectable[index]),
-                  if (index == listSelectable.length - 1) const SizedBox(height: 50),
-                ],
-              );
-            },
+            itemBuilder: (_, index) => widget.itemBuilder(listSelectable[index]),
           );
         },
       ),

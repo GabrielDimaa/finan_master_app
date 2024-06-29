@@ -9,4 +9,7 @@ class CreditCardFind implements ICreditCardFind {
 
   @override
   Future<List<CreditCardEntity>> findAll() => _repository.findAll();
+
+  @override
+  Future<CreditCardEntity?> findById(String id) => _repository.findById(id);
 }

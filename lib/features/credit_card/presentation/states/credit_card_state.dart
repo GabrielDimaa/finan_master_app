@@ -11,6 +11,8 @@ sealed class CreditCardState {
 
   CreditCardState changedCreditCard() => ChangedCreditCardState(creditCard: creditCard);
 
+  CreditCardState setRefreshing() => RefreshingCreditCardState(creditCard: creditCard);
+
   CreditCardState setSaving() => SavingCreditCardState(creditCard: creditCard);
 
   CreditCardState setDeleting() => DeletingCreditCardState(creditCard: creditCard);
@@ -40,6 +42,10 @@ class StartCreditCardState extends CreditCardState {
 
 class ChangedCreditCardState extends CreditCardState {
   const ChangedCreditCardState({required super.creditCard});
+}
+
+class RefreshingCreditCardState extends CreditCardState {
+  const RefreshingCreditCardState({required super.creditCard});
 }
 
 class SavingCreditCardState extends CreditCardState {

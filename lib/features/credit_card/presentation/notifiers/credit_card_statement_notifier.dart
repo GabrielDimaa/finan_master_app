@@ -20,14 +20,16 @@ class CreditCardStatementNotifier extends ValueNotifier<CreditCardStatementState
         _creditCardTransactionDelete = creditCardTransactionDelete,
         super(CreditCardStatementState.start());
 
+  bool get isLoading => value is SavingCreditCardStatementState;
+
   CreditCardStatementEntity? get creditCardStatement => value.creditCardStatement;
 
   void setStatement(CreditCardStatementEntity? statement) => value = value.setStatement(statement);
 
-  Future<void> findByPeriod({required DateTime startDate, required DateTime endDate, required String idCreditCard}) async {
+  Future<void> findById(String id) async {
     try {
-      value = value.setFiltering();
-      final CreditCardStatementEntity? statement = await _creditCardStatementFind.findFirstInPeriod(startDate: startDate, endDate: endDate, idCreditCard: idCreditCard);
+      value = value.setLoading();
+      final CreditCardStatementEntity? statement = await _creditCardStatementFind.findById(id);
       value = value.setStatement(statement);
     } catch (e) {
       value = value.setError(e.toString());

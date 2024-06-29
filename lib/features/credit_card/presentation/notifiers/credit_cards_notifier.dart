@@ -10,12 +10,14 @@ class CreditCardsNotifier extends ValueNotifier<CreditCardsState> {
       : _creditCardFind = creditCardFind,
         super(CreditCardsState.start());
 
+  void setCreditCards(List<CreditCardEntity> creditCards) => value = value.setCreditCards(creditCards);
+
   Future<void> findAll({bool deleted = false}) async {
     try {
       value = value.setLoading();
 
       final List<CreditCardEntity> creditCards = await _creditCardFind.findAll();
-      value = value.setCreditCards(creditCards);
+      setCreditCards(creditCards);
     } catch (e) {
       value = value.setError(e.toString());
     }

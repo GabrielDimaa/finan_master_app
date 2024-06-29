@@ -12,4 +12,7 @@ class CreditCardStatementFind implements ICreditCardStatementFind {
 
   @override
   Future<List<CreditCardStatementEntity>> findAllAfterDate({required DateTime date, required String idCreditCard}) => _repository.findAllAfterDate(date: date, idCreditCard: idCreditCard);
+
+  @override
+  Future<CreditCardStatementEntity?> findById(String id) => _repository.findById(id);
 }

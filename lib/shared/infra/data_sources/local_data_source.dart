@@ -28,28 +28,24 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
 
   @override
   Future<T> upsert(T model, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      return await databaseLocal.transactionInstance().openTransaction((newTransaction) => upsert(model, txn: newTransaction));
+    }
+
     try {
       final T modelClone = model.clone() as T;
 
-      fun(ITransactionExecutor transaction) async {
-        if (!await exists(where: '${Model.idColumnName} = ?', whereArgs: [modelClone.id], txn: transaction)) {
-          modelClone.createdAt ??= DateTime.now();
-          await transaction.insert(tableName, modelClone.toMap());
-        } else {
-          await transaction.update(tableName, modelClone.toMap(), where: '${Model.idColumnName} = ?', whereArgs: [modelClone.id]);
-        }
-
-        for (final repository in childrenRepositories) {
-          for (final childModel in repository.childrenModels(modelClone)) {
-            await repository.upsert(childModel, txn: transaction);
-          }
-        }
+      if (!await exists(where: '${Model.idColumnName} = ?', whereArgs: [modelClone.id], txn: txn)) {
+        modelClone.createdAt ??= DateTime.now();
+        await txn.insert(tableName, modelClone.toMap());
+      } else {
+        await txn.update(tableName, modelClone.toMap(), where: '${Model.idColumnName} = ?', whereArgs: [modelClone.id]);
       }
 
-      if (txn == null) {
-        await databaseLocal.transactionInstance().openTransaction((newTransaction) => fun(newTransaction));
-      } else {
-        await fun(txn);
+      for (final repository in childrenRepositories) {
+        for (final childModel in repository.childrenModels(modelClone)) {
+          await repository.upsert(childModel, txn: txn);
+        }
       }
 
       return modelClone;
@@ -78,26 +74,22 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
 
   @override
   Future<void> delete(T model, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      return await databaseLocal.transactionInstance().openTransaction((newTransaction) => delete(model, txn: newTransaction));
+    }
+
     try {
       final T modelClone = model.clone() as T;
 
-      fun(ITransactionExecutor transaction) async {
-        modelClone.createdAt ??= DateTime.now();
-        modelClone.deletedAt ??= DateTime.now();
+      modelClone.createdAt ??= DateTime.now();
+      modelClone.deletedAt ??= DateTime.now();
 
-        await transaction.update(tableName, modelClone.toMap(), where: '${Model.idColumnName} = ?', whereArgs: [modelClone.id]);
+      await txn.update(tableName, modelClone.toMap(), where: '${Model.idColumnName} = ?', whereArgs: [modelClone.id]);
 
-        for (final repository in childrenRepositories) {
-          for (final childModel in repository.childrenModels(modelClone)) {
-            await repository.delete(childModel, txn: transaction);
-          }
+      for (final repository in childrenRepositories) {
+        for (final childModel in repository.childrenModels(modelClone)) {
+          await repository.delete(childModel, txn: txn);
         }
-      }
-
-      if (txn == null) {
-        await databaseLocal.transactionInstance().openTransaction((newTransaction) => fun(newTransaction));
-      } else {
-        await fun(txn);
       }
     } on DatabaseLocalException catch (e, stackTrace) {
       throw throwable(e, stackTrace);

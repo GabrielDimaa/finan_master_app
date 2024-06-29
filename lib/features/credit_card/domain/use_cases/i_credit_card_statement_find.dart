@@ -4,4 +4,6 @@ abstract interface class ICreditCardStatementFind {
   Future<CreditCardStatementEntity?> findFirstInPeriod({required DateTime startDate, required DateTime endDate, required String idCreditCard});
 
   Future<List<CreditCardStatementEntity>> findAllAfterDate({required DateTime date, required String idCreditCard});
+
+  Future<CreditCardStatementEntity?> findById(String id);
 }

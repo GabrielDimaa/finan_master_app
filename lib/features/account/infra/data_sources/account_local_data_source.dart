@@ -116,9 +116,9 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
   }
 
   @override
-  Future<List<AccountSimpleModel>> getAllSimplesByIds(List<String> ids) async {
+  Future<List<AccountSimpleModel>> getAllSimplesByIds(List<String> ids, {ITransactionExecutor? txn}) async {
     try {
-      final List<Map<String, dynamic>> results = await databaseLocal.query(tableName, where: '${Model.idColumnName} IN (${ids.map((e) => '?').join(', ')})', whereArgs: ids);
+      final List<Map<String, dynamic>> results = await (txn ?? databaseLocal).query(tableName, where: '${Model.idColumnName} IN (${ids.map((e) => '?').join(', ')})', whereArgs: ids);
 
       return results.map((e) => AccountSimpleModel(id: e['id'], description: e['description'], financialInstitution: FinancialInstitutionEnum.getByValue(e['financial_institution'])!)).toList();
     } on DatabaseLocalException catch (e, stackTrace) {
@@ -127,5 +127,5 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
   }
 
   @override
-  Future<AccountSimpleModel?> getSimpleById(String id) async => (await getAllSimplesByIds([id])).firstOrNull;
+  Future<AccountSimpleModel?> getSimpleById(String id, {ITransactionExecutor? txn}) async => (await getAllSimplesByIds([id], txn: txn)).firstOrNull;
 }

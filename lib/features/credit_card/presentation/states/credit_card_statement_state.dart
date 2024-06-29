@@ -11,7 +11,7 @@ sealed class CreditCardStatementState {
 
   CreditCardStatementState changedStatement() => ChangedCreditCardStatementState(creditCardStatement: creditCardStatement);
 
-  CreditCardStatementState setFiltering() => const FilteringCreditCardStatementState();
+  CreditCardStatementState setLoading() => const LoadingCreditCardStatementState();
 
   CreditCardStatementState setSaving() => SavingCreditCardStatementState(creditCardStatement: creditCardStatement);
 
@@ -26,8 +26,8 @@ class ChangedCreditCardStatementState extends CreditCardStatementState {
   const ChangedCreditCardStatementState({required super.creditCardStatement});
 }
 
-class FilteringCreditCardStatementState extends CreditCardStatementState {
-  const FilteringCreditCardStatementState() : super(creditCardStatement: null);
+class LoadingCreditCardStatementState extends CreditCardStatementState {
+  const LoadingCreditCardStatementState() : super(creditCardStatement: null);
 }
 
 class SavingCreditCardStatementState extends CreditCardStatementState {

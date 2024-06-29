@@ -48,6 +48,7 @@ class _ListTransactionsState extends State<ListTransactions> {
       key: ObjectKey(widget.state),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
+      padding: const EdgeInsets.only(bottom: 50),
       list: widget.state.transactions,
       itemBuilder: (ItemSelectable<ITransactionEntity> item) {
         if (item.value is ExpenseEntity) {

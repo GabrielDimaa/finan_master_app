@@ -6,11 +6,14 @@ import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_statement_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/statement_status_enum.dart';
+import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_statements_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_cards_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_statements_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_cards_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_card_widget.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_bill_details_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
@@ -35,28 +38,30 @@ class CreditCardsPage extends StatefulWidget {
 }
 
 class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
-  final CreditCardsNotifier creditCardsNotifier = DI.get<CreditCardsNotifier>();
-  final CreditCardStatementsNotifier statementsNotifier = DI.get<CreditCardStatementsNotifier>();
-  final ValueNotifier<CreditCardEntity?> creditCardSelected = ValueNotifier<CreditCardEntity?>(null);
+  final CreditCardsNotifier creditCardsListNotifier = DI.get<CreditCardsNotifier>();
+  final CreditCardStatementsNotifier billsNotifier = DI.get<CreditCardStatementsNotifier>();
+  final CreditCardNotifier creditCardSelectedNotifier = DI.get<CreditCardNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final CarouselController carouselController = CarouselController();
 
   @override
   void initState() {
     super.initState();
 
     Future(() async {
-      await creditCardsNotifier.findAll();
+      await creditCardsListNotifier.findAll();
 
-      creditCardSelected.addListener(() {
-        if (creditCardSelected.value == null) {
-          statementsNotifier.setStatements([]);
+      creditCardSelectedNotifier.addListener(() {
+        if (creditCardSelectedNotifier.value.creditCard.isNew) {
+          billsNotifier.setStatements([]);
         } else {
-          statementsNotifier.findAllAfterDate(date: DateTime.now().getInitialMonth(), idCreditCard: creditCardSelected.value!.id);
+          billsNotifier.findAllAfterDate(date: DateTime.now().getInitialMonth(), idCreditCard: creditCardSelectedNotifier.value.creditCard.id);
         }
       });
 
-      creditCardSelected.value = creditCardsNotifier.value.creditCards.firstOrNull;
+      if (creditCardsListNotifier.value.creditCards.isNotEmpty) creditCardSelectedNotifier.value = creditCardSelectedNotifier.value.setCreditCard(creditCardsListNotifier.value.creditCards.first);
     });
   }
 
@@ -72,6 +77,24 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
         ),
         title: Text(strings.creditCards),
         centerTitle: true,
+        actions: [
+          PopupMenuButton(
+            tooltip: strings.moreOptions,
+            icon: const Icon(Icons.more_vert_outlined),
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem(
+                onTap: () => goCreditCardExpenseForm(context: context),
+                child: Row(
+                  children: [
+                    const Icon(Icons.credit_card_outlined, size: 20),
+                    const Spacing.x(),
+                    Text(strings.cardExpense),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       drawer: const NavDrawer(selectedIndex: CreditCardsPage.indexDrawer),
       floatingActionButton: FloatingActionButton(
@@ -81,19 +104,20 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
       ),
       body: SafeArea(
         child: ValueListenableBuilder(
-          valueListenable: creditCardsNotifier,
+          valueListenable: creditCardsListNotifier,
           builder: (_, CreditCardsState state, __) {
             return switch (state) {
+              StartCreditCardsState _ => const SizedBox.shrink(),
               LoadingCreditCardsState _ => const Center(child: CircularProgressIndicator()),
               ErrorCreditCardsState _ => MessageErrorWidget(state.message),
               EmptyCreditCardsState _ => NoContentWidget(child: Text(strings.noCreditCardRegistered)),
-              StartCreditCardsState _ => const SizedBox.shrink(),
               ListCreditCardsState state => SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Spacing.y(),
                       CarouselSlider(
+                        carouselController: carouselController,
                         items: List.generate(
                           state.creditCards.length,
                           (index) => Padding(
@@ -109,22 +133,34 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
                           viewportFraction: 0.85,
                           aspectRatio: 2.4,
                           enableInfiniteScroll: false,
-                          onPageChanged: (index, _) => setState(() => creditCardSelected.value = creditCardsNotifier.value.creditCards[index]),
+                          onPageChanged: (index, _) => creditCardSelectedNotifier.setCreditCard(creditCardsListNotifier.value.creditCards[index]),
                         ),
                       ),
                       const Spacing.y(4),
-                      _Limit(amountLimit: creditCardSelected.value?.amountLimit ?? 0, amountLimitUtilized: creditCardSelected.value?.amountLimitUtilized ?? 0),
+                      ValueListenableBuilder(
+                        valueListenable: creditCardSelectedNotifier,
+                        builder: (_, __, ___) {
+                          return _Limit(
+                            amountLimit: creditCardSelectedNotifier.value.creditCard.amountLimit,
+                            amountLimitUtilized: creditCardSelectedNotifier.value.creditCard.amountLimitUtilized,
+                          );
+                        },
+                      ),
                       const Spacing.y(2),
                       ValueListenableBuilder(
-                        valueListenable: statementsNotifier,
+                        valueListenable: billsNotifier,
                         builder: (_, state, __) {
                           return AnimatedSwitcher(
                             duration: const Duration(milliseconds: 500),
                             child: switch (state) {
-                              StartCreditCardStatementsState _ => const SizedBox.shrink(),
-                              LoadingCreditCardStatementsState _ => const CircularProgressIndicator(),
                               ErrorCreditCardStatementsState state => MessageErrorWidget(state.message),
-                              ListCreditCardStatementsState _ => _Bill(creditCard: creditCardSelected.value!, bills: statementsNotifier.value.statements),
+                              ListCreditCardStatementsState _ => _Bill(
+                                  creditCard: creditCardSelectedNotifier.value.creditCard,
+                                  creditCardsNotifier: creditCardsListNotifier,
+                                  billNotifier: billsNotifier,
+                                  onRefreshCreditCard: refreshCreditCard,
+                                ),
+                              _ => const SizedBox.shrink(),
                             },
                           );
                         },
@@ -142,15 +178,41 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
 
   Future<void> goCreditCard([CreditCardEntity? creditCard]) async {
     final FormResultNavigation<CreditCardEntity>? result = await context.pushNamed(CreditCardFormPage.route, extra: creditCard);
-
     if (result == null) return;
 
-    creditCardsNotifier.findAll();
+    if (result.isSave) {
+      if (creditCard == null) {
+        creditCardsListNotifier.setCreditCards(creditCardsListNotifier.value.creditCards..insert(0, result.value!));
+        carouselController.animateToPage(0, duration: const Duration(milliseconds: 500), curve: Curves.ease);
+        return;
+      }
+
+      await refreshCreditCard();
+    }
+
+    if (result.isDelete) {
+      creditCardsListNotifier.setCreditCards(creditCardsListNotifier.value.creditCards..removeWhere((e) => e.id == creditCard?.id));
+    }
+  }
+
+  Future<void> goCreditCardExpenseForm({required BuildContext context}) async {
+    final FormResultNavigation? result = await context.pushNamed(CreditCardExpensePage.route);
+    if (result != null) await refreshCreditCard();
+  }
+
+  Future<void> refreshCreditCard() async {
+    await creditCardSelectedNotifier.refresh();
+
+    final int index = creditCardsListNotifier.value.creditCards.indexWhere((e) => e.id == creditCardSelectedNotifier.creditCard.id);
+
+    if (index >= 0) {
+      creditCardsListNotifier.setCreditCards(creditCardsListNotifier.value.creditCards..[index] = creditCardSelectedNotifier.creditCard);
+    }
   }
 
   @override
   void dispose() {
-    creditCardSelected.dispose();
+    creditCardSelectedNotifier.dispose();
     super.dispose();
   }
 }
@@ -239,9 +301,10 @@ class _LimitState extends State<_Limit> with ThemeContext {
 
 class _Bill extends StatefulWidget {
   final CreditCardEntity creditCard;
-  final List<CreditCardStatementEntity> bills;
+  final CreditCardStatementsNotifier billNotifier;
+  final VoidCallback onRefreshCreditCard;
 
-  const _Bill({required this.creditCard, required this.bills});
+  const _Bill({required this.creditCard, required this.billNotifier, required CreditCardsNotifier creditCardsNotifier, required this.onRefreshCreditCard});
 
   @override
   State<_Bill> createState() => _BillState();
@@ -254,21 +317,21 @@ class _BillState extends State<_Bill> with ThemeContext {
   void initState() {
     super.initState();
 
-    final DateTime billFirst = widget.bills.firstOrNull?.statementClosingDate ?? DateTime(DateTime.now().year, DateTime.now().month, widget.creditCard.statementClosingDay);
-    final DateTime billLast = widget.bills.lastOrNull?.statementClosingDate ?? billFirst;
+    final DateTime billFirst = widget.billNotifier.value.statements.firstOrNull?.statementClosingDate ?? DateTime(DateTime.now().year, DateTime.now().month, widget.creditCard.statementClosingDay);
+    final DateTime billLast = widget.billNotifier.value.statements.lastOrNull?.statementClosingDate ?? billFirst;
 
     DateTime date = billFirst;
 
     while (date.isBefore(billLast) || date.isAtSameMomentAs(billLast) || bills.length < 12) {
       // Verificar se há uma fatura para o mês atual
-      final CreditCardStatementEntity bill = widget.bills.firstWhere(
+      final CreditCardStatementEntity bill = widget.billNotifier.value.statements.firstWhere(
         (bill) => bill.statementClosingDate.year == date.year && bill.statementClosingDate.month == date.month,
         orElse: () => CreditCardStatementEntity(
           id: null,
           createdAt: null,
           deletedAt: null,
-          statementClosingDate: date,
-          statementDueDate: date,
+          statementClosingDate: generateDates(date).closingDate,
+          statementDueDate: generateDates(date).dueDate,
           idCreditCard: widget.creditCard.id,
           transactions: [],
           paid: false,
@@ -292,13 +355,14 @@ class _BillState extends State<_Bill> with ThemeContext {
           child: Row(
             children: [
               Text(strings.bills, style: textTheme.bodyLarge),
-              const Spacer(),
-              TextButton.icon(
-                iconAlignment: IconAlignment.end,
-                onPressed: () {},
-                label: Text(strings.viewAll),
-                icon: const Icon(Icons.chevron_right_outlined),
-              ),
+              const SizedBox(height: 50),
+              // const Spacer(),
+              // TextButton.icon(
+              //   iconAlignment: IconAlignment.end,
+              //   onPressed: () {},
+              //   label: Text(strings.viewAll),
+              //   icon: const Icon(Icons.chevron_right_outlined),
+              // ),
             ],
           ),
         ),
@@ -320,7 +384,7 @@ class _BillState extends State<_Bill> with ThemeContext {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(14),
-                    onTap: () {},
+                    onTap: () => goBillDetails(bill),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                       child: Column(
@@ -355,5 +419,27 @@ class _BillState extends State<_Bill> with ThemeContext {
         ),
       ],
     );
+  }
+
+  Future<void> goBillDetails(CreditCardStatementEntity bill) async {
+    final FormResultNavigation? result = await context.pushNamed(CreditCardBillDetailsPage.route, extra: CreditCardBillDetailsArgsPage(bill: bill, creditCard: widget.creditCard));
+    if (result == null) return;
+
+    widget.onRefreshCreditCard();
+
+    final int index = bills.indexWhere((e) => e.id == result.value!.id);
+
+    if (index >= 0) bills[index] = result.value!;
+  }
+
+  ({DateTime closingDate, DateTime dueDate}) generateDates(DateTime date) {
+    final closingDate = DateTime(date.year, date.month, widget.creditCard.statementClosingDay);
+    final dueDate = DateTime(date.year, date.month, widget.creditCard.statementDueDay);
+
+    if (dueDate.isBefore(closingDate)) {
+      dueDate.addMonths(1);
+    }
+
+    return (closingDate: closingDate, dueDate: dueDate);
   }
 }
