@@ -1,28 +1,28 @@
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
-import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_statement_entity.dart';
+import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_bill_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_repository.dart';
-import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_statement_repository.dart';
+import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_bill_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_transaction_repository.dart';
-import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_statement_dates.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_bill_dates.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_save.dart';
 import 'package:finan_master_app/shared/exceptions/exceptions.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class CreditCardTransactionSave implements ICreditCardTransactionSave {
-  final ICreditCardStatementDates _creditCardStatementDates;
+  final ICreditCardBillDates _creditCardBillDates;
   final ICreditCardRepository _repository;
-  final ICreditCardStatementRepository _creditCardStatementRepository;
+  final ICreditCardBillRepository _creditCardBillRepository;
   final ICreditCardTransactionRepository _creditCardTransactionRepository;
 
   CreditCardTransactionSave({
-    required ICreditCardStatementDates creditCardStatementDates,
+    required ICreditCardBillDates creditCardBillDates,
     required ICreditCardRepository repository,
-    required ICreditCardStatementRepository creditCardStatementRepository,
+    required ICreditCardBillRepository creditCardBillRepository,
     required ICreditCardTransactionRepository creditCardTransactionRepository,
-  })  : _creditCardStatementDates = creditCardStatementDates,
+  })  : _creditCardBillDates = creditCardBillDates,
         _repository = repository,
-        _creditCardStatementRepository = creditCardStatementRepository,
+        _creditCardBillRepository = creditCardBillRepository,
         _creditCardTransactionRepository = creditCardTransactionRepository;
 
   @override
@@ -36,28 +36,28 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
     if (creditCard == null) throw ValidationException(R.strings.creditCardNotFound);
 
     //Se a entidade já pertencer a uma fatura
-    if (!entity.isNew && entity.idCreditCardStatement != null) {
-      final CreditCardStatementEntity? statement = await _creditCardStatementRepository.findById(entity.idCreditCardStatement!);
-      if (statement == null) throw ValidationException(R.strings.creditCardStatementNotFound);
+    if (!entity.isNew && entity.idCreditCardBill != null) {
+      final CreditCardBillEntity? bill = await _creditCardBillRepository.findById(entity.idCreditCardBill!);
+      if (bill == null) throw ValidationException(R.strings.creditCardBillNotFound);
 
       //Não é possível editar uma transação de uma fatura paga
-      if (statement.paid) throw ValidationException(R.strings.notPossibleEditTransactionCreditCardPaid);
+      if (bill.paid) throw ValidationException(R.strings.notPossibleEditTransactionCreditCardPaid);
     }
 
-    CreditCardStatementEntity? statement = await _creditCardStatementRepository.findFirstAfterDate(date: entity.date, idCreditCard: creditCard.id);
+    CreditCardBillEntity? bill = await _creditCardBillRepository.findFirstAfterDate(date: entity.date, idCreditCard: creditCard.id);
 
     //Gera as datas de fechamento e vencimento da fatura com base na data da transação
-    final dates = _creditCardStatementDates.generateDates(closingDay: creditCard.statementClosingDay, dueDay: creditCard.statementDueDay, baseDate: entity.date);
+    final dates = _creditCardBillDates.generateDates(closingDay: creditCard.billClosingDay, dueDay: creditCard.billDueDay, baseDate: entity.date);
 
     //Se não existir nenhuma fatura superior a data da transação ou a fatura encontrada for de um mês posterior
-    if (statement == null || statement.statementClosingDate.year != dates.closingDate.year || statement.statementClosingDate.month != dates.closingDate.month) {
+    if (bill == null || bill.billClosingDate.year != dates.closingDate.year || bill.billClosingDate.month != dates.closingDate.month) {
       //Monta uma nova fatura
-      statement = CreditCardStatementEntity(
+      bill = CreditCardBillEntity(
         id: null,
         createdAt: null,
         deletedAt: null,
-        statementClosingDate: dates.closingDate,
-        statementDueDate: dates.dueDate,
+        billClosingDate: dates.closingDate,
+        billDueDate: dates.dueDate,
         idCreditCard: creditCard.id,
         transactions: [],
         paid: false,
@@ -65,18 +65,18 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
     }
 
     //Se a fatura já estiver fechada
-    if (statement.statementClosingDate.isBefore(DateTime.now())) throw ValidationException(R.strings.statementClosedInDateTransaction);
+    if (bill.billClosingDate.isBefore(DateTime.now())) throw ValidationException(R.strings.billClosedInDateTransaction);
 
     //Associa a transação a uma fatura
-    entity.idCreditCardStatement = statement.id;
+    entity.idCreditCardBill = bill.id;
 
     //Adiciona a transação na fatura
-    statement.transactions.add(entity);
+    bill.transactions.add(entity);
 
     //Se for uma nova fatura, salva a transação com a fatura
-    if (statement.isNew) {
-      final statementResult = await _creditCardStatementRepository.save(statement);
-      return statementResult.transactions.firstWhere((e) => e.id == entity.id);
+    if (bill.isNew) {
+      final billResult = await _creditCardBillRepository.save(bill);
+      return billResult.transactions.firstWhere((e) => e.id == entity.id);
     } else {
       return await _creditCardTransactionRepository.save(entity);
     }

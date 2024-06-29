@@ -13,7 +13,7 @@ abstract class CreditCardTransactionFactory {
       date: entity.date,
       idCategory: entity.idCategory!,
       idCreditCard: entity.idCreditCard!,
-      idCreditCardStatement: entity.idCreditCardStatement!,
+      idCreditCardBill: entity.idCreditCardBill!,
       observation: entity.observation,
     );
   }
@@ -28,7 +28,7 @@ abstract class CreditCardTransactionFactory {
       date: model.date,
       idCategory: model.idCategory,
       idCreditCard: model.idCreditCard,
-      idCreditCardStatement: model.idCreditCardStatement,
+      idCreditCardBill: model.idCreditCardBill,
       observation: model.observation,
     );
   }

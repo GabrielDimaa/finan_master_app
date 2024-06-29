@@ -4,8 +4,8 @@ import 'package:finan_master_app/shared/infra/models/model.dart';
 class CreditCardModel extends Model {
   final String description;
   final double amountLimit;
-  final int statementClosingDay;
-  final int statementDueDay;
+  final int billClosingDay;
+  final int billDueDay;
   final CardBrandEnum brand;
   final String idAccount;
 
@@ -17,8 +17,8 @@ class CreditCardModel extends Model {
     required super.deletedAt,
     required this.description,
     required this.amountLimit,
-    required this.statementClosingDay,
-    required this.statementDueDay,
+    required this.billClosingDay,
+    required this.billDueDay,
     required this.brand,
     required this.idAccount,
     required this.amountLimitUtilized,
@@ -32,8 +32,8 @@ class CreditCardModel extends Model {
       deletedAt: deletedAt,
       description: description,
       amountLimit: amountLimit,
-      statementClosingDay: statementClosingDay,
-      statementDueDay: statementDueDay,
+      billClosingDay: billClosingDay,
+      billDueDay: billDueDay,
       brand: brand,
       idAccount: idAccount,
       amountLimitUtilized: amountLimitUtilized,
@@ -46,8 +46,8 @@ class CreditCardModel extends Model {
       ...baseMap(),
       'description': description,
       'amount_limit': amountLimit,
-      'statement_closing_day': statementClosingDay,
-      'statement_due_day': statementDueDay,
+      'bill_closing_day': billClosingDay,
+      'bill_due_day': billDueDay,
       'brand': brand.value,
       'id_account': idAccount,
     };

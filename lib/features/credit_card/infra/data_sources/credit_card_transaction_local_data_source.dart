@@ -1,5 +1,6 @@
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_transaction_model.dart';
+import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
@@ -8,7 +9,7 @@ class CreditCardTransactionLocalDataSource extends LocalDataSource<CreditCardTra
   CreditCardTransactionLocalDataSource({required super.databaseLocal});
 
   @override
-  String get tableName => 'credit_card_transactions';
+  String get tableName => creditCardTransactionsTableName;
 
   @override
   String get orderByDefault => 'date DESC';
@@ -21,9 +22,9 @@ class CreditCardTransactionLocalDataSource extends LocalDataSource<CreditCardTra
         description TEXT NOT NULL,
         amount REAL NOT NULL,
         date TEXT NOT NULL,
-        id_category TEXT NOT NULL REFERENCES categories(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
-        id_credit_card TEXT NOT NULL REFERENCES credit_cards(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
-        id_credit_card_statement TEXT REFERENCES credit_card_statements(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
+        id_category TEXT NOT NULL REFERENCES $categoriesTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
+        id_credit_card TEXT NOT NULL REFERENCES $creditCardsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
+        id_credit_card_bill TEXT REFERENCES $creditCardBillsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         observation TEXT
       );
     ''');
@@ -42,7 +43,7 @@ class CreditCardTransactionLocalDataSource extends LocalDataSource<CreditCardTra
       date: DateTime.tryParse(map['${prefix}date'].toString())!.toLocal(),
       idCategory: map['${prefix}id_category'],
       idCreditCard: map['${prefix}id_credit_card'],
-      idCreditCardStatement: map['${prefix}id_credit_card_statement'],
+      idCreditCardBill: map['${prefix}id_credit_card_bill'],
       observation: map['${prefix}observation'],
     );
   }

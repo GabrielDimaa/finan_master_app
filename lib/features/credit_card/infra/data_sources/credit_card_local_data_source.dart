@@ -1,24 +1,25 @@
 import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/brand_card_enum.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_local_data_source.dart';
-import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_statement_local_data_source.dart';
+import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_bill_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_model.dart';
-import 'package:finan_master_app/features/credit_card/infra/models/credit_card_statement_model.dart';
+import 'package:finan_master_app/features/credit_card/infra/models/credit_card_bill_model.dart';
+import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> implements ICreditCardLocalDataSource {
-  final ICreditCardStatementLocalDataSource _creditCardStatementLocalDataSource;
+  final ICreditCardBillLocalDataSource _creditCardBillLocalDataSource;
 
   CreditCardLocalDataSource({
     required super.databaseLocal,
-    required ICreditCardStatementLocalDataSource creditCardStatementLocalDataSource,
-  }) : _creditCardStatementLocalDataSource = creditCardStatementLocalDataSource;
+    required ICreditCardBillLocalDataSource creditCardBillLocalDataSource,
+  }) : _creditCardBillLocalDataSource = creditCardBillLocalDataSource;
 
   @override
-  String get tableName => 'credit_cards';
+  String get tableName => creditCardsTableName;
 
   @override
   String get orderByDefault => 'description COLLATE NOCASE';
@@ -30,8 +31,8 @@ class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> impleme
         ${baseColumnsSql()},
         description TEXT NOT NULL,
         amount_limit REAL NOT NULL,
-        statement_closing_day INTEGER NOT NULL,
-        statement_due_day INTEGER NOT NULL,
+        bill_closing_day INTEGER NOT NULL,
+        bill_due_day INTEGER NOT NULL,
         brand INTEGER NOT NULL,
         id_account TEXT NOT NULL REFERENCES accounts(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT
       );
@@ -48,8 +49,8 @@ class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> impleme
       deletedAt: base.deletedAt,
       description: map['${prefix}description'],
       amountLimit: map['${prefix}amount_limit'],
-      statementClosingDay: map['${prefix}statement_closing_day'],
-      statementDueDay: map['${prefix}statement_due_day'],
+      billClosingDay: map['${prefix}bill_closing_day'],
+      billDueDay: map['${prefix}bill_due_day'],
       brand: CardBrandEnum.getByValue(map['${prefix}brand'])!,
       idAccount: map['${prefix}id_account'],
       //É carregado este valor separadamente
@@ -63,14 +64,14 @@ class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> impleme
 
     if (creditCards.isEmpty) return [];
 
-    final List<CreditCardStatementModel> statements = await _creditCardStatementLocalDataSource.findAll(
+    final List<CreditCardBillModel> bills = await _creditCardBillLocalDataSource.findAll(
       where: 'id_credit_card IN (${creditCards.map((_) => '?').join(', ')}) AND paid = 0',
       whereArgs: creditCards.map((e) => e.id).toList(),
       txn: txn,
     );
 
     for (final creditCard in creditCards) {
-      creditCard.amountLimitUtilized = statements.where((statement) => statement.idCreditCard == creditCard.id).map((statement) => statement.statementAmount).sum;
+      creditCard.amountLimitUtilized = bills.where((bill) => bill.idCreditCard == creditCard.id).map((bill) => bill.billAmount).sum;
     }
 
     return creditCards;

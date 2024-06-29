@@ -4,12 +4,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:collection/collection.dart';
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
-import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_statement_entity.dart';
-import 'package:finan_master_app/features/credit_card/domain/enums/statement_status_enum.dart';
+import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_bill_entity.dart';
+import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_enum.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_notifier.dart';
-import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_statements_notifier.dart';
+import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_bills_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_cards_notifier.dart';
-import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_statements_state.dart';
+import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_bills_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_cards_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_card_widget.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_bill_details_page.dart';
@@ -39,7 +39,7 @@ class CreditCardsPage extends StatefulWidget {
 
 class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
   final CreditCardsNotifier creditCardsListNotifier = DI.get<CreditCardsNotifier>();
-  final CreditCardStatementsNotifier billsNotifier = DI.get<CreditCardStatementsNotifier>();
+  final CreditCardBillsNotifier billsNotifier = DI.get<CreditCardBillsNotifier>();
   final CreditCardNotifier creditCardSelectedNotifier = DI.get<CreditCardNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -55,7 +55,7 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
 
       creditCardSelectedNotifier.addListener(() {
         if (creditCardSelectedNotifier.value.creditCard.isNew) {
-          billsNotifier.setStatements([]);
+          billsNotifier.setBills([]);
         } else {
           billsNotifier.findAllAfterDate(date: DateTime.now().getInitialMonth().subtractMonths(1), idCreditCard: creditCardSelectedNotifier.value.creditCard.id);
         }
@@ -153,8 +153,8 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
                           return AnimatedSwitcher(
                             duration: const Duration(milliseconds: 500),
                             child: switch (state) {
-                              ErrorCreditCardStatementsState state => MessageErrorWidget(state.message),
-                              ListCreditCardStatementsState _ => _Bill(
+                              ErrorCreditCardBillsState state => MessageErrorWidget(state.message),
+                              ListCreditCardBillsState _ => _Bill(
                                   creditCard: creditCardSelectedNotifier.value.creditCard,
                                   creditCardsNotifier: creditCardsListNotifier,
                                   billNotifier: billsNotifier,
@@ -301,7 +301,7 @@ class _LimitState extends State<_Limit> with ThemeContext {
 
 class _Bill extends StatefulWidget {
   final CreditCardEntity creditCard;
-  final CreditCardStatementsNotifier billNotifier;
+  final CreditCardBillsNotifier billNotifier;
   final VoidCallback onRefreshCreditCard;
 
   const _Bill({required this.creditCard, required this.billNotifier, required CreditCardsNotifier creditCardsNotifier, required this.onRefreshCreditCard});
@@ -311,29 +311,29 @@ class _Bill extends StatefulWidget {
 }
 
 class _BillState extends State<_Bill> with ThemeContext {
-  final List<CreditCardStatementEntity> bills = [];
+  final List<CreditCardBillEntity> bills = [];
 
   @override
   void initState() {
     super.initState();
 
-    widget.billNotifier.value.statements.removeWhere((e) => e.paid && e.statementClosingDate.isBefore(DateTime(DateTime.now().year, DateTime.now().month)));
+    widget.billNotifier.value.bills.removeWhere((e) => e.paid && e.billClosingDate.isBefore(DateTime(DateTime.now().year, DateTime.now().month)));
 
-    final DateTime billFirst = widget.billNotifier.value.statements.firstOrNull?.statementClosingDate ?? DateTime(DateTime.now().year, DateTime.now().month, widget.creditCard.statementClosingDay);
-    final DateTime billLast = widget.billNotifier.value.statements.lastOrNull?.statementClosingDate ?? billFirst;
+    final DateTime billFirst = widget.billNotifier.value.bills.firstOrNull?.billClosingDate ?? DateTime(DateTime.now().year, DateTime.now().month, widget.creditCard.billClosingDay);
+    final DateTime billLast = widget.billNotifier.value.bills.lastOrNull?.billClosingDate ?? billFirst;
 
     DateTime date = billFirst;
 
     while (date.isBefore(billLast) || date.isAtSameMomentAs(billLast) || bills.length < 12) {
       // Verificar se há uma fatura para o mês atual
-      final CreditCardStatementEntity bill = widget.billNotifier.value.statements.firstWhere(
-        (bill) => bill.statementClosingDate.year == date.year && bill.statementClosingDate.month == date.month,
-        orElse: () => CreditCardStatementEntity(
+      final CreditCardBillEntity bill = widget.billNotifier.value.bills.firstWhere(
+        (bill) => bill.billClosingDate.year == date.year && bill.billClosingDate.month == date.month,
+        orElse: () => CreditCardBillEntity(
           id: null,
           createdAt: null,
           deletedAt: null,
-          statementClosingDate: generateDates(date).closingDate,
-          statementDueDate: generateDates(date).dueDate,
+          billClosingDate: generateDates(date).closingDate,
+          billDueDate: generateDates(date).dueDate,
           idCreditCard: widget.creditCard.id,
           transactions: [],
           paid: false,
@@ -377,7 +377,7 @@ class _BillState extends State<_Bill> with ThemeContext {
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemBuilder: (_, index) {
-              final CreditCardStatementEntity bill = bills[index];
+              final CreditCardBillEntity bill = bills[index];
 
               return ConstrainedBox(
                 constraints: const BoxConstraints(minWidth: 108),
@@ -393,7 +393,7 @@ class _BillState extends State<_Bill> with ThemeContext {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(bill.statementClosingDate.formatMMMM().capitalizeFirstLetter()),
+                          Text(bill.billClosingDate.formatMMMM().capitalizeFirstLetter()),
                           Text(bill.totalSpent.money, style: textTheme.titleMedium),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -423,7 +423,7 @@ class _BillState extends State<_Bill> with ThemeContext {
     );
   }
 
-  Future<void> goBillDetails(CreditCardStatementEntity bill) async {
+  Future<void> goBillDetails(CreditCardBillEntity bill) async {
     final FormResultNavigation? result = await context.pushNamed(CreditCardBillDetailsPage.route, extra: CreditCardBillDetailsArgsPage(bill: bill, creditCard: widget.creditCard));
     if (result == null) return;
 
@@ -435,8 +435,8 @@ class _BillState extends State<_Bill> with ThemeContext {
   }
 
   ({DateTime closingDate, DateTime dueDate}) generateDates(DateTime date) {
-    final closingDate = DateTime(date.year, date.month, widget.creditCard.statementClosingDay);
-    final dueDate = DateTime(date.year, date.month, widget.creditCard.statementDueDay);
+    final closingDate = DateTime(date.year, date.month, widget.creditCard.billClosingDay);
+    final dueDate = DateTime(date.year, date.month, widget.creditCard.billDueDay);
 
     if (dueDate.isBefore(closingDate)) {
       dueDate.addMonths(1);

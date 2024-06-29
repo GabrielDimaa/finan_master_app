@@ -2,11 +2,11 @@ import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
-import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_statement_entity.dart';
+import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_bill_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
-import 'package:finan_master_app/features/credit_card/domain/enums/statement_status_enum.dart';
-import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_statement_notifier.dart';
-import 'package:finan_master_app/features/credit_card/presentation/ui/components/pay_statement_dialog.dart';
+import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_enum.dart';
+import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_bill_notifier.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/components/pay_bill_dialog.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
@@ -27,7 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CreditCardBillDetailsArgsPage {
-  final CreditCardStatementEntity bill;
+  final CreditCardBillEntity bill;
   final CreditCardEntity creditCard;
 
   CreditCardBillDetailsArgsPage({required this.bill, required this.creditCard});
@@ -45,7 +45,7 @@ class CreditCardBillDetailsPage extends StatefulWidget {
 }
 
 class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> with ThemeContext {
-  final CreditCardStatementNotifier notifier = DI.get<CreditCardStatementNotifier>();
+  final CreditCardBillNotifier notifier = DI.get<CreditCardBillNotifier>();
   final CategoriesNotifier categoriesNotifier = DI.get<CategoriesNotifier>();
 
   List<CreditCardTransactionEntity> listSelectable = [];
@@ -56,7 +56,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
   void initState() {
     super.initState();
 
-    notifier.setStatement(widget.args.bill);
+    notifier.setBill(widget.args.bill);
 
     Future(() async {
       try {
@@ -74,7 +74,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (_) => context.pop(changed ? FormResultNavigation.save(notifier.creditCardStatement!) : null),
+      onPopInvoked: (_) => context.pop(changed ? FormResultNavigation.save(notifier.creditCardBill!) : null),
       child: ListModeSelectable(
         list: listSelectable,
         updateList: (List value) => setState(() => listSelectable = value.cast<CreditCardTransactionEntity>()),
@@ -119,12 +119,12 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                                               width: 8,
                                               height: 18,
                                               decoration: BoxDecoration(
-                                                color: notifier.creditCardStatement!.status.color,
+                                                color: notifier.creditCardBill!.status.color,
                                                 borderRadius: BorderRadius.circular(100),
                                               ),
                                             ),
                                             const SizedBox(width: 10),
-                                            Text(notifier.creditCardStatement!.status.description, style: textTheme.bodyLarge),
+                                            Text(notifier.creditCardBill!.status.description, style: textTheme.bodyLarge),
                                           ],
                                         ),
                                         const Spacing.y(1.5),
@@ -136,7 +136,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(strings.closureDate, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                                Text(notifier.creditCardStatement!.statementClosingDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                                Text(notifier.creditCardBill!.billClosingDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
                                               ],
                                             ),
                                             const Spacer(),
@@ -144,22 +144,22 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                                               crossAxisAlignment: CrossAxisAlignment.end,
                                               children: [
                                                 Text(strings.dueDate, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                                Text(notifier.creditCardStatement!.statementDueDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                                Text(notifier.creditCardBill!.billDueDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
                                               ],
                                             ),
                                           ],
                                         ),
                                         const Spacing.y(2),
-                                        if (notifier.creditCardStatement!.transactions.isNotEmpty) Text(strings.transactions, style: textTheme.bodyLarge),
+                                        if (notifier.creditCardBill!.transactions.isNotEmpty) Text(strings.transactions, style: textTheme.bodyLarge),
                                       ],
                                     ),
                                   ),
                                   ListViewSelectable.separated(
-                                    key: ObjectKey(notifier.creditCardStatement!.transactions),
+                                    key: ObjectKey(notifier.creditCardBill!.transactions),
                                     physics: const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     padding: EdgeInsets.zero,
-                                    list: notifier.creditCardStatement!.transactions,
+                                    list: notifier.creditCardBill!.transactions,
                                     itemBuilder: (ItemSelectable<CreditCardTransactionEntity> item) {
                                       final transaction = item.value;
                                       final category = categoriesNotifier.value.categories.firstWhere((category) => category.id == transaction.idCategory);
@@ -213,7 +213,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(strings.totalSpent, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                            Text(notifier.creditCardStatement!.totalSpent.money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
+                                            Text(notifier.creditCardBill!.totalSpent.money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
                                           ],
                                         ),
                                       ),
@@ -223,7 +223,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                                           crossAxisAlignment: CrossAxisAlignment.end,
                                           children: [
                                             Text(strings.amountOutstanding, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                            Text(notifier.creditCardStatement!.statementAmount.money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
+                                            Text(notifier.creditCardBill!.billAmount.money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
                                           ],
                                         ),
                                       ),
@@ -233,9 +233,9 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                               ),
                               const Spacing.y(1.5),
                               FilledButton.icon(
-                                onPressed: (notifier.creditCardStatement?.totalSpent ?? 0) > 0 && (notifier.creditCardStatement?.statementAmount ?? 0) > 0 ? payBill : null,
+                                onPressed: (notifier.creditCardBill?.totalSpent ?? 0) > 0 && (notifier.creditCardBill?.billAmount ?? 0) > 0 ? payBill : null,
                                 icon: const Icon(Icons.credit_score_outlined),
-                                label: Text(strings.payStatement),
+                                label: Text(strings.payBill),
                               ),
                             ],
                           ),
@@ -261,7 +261,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
   }
 
   Future<void> payBill() async {
-    final CreditCardStatementEntity? result = await PayStatementDialog.show(context: context, statement: notifier.creditCardStatement!);
+    final CreditCardBillEntity? result = await PayBillDialog.show(context: context, bill: notifier.creditCardBill!);
 
     if (result != null) {
       changed = true;
@@ -278,7 +278,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
   }
 
   Future<void> refreshBill() async {
-    await notifier.findById(notifier.creditCardStatement!.id);
+    await notifier.findById(notifier.creditCardBill!.id);
     setState(() {});
   }
 }

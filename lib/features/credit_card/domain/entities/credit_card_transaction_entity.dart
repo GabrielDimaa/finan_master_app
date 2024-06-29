@@ -7,7 +7,7 @@ class CreditCardTransactionEntity extends Entity {
   String? idCategory;
 
   String? idCreditCard;
-  String? idCreditCardStatement;
+  String? idCreditCardBill;
 
   String? observation;
 
@@ -20,7 +20,7 @@ class CreditCardTransactionEntity extends Entity {
     required this.date,
     required this.idCategory,
     required this.idCreditCard,
-    required this.idCreditCardStatement,
+    required this.idCreditCardBill,
     required this.observation,
   });
 
@@ -34,7 +34,7 @@ class CreditCardTransactionEntity extends Entity {
       date: date,
       idCategory: idCategory,
       idCreditCard: idCreditCard,
-      idCreditCardStatement: idCreditCardStatement,
+      idCreditCardBill: idCreditCardBill,
       observation: observation,
     );
   }

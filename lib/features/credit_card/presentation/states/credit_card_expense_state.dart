@@ -30,7 +30,7 @@ class StartCreditCardExpenseState extends CreditCardExpenseState {
             date: DateTime.now(),
             idCategory: null,
             idCreditCard: null,
-            idCreditCardStatement: null,
+            idCreditCardBill: null,
             observation: null,
           ),
         );

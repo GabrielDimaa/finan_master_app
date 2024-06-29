@@ -131,19 +131,19 @@ class _CreditCardFormPageState extends State<CreditCardFormPage> with ThemeConte
                               Row(
                                 children: [
                                   DropdownMenu<int>(
-                                    initialSelection: state.creditCard.statementClosingDay,
+                                    initialSelection: state.creditCard.billClosingDay,
                                     enabled: !notifier.isLoading,
                                     label: Text(strings.closingDay),
                                     dropdownMenuEntries: List.generate(30, (index) => DropdownMenuEntry(value: index + 1, label: (index + 1).toString())),
-                                    onSelected: (int? value) => state.creditCard.statementClosingDay = value ?? 0,
+                                    onSelected: (int? value) => state.creditCard.billClosingDay = value ?? 0,
                                   ),
                                   const Spacing.x(),
                                   DropdownMenu<int>(
-                                    initialSelection: state.creditCard.statementDueDay,
+                                    initialSelection: state.creditCard.billDueDay,
                                     enabled: !notifier.isLoading,
                                     label: Text(strings.dueDay),
                                     dropdownMenuEntries: List.generate(30, (index) => DropdownMenuEntry(value: index + 1, label: (index + 1).toString())),
-                                    onSelected: (int? value) => state.creditCard.statementDueDay = value ?? 0,
+                                    onSelected: (int? value) => state.creditCard.billDueDay = value ?? 0,
                                   ),
                                 ],
                               ),

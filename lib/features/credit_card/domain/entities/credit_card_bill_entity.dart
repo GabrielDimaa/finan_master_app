@@ -1,12 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
-import 'package:finan_master_app/features/credit_card/domain/enums/statement_status_enum.dart';
+import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_enum.dart';
 import 'package:finan_master_app/shared/domain/entities/entity.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 
-class CreditCardStatementEntity extends Entity {
-  DateTime statementClosingDate;
-  DateTime statementDueDate;
+class CreditCardBillEntity extends Entity {
+  DateTime billClosingDate;
+  DateTime billDueDate;
 
   final String idCreditCard;
 
@@ -19,42 +19,42 @@ class CreditCardStatementEntity extends Entity {
   double get totalPaid => transactions.map((transaction) => transaction.amount < 0 ? transaction.amount : 0).sum.toDouble();
 
   //totalPaid terá valor negativo, portanto, 1000 + (-100).
-  double get statementAmount => (totalSpent + totalPaid).truncateFractionalDigits(2);
+  double get billAmount => (totalSpent + totalPaid).truncateFractionalDigits(2);
 
-  StatementStatusEnum get status {
+  BillStatusEnum get status {
     final dateTimeNow = DateTime.now();
 
-    if (paid) return StatementStatusEnum.paid;
+    if (paid) return BillStatusEnum.paid;
 
-    if (dateTimeNow == statementClosingDate || dateTimeNow.isAfter(statementClosingDate)) {
-      if (totalSpent == 0) return StatementStatusEnum.paid;
+    if (dateTimeNow == billClosingDate || dateTimeNow.isAfter(billClosingDate)) {
+      if (totalSpent == 0) return BillStatusEnum.paid;
 
-      if (dateTimeNow == statementDueDate || dateTimeNow.isBefore(statementDueDate)) return StatementStatusEnum.closed;
+      if (dateTimeNow == billDueDate || dateTimeNow.isBefore(billDueDate)) return BillStatusEnum.closed;
     }
 
-    if (dateTimeNow.isAfter(statementDueDate)) return StatementStatusEnum.overdue;
+    if (dateTimeNow.isAfter(billDueDate)) return BillStatusEnum.overdue;
 
-    return StatementStatusEnum.outstanding;
+    return BillStatusEnum.outstanding;
   }
 
-  CreditCardStatementEntity({
+  CreditCardBillEntity({
     required super.id,
     required super.createdAt,
     required super.deletedAt,
-    required this.statementClosingDate,
-    required this.statementDueDate,
+    required this.billClosingDate,
+    required this.billDueDate,
     required this.idCreditCard,
     required this.transactions,
     required this.paid,
   });
 
-  CreditCardStatementEntity clone() {
-    return CreditCardStatementEntity(
+  CreditCardBillEntity clone() {
+    return CreditCardBillEntity(
       id: id,
       createdAt: createdAt,
       deletedAt: deletedAt,
-      statementClosingDate: statementClosingDate,
-      statementDueDate: statementDueDate,
+      billClosingDate: billClosingDate,
+      billDueDate: billDueDate,
       idCreditCard: idCreditCard,
       transactions: transactions.map((transaction) => transaction.clone()).toList(),
       paid: paid,

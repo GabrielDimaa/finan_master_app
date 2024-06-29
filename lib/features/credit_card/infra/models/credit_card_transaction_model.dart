@@ -7,7 +7,7 @@ class CreditCardTransactionModel extends Model {
   final String idCategory;
 
   final String idCreditCard;
-  final String idCreditCardStatement;
+  final String idCreditCardBill;
 
   final String? observation;
 
@@ -20,7 +20,7 @@ class CreditCardTransactionModel extends Model {
     required this.date,
     required this.idCategory,
     required this.idCreditCard,
-    required this.idCreditCardStatement,
+    required this.idCreditCardBill,
     required this.observation,
   });
 
@@ -35,7 +35,7 @@ class CreditCardTransactionModel extends Model {
       date: date,
       idCategory: idCategory,
       idCreditCard: idCreditCard,
-      idCreditCardStatement: idCreditCardStatement,
+      idCreditCardBill: idCreditCardBill,
       observation: observation,
     );
   }
@@ -49,7 +49,7 @@ class CreditCardTransactionModel extends Model {
       'date': date.toIso8601String(),
       'id_category': idCategory,
       'id_credit_card': idCreditCard,
-      'id_credit_card_statement': idCreditCardStatement,
+      'id_credit_card_bill': idCreditCardBill,
       'observation': observation,
     };
   }

@@ -1,6 +1,6 @@
-import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_statement_entity.dart';
+import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_bill_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
-import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_statement_repository.dart';
+import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_bill_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_transaction_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_delete.dart';
 import 'package:finan_master_app/shared/exceptions/exceptions.dart';
@@ -8,37 +8,37 @@ import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class CreditCardTransactionDelete implements ICreditCardTransactionDelete {
   final ICreditCardTransactionRepository _repository;
-  final ICreditCardStatementRepository _creditCardStatementRepository;
+  final ICreditCardBillRepository _creditCardBillRepository;
 
   CreditCardTransactionDelete({
     required ICreditCardTransactionRepository repository,
-    required ICreditCardStatementRepository creditCardStatementRepository,
+    required ICreditCardBillRepository creditCardBillRepository,
   })  : _repository = repository,
-        _creditCardStatementRepository = creditCardStatementRepository;
+        _creditCardBillRepository = creditCardBillRepository;
 
   @override
   Future<void> delete(CreditCardTransactionEntity entity) async {
-    final CreditCardStatementEntity? statement = await _creditCardStatementRepository.findById(entity.idCreditCardStatement!);
-    if (statement == null) throw ValidationException(R.strings.creditCardStatementNotFound);
+    final CreditCardBillEntity? bill = await _creditCardBillRepository.findById(entity.idCreditCardBill!);
+    if (bill == null) throw ValidationException(R.strings.creditCardBillNotFound);
 
     //Não é possível excluir uma transação de uma fatura paga
-    if (statement.paid) throw ValidationException(R.strings.notPossibleDeleteTransactionCreditCardPaid);
+    if (bill.paid) throw ValidationException(R.strings.notPossibleDeleteTransactionCreditCardPaid);
 
     await _repository.delete(entity);
   }
 
   @override
   Future<void> deleteMany(List<CreditCardTransactionEntity> entities) async {
-    final List<String> idsStatements = [];
+    final List<String> idsBills = [];
 
     for (final CreditCardTransactionEntity entity in entities) {
-      if (entity.idCreditCardStatement != null && !idsStatements.any((id) => entity.idCreditCardStatement == id)) {
-        idsStatements.add(entity.idCreditCardStatement!);
+      if (entity.idCreditCardBill != null && !idsBills.any((id) => entity.idCreditCardBill == id)) {
+        idsBills.add(entity.idCreditCardBill!);
       }
     }
 
-    final List<CreditCardStatementEntity> statements = await _creditCardStatementRepository.findByIds(idsStatements);
-    if (statements.any((statement) => statement.paid)) throw ValidationException(R.strings.notPossibleDeleteTransactionCreditCardPaid);
+    final List<CreditCardBillEntity> bills = await _creditCardBillRepository.findByIds(idsBills);
+    if (bills.any((bill) => bill.paid)) throw ValidationException(R.strings.notPossibleDeleteTransactionCreditCardPaid);
 
     await _repository.deleteMany(entities);
   }
