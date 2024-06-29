@@ -1,8 +1,8 @@
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/brand_card_enum.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CreditCardWidget extends StatelessWidget {
   final CreditCardEntity creditCard;
