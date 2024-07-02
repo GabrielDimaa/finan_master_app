@@ -7,7 +7,7 @@ enum CardBrandEnum {
   alelo(1),
   americanExpress(2),
   banescard(3),
-  banricompras(4),
+  visa(4),
   cabal(5),
   dinersClub(6),
   elo(7),
@@ -15,8 +15,7 @@ enum CardBrandEnum {
   hipercard(9),
   jcb(10),
   mastercard(11),
-  sorocred(12),
-  visa(13);
+  sorocred(12);
 
   final int value;
 
@@ -30,7 +29,6 @@ extension CardBrandExtension on CardBrandEnum {
     CardBrandEnum.alelo => 'Alelo',
     CardBrandEnum.americanExpress => 'American Express',
     CardBrandEnum.banescard => 'Banescard',
-    CardBrandEnum.banricompras => 'Banricompras',
     CardBrandEnum.cabal => 'Cabal',
     CardBrandEnum.dinersClub => 'Diners Club',
     CardBrandEnum.elo => 'Elo',
@@ -47,7 +45,6 @@ extension CardBrandExtension on CardBrandEnum {
       CardBrandEnum.alelo => SvgPicture.asset('assets/icons/card-brands/alelo.svg', height: size, width: size),
       CardBrandEnum.americanExpress => SvgPicture.asset('assets/icons/card-brands/americanexpress.svg', height: size, width: size),
       CardBrandEnum.banescard => SvgPicture.asset('assets/icons/card-brands/banescard.svg', height: size, width: size),
-      CardBrandEnum.banricompras => SvgPicture.asset('assets/icons/card-brands/banricompras.svg', height: size, width: size),
       CardBrandEnum.cabal => SvgPicture.asset('assets/icons/card-brands/cabal.svg', height: size, width: size),
       CardBrandEnum.dinersClub => SvgPicture.asset('assets/icons/card-brands/dinersclub.svg', height: size, width: size),
       CardBrandEnum.elo => SvgPicture.asset('assets/icons/card-brands/elo.svg', height: size, width: size),

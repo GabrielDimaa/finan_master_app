@@ -22,4 +22,16 @@ class CreditCardBillsNotifier extends ValueNotifier<CreditCardBillsState> {
       value = value.setError(e.toString());
     }
   }
+
+  Future<void> findByPeriod({required DateTime startDate, required DateTime endDate, required String idCreditCard}) async {
+    try {
+      value = value.setLoading();
+
+      final List<CreditCardBillEntity> bills = await _creditCardBillFind.findByPeriod(startDate: startDate, endDate: endDate, idCreditCard: idCreditCard);
+
+      setBills(bills);
+    } catch (e) {
+      value = value.setError(e.toString());
+    }
+  }
 }

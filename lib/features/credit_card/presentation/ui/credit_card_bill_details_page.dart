@@ -97,6 +97,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                               loading: notifier.isLoading,
                               actionsInModeSelection: [
                                 IconButton(
+                                  tooltip: strings.delete,
                                   onPressed: deleteTransactions,
                                   icon: const Icon(Icons.delete_outline),
                                 ),

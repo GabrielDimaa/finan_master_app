@@ -6,4 +6,6 @@ abstract interface class ICreditCardBillFind {
   Future<List<CreditCardBillEntity>> findAllAfterDate({required DateTime date, required String idCreditCard});
 
   Future<CreditCardBillEntity?> findById(String id);
+
+  Future<List<CreditCardBillEntity>> findByPeriod({required DateTime startDate, required DateTime endDate, required String idCreditCard});
 }

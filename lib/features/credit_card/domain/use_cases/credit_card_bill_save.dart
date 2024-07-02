@@ -38,7 +38,6 @@ class CreditCardBillSave implements ICreditCardBillSave {
   Future<CreditCardBillEntity> payBill({required CreditCardBillEntity creditCardBill, required double payValue}) async {
     if (creditCardBill.totalSpent == 0) throw ValidationException(R.strings.noMovementsToPay);
     if (creditCardBill.status == BillStatusEnum.paid) throw ValidationException(R.strings.billAlreadyPaid);
-    if (creditCardBill.status == BillStatusEnum.paid) throw ValidationException(R.strings.billAlreadyPaid);
     if (creditCardBill.billAmount <= 0) throw ValidationException(R.strings.billGreaterThanZero);
     if (payValue > creditCardBill.billAmount) throw ValidationException(R.strings.paymentExceedBillAmount);
 

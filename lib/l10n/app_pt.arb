@@ -50,6 +50,7 @@
   "changeInitialAmount": "Alterar valor inicial",
   "changeInitialAmountExplication": "Será alterado seu saldo inicial e reajustado seu saldo atual, o que resultará em possíveis variações nos saldos ao final do mês.",
   "changeInitialAmountConfirmation": "Reajustar saldo inicial da conta?",
+  "clear": "Limpar",
   "close": "Fechar",
   "closingDay": "Dia fechamento",
   "closureDate": "Fechamento",

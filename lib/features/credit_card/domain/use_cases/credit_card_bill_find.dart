@@ -15,4 +15,7 @@ class CreditCardBillFind implements ICreditCardBillFind {
 
   @override
   Future<CreditCardBillEntity?> findById(String id) => _repository.findById(id);
+
+  @override
+  Future<List<CreditCardBillEntity>> findByPeriod({required DateTime startDate, required DateTime endDate, required String idCreditCard}) => _repository.findByPeriod(startDate: startDate, endDate: endDate, idCreditCard: idCreditCard);
 }

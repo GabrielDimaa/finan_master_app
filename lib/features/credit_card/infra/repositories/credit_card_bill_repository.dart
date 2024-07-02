@@ -8,6 +8,7 @@ import 'package:finan_master_app/features/credit_card/infra/models/credit_card_b
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_transaction_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class CreditCardBillRepository implements ICreditCardBillRepository {
   final ICreditCardBillLocalDataSource _localDataSource;
@@ -91,11 +92,25 @@ class CreditCardBillRepository implements ICreditCardBillRepository {
 
   @override
   Future<CreditCardBillEntity?> findFirstInPeriod({required DateTime startDate, required DateTime endDate, required String idCreditCard}) async {
+    if (startDate.isAfter(endDate)) throw Exception(R.strings.errorStartDateAfterEndDate);
+
     final CreditCardBillModel? model = await _localDataSource.findOne(
       where: '${_localDataSource.tableName}.bill_closing_date BETWEEN ? AND ? AND ${_localDataSource.tableName}.id_credit_card = ?',
       whereArgs: [startDate.toIso8601String(), endDate.toIso8601String(), idCreditCard],
     );
 
     return model != null ? CreditCardBillFactory.toEntity(model) : null;
+  }
+
+  @override
+  Future<List<CreditCardBillEntity>> findByPeriod({required DateTime startDate, required DateTime endDate, required String idCreditCard}) async {
+    if (startDate.isAfter(endDate)) throw Exception(R.strings.errorStartDateAfterEndDate);
+
+    final List<CreditCardBillModel> model = await _localDataSource.findAll(
+      where: '${_localDataSource.tableName}.bill_closing_date BETWEEN ? AND ? AND ${_localDataSource.tableName}.id_credit_card = ?',
+      whereArgs: [startDate.toIso8601String(), endDate.toIso8601String(), idCreditCard],
+    );
+
+    return model.map((model) => CreditCardBillFactory.toEntity(model)).toList();
   }
 }

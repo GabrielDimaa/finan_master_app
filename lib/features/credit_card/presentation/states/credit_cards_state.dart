@@ -9,7 +9,7 @@ sealed class CreditCardsState {
 
   CreditCardsState setCreditCards(List<CreditCardEntity> creditCards) => creditCards.isEmpty ? const EmptyCreditCardsState([]) : ListCreditCardsState(creditCards);
 
-  CreditCardsState setLoading() => const LoadingCreditCardsState([]);
+  CreditCardsState setLoading() => LoadingCreditCardsState(creditCards);
 
   CreditCardsState setError(String message) => ErrorCreditCardsState(message);
 }

@@ -4,11 +4,11 @@ import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart'
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class ReportFiltersBottomSheet extends StatefulWidget {
+class FiltersBottomSheet extends StatefulWidget {
   final VoidCallback filter;
   final List<Widget> children;
 
-  const ReportFiltersBottomSheet._({required this.filter, required this.children});
+  const FiltersBottomSheet._({required this.filter, required this.children});
 
   static Future<void> show({required BuildContext context, required VoidCallback filter, required List<Widget> children}) async {
     return await showModalBottomSheet(
@@ -17,15 +17,15 @@ class ReportFiltersBottomSheet extends StatefulWidget {
       enableDrag: true,
       useSafeArea: true,
       isScrollControlled: true,
-      builder: (_) => ReportFiltersBottomSheet._(filter: filter, children: children),
+      builder: (_) => FiltersBottomSheet._(filter: filter, children: children),
     );
   }
 
   @override
-  State<ReportFiltersBottomSheet> createState() => _ReportFiltersBottomSheetState();
+  State<FiltersBottomSheet> createState() => _FiltersBottomSheetState();
 }
 
-class _ReportFiltersBottomSheetState extends State<ReportFiltersBottomSheet> with ThemeContext {
+class _FiltersBottomSheetState extends State<FiltersBottomSheet> with ThemeContext {
   @override
   Widget build(BuildContext context) {
     return DraggableBottomSheet(

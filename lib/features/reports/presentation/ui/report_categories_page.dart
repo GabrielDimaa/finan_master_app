@@ -3,7 +3,7 @@ import 'package:finan_master_app/features/reports/presentation/enums/date_period
 import 'package:finan_master_app/features/reports/presentation/notifiers/report_categories_notifier.dart';
 import 'package:finan_master_app/features/reports/presentation/states/report_categories_state.dart';
 import 'package:finan_master_app/features/reports/presentation/ui/components/report_categories_chart.dart';
-import 'package:finan_master_app/features/reports/presentation/ui/components/report_filters_bottom_sheet.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/filters/filters_bottom_sheet.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/filters/date_period_filter.dart';
@@ -79,7 +79,7 @@ class _ReportCategoriesPageState extends State<ReportCategoriesPage> with ThemeC
   }
 
   Future<void> filters() async {
-    await ReportFiltersBottomSheet.show(
+    await FiltersBottomSheet.show(
       context: context,
       filter: () => notifier.findByPeriod(notifier.dateInitialFilter, notifier.dateFinalFilter),
       children: [

@@ -13,6 +13,7 @@ import 'package:finan_master_app/features/credit_card/presentation/states/credit
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_cards_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_card_widget.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_bill_details_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_bills_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
@@ -182,7 +183,8 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
 
     if (result.isSave) {
       if (creditCard == null) {
-        creditCardsListNotifier.setCreditCards(creditCardsListNotifier.value.creditCards..insert(0, result.value!));
+        creditCardsListNotifier.setCreditCards([result.value!, ...creditCardsListNotifier.value.creditCards]);
+        creditCardSelectedNotifier.setCreditCard(creditCardsListNotifier.value.creditCards.first);
         carouselController.animateToPage(0, duration: const Duration(milliseconds: 500), curve: Curves.ease);
         return;
       }
@@ -253,7 +255,7 @@ class _LimitState extends State<_Limit> with ThemeContext {
                 ),
                 Builder(
                   builder: (_) {
-                    final value = (widget.amountLimitUtilized) / (widget.amountLimit);
+                    final value = widget.amountLimit == 0.0 ? 0.0 : (widget.amountLimitUtilized) / (widget.amountLimit);
                     return FractionallySizedBox(
                       widthFactor: min(max(value, 0.0), 1.0),
                       child: Container(
@@ -353,18 +355,17 @@ class _BillState extends State<_Bill> with ThemeContext {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.only(left: 16),
           child: Row(
             children: [
               Text(strings.bills, style: textTheme.bodyLarge),
-              const SizedBox(height: 50),
-              // const Spacer(),
-              // TextButton.icon(
-              //   iconAlignment: IconAlignment.end,
-              //   onPressed: () {},
-              //   label: Text(strings.viewAll),
-              //   icon: const Icon(Icons.chevron_right_outlined),
-              // ),
+              const Spacer(),
+              TextButton.icon(
+                iconAlignment: IconAlignment.end,
+                onPressed: goViewAll,
+                label: Text(strings.viewAll),
+                icon: const Icon(Icons.chevron_right_outlined),
+              ),
             ],
           ),
         ),
@@ -421,6 +422,20 @@ class _BillState extends State<_Bill> with ThemeContext {
         ),
       ],
     );
+  }
+
+  Future<void> goViewAll() async {
+    final FormResultNavigation<List<CreditCardBillEntity>>? result = await context.pushNamed(CreditCardBillsPage.route, extra: widget.creditCard);
+
+    if (result?.isSave == true) {
+      widget.onRefreshCreditCard();
+
+      for (final CreditCardBillEntity bill in result!.value!) {
+        final int index = bills.indexWhere((e) => e.id == bill.id);
+
+        if (index >= 0) bills[index] = bill;
+      }
+    }
   }
 
   Future<void> goBillDetails(CreditCardBillEntity bill) async {

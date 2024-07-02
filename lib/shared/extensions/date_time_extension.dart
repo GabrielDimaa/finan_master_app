@@ -53,5 +53,14 @@ extension DateTimeExtension on DateTime {
 
   String formatMMMM() => DateFormat.MMMM(AppLocale().locale.languageCode).format(this);
 
+  String formatYMMMM() => DateFormat.yMMMM(AppLocale().locale.languageCode).format(this);
+
   bool isSameDay(DateTime date1, DateTime date2) => date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
+}
+
+int differenceInMonths(DateTime startDate, DateTime endDate) {
+  final int yearDiff = endDate.year - startDate.year;
+  final int monthDiff = endDate.month - startDate.month;
+
+  return yearDiff * 12 + monthDiff;
 }

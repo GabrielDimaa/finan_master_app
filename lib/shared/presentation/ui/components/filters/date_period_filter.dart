@@ -11,6 +11,7 @@ class DatePeriodFilter extends StatefulWidget {
   final DateTimeRange? dateRange;
   final DatePeriodEnum? periodSelected;
   final bool enabled;
+  final bool showClear;
 
   const DatePeriodFilter({
     super.key,
@@ -19,7 +20,8 @@ class DatePeriodFilter extends StatefulWidget {
     this.dateRange,
     this.periodSelected,
     this.enabled = true,
-  }) : assert ((dateRange == null && periodSelected == null) || (dateRange != null) != (periodSelected != null));
+    this.showClear = true,
+  }) : assert((dateRange == null && periodSelected == null) || (dateRange != null) != (periodSelected != null));
 
   @override
   State<DatePeriodFilter> createState() => _DatePeriodFilterState();
@@ -78,8 +80,9 @@ class _DatePeriodFilterState extends State<DatePeriodFilter> with ThemeContext {
           leading: const Icon(Icons.date_range_outlined, size: 18),
           title: Text(dateTimeInitial == null || dateTimeFinal == null ? strings.selectDate : '${dateTimeInitial?.format()} - ${dateTimeFinal?.format()}', style: textTheme.bodyMedium),
           trailing: Visibility(
-            visible: dateTimeInitial != null || dateTimeFinal != null,
+            visible: widget.showClear && (dateTimeInitial != null || dateTimeFinal != null),
             child: IconButton(
+              tooltip: strings.clear,
               icon: const Icon(Icons.close_outlined, size: 20),
               onPressed: widget.enabled ? () => onSelect(null, null) : null,
             ),
