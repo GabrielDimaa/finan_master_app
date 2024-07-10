@@ -26,9 +26,9 @@ class _FiltersTransactionsState extends State<FiltersTransactions> with ThemeCon
         SegmentedButton(
           multiSelectionEnabled: false,
           segments: [
-            ButtonSegment<CategoryTypeEnum?>(value: null, label: Text(AppLocalizations.of(context)!.allFilter)),
-            ButtonSegment<CategoryTypeEnum>(value: CategoryTypeEnum.expense, label: Text(CategoryTypeEnum.expense.descriptionPlural)),
-            ButtonSegment<CategoryTypeEnum>(value: CategoryTypeEnum.income, label: Text(CategoryTypeEnum.income.descriptionPlural)),
+            ButtonSegment<CategoryTypeEnum?>(value: null, label: Text(AppLocalizations.of(context)!.allFilter, style: const TextStyle(fontSize: 13))),
+            ButtonSegment<CategoryTypeEnum>(value: CategoryTypeEnum.income, label: Text(CategoryTypeEnum.income.descriptionPlural, style: const TextStyle(fontSize: 13))),
+            ButtonSegment<CategoryTypeEnum>(value: CategoryTypeEnum.expense, label: Text(CategoryTypeEnum.expense.descriptionPlural, style: const TextStyle(fontSize: 13))),
           ],
           selected: widget.notifier.filterType,
           onSelectionChanged: widget.enabled ? widget.notifier.filterTransactions : null,

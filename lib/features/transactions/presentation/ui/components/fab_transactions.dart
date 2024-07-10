@@ -1,12 +1,7 @@
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
-import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
-import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab_child.dart';
@@ -14,9 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class FabTransactions extends StatefulWidget {
-  final TransactionsNotifier notifier;
-
-  const FabTransactions({Key? key, required this.notifier}) : super(key: key);
+  const FabTransactions({super.key});
 
   @override
   State<FabTransactions> createState() => _FabTransactionsState();
@@ -52,23 +45,11 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
     );
   }
 
-  Future<void> goExpenseFormPage() async {
-    final FormResultNavigation<ExpenseEntity>? result = await context.pushNamed(ExpenseFormPage.route);
+  Future<void> goExpenseFormPage() => context.pushNamed(ExpenseFormPage.route);
 
-    if (result != null) await widget.notifier.onRefresh();
-  }
+  Future<void> goIncomeFormPage() => context.pushNamed(IncomeFormPage.route);
 
-  Future<void> goIncomeFormPage() async {
-    final FormResultNavigation<IncomeEntity>? result = await context.pushNamed(IncomeFormPage.route);
-
-    if (result != null) await widget.notifier.onRefresh();
-  }
-
-  Future<void> goTransferFormPage() async {
-    final FormResultNavigation<TransferEntity>? result = await context.pushNamed(TransferFormPage.route);
-
-    if (result != null) await widget.notifier.onRefresh();
-  }
+  Future<void> goTransferFormPage() => context.pushNamed(TransferFormPage.route);
 
   Future<void> goCreditCardExpenseFormPage() => context.pushNamed(CreditCardExpensePage.route);
 

@@ -10,6 +10,7 @@ import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart'
 import 'package:finan_master_app/features/backup/presentation/ui/backup_page.dart';
 import 'package:finan_master_app/features/backup/presentation/ui/restore_backup_page.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
+import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/category/presentation/ui/categories_list_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/category_form_page.dart';
 import 'package:finan_master_app/features/config/presentation/ui/config_page.dart';
@@ -210,7 +211,7 @@ sealed class AppRouter {
                   parentNavigatorKey: _transactionsNavigatorKey,
                   name: TransactionsListPage.route,
                   path: '/${TransactionsListPage.route}',
-                  builder: (_, __) => const TransactionsListPage(),
+                  builder: (_, GoRouterState state) => TransactionsListPage(key: ObjectKey(state.extra), categoryTypeFilter: state.extra as CategoryTypeEnum?),
                 ),
               ],
             ),
