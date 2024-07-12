@@ -1,8 +1,11 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
+import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_accounts_balance.dart';
+import 'package:finan_master_app/features/home/presentation/ui/components/home_card_bill_credit_card.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_income.dart';
+import 'package:finan_master_app/features/home/presentation/ui/components/home_card_monthly_balance.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/fab_transactions.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -23,7 +26,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with ThemeContext {
   final EventNotifier eventNotifier = DI.get<EventNotifier>();
-  final AccountsNotifier accountsNotifier = DI.get<AccountsNotifier>();
+  final HomeAccountsBalanceNotifier accountsBalanceNotifier = DI.get<HomeAccountsBalanceNotifier>();
   final TransactionsNotifier transactionsNotifier = DI.get<TransactionsNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -32,21 +35,18 @@ class _HomePageState extends State<HomePage> with ThemeContext {
   void initState() {
     super.initState();
 
-    Future(() async {
-      try {
-        await Future.wait([
-          accountsNotifier.findAll(deleted: true),
-          transactionsNotifier.findByPeriod(transactionsNotifier.startDate, transactionsNotifier.endDate),
-        ]);
+    load();
 
-        eventNotifier.addListener(() {
-          if (eventNotifier.value == EventType.transactions) onRefresh();
-        });
-      } catch (e) {
-        if (!mounted) return;
-        ErrorDialog.show(context, e.toString());
-      }
+    eventNotifier.addListener(() {
+      if (eventNotifier.value == EventType.transactions) load();
     });
+  }
+
+  Future<void> load() async {
+    await Future.wait([
+      accountsBalanceNotifier.load(),
+      transactionsNotifier.findByPeriod(transactionsNotifier.startDate, transactionsNotifier.endDate),
+    ]);
   }
 
   @override
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
       floatingActionButton: const FabTransactions(),
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: onRefresh,
+          onRefresh: load,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Spacing.y(),
-                HomeCardAccountsBalance(accountsNotifier: accountsNotifier),
+                HomeCardAccountsBalance(notifier: accountsBalanceNotifier),
                 const Spacing.y(),
                 IntrinsicHeight(
                   child: Row(
@@ -86,6 +86,9 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                     ],
                   ),
                 ),
+                const Spacing.y(),
+                // HomeCardBillCreditCard(billNotifier: billNotifier, creditCardNotifier: creditCardNotifier),
+                const HomeCardMonthlyBalance(),
               ],
             ),
           ),
@@ -93,6 +96,4 @@ class _HomePageState extends State<HomePage> with ThemeContext {
       ),
     );
   }
-
-  Future<void> onRefresh() async {}
 }

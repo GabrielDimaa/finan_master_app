@@ -15,4 +15,7 @@ class AccountFind implements IAccountFind {
 
   @override
   Future<double> findBalanceUntilDate(DateTime date) => _repository.findBalanceUntilDate(date);
+
+  @override
+  Future<double> findAccountsBalance() => _repository.findAccountsBalance();
 }

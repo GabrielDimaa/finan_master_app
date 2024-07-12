@@ -53,7 +53,17 @@ class _HomeCardMonthlyTransactionState extends State<HomeCardMonthlyTransaction>
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Expanded(child: Text(widget._type == _Type.expense ? widget.transactionsNotifier.transactionsByPeriod.amountsExpense.money : widget.transactionsNotifier.transactionsByPeriod.amountsIncome.money, style: textTheme.titleLarge?.copyWith(fontSize: 18))),
+                  Expanded(
+                    child: ValueListenableBuilder(
+                      valueListenable: widget.transactionsNotifier,
+                      builder: (_, state, __) {
+                        return Text(
+                          widget._type == _Type.expense ? widget.transactionsNotifier.transactionsByPeriod.amountsExpense.money : widget.transactionsNotifier.transactionsByPeriod.amountsIncome.money,
+                          style: textTheme.titleLarge?.copyWith(fontSize: 18),
+                        );
+                      },
+                    ),
+                  ),
                   Icon(Icons.chevron_right_outlined, color: colorScheme.onSurfaceVariant),
                 ],
               ),

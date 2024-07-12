@@ -6,4 +6,6 @@ abstract interface class IAccountFind {
   Future<AccountEntity?> findById(String id);
 
   Future<double> findBalanceUntilDate(DateTime date);
+
+  Future<double> findAccountsBalance();
 }

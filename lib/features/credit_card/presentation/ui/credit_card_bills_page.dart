@@ -6,6 +6,7 @@ import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_e
 import 'package:finan_master_app/features/credit_card/domain/enums/brand_card_enum.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_bills_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_bills_state.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_card_simple_widget.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_bill_details_page.dart';
 import 'package:finan_master_app/features/reports/presentation/enums/date_period_enum.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
@@ -131,30 +132,7 @@ class _CreditCardPersistentHeader extends SliverPersistentHeaderDelegate {
   _CreditCardPersistentHeader(this.creditCard);
 
   @override
-  Widget build(context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: Theme.of(context).colorScheme.surface,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          color: creditCard.financialInstitutionAccount!.creditCardBackgroundColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: Row(
-              children: [
-                creditCard.financialInstitutionAccount!.icon(),
-                const Spacing.x(),
-                Text(creditCard.description, style: Theme.of(context).textTheme.labelLarge),
-                const Spacer(),
-                creditCard.brand!.icon(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(context, double shrinkOffset, bool overlapsContent) => CreditCardSimpleWidget(creditCard: creditCard);
 
   @override
   double get maxExtent => 68;

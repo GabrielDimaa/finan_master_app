@@ -11,8 +11,6 @@ class AccountsNotifier extends ValueNotifier<AccountsState> {
       : _accountFind = accountFind,
         super(AccountsState.start());
 
-  double get accountsBalance => value.accounts.map((account) => account.deletedAt == null && account.includeTotalBalance ? account.balance : 0).sum.toDouble();
-
   Future<void> findAll({bool deleted = false}) async {
     try {
       value = value.setLoading();

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/repositories/i_account_repository.dart';
 import 'package:finan_master_app/features/account/helpers/account_factory.dart';
@@ -45,4 +46,13 @@ class AccountRepository implements IAccountRepository {
 
   @override
   Future<double> findBalanceUntilDate(DateTime date) => _dataSource.findBalanceUntilDate(date);
+
+  @override
+  Future<double> findAccountsBalance() async {
+    final List<AccountModel> models = await _dataSource.findAll(where: 'include_total_balance = ?', whereArgs: [true]);
+
+    final List<AccountEntity> entities = models.map((account) => AccountFactory.toEntity(account)).toList();
+
+    return entities.map((account) => account.includeTotalBalance ? account.balance : 0).sum.toDouble();
+  }
 }
