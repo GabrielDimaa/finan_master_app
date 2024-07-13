@@ -1,9 +1,9 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
+import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_transaction_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_accounts_balance.dart';
-import 'package:finan_master_app/features/home/presentation/ui/components/home_card_income.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_monthly_balance.dart';
-import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
+import 'package:finan_master_app/features/home/presentation/ui/components/home_card_monthly_transaction.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/fab_transactions.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
@@ -23,7 +23,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with ThemeContext {
   final EventNotifier eventNotifier = DI.get<EventNotifier>();
   final HomeAccountsBalanceNotifier accountsBalanceNotifier = DI.get<HomeAccountsBalanceNotifier>();
-  final TransactionsNotifier transactionsNotifier = DI.get<TransactionsNotifier>();
+  final HomeMonthlyTransactionNotifier monthlyTransactionNotifier = DI.get<HomeMonthlyTransactionNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
   Future<void> load() async {
     await Future.wait([
       accountsBalanceNotifier.load(),
-      transactionsNotifier.findByPeriod(transactionsNotifier.startDate, transactionsNotifier.endDate),
+      monthlyTransactionNotifier.load(),
     ]);
   }
 
@@ -76,9 +76,9 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Expanded(child: HomeCardMonthlyTransaction.income(transactionsNotifier: transactionsNotifier)),
+                      Expanded(child: HomeCardMonthlyTransaction.income(notifier: monthlyTransactionNotifier)),
                       const Spacing.x(),
-                      Expanded(child: HomeCardMonthlyTransaction.expense(transactionsNotifier: transactionsNotifier)),
+                      Expanded(child: HomeCardMonthlyTransaction.expense(notifier: monthlyTransactionNotifier)),
                     ],
                   ),
                 ),

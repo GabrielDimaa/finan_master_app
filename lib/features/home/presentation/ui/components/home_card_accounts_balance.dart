@@ -1,4 +1,3 @@
-import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/ui/accounts_list_page.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/states/home_accounts_balance_state.dart';
