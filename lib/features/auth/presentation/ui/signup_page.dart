@@ -98,7 +98,7 @@ class _SignupPageState extends State<SignupPage> with ThemeContext {
                           style: FilledButton.styleFrom(backgroundColor: colorScheme.onInverseSurface, foregroundColor: colorScheme.inverseSurface),
                           onPressed: createAccountWithGoogle,
                           icon: state is SigningUpWithGoogleState ? const SizedBox.shrink() : SvgPicture.asset('assets/icons/google.svg', width: 22, height: 22),
-                          label: state is SigningUpWithGoogleState ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator()) : Text(strings.createAccountWithGoogle),
+                          label: state is SigningUpWithGoogleState ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2.5)) : Text(strings.createAccountWithGoogle),
                         );
                       }
                     ),

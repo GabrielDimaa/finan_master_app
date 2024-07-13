@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
                         const Spacing.y(),
                         FilledButton(
                           onPressed: login,
-                          child: notifier.value is LoggingWithEmailAndPasswordState ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary)) : Text(strings.loginButtonName),
+                          child: notifier.value is LoggingWithEmailAndPasswordState ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5)) : Text(strings.loginButtonName),
                         ),
                         const Spacing.y(),
                         Row(
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
                           style: FilledButton.styleFrom(backgroundColor: colorScheme.onInverseSurface, foregroundColor: colorScheme.inverseSurface),
                           onPressed: loginWithGoogle,
                           icon: notifier.value is LoggingWithGoogleState ? const SizedBox.shrink() : SvgPicture.asset('assets/icons/google.svg', width: 22, height: 22),
-                          label: notifier.value is LoggingWithGoogleState ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator()) : Text(strings.loginWithGoogle),
+                          label: notifier.value is LoggingWithGoogleState ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2.5)) : Text(strings.loginWithGoogle),
                         ),
                         const Spacing.y(4),
                         Row(

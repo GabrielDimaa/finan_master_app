@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 class HomeMonthlyTransactionNotifier extends ValueNotifier<HomeMonthlyTransactionState> {
   final ITransactionFind _transactionFind;
 
-  HomeMonthlyTransactionNotifier(ITransactionFind transactionFind)
+  HomeMonthlyTransactionNotifier({required ITransactionFind transactionFind})
       : _transactionFind = transactionFind,
         super(HomeMonthlyTransactionState.start());
 

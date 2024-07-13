@@ -81,7 +81,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> with Them
                                   if (state is ResendingEmailVerificationState) {
                                     return FilledButton.tonal(
                                       onPressed: null,
-                                      child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onSecondaryContainer)),
+                                      child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onSecondaryContainer, strokeWidth: 2.5)),
                                     );
                                   }
 
@@ -103,7 +103,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> with Them
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: FilledButton(
                       onPressed: completeRegistration,
-                      child: notifier.value is CompletingRegistrationState ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary)) : Text(strings.completeRegistration),
+                      child: notifier.value is CompletingRegistrationState ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5)) : Text(strings.completeRegistration),
                     ),
                   ),
                 ],

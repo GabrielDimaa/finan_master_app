@@ -69,7 +69,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> with ThemeContext
                             ),
                             const Spacing.y(3),
                             switch (state) {
-                              SendingResetPasswordState _ => FilledButton(onPressed: resetPassword, child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary))),
+                              SendingResetPasswordState _ => FilledButton(onPressed: resetPassword, child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5))),
                               SentResetPasswordState _ => FilledButton.icon(onPressed: null, icon: const Icon(Icons.check), label: Text(strings.sent)),
                               _ => FilledButton(onPressed: resetPassword, child: Text(strings.resetPassword)),
                             },

@@ -42,8 +42,8 @@ class _HomeCardAccountsBalanceState extends State<HomeCardAccountsBalance> with 
                   children: [
                     Text(strings.accountsBalance, style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurfaceVariant)),
                     const SizedBox(height: 4),
-                    SizedBox(
-                      height: textTheme.headlineSmall!.fontSize,
+                    ConstrainedBox(
+                      constraints: BoxConstraints(minHeight: textTheme.headlineSmall?.fontSize ?? 20),
                       child: ValueListenableBuilder(
                         valueListenable: widget.notifier,
                         builder: (_, state, __) {
@@ -65,7 +65,7 @@ class _HomeCardAccountsBalanceState extends State<HomeCardAccountsBalance> with 
                               child: SizedBox(
                                 height: 20,
                                 width: 20,
-                                child: CircularProgressIndicator(strokeWidth: 3),
+                                child: CircularProgressIndicator(strokeWidth: 2.5),
                               ),
                             );
                           }

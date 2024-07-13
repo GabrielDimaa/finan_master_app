@@ -64,8 +64,8 @@ class _HomeCardMonthlyTransactionState extends State<HomeCardMonthlyTransaction>
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Expanded(
-                    child: SizedBox(
-                      height: 18,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 18),
                       child: ValueListenableBuilder(
                         valueListenable: widget.notifier,
                         builder: (_, state, __) {
@@ -87,7 +87,7 @@ class _HomeCardMonthlyTransactionState extends State<HomeCardMonthlyTransaction>
                               child: SizedBox(
                                 height: 18,
                                 width: 18,
-                                child: CircularProgressIndicator(strokeWidth: 3),
+                                child: CircularProgressIndicator(strokeWidth: 2.5),
                               ),
                             );
                           }

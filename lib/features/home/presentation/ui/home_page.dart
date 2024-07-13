@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
       floatingActionButton: const FabTransactions(),
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: load,
+          onRefresh: onRefresh,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -91,5 +91,10 @@ class _HomePageState extends State<HomePage> with ThemeContext {
         ),
       ),
     );
+  }
+
+  Future<void> onRefresh() async {
+    load();
+    await Future.delayed(const Duration(milliseconds: 400));
   }
 }

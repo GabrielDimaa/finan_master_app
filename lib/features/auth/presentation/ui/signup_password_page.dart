@@ -110,7 +110,7 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
                             const Spacing.y(3),
                             FilledButton(
                               onPressed: signup,
-                              child: notifier.isLoading ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary)) : Text(strings.signup),
+                              child: notifier.isLoading ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5)) : Text(strings.signup),
                             ),
                           ],
                         ),
