@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/home/domain/entities/home_monthly_balance_entity.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/states/home_monthly_balance_state.dart';
@@ -45,9 +46,8 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
               ],
             ),
           ),
-          const Spacing.y(2),
           AspectRatio(
-            aspectRatio: 12 / 8,
+            aspectRatio: 12 / 7,
             child: ValueListenableBuilder(
               valueListenable: widget.notifier,
               builder: (_, state, __) {
@@ -55,78 +55,77 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
                 this.state = state;
 
                 if (state is ErrorHomeMonthlyBalanceState) {
-                  return Text(
-                    state.message.replaceAll('Exception: ', ''),
-                    style: textTheme.bodyMedium?.copyWith(color: colorScheme.error),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 3,
+                  return Center(
+                    child: Text(
+                      state.message.replaceAll('Exception: ', ''),
+                      style: textTheme.bodyMedium?.copyWith(color: colorScheme.error),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+                    ),
                   );
                 }
 
                 if (state is StartHomeMonthlyBalanceState || (state is LoadingHomeMonthlyBalanceState && lastState is! LoadedHomeMonthlyBalanceState)) {
-                  return const Align(
-                    alignment: Alignment.centerLeft,
-                    child: SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2.5),
-                    ),
-                  );
+                  return const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));
                 }
 
-                return BarChart(
-                  swapAnimationDuration: const Duration(milliseconds: 250),
-                  BarChartData(
-                    gridData: const FlGridData(show: false),
-                    borderData: FlBorderData(show: false),
-                    titlesData: FlTitlesData(
-                      show: true,
-                      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 80,
-                          getTitlesWidget: (double value, TitleMeta meta) => SideTitleWidget(
-                            axisSide: meta.axisSide,
-                            child: Text(
-                              value.money,
-                              style: textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.w300),
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: BarChart(
+                    swapAnimationDuration: const Duration(milliseconds: 250),
+                    BarChartData(
+                      gridData: const FlGridData(show: false),
+                      borderData: FlBorderData(show: false),
+                      titlesData: FlTitlesData(
+                        show: true,
+                        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            interval: widget.notifier.monthlyBalances.map((e) => e.balance).max / 5,
+                            reservedSize: 80,
+                            getTitlesWidget: (double value, TitleMeta meta) => SideTitleWidget(
+                              axisSide: meta.axisSide,
+                              child: Text(
+                                value.money,
+                                style: textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.w300),
+                              ),
+                            ),
+                          ),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 38,
+                            getTitlesWidget: (double value, TitleMeta meta) => SideTitleWidget(
+                              axisSide: meta.axisSide,
+                              space: 8,
+                              child: Text(widget.notifier.monthlyBalances[value.toInt()].date.formatMMM(), style: textTheme.bodySmall),
                             ),
                           ),
                         ),
                       ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (double value, TitleMeta meta) => SideTitleWidget(
-                            axisSide: meta.axisSide,
-                            space: 8,
-                            child: Text(widget.notifier.monthlyBalances[value.toInt()].date.formatMMM(), style: textTheme.bodySmall),
-                          ),
-                          reservedSize: 38,
+                      barGroups: barGroups(),
+                      barTouchData: BarTouchData(
+                        touchCallback: touchCallback,
+                        touchTooltipData: BarTouchTooltipData(
+                          getTooltipColor: (_) => colorScheme.outlineVariant,
+                          tooltipHorizontalAlignment: FLHorizontalAlignment.center,
+                          getTooltipItem: (BarChartGroupData group, int groupIndex, BarChartRodData rod, int? rodIndex) {
+                            final HomeMonthlyBalanceEntity monthlyBalance = widget.notifier.monthlyBalances[group.x];
+                            return BarTooltipItem(
+                              '${monthlyBalance.date.formatMMMM().capitalizeFirstLetter()}\n',
+                              textTheme.labelMedium!,
+                              children: [
+                                TextSpan(
+                                  text: rod.toY.money,
+                                  style: textTheme.labelLarge,
+                                ),
+                              ],
+                            );
+                          },
                         ),
-                      ),
-                    ),
-                    barGroups: barGroups(),
-                    barTouchData: BarTouchData(
-                      touchCallback: touchCallback,
-                      touchTooltipData: BarTouchTooltipData(
-                        getTooltipColor: (_) => colorScheme.outlineVariant,
-                        tooltipHorizontalAlignment: FLHorizontalAlignment.center,
-                        getTooltipItem: (BarChartGroupData group, int groupIndex, BarChartRodData rod, int? rodIndex) {
-                          final HomeMonthlyBalanceEntity monthlyBalance = widget.notifier.monthlyBalances[group.x];
-                          return BarTooltipItem(
-                            '${monthlyBalance.date.formatMMMM().capitalizeFirstLetter()}\n',
-                            textTheme.labelMedium!,
-                            children: [
-                              TextSpan(
-                                text: rod.toY.money,
-                                style: textTheme.labelLarge,
-                              ),
-                            ],
-                          );
-                        },
                       ),
                     ),
                   ),
@@ -154,12 +153,14 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
     return widget.notifier.monthlyBalances.map((e) {
       final int index = widget.notifier.monthlyBalances.indexOf(e);
 
+      final Color color = e.balance < 0 ? const Color(0xFFFF5454) : const Color(0xFF3CDE87);
+
       return BarChartGroupData(
         x: index,
         barRods: [
           BarChartRodData(
             toY: e.balance,
-            color: index == touchedIndex ? const Color(0xFF3CDE87) : const Color(0xFF3CDE87).withAlpha(100),
+            color: index == touchedIndex ? color : color.withAlpha(100),
             width: 18,
             backDrawRodData: BackgroundBarChartRodData(
               show: true,

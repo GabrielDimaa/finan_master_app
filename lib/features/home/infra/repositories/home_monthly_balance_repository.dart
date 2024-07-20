@@ -13,9 +13,9 @@ class HomeMonthlyBalanceRepository implements IHomeMonthlyBalanceRepository {
 
     return results
         .map((result) => HomeMonthlyBalanceEntity(
-              date: DateTime.tryParse(result['month'].toString())!.toLocal(),
-              balance: result['monthly_sum'],
-            ))
+      date: DateTime.tryParse(result['month'].toString())!.toLocal(),
+      balance: result['monthly_sum'],
+    ))
         .toList();
   }
 }

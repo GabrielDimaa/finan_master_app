@@ -88,6 +88,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                 const Spacing.y(),
                 // HomeCardBillCreditCard(billNotifier: billNotifier, creditCardNotifier: creditCardNotifier),
                 HomeCardMonthlyBalance(notifier: monthlyBalanceNotifier),
+                const SizedBox(height: 100),
               ],
             ),
           ),
