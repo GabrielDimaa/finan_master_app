@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:intl/intl.dart';
 
@@ -48,8 +49,10 @@ extension DateTimeExtension on DateTime {
 
     if (isSameDay(now.subtract(const Duration(days: 1)), this)) return R.strings.yesterday;
 
-    return DateFormat('d MMM', AppLocale().locale.languageCode).format(this).replaceAll(".", "").toUpperCase();
+    return DateFormat('d MMM', AppLocale().locale.languageCode).format(this).replaceAll('.', '').toUpperCase();
   }
+
+  String formatMMM() => DateFormat.MMM(AppLocale().locale.languageCode).format(this).replaceAll('.', '').capitalizeFirstLetter();
 
   String formatMMMM() => DateFormat.MMMM(AppLocale().locale.languageCode).format(this);
 

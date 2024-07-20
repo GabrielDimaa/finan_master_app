@@ -1,5 +1,6 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
+import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_transaction_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_accounts_balance.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_monthly_balance.dart';
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
   final EventNotifier eventNotifier = DI.get<EventNotifier>();
   final HomeAccountsBalanceNotifier accountsBalanceNotifier = DI.get<HomeAccountsBalanceNotifier>();
   final HomeMonthlyTransactionNotifier monthlyTransactionNotifier = DI.get<HomeMonthlyTransactionNotifier>();
+  final HomeMonthlyBalanceNotifier monthlyBalanceNotifier = DI.get<HomeMonthlyBalanceNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -42,6 +44,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
     await Future.wait([
       accountsBalanceNotifier.load(),
       monthlyTransactionNotifier.load(),
+      monthlyBalanceNotifier.load(),
     ]);
   }
 
@@ -84,7 +87,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                 ),
                 const Spacing.y(),
                 // HomeCardBillCreditCard(billNotifier: billNotifier, creditCardNotifier: creditCardNotifier),
-                const HomeCardMonthlyBalance(),
+                HomeCardMonthlyBalance(notifier: monthlyBalanceNotifier),
               ],
             ),
           ),

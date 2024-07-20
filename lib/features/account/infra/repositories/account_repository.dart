@@ -49,7 +49,7 @@ class AccountRepository implements IAccountRepository {
 
   @override
   Future<double> findAccountsBalance() async {
-    final List<AccountModel> models = await _dataSource.findAll(where: 'include_total_balance = ?', whereArgs: [true]);
+    final List<AccountModel> models = await _dataSource.findAll(where: 'include_total_balance = ?', whereArgs: [1]);
 
     final List<AccountEntity> entities = models.map((account) => AccountFactory.toEntity(account)).toList();
 

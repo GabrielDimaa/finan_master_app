@@ -22,7 +22,7 @@ dependencies:
   firebase_auth: ^4.19.0
   firebase_core: ^2.28.0
   flutter_svg: ^2.0.7
-  fl_chart: ^0.66.0
+  fl_chart: ^0.68.0
   get_it: ^7.6.0
   google_sign_in: ^6.2.1
   go_router: ^14.2.0

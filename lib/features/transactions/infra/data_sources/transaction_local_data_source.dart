@@ -11,6 +11,7 @@ import 'package:finan_master_app/features/transactions/infra/models/i_transactio
 import 'package:finan_master_app/features/transactions/infra/models/income_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transaction_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transfer_model.dart';
+import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_operation.dart';
@@ -413,5 +414,28 @@ class TransactionLocalDataSource extends LocalDataSource<TransactionModel> imple
     final List<Map<String, dynamic>> results = await databaseLocal.raw(sql, DatabaseOperation.select, ['%$text%']);
 
     return results.map((result) => _expenseLocalDataSource.fromMap(result, prefix: '${_expenseLocalDataSource.tableName}_')).toList();
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> findMonthlyBalances({required DateTime startDate, required DateTime endDate}) async {
+    try {
+      startDate = startDate.getInitialMonth();
+      endDate = endDate.getFinalMonth();
+
+      const String sql = '''
+        SELECT
+          STRFTIME('%Y-%m-01', date) AS month,
+          ROUND(SUM(amount), 2) AS monthly_sum
+        FROM transactions
+        WHERE
+          date BETWEEN ? AND ? AND
+          ${Model.deletedAtColumnName} IS NULL
+        GROUP BY month;
+    ''';
+
+      return await databaseLocal.raw(sql, DatabaseOperation.select, [startDate.toIso8601String(), endDate.toIso8601String()]);
+    } on DatabaseLocalException catch (e, stackTrace) {
+      throw throwable(e, stackTrace);
+    }
   }
 }

@@ -59,7 +59,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
   final TextEditingController dateController = TextEditingController();
 
   List<ExpenseEntity> transactionsOldAutoComplete = [];
-  late TextEditingValue textEditingValue;
+  TextEditingValue textEditingValue = const TextEditingValue(text: '');
 
   @override
   void initState() {

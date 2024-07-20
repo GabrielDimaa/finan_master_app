@@ -8,4 +8,6 @@ abstract interface class ITransactionLocalDataSource implements ILocalDataSource
   Future<List<ITransactionModel>> findIncomeByText(String text);
 
   Future<List<ITransactionModel>> findExpenseByText(String text);
+
+  Future<List<Map<String, dynamic>>> findMonthlyBalances({required DateTime startDate, required DateTime endDate});
 }

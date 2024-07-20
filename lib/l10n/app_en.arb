@@ -128,6 +128,7 @@
   "language": "Language",
   "languages": "Languages",
   "lastBackupDate": "Last backup date",
+  "lastSixMonths": "Last 6 months",
   "lessThan": "The value must be less than",
   "lessThanZero": "The value must be less than zero.",
   "limit": "Limit",

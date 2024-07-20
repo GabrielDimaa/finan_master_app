@@ -102,9 +102,9 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
     try {
       const String sql = '''
         SELECT
-          SUM(amount) + (SELECT SUM(initial_amount) FROM accounts) AS balance
+          SUM(amount) + (SELECT SUM(initial_amount) FROM accounts WHERE accounts.${Model.deletedAtColumnName} IS NULL) AS balance
         FROM transactions
-        WHERE date <= ?;
+        WHERE date <= ? AND ${Model.deletedAtColumnName} IS NULL;
       ''';
 
       final List<Map<String, dynamic>> results = await databaseLocal.raw(sql, DatabaseOperation.select, [date.toIso8601String()]);
