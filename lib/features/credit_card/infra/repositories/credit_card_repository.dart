@@ -82,7 +82,10 @@ class CreditCardRepository implements ICreditCardRepository {
     final List<CreditCardWithBillEntity> creditCardsWithBill = [];
 
     for (final creditCard in creditCards) {
-      final CreditCardBillModel? bill = await _billDataSource.findOne(where: '${_billDataSource.tableName}.paid = ?', whereArgs: [0]);
+      final CreditCardBillModel? bill = await _billDataSource.findOne(
+        where: '${_billDataSource.tableName}.paid = ? AND ${_billDataSource.tableName}.id_credit_card = ?',
+        whereArgs: [0, creditCard.id],
+      );
 
       creditCardsWithBill.add(
         CreditCardWithBillEntity(
