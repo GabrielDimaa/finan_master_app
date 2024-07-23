@@ -1,9 +1,7 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
-import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_bill_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_enum.dart';
-import 'package:finan_master_app/features/credit_card/domain/enums/brand_card_enum.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_bills_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_bills_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_card_simple_widget.dart';
@@ -18,7 +16,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/filters/date_
 import 'package:finan_master_app/shared/presentation/ui/components/filters/filters_bottom_sheet.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar_medium.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
