@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/home/domain/entities/home_monthly_balance_entity.dart';
 import 'package:finan_master_app/features/home/domain/usecases/i_home_monthly_balance.dart';
 import 'package:finan_master_app/features/home/presentation/states/home_monthly_balance_state.dart';
@@ -18,9 +19,25 @@ class HomeMonthlyBalanceNotifier extends ValueNotifier<HomeMonthlyBalanceState> 
       value = value.setLoading();
 
       final DateTime now = DateTime.now();
-      final List<HomeMonthlyBalanceEntity> monthlyBalances = await _monthlyBalance.findMonthlyBalances(startDate: now.subtractMonths(5).getInitialMonth(), endDate: now.getFinalMonth());
+      final DateTime startMonth = now.subtractMonths(5).getInitialMonth();
+      final DateTime endMonth = now.getFinalMonth();
 
-      value = value.setMonthlyBalances(monthlyBalances);
+      final List<HomeMonthlyBalanceEntity> results = await _monthlyBalance.findMonthlyBalances(startDate: startMonth, endDate: endMonth);
+
+      List<HomeMonthlyBalanceEntity> monthlyBalances = [];
+
+      for (int i = 0; i < 6; i++) {
+        final DateTime date = i == 0 ? now : now.subtractMonths(i);
+
+        monthlyBalances.add(
+          results.firstWhere(
+            (e) => e.date.year == date.year && e.date.month == date.month,
+            orElse: () => HomeMonthlyBalanceEntity(date: date.getInitialMonth(), balance: 0),
+          ),
+        );
+      }
+
+      value = value.setMonthlyBalances(monthlyBalances.reversed.toList());
     } catch (e) {
       value = value.setError(e.toString());
     }

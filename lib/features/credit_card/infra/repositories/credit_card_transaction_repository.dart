@@ -7,42 +7,48 @@ import 'package:finan_master_app/features/transactions/infra/data_sources/i_expe
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/expense_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 
 class CreditCardTransactionRepository implements ICreditCardTransactionRepository {
   final ICreditCardTransactionLocalDataSource _dataSource;
   final IExpenseLocalDataSource _expenseDataSource;
   final ITransactionLocalDataSource _transactionDataSource;
   final IDatabaseLocalTransaction _dbTransaction;
+  final EventNotifier _eventNotifier;
 
   CreditCardTransactionRepository({
     required ICreditCardTransactionLocalDataSource dataSource,
     required IExpenseLocalDataSource expenseDataSource,
     required ITransactionLocalDataSource transactionDataSource,
     required IDatabaseLocalTransaction dbTransaction,
+    required EventNotifier eventNotifier,
   })  : _dataSource = dataSource,
         _expenseDataSource = expenseDataSource,
         _transactionDataSource = transactionDataSource,
-        _dbTransaction = dbTransaction;
+        _dbTransaction = dbTransaction,
+        _eventNotifier = eventNotifier;
 
   @override
   Future<CreditCardTransactionEntity> save(CreditCardTransactionEntity entity, {ITransactionExecutor? txn}) async {
     final CreditCardTransactionModel transaction = await _dataSource.upsert(CreditCardTransactionFactory.fromEntity(entity), txn: txn);
+
+    _eventNotifier.notify(EventType.creditCards);
+
     return CreditCardTransactionFactory.toEntity(transaction);
   }
 
   @override
   Future<void> saveMany(List<CreditCardTransactionEntity> transactions, {ITransactionExecutor? txn}) async {
     if (txn == null) {
-      await _dbTransaction.openTransaction((newTxn) async {
-        for (final transaction in transactions) {
-          await _dataSource.upsert(CreditCardTransactionFactory.fromEntity(transaction), txn: newTxn);
-        }
-      });
-    } else {
-      for (final transaction in transactions) {
-        await _dataSource.upsert(CreditCardTransactionFactory.fromEntity(transaction), txn: txn);
-      }
+      await _dbTransaction.openTransaction((newTxn) => saveMany(transactions, txn: newTxn));
+      return;
     }
+
+    for (final transaction in transactions) {
+      await _dataSource.upsert(CreditCardTransactionFactory.fromEntity(transaction), txn: txn);
+    }
+
+    _eventNotifier.notify(EventType.creditCards);
   }
 
   @override
@@ -60,6 +66,8 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
     }
 
     await _dataSource.delete(CreditCardTransactionFactory.fromEntity(entity), txn: txn);
+
+    _eventNotifier.notify(EventType.creditCards);
   }
 
   @override
@@ -69,5 +77,7 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
         await delete(entity, txn: txn);
       }
     });
+
+    _eventNotifier.notify(EventType.creditCards);
   }
 }

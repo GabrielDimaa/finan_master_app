@@ -94,6 +94,7 @@ import 'package:finan_master_app/features/home/domain/usecases/home_monthly_bala
 import 'package:finan_master_app/features/home/domain/usecases/i_home_monthly_balance.dart';
 import 'package:finan_master_app/features/home/infra/repositories/home_monthly_balance_repository.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
+import 'package:finan_master_app/features/home/presentation/notifiers/home_bills_credit_card_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_transaction_notifier.dart';
 import 'package:finan_master_app/features/reports/domain/repositories/i_report_categories_repository.dart';
@@ -233,9 +234,9 @@ final class DependencyInjection {
     getIt.registerFactory<IBackupRepository>(() => BackupRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>(), shareDriver: getIt.get<IShareDriver>(), filePickerDriver: getIt.get<IFilePickerDriver>()));
     getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryLocalDataSource>()));
     getIt.registerFactory<IConfigRepository>(() => ConfigRepository(cacheLocal: getIt.get<ICacheLocal>()));
-    getIt.registerFactory<ICreditCardRepository>(() => CreditCardRepository(creditCardDataSource: getIt.get<ICreditCardLocalDataSource>(), accountDataSource: getIt.get<IAccountLocalDataSource>()));
-    getIt.registerFactory<ICreditCardBillRepository>(() => CreditCardBillRepository(localDataSource: getIt.get<ICreditCardBillLocalDataSource>(), creditCardTransactionLocalDataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
-    getIt.registerFactory<ICreditCardTransactionRepository>(() => CreditCardTransactionRepository(dataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), expenseDataSource: getIt.get<IExpenseLocalDataSource>(), transactionDataSource: getIt.get<ITransactionLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
+    getIt.registerFactory<ICreditCardRepository>(() => CreditCardRepository(creditCardDataSource: getIt.get<ICreditCardLocalDataSource>(), accountDataSource: getIt.get<IAccountLocalDataSource>(), billDataSource: getIt.get<ICreditCardBillLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
+    getIt.registerFactory<ICreditCardBillRepository>(() => CreditCardBillRepository(localDataSource: getIt.get<ICreditCardBillLocalDataSource>(), creditCardTransactionLocalDataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance(), eventNotifier: getIt.get<EventNotifier>()));
+    getIt.registerFactory<ICreditCardTransactionRepository>(() => CreditCardTransactionRepository(dataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), expenseDataSource: getIt.get<IExpenseLocalDataSource>(), transactionDataSource: getIt.get<ITransactionLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<IDeleteAppDataRepository>(() => DeleteAppDataRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>()));
     getIt.registerFactory<IExpenseRepository>(() => ExpenseRepository(dbTransaction: databaseLocal.transactionInstance(), expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<IHomeMonthlyBalanceRepository>(() => HomeMonthlyBalanceRepository(dataSource: getIt.get<ITransactionLocalDataSource>()));
@@ -285,6 +286,7 @@ final class DependencyInjection {
     getIt.registerFactory<AccountNotifier>(() => AccountNotifier(accountFind: getIt.get<IAccountFind>(), accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>(), accountReadjustmentTransaction: getIt.get<IAccountReadjustmentTransaction>()));
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<HomeAccountsBalanceNotifier>(() => HomeAccountsBalanceNotifier(accountFind: getIt.get<IAccountFind>()));
+    getIt.registerFactory<HomeBillsCreditCardNotifier>(() => HomeBillsCreditCardNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
     getIt.registerFactory<HomeMonthlyBalanceNotifier>(() => HomeMonthlyBalanceNotifier(monthlyBalance: getIt.get<IHomeMonthlyBalance>()));
     getIt.registerFactory<HomeMonthlyTransactionNotifier>(() => HomeMonthlyTransactionNotifier(transactionFind: getIt.get<ITransactionFind>()));
     getIt.registerFactory<BackupNotifier>(() => BackupNotifier(backup: getIt.get<IBackup>(), restoreBackup: getIt.get<IRestoreBackup>(), deleteAppData: getIt.get<IDeleteAppData>()));

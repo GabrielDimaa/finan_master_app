@@ -132,7 +132,13 @@ class _CreditCardPersistentHeader extends SliverPersistentHeaderDelegate {
   _CreditCardPersistentHeader(this.creditCard);
 
   @override
-  Widget build(context, double shrinkOffset, bool overlapsContent) => CreditCardSimpleWidget(creditCard: creditCard);
+  Widget build(context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Theme.of(context).colorScheme.surface,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: CreditCardSimpleWidget(creditCard: creditCard),
+    );
+  }
 
   @override
   double get maxExtent => 68;

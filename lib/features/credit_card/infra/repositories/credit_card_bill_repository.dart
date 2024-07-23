@@ -8,20 +8,24 @@ import 'package:finan_master_app/features/credit_card/infra/models/credit_card_b
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_transaction_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class CreditCardBillRepository implements ICreditCardBillRepository {
   final ICreditCardBillLocalDataSource _localDataSource;
   final ICreditCardTransactionLocalDataSource _creditCardTransactionLocalDataSource;
   final IDatabaseLocalTransaction _dbTransaction;
+  final EventNotifier _eventNotifier;
 
   CreditCardBillRepository({
     required ICreditCardBillLocalDataSource localDataSource,
     required ICreditCardTransactionLocalDataSource creditCardTransactionLocalDataSource,
     required IDatabaseLocalTransaction dbTransaction,
+    required EventNotifier eventNotifier,
   })  : _localDataSource = localDataSource,
         _creditCardTransactionLocalDataSource = creditCardTransactionLocalDataSource,
-        _dbTransaction = dbTransaction;
+        _dbTransaction = dbTransaction,
+        _eventNotifier = eventNotifier;
 
   @override
   Future<CreditCardBillEntity> save(CreditCardBillEntity entity) async {
@@ -36,6 +40,8 @@ class CreditCardBillRepository implements ICreditCardBillRepository {
       return model;
     });
 
+    _eventNotifier.notify(EventType.transactions);
+
     return CreditCardBillFactory.toEntity(model);
   }
 
@@ -49,11 +55,16 @@ class CreditCardBillRepository implements ICreditCardBillRepository {
     for (final bill in bills) {
       await _localDataSource.upsert(CreditCardBillFactory.fromEntity(bill), txn: txn);
     }
+
+    _eventNotifier.notify(EventType.transactions);
   }
 
   @override
   Future<CreditCardBillEntity> saveOnlyBill(CreditCardBillEntity entity, {ITransactionExecutor? txn}) async {
     final CreditCardBillModel model = await _localDataSource.upsert(CreditCardBillFactory.fromEntity(entity), txn: txn);
+
+    _eventNotifier.notify(EventType.transactions);
+
     return CreditCardBillFactory.toEntity(model);
   }
 

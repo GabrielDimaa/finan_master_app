@@ -1,8 +1,10 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
+import 'package:finan_master_app/features/home/presentation/notifiers/home_bills_credit_card_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_transaction_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_accounts_balance.dart';
+import 'package:finan_master_app/features/home/presentation/ui/components/home_card_bill_credit_card.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_monthly_balance.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_monthly_transaction.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/fab_transactions.dart';
@@ -25,6 +27,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
   final EventNotifier eventNotifier = DI.get<EventNotifier>();
   final HomeAccountsBalanceNotifier accountsBalanceNotifier = DI.get<HomeAccountsBalanceNotifier>();
   final HomeMonthlyTransactionNotifier monthlyTransactionNotifier = DI.get<HomeMonthlyTransactionNotifier>();
+  final HomeBillsCreditCardNotifier billsCreditCardNotifier = DI.get<HomeBillsCreditCardNotifier>();
   final HomeMonthlyBalanceNotifier monthlyBalanceNotifier = DI.get<HomeMonthlyBalanceNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -36,7 +39,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
     load();
 
     eventNotifier.addListener(() {
-      if (eventNotifier.value == EventType.transactions) load();
+      if ([EventType.transactions, EventType.creditCards].contains(eventNotifier.value)) load();
     });
   }
 
@@ -44,6 +47,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
     await Future.wait([
       accountsBalanceNotifier.load(),
       monthlyTransactionNotifier.load(),
+      billsCreditCardNotifier.load(),
       monthlyBalanceNotifier.load(),
     ]);
   }
@@ -86,7 +90,8 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                   ),
                 ),
                 const Spacing.y(),
-                // HomeCardBillCreditCard(billNotifier: billNotifier, creditCardNotifier: creditCardNotifier),
+                HomeCardBillCreditCard(notifier: billsCreditCardNotifier),
+                const Spacing.y(),
                 HomeCardMonthlyBalance(notifier: monthlyBalanceNotifier),
                 const SizedBox(height: 100),
               ],

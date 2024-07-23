@@ -6,6 +6,7 @@
   "accountNotFound": "Account not found.",
   "accountUsedCreditCard": "This account is being used by a credit card.",
   "accounts": "Accounts",
+  "addCreditCard": "Add credit card",
   "allFilter": "All",
   "alreadyHaveAccount": "Already have an account?",
   "amount": "Amount",

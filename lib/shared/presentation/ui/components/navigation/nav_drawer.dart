@@ -17,7 +17,7 @@ class NavDrawer extends StatefulWidget {
 class _NavDrawerState extends State<NavDrawer> with ThemeContext {
   Map<int, NavigationDrawerDestination> get destinations => {
         CategoriesListPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.categories), icon: const Icon(Icons.category_outlined), selectedIcon: const Icon(Icons.category)),
-        CreditCardsPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.creditCards), icon: const Icon(Icons.credit_card_outlined), selectedIcon: const Icon(Icons.credit_card)),
+        CreditCardsDetailsPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.creditCards), icon: const Icon(Icons.credit_card_outlined), selectedIcon: const Icon(Icons.credit_card)),
         AccountsListPage.indexDrawer: NavigationDrawerDestination(label: Text(strings.accounts), icon: const Icon(Icons.account_balance_outlined), selectedIcon: const Icon(Icons.account_balance)),
       };
 
@@ -27,8 +27,8 @@ class _NavDrawerState extends State<NavDrawer> with ThemeContext {
       case CategoriesListPage.indexDrawer:
         context.goNamed(CategoriesListPage.route);
         break;
-      case CreditCardsPage.indexDrawer:
-        context.goNamed(CreditCardsPage.route);
+      case CreditCardsDetailsPage.indexDrawer:
+        context.goNamed(CreditCardsDetailsPage.route);
         break;
       case AccountsListPage.indexDrawer:
         context.goNamed(AccountsListPage.route);
@@ -50,7 +50,7 @@ class _NavDrawerState extends State<NavDrawer> with ThemeContext {
           ),
         ),
         destinations[CategoriesListPage.indexDrawer]!,
-        destinations[CreditCardsPage.indexDrawer]!,
+        destinations[CreditCardsDetailsPage.indexDrawer]!,
         destinations[AccountsListPage.indexDrawer]!,
       ],
     );

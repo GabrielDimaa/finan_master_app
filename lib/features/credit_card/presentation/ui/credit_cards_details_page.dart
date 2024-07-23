@@ -28,17 +28,19 @@ import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart'
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class CreditCardsPage extends StatefulWidget {
+class CreditCardsDetailsPage extends StatefulWidget {
   static const String route = 'credit-cards-details';
   static const int indexDrawer = 1;
 
-  const CreditCardsPage({Key? key}) : super(key: key);
+  final String? idCreditCard;
+
+  const CreditCardsDetailsPage({Key? key, this.idCreditCard}) : super(key: key);
 
   @override
-  State<CreditCardsPage> createState() => _CreditCardsPageState();
+  State<CreditCardsDetailsPage> createState() => _CreditCardsDetailsPageState();
 }
 
-class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
+class _CreditCardsDetailsPageState extends State<CreditCardsDetailsPage> with ThemeContext {
   final CreditCardsNotifier creditCardsListNotifier = DI.get<CreditCardsNotifier>();
   final CreditCardBillsNotifier billsNotifier = DI.get<CreditCardBillsNotifier>();
   final CreditCardNotifier creditCardSelectedNotifier = DI.get<CreditCardNotifier>();
@@ -62,7 +64,19 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
         }
       });
 
-      if (creditCardsListNotifier.value.creditCards.isNotEmpty) creditCardSelectedNotifier.value = creditCardSelectedNotifier.value.setCreditCard(creditCardsListNotifier.value.creditCards.first);
+      if (creditCardsListNotifier.value.creditCards.isNotEmpty) {
+        final CreditCardEntity? creditCard = widget.idCreditCard == null ? null : creditCardsListNotifier.value.creditCards.firstWhereOrNull((creditCard) => creditCard.id == widget.idCreditCard);
+
+        creditCardSelectedNotifier.setCreditCard(creditCard ?? creditCardsListNotifier.value.creditCards.first);
+
+        Future.delayed(const Duration(milliseconds: 200), () {
+          carouselController.animateToPage(
+            creditCardsListNotifier.value.creditCards.indexWhere((creditCard) => creditCard.id == creditCardSelectedNotifier.value.creditCard.id),
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.ease,
+          );
+        });
+      }
     });
   }
 
@@ -97,7 +111,7 @@ class _CreditCardsPageState extends State<CreditCardsPage> with ThemeContext {
           ),
         ],
       ),
-      drawer: const NavDrawer(selectedIndex: CreditCardsPage.indexDrawer),
+      drawer: const NavDrawer(selectedIndex: CreditCardsDetailsPage.indexDrawer),
       floatingActionButton: FloatingActionButton(
         tooltip: strings.createCreditCard,
         onPressed: goCreditCard,

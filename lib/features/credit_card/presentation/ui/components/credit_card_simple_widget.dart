@@ -11,25 +11,19 @@ class CreditCardSimpleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.surface,
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: creditCard.financialInstitutionAccount!.creditCardBackgroundColor,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          color: creditCard.financialInstitutionAccount!.creditCardBackgroundColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: Row(
-              children: [
-                creditCard.financialInstitutionAccount!.icon(),
-                const Spacing.x(),
-                Text(creditCard.description, style: Theme.of(context).textTheme.labelLarge),
-                const Spacer(),
-                creditCard.brand!.icon(),
-              ],
-            ),
-          ),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        child: Row(
+          children: [
+            creditCard.financialInstitutionAccount!.icon(),
+            const Spacing.x(),
+            Text(creditCard.description, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: creditCard.financialInstitutionAccount!.creditCardOnBackgroundColor)),
+            const Spacer(),
+            creditCard.brand!.icon(),
+          ],
         ),
       ),
     );

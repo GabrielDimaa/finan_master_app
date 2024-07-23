@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:finan_master_app/features/home/domain/entities/home_monthly_balance_entity.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
@@ -6,7 +8,6 @@ import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -83,7 +84,6 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            interval: widget.notifier.monthlyBalances.map((e) => e.balance).max / 5,
                             reservedSize: 80,
                             getTitlesWidget: (double value, TitleMeta meta) => SideTitleWidget(
                               axisSide: meta.axisSide,
@@ -164,8 +164,8 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
             width: 18,
             backDrawRodData: BackgroundBarChartRodData(
               show: true,
-              toY: 20,
-              color: colorScheme.surfaceContainer,
+              toY: max(widget.notifier.monthlyBalances.map((e) => e.balance).max, 100),
+              color: colorScheme.outlineVariant.withAlpha(80),
             ),
           ),
         ],
