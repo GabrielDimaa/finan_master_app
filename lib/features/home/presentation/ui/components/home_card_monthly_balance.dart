@@ -67,7 +67,7 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
                 }
 
                 if (state is StartHomeMonthlyBalanceState || (state is LoadingHomeMonthlyBalanceState && lastState is! LoadedHomeMonthlyBalanceState)) {
-                  return const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));
+                  return const Center(child: SizedBox(height: 30, width: 30, child: CircularProgressIndicator()));
                 }
 
                 return Padding(

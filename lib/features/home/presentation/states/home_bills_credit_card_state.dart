@@ -9,7 +9,7 @@ sealed class HomeBillsCreditCardState {
 
   HomeBillsCreditCardState setLoading() => LoadingHomeBillsCreditCardState(creditCardsWithBill: creditCardsWithBill);
 
-  HomeBillsCreditCardState setCreditCardsWithBill(List<CreditCardWithBillEntity> value) => LoadedHomeBillsCreditCardState(creditCardsWithBill: value);
+  HomeBillsCreditCardState setCreditCardsWithBill(List<CreditCardWithBillEntity> value) => value.isEmpty ? EmptyHomeBillsCreditCardState(creditCardsWithBill: creditCardsWithBill) : ListHomeBillsCreditCardState(creditCardsWithBill: value);
 
   HomeBillsCreditCardState setError(String message) => ErrorHomeBillsCreditCardState(message, creditCardsWithBill: creditCardsWithBill);
 }
@@ -22,8 +22,12 @@ class LoadingHomeBillsCreditCardState extends HomeBillsCreditCardState {
   const LoadingHomeBillsCreditCardState({required super.creditCardsWithBill});
 }
 
-class LoadedHomeBillsCreditCardState extends HomeBillsCreditCardState {
-  const LoadedHomeBillsCreditCardState({required super.creditCardsWithBill});
+class EmptyHomeBillsCreditCardState extends HomeBillsCreditCardState {
+  const EmptyHomeBillsCreditCardState({required super.creditCardsWithBill});
+}
+
+class ListHomeBillsCreditCardState extends HomeBillsCreditCardState {
+  const ListHomeBillsCreditCardState({required super.creditCardsWithBill});
 }
 
 class ErrorHomeBillsCreditCardState extends HomeBillsCreditCardState {
