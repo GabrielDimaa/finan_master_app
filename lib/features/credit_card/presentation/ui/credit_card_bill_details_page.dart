@@ -72,9 +72,13 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (_) => context.pop(changed ? FormResultNavigation.save(notifier.creditCardBill!) : null),
+    return WillPopScope(
+      // canPop: false,
+      // onPopInvoked: (_) => context.pop(changed ? FormResultNavigation.save(notifier.creditCardBill!) : null),
+      onWillPop: () async {
+        if (changed) context.pop(FormResultNavigation.save(notifier.creditCardBill!));
+        return true;
+      },
       child: ListModeSelectable(
         list: listSelectable,
         updateList: (List value) => setState(() => listSelectable = value.cast<CreditCardTransactionEntity>()),

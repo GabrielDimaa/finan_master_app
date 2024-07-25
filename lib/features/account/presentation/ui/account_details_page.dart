@@ -46,9 +46,15 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
     return ValueListenableBuilder(
       valueListenable: notifier,
       builder: (_, state, __) {
-        return PopScope(
-          canPop: !accountChanged,
-          onPopInvoked: (_) => context.pop(FormResultNavigation.save(notifier.account)),
+        return WillPopScope(
+          // canPop: !accountChanged,
+          // onPopInvoked: (_) => context.pop(FormResultNavigation.save(notifier.account)),
+          onWillPop: () async {
+            if (accountChanged) {
+              context.pop(FormResultNavigation.save(notifier.account));
+            }
+            return true;
+          },
           child: SliverScaffold(
             appBar: SliverAppBarMedium(
               title: Text(strings.accountDetails),

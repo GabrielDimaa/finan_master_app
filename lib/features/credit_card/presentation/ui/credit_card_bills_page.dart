@@ -54,9 +54,13 @@ class _CreditCardBillsPageState extends State<CreditCardBillsPage> with ThemeCon
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (_) => context.pop(billsChanged.isNotEmpty ? FormResultNavigation.save(billsChanged) : null),
+    return WillPopScope(
+      // canPop: false,
+      // onPopInvoked: (_) => context.pop(billsChanged.isNotEmpty ? FormResultNavigation.save(billsChanged) : null),
+      onWillPop: () async {
+        if (billsChanged.isNotEmpty) context.pop(FormResultNavigation.save(billsChanged));
+        return true;
+      },
       child: Scaffold(
         body: CustomScrollView(
           slivers: [
