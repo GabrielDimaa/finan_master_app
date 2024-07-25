@@ -66,9 +66,9 @@ class CreditCardNotifier extends ValueNotifier<CreditCardState> {
     try {
       value = value.setRefreshing();
 
-      await _creditCardFind.findById(creditCard.id);
+      final CreditCardEntity? result = await _creditCardFind.findById(creditCard.id);
 
-      value = value.changedCreditCard();
+      value = value.setCreditCard(result!);
     } catch (e) {
       value = value.setError(e.toString());
     }
