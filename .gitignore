@@ -46,3 +46,4 @@ app.*.map.json
 examples/teste.dart
 
 .env
+android/app/google-services.json
