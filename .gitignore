@@ -47,3 +47,4 @@ examples/teste.dart
 
 .env
 android/app/google-services.json
+keys/keystore.jks
