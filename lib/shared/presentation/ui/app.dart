@@ -31,73 +31,68 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: App.localeNotifier,
-      builder: (_, locale, __) {
-        return ValueListenableBuilder(
-          valueListenable: App.themeNotifier,
-          builder: (_, themeMode, __) {
-            return MaterialApp.router(
-              title: appName,
-              debugShowCheckedModeBanner: false,
-              routerConfig: routerConfig,
-              themeMode: themeMode,
-              theme: ThemeData(
-                fontFamily: 'Roboto',
-                colorScheme: themeMode == ThemeMode.dark ? themeDark : themeLight,
-                filledButtonTheme: FilledButtonThemeData(
-                  style: FilledButton.styleFrom(
-                    fixedSize: const Size.fromHeight(40),
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                  ),
-                ),
-                outlinedButtonTheme: OutlinedButtonThemeData(
-                  style: OutlinedButton.styleFrom(
-                    fixedSize: const Size.fromHeight(40),
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                  ),
-                ),
-                elevatedButtonTheme: ElevatedButtonThemeData(
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: const Size.fromHeight(40),
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                  ),
-                ),
-                textButtonTheme: TextButtonThemeData(
-                  style: TextButton.styleFrom(
-                    fixedSize: const Size.fromHeight(40),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                  ),
-                ),
-                segmentedButtonTheme: const SegmentedButtonThemeData(
-                  style: ButtonStyle(
-                    fixedSize: WidgetStatePropertyAll<Size>(Size.fromHeight(40)),
-                    padding: WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.symmetric(horizontal: 12)),
-                  ),
-                ),
-                dividerTheme: const DividerThemeData(
-                  space: 2,
-                ),
-                listTileTheme: const ListTileThemeData(
-                  contentPadding: EdgeInsets.only(left: 16, top: 8, right: 24, bottom: 8),
-                ),
-                inputDecorationTheme: const InputDecorationTheme(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.all(16),
-                ),
-                appBarTheme: const AppBarTheme(
-                  scrolledUnderElevation: 0,
-                ),
-                cardTheme: const CardTheme(
-                  elevation: 0,
-                  margin: EdgeInsets.zero,
-                ),
+    return ListenableBuilder(
+      listenable: Listenable.merge([App.localeNotifier, App.themeNotifier]),
+      builder: (_, __) {
+        return MaterialApp.router(
+          title: appName,
+          debugShowCheckedModeBanner: false,
+          routerConfig: routerConfig,
+          themeMode: App.themeNotifier.value,
+          theme: ThemeData(
+            fontFamily: 'Roboto',
+            colorScheme: App.themeNotifier.value == ThemeMode.dark ? themeDark : themeLight,
+            filledButtonTheme: FilledButtonThemeData(
+              style: FilledButton.styleFrom(
+                fixedSize: const Size.fromHeight(40),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
               ),
-              locale: locale,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: AppLocalizations.supportedLocales,
-            );
-          },
+            ),
+            outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                fixedSize: const Size.fromHeight(40),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+              ),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                fixedSize: const Size.fromHeight(40),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                fixedSize: const Size.fromHeight(40),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+              ),
+            ),
+            segmentedButtonTheme: const SegmentedButtonThemeData(
+              style: ButtonStyle(
+                fixedSize: WidgetStatePropertyAll<Size>(Size.fromHeight(40)),
+                padding: WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.symmetric(horizontal: 12)),
+              ),
+            ),
+            dividerTheme: const DividerThemeData(
+              space: 2,
+            ),
+            listTileTheme: const ListTileThemeData(
+              contentPadding: EdgeInsets.only(left: 16, top: 8, right: 24, bottom: 8),
+            ),
+            inputDecorationTheme: const InputDecorationTheme(
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.all(16),
+            ),
+            appBarTheme: const AppBarTheme(
+              scrolledUnderElevation: 0,
+            ),
+            cardTheme: const CardTheme(
+              elevation: 0,
+              margin: EdgeInsets.zero,
+            ),
+          ),
+          locale: App.localeNotifier.value,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
         );
       },
     );

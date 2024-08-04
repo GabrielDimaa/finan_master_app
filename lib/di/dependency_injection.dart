@@ -145,6 +145,7 @@ import 'package:finan_master_app/features/user_account/infra/data_sources/i_user
 import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_local_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/user_account_cloud_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/user_account_local_data_source.dart';
+import 'package:finan_master_app/shared/classes/env.dart';
 import 'package:finan_master_app/shared/domain/domain/delete_app_data.dart';
 import 'package:finan_master_app/shared/domain/domain/i_delete_app_data.dart';
 import 'package:finan_master_app/shared/domain/repositories/i_delete_app_data_repository.dart';
@@ -188,11 +189,11 @@ final class DependencyInjection {
       Firebase.initializeApp(
         name: appName,
         options: const FirebaseOptions(
-          apiKey: String.fromEnvironment('FIREBASE_API_KEY'),
-          appId: String.fromEnvironment('FIREBASE_APP_ID'),
-          messagingSenderId: String.fromEnvironment('FIREBASE_MESSAGING_SENDER_ID'),
-          projectId: String.fromEnvironment('FIREBASE_PROJECT_ID'),
-          storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET'),
+          apiKey: Env.firebaseApiKey,
+          appId: Env.firebaseAppId,
+          messagingSenderId: Env.firebaseMessagingSenderId,
+          projectId: Env.firebaseProjectId,
+          storageBucket: Env.firebaseStorageBucket,
         ),
       ),
       Future(() async => databaseLocal = await DatabaseLocal.getInstance()),

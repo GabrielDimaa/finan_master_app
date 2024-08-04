@@ -77,8 +77,8 @@ class _IntroductionPageState extends State<IntroductionPage> with ThemeContext {
                             return GestureDetector(
                               onTap: () => carouselController.animateToPage(index),
                               child: Container(
-                                width: itemCarrouselCurrent == index ? 16 : 8,
-                                height: itemCarrouselCurrent == index ? 16 : 8,
+                                width: itemCarrouselCurrent == index ? 12 : 6,
+                                height: itemCarrouselCurrent == index ? 12 : 6,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: colorScheme.primary.withOpacity(itemCarrouselCurrent == index ? 1 : 0.4),
