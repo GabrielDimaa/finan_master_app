@@ -45,6 +45,6 @@ Finan Master é a ferramenta perfeita para você controlar suas despesas e acomp
 
 ## 📝 Licença
 
-Este projeto esta sob a licença [MIT](./LICENSE.md).
+Este projeto esta sob a licença [GNU Affero General Public License v3.0](./LICENSE).
 
 Desenvolvido por Gabriel Hainzenreder 👋🏽 [Contato!](https://www.linkedin.com/in/gabriel-de-matos-hainzenreder-98005b192)
