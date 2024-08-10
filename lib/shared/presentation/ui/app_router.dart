@@ -245,18 +245,3 @@ sealed class AppRouter {
     );
   }
 }
-
-extension GoRouterExtension on BuildContext {
-  Future<void> navigateNamed(
-    String name, {
-    Map<String, String> pathParameters = const <String, String>{},
-    Map<String, dynamic> queryParameters = const <String, dynamic>{},
-    Object? extra,
-  }) async {
-    while (canPop()) {
-      pop();
-    }
-
-    pushReplacementNamed(name);
-  }
-}

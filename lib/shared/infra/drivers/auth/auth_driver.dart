@@ -144,6 +144,15 @@ class AuthDriver implements IAuthDriver {
   @override
   Future<bool> checkIsLogged() => Future.value(_firebaseAuth.currentUser != null);
 
+  @override
+  Future<void> logout() async {
+    try {
+      await _firebaseAuth.signOut();
+    } on FirebaseAuthException catch (e) {
+      throw e.getError();
+    }
+  }
+
   Future<({GoogleSignInAccount account, UserCredential userCredential})?> _signInWithGoogle() async {
     await ConnectivityNetwork.hasInternet();
 

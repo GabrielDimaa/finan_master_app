@@ -2,6 +2,7 @@ import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/backup/presentation/notifiers/backup_notifier.dart';
 import 'package:finan_master_app/features/backup/presentation/states/backup_state.dart';
 import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
+import 'package:finan_master_app/main.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
@@ -74,7 +75,8 @@ class _RestoreBackupPageState extends State<RestoreBackupPage> with ThemeContext
       if (notifier.value is ErrorBackupState) throw Exception((notifier.value as ErrorBackupState).message);
 
       if (!mounted) return;
-      context.navigateNamed(SplashPage.route);
+
+      reset();
     } catch (e) {
       if (!mounted) return;
       await ErrorDialog.show(context, e.toString());
@@ -87,7 +89,8 @@ class _RestoreBackupPageState extends State<RestoreBackupPage> with ThemeContext
       if (notifier.value is ErrorBackupState) throw Exception((notifier.value as ErrorBackupState).message);
 
       if (!mounted) return;
-      context.navigateNamed(SplashPage.route);
+
+      reset();
     } catch (e) {
       if (!mounted) return;
       await ErrorDialog.show(context, e.toString());

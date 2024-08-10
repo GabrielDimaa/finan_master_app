@@ -173,14 +173,14 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final class DependencyInjection {
-  static final DependencyInjection _instance = DependencyInjection._();
+  static DependencyInjection? _instance;
 
   DependencyInjection._();
 
-  factory DependencyInjection() => _instance;
+  factory DependencyInjection() => _instance ??= DependencyInjection._();
 
   Future<void> setup() async {
-    final GetIt getIt = GetIt.instance;
+    final GetIt getIt = GetIt.I;
 
     //Data Sources
     late final DatabaseLocal databaseLocal;
@@ -238,7 +238,7 @@ final class DependencyInjection {
     getIt.registerFactory<ICreditCardRepository>(() => CreditCardRepository(creditCardDataSource: getIt.get<ICreditCardLocalDataSource>(), accountDataSource: getIt.get<IAccountLocalDataSource>(), billDataSource: getIt.get<ICreditCardBillLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<ICreditCardBillRepository>(() => CreditCardBillRepository(localDataSource: getIt.get<ICreditCardBillLocalDataSource>(), creditCardTransactionLocalDataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<ICreditCardTransactionRepository>(() => CreditCardTransactionRepository(dataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), expenseDataSource: getIt.get<IExpenseLocalDataSource>(), transactionDataSource: getIt.get<ITransactionLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance(), eventNotifier: getIt.get<EventNotifier>()));
-    getIt.registerFactory<IDeleteAppDataRepository>(() => DeleteAppDataRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>()));
+    getIt.registerFactory<IDeleteAppDataRepository>(() => DeleteAppDataRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>(), authDriver: getIt.get<IAuthDriver>()));
     getIt.registerFactory<IExpenseRepository>(() => ExpenseRepository(dbTransaction: databaseLocal.transactionInstance(), expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<IHomeMonthlyBalanceRepository>(() => HomeMonthlyBalanceRepository(dataSource: getIt.get<ITransactionLocalDataSource>()));
     getIt.registerFactory<IIncomeRepository>(() => IncomeRepository(dbTransaction: databaseLocal.transactionInstance(), incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
@@ -311,8 +311,14 @@ final class DependencyInjection {
     getIt.registerFactory<TransactionsNotifier>(() => TransactionsNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<TransferNotifier>(() => TransferNotifier(transferSave: getIt.get<ITransferSave>(), transferDelete: getIt.get<ITransferDelete>()));
   }
+
+  Future<void> dispose() async {
+    await GetIt.I.reset();
+
+    _instance = null;
+  }
 }
 
 abstract class DI {
-  static get<T extends Object>() => GetIt.I.get<T>();
+  static T get<T extends Object>() => GetIt.I.get<T>();
 }

@@ -16,3 +16,9 @@ void main() async {
 
   runApp(const App());
 }
+
+void reset() async {
+  await DependencyInjection().dispose();
+
+  main();
+}

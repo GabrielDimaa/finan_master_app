@@ -17,4 +17,6 @@ abstract class IAuthDriver {
   Future<bool> checkEmailVerified();
 
   Future<bool> checkIsLogged();
+
+  Future<void> logout();
 }
