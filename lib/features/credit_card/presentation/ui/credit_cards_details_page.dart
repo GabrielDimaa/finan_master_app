@@ -47,7 +47,7 @@ class _CreditCardsDetailsPageState extends State<CreditCardsDetailsPage> with Th
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final CarouselController carouselController = CarouselController();
+  final CarouselSliderController carouselController = CarouselSliderController();
 
   @override
   void initState() {

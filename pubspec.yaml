@@ -13,7 +13,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  carousel_slider: ^4.2.1
+  carousel_slider: ^5.0.0
   cloud_firestore: ^4.17.3
   collection: ^1.17.1
   diacritic: ^0.1.4
@@ -25,7 +25,7 @@ dependencies:
   fl_chart: ^0.68.0
   get_it: ^7.6.0
   google_sign_in: ^6.2.1
-  go_router: ^14.2.0
+  go_router: ^14.2.3
   intl: any
   uuid: ^3.0.7
   path: ^1.8.3
