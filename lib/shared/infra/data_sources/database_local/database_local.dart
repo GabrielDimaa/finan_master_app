@@ -7,6 +7,8 @@ import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_bill_local_data_source.dart';
+import 'package:finan_master_app/features/first_steps/domain/entities/first_steps_entity.dart';
+import 'package:finan_master_app/features/first_steps/helpers/first_steps_factory.dart';
 import 'package:finan_master_app/features/first_steps/infra/data_sources/first_steps_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/expense_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
@@ -27,7 +29,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 final class DatabaseLocal implements IDatabaseLocal {
   String get _name => "finan_master.db";
 
-  int get _version => 1;
+  int get _version => 2;
 
   late Database database;
 
@@ -102,7 +104,19 @@ final class DatabaseLocal implements IDatabaseLocal {
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // TODO: Create migrations.
+    final IDatabaseLocalBatch batch = DatabaseLocalBatch(database: db);
+
+    if (oldVersion < 2) {
+      FirstStepsLocalDataSource(databaseLocal: this).createTable(batch);
+
+      final FirstStepsEntity entity = FirstStepsFactory.newEntity()
+        ..done = true
+        ..createdAt = DateTime.now();
+
+      batch.insert(FirstStepsLocalDataSource(databaseLocal: this).tableName, FirstStepsFactory.fromEntity(entity).toMap());
+    }
+
+    await batch.commit();
   }
 
   Future<String> _getPath() async {
