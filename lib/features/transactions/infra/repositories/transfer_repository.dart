@@ -33,7 +33,7 @@ class TransferRepository implements ITransferRepository {
       return await _transferLocalDataSource.upsert(model, txn: txn);
     });
 
-    _eventNotifier.notify(EventType.transactions);
+    _eventNotifier.notify(EventType.transfer);
 
     return TransferFactory.toEntity(result);
   }
@@ -51,6 +51,6 @@ class TransferRepository implements ITransferRepository {
     await _transactionLocalDataSource.delete(model.transactionFrom, txn: txn);
     await _transactionLocalDataSource.delete(model.transactionTo, txn: txn);
 
-    _eventNotifier.notify(EventType.transactions);
+    _eventNotifier.notify(EventType.transfer);
   }
 }

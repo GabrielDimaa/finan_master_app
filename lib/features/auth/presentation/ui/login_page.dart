@@ -3,6 +3,7 @@ import 'package:finan_master_app/features/auth/presentation/notifiers/login_noti
 import 'package:finan_master_app/features/auth/presentation/states/login_state.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/reset_password_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
+import 'package:finan_master_app/features/first_steps/presentation/ui/first_steps_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
@@ -154,7 +155,7 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
         if (notifier.value is ErrorLoginState) throw Exception((notifier.value as ErrorLoginState).message);
 
         if (!mounted) return;
-        context.goNamed(HomePage.route);
+        context.goNamed(FirstStepsPage.route, extra: true);
       } else {
         setState(() => autovalidateMode = AutovalidateMode.always);
       }
@@ -172,7 +173,7 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
       if (notifier.value is ErrorLoginState) throw Exception((notifier.value as ErrorLoginState).message);
 
       if (!mounted) return;
-      context.goNamed(HomePage.route);
+      context.goNamed(FirstStepsPage.route, extra: true);
     } catch (e) {
       if (!mounted) return;
       await ErrorDialog.show(context, e.toString());

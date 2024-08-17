@@ -32,7 +32,7 @@ class ExpenseRepository implements IExpenseRepository {
     model.transaction = await _transactionLocalDataSource.upsert(model.transaction, txn: txn);
     final ExpenseModel result = await _expenseLocalDataSource.upsert(model, txn: txn);
 
-    _eventNotifier.notify(EventType.transactions);
+    _eventNotifier.notify(EventType.expense);
 
     return ExpenseFactory.toEntity(result);
   }
@@ -49,6 +49,6 @@ class ExpenseRepository implements IExpenseRepository {
     await _expenseLocalDataSource.delete(model, txn: txn);
     await _transactionLocalDataSource.delete(model.transaction, txn: txn);
 
-    _eventNotifier.notify(EventType.transactions);
+    _eventNotifier.notify(EventType.expense);
   }
 }

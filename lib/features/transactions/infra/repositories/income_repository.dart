@@ -32,7 +32,7 @@ class IncomeRepository implements IIncomeRepository {
       return await _incomeLocalDataSource.upsert(model, txn: txn);
     });
 
-    _eventNotifier.notify(EventType.transactions);
+    _eventNotifier.notify(EventType.income);
 
     return IncomeFactory.toEntity(result);
   }
@@ -49,6 +49,6 @@ class IncomeRepository implements IIncomeRepository {
     await _incomeLocalDataSource.delete(model, txn: txn);
     await _transactionLocalDataSource.delete(model.transaction, txn: txn);
 
-    _eventNotifier.notify(EventType.transactions);
+    _eventNotifier.notify(EventType.income);
   }
 }

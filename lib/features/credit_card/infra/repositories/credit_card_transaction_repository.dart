@@ -32,7 +32,7 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
   Future<CreditCardTransactionEntity> save(CreditCardTransactionEntity entity, {ITransactionExecutor? txn}) async {
     final CreditCardTransactionModel transaction = await _dataSource.upsert(CreditCardTransactionFactory.fromEntity(entity), txn: txn);
 
-    _eventNotifier.notify(EventType.creditCards);
+    _eventNotifier.notify(EventType.creditCard);
 
     return CreditCardTransactionFactory.toEntity(transaction);
   }
@@ -48,7 +48,7 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
       await _dataSource.upsert(CreditCardTransactionFactory.fromEntity(transaction), txn: txn);
     }
 
-    _eventNotifier.notify(EventType.creditCards);
+    _eventNotifier.notify(EventType.creditCard);
   }
 
   @override
@@ -67,7 +67,7 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
 
     await _dataSource.delete(CreditCardTransactionFactory.fromEntity(entity), txn: txn);
 
-    _eventNotifier.notify(EventType.creditCards);
+    _eventNotifier.notify(EventType.creditCard);
   }
 
   @override
@@ -78,6 +78,6 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
       }
     });
 
-    _eventNotifier.notify(EventType.creditCards);
+    _eventNotifier.notify(EventType.creditCard);
   }
 }

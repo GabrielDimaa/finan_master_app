@@ -4,7 +4,9 @@ import 'dart:math';
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/email_verification_notifier.dart';
 import 'package:finan_master_app/features/auth/presentation/states/email_verification_state.dart';
+import 'package:finan_master_app/features/first_steps/presentation/ui/first_steps_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
+import 'package:finan_master_app/shared/classes/env.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
@@ -137,7 +139,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> with Them
       if (notifier.value is ErrorEmailVerificationState) throw Exception((notifier.value as ErrorEmailVerificationState).message);
 
       if (!mounted) return;
-      context.goNamed(HomePage.route);
+
+      context.goNamed(FirstStepsPage.route, extra: true);
     } catch (e) {
       if (!mounted) return;
       await ErrorDialog.show(context, e.toString());

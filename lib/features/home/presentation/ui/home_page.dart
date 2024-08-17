@@ -1,8 +1,10 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
+import 'package:finan_master_app/features/first_steps/presentation/notifiers/first_steps_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_bills_credit_card_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_transaction_notifier.dart';
+import 'package:finan_master_app/features/home/presentation/ui/components/home_alert_first_steps.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_accounts_balance.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_bill_credit_card.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_monthly_balance.dart';
@@ -29,6 +31,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
   final HomeMonthlyTransactionNotifier monthlyTransactionNotifier = DI.get<HomeMonthlyTransactionNotifier>();
   final HomeBillsCreditCardNotifier billsCreditCardNotifier = DI.get<HomeBillsCreditCardNotifier>();
   final HomeMonthlyBalanceNotifier monthlyBalanceNotifier = DI.get<HomeMonthlyBalanceNotifier>();
+  final FirstStepsNotifier firstStepsNotifier = DI.get<FirstStepsNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -39,7 +42,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
     load();
 
     eventNotifier.addListener(() {
-      if ([EventType.transactions, EventType.creditCards].contains(eventNotifier.value)) load();
+      if ([EventType.income, EventType.expense, EventType.transfer, EventType.creditCard].contains(eventNotifier.value)) load();
     });
   }
 
@@ -70,32 +73,50 @@ class _HomePageState extends State<HomePage> with ThemeContext {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: onRefresh,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Spacing.y(),
-                HomeCardAccountsBalance(notifier: accountsBalanceNotifier),
-                const Spacing.y(),
-                IntrinsicHeight(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
+          child: Column(
+            children: [
+              HomeAlertFirstSteps(notifier: firstStepsNotifier),
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(child: HomeCardMonthlyTransaction.income(notifier: monthlyTransactionNotifier)),
-                      const Spacing.x(),
-                      Expanded(child: HomeCardMonthlyTransaction.expense(notifier: monthlyTransactionNotifier)),
+                      const Spacing.y(),
+                      HomeCardAccountsBalance(notifier: accountsBalanceNotifier),
+                      const Spacing.y(),
+                      IntrinsicHeight(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(child: HomeCardMonthlyTransaction.income(notifier: monthlyTransactionNotifier)),
+                            const Spacing.x(),
+                            Expanded(child: HomeCardMonthlyTransaction.expense(notifier: monthlyTransactionNotifier)),
+                          ],
+                        ),
+                      ),
+                      const Spacing.y(),
+                      ValueListenableBuilder(
+                        valueListenable: billsCreditCardNotifier,
+                        builder: (_, __, ___) {
+                          if (billsCreditCardNotifier.value.creditCardsWithBill.isEmpty) return const SizedBox.shrink();
+
+                          return Column(
+                            children: [
+                              HomeCardBillCreditCard(notifier: billsCreditCardNotifier),
+                              const Spacing.y(),
+                            ],
+                          );
+                        },
+                      ),
+                      HomeCardMonthlyBalance(notifier: monthlyBalanceNotifier),
+                      const SizedBox(height: 100),
                     ],
                   ),
                 ),
-                const Spacing.y(),
-                HomeCardBillCreditCard(notifier: billsCreditCardNotifier),
-                const Spacing.y(),
-                HomeCardMonthlyBalance(notifier: monthlyBalanceNotifier),
-                const SizedBox(height: 100),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

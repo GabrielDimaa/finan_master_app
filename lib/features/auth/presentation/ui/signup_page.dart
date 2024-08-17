@@ -3,6 +3,7 @@ import 'package:finan_master_app/features/auth/presentation/notifiers/signup_not
 import 'package:finan_master_app/features/auth/presentation/states/signup_state.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_password_page.dart';
+import 'package:finan_master_app/features/first_steps/presentation/ui/first_steps_page.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
@@ -145,7 +146,7 @@ class _SignupPageState extends State<SignupPage> with ThemeContext {
       if (notifier.value is ErrorSignupState) throw Exception((notifier.value as ErrorSignupState).message);
 
       if (!mounted) return;
-      context.goNamed(HomePage.route);
+      context.goNamed(FirstStepsPage.route, extra: true);
     } catch (e) {
       if (!mounted) return;
       await ErrorDialog.show(context, e.toString());

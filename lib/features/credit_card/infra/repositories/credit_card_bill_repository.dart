@@ -40,7 +40,7 @@ class CreditCardBillRepository implements ICreditCardBillRepository {
       return model;
     });
 
-    _eventNotifier.notify(EventType.transactions);
+    _eventNotifier.notify(EventType.expense);
 
     return CreditCardBillFactory.toEntity(model);
   }
@@ -56,14 +56,14 @@ class CreditCardBillRepository implements ICreditCardBillRepository {
       await _localDataSource.upsert(CreditCardBillFactory.fromEntity(bill), txn: txn);
     }
 
-    _eventNotifier.notify(EventType.transactions);
+    _eventNotifier.notify(EventType.expense);
   }
 
   @override
   Future<CreditCardBillEntity> saveOnlyBill(CreditCardBillEntity entity, {ITransactionExecutor? txn}) async {
     final CreditCardBillModel model = await _localDataSource.upsert(CreditCardBillFactory.fromEntity(entity), txn: txn);
 
-    _eventNotifier.notify(EventType.transactions);
+    _eventNotifier.notify(EventType.expense);
 
     return CreditCardBillFactory.toEntity(model);
   }

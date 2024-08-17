@@ -34,7 +34,7 @@ class CreditCardRepository implements ICreditCardRepository {
   Future<CreditCardEntity> save(CreditCardEntity entity, {ITransactionExecutor? txn}) async {
     final CreditCardModel creditCard = await _creditCardDataSource.upsert(CreditCardFactory.fromEntity(entity), txn: txn);
 
-    _eventNotifier.notify(EventType.creditCards);
+    _eventNotifier.notify(EventType.creditCard);
 
     return CreditCardFactory.toEntity(
       model: creditCard,
@@ -49,7 +49,7 @@ class CreditCardRepository implements ICreditCardRepository {
   @override
   Future<void> delete(CreditCardEntity entity) async {
     await _creditCardDataSource.delete(CreditCardFactory.fromEntity(entity));
-    _eventNotifier.notify(EventType.creditCards);
+    _eventNotifier.notify(EventType.creditCard);
   }
 
   @override

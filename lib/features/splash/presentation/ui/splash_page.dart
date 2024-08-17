@@ -1,6 +1,7 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/email_verification_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
+import 'package:finan_master_app/features/first_steps/presentation/notifiers/first_steps_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/introduction/presentation/ui/introduction_page.dart';
 import 'package:finan_master_app/features/splash/presentation/notifiers/splash_notifier.dart';
@@ -23,13 +24,17 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> with ThemeContext {
   final SplashNotifier notifier = DI.get<SplashNotifier>();
+  final FirstStepsNotifier firstStepsNotifier = DI.get<FirstStepsNotifier>();
 
   @override
   void initState() {
     super.initState();
 
     Future(() async {
-      await notifier.init();
+      await Future.wait([
+        notifier.init(),
+        firstStepsNotifier.find(),
+      ]);
 
       if (!mounted) return;
       if (notifier.value is ErrorSplashState) return;

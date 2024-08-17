@@ -7,6 +7,7 @@ import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_bill_local_data_source.dart';
+import 'package:finan_master_app/features/first_steps/infra/data_sources/first_steps_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/expense_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/income_local_data_source.dart';
@@ -95,6 +96,7 @@ final class DatabaseLocal implements IDatabaseLocal {
     CreditCardLocalDataSource(databaseLocal: this, creditCardBillLocalDataSource: creditCardBillLocalDataSource).createTable(batch);
     AuthLocalDataSource(databaseLocal: this).createTable(batch);
     UserAccountLocalDataSource(databaseLocal: this).createTable(batch);
+    FirstStepsLocalDataSource(databaseLocal: this).createTable(batch);
 
     await batch.commit();
   }

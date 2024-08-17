@@ -71,7 +71,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
       }
 
       eventNotifier.addListener(() {
-        if (eventNotifier.value == EventType.transactions) notifier.onRefresh();
+        if ([EventType.income, EventType.expense, EventType.transfer].contains(eventNotifier.value)) notifier.onRefresh();
       });
 
       final DateTime dateNow = DateTime.now();

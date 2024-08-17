@@ -10,6 +10,9 @@ class EventNotifier extends ValueNotifier<EventType?> {
 }
 
 enum EventType {
-  transactions,
-  creditCards,
+  transfer,
+  income,
+  expense,
+  creditCard,
+  account,
 }

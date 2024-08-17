@@ -6,17 +6,21 @@ import 'package:finan_master_app/features/account/infra/data_sources/i_account_l
 import 'package:finan_master_app/features/account/infra/models/account_model.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_local_data_source.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class AccountRepository implements IAccountRepository {
   final IAccountLocalDataSource _dataSource;
   final ICreditCardLocalDataSource _creditCardLocalDataSource;
+  final EventNotifier _eventNotifier;
 
   AccountRepository({
     required IAccountLocalDataSource dataSource,
     required ICreditCardLocalDataSource creditCardLocalDataSource,
+    required EventNotifier eventNotifier,
   })  : _dataSource = dataSource,
-        _creditCardLocalDataSource = creditCardLocalDataSource;
+        _creditCardLocalDataSource = creditCardLocalDataSource,
+        _eventNotifier = eventNotifier;
 
   @override
   Future<List<AccountEntity>> findAll({bool deleted = false}) async {
@@ -33,6 +37,9 @@ class AccountRepository implements IAccountRepository {
   @override
   Future<AccountEntity> save(AccountEntity entity) async {
     final AccountModel account = await _dataSource.upsert(AccountFactory.fromEntity(entity));
+
+    _eventNotifier.notify(EventType.account);
+
     return AccountFactory.toEntity(account);
   }
 
@@ -42,6 +49,8 @@ class AccountRepository implements IAccountRepository {
     if (existsCreditCard) throw Exception(R.strings.accountUsedCreditCard);
 
     await _dataSource.delete(AccountFactory.fromEntity(entity));
+
+    _eventNotifier.notify(EventType.account);
   }
 
   @override

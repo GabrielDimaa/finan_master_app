@@ -1,10 +1,8 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/backup/presentation/notifiers/backup_notifier.dart';
 import 'package:finan_master_app/features/backup/presentation/states/backup_state.dart';
-import 'package:finan_master_app/features/splash/presentation/ui/splash_page.dart';
 import 'package:finan_master_app/main.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
-import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/linear_progress_indicator_app_bar.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
