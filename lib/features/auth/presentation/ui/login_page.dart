@@ -4,7 +4,6 @@ import 'package:finan_master_app/features/auth/presentation/states/login_state.d
 import 'package:finan_master_app/features/auth/presentation/ui/reset_password_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
 import 'package:finan_master_app/features/first_steps/presentation/ui/first_steps_page.dart';
-import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_email_validator.dart';
