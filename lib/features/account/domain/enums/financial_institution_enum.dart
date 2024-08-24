@@ -24,7 +24,8 @@ enum FinancialInstitutionEnum {
   original(18),
   safra(19),
   santander(20),
-  xp(21);
+  xp(21),
+  mercadoPago(22);
 
   final int value;
 
@@ -56,6 +57,7 @@ extension FinancialInstitutionExtension on FinancialInstitutionEnum {
         FinancialInstitutionEnum.safra => 'Safra',
         FinancialInstitutionEnum.santander => 'Santander',
         FinancialInstitutionEnum.xp => 'XP',
+        FinancialInstitutionEnum.mercadoPago => 'Mercado Pago',
       };
 
   Widget icon([double size = 36]) {
@@ -89,6 +91,7 @@ extension FinancialInstitutionExtension on FinancialInstitutionEnum {
           FinancialInstitutionEnum.safra => SvgPicture.asset('assets/icons/banks/safra.svg', height: size, width: size),
           FinancialInstitutionEnum.santander => SvgPicture.asset('assets/icons/banks/santander.svg', height: size, width: size),
           FinancialInstitutionEnum.xp => SvgPicture.asset('assets/icons/banks/xp.svg', height: size, width: size),
+          FinancialInstitutionEnum.mercadoPago => SvgPicture.asset('assets/icons/banks/mercado-pago.svg', height: size, width: size),
         },
       ),
     );
@@ -139,6 +142,7 @@ extension FinancialInstitutionExtension on FinancialInstitutionEnum {
         FinancialInstitutionEnum.santander => const Color(0xFFEC0000),
         FinancialInstitutionEnum.inter => const Color(0xFFFF8700),
         FinancialInstitutionEnum.xp => const Color(0xFF000000),
+        FinancialInstitutionEnum.mercadoPago => const Color(0xFF242A38),
         _ => Colors.white,
       };
 
