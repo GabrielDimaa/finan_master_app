@@ -340,7 +340,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
       if (notifier.value is ErrorIncomeState) throw Exception((notifier.value as ErrorIncomeState).message);
 
       if (!mounted) return;
-      context.pop(FormResultNavigation.delete());
+      context.pop(FormResultNavigation<IncomeEntity>.delete());
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
     }

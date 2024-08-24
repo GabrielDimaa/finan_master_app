@@ -334,7 +334,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
       if (notifier.value is ErrorCreditCardExpenseState) throw Exception((notifier.value as ErrorCreditCardExpenseState).message);
 
       if (!mounted) return;
-      context.pop(FormResultNavigation.delete());
+      context.pop(FormResultNavigation<CreditCardTransactionEntity>.delete());
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
     }

@@ -338,7 +338,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
       if (notifier.value is ErrorExpenseState) throw Exception((notifier.value as ErrorExpenseState).message);
 
       if (!mounted) return;
-      context.pop(FormResultNavigation.delete());
+      context.pop(FormResultNavigation<ExpenseEntity>.delete());
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
     }

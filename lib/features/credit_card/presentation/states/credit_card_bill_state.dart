@@ -11,7 +11,7 @@ sealed class CreditCardBillState {
 
   CreditCardBillState changedBill() => ChangedCreditCardBillState(creditCardBill: creditCardBill);
 
-  CreditCardBillState setLoading() => const LoadingCreditCardBillState();
+  CreditCardBillState setLoading() => LoadingCreditCardBillState(creditCardBill: creditCardBill);
 
   CreditCardBillState setSaving() => SavingCreditCardBillState(creditCardBill: creditCardBill);
 
@@ -27,7 +27,7 @@ class ChangedCreditCardBillState extends CreditCardBillState {
 }
 
 class LoadingCreditCardBillState extends CreditCardBillState {
-  const LoadingCreditCardBillState() : super(creditCardBill: null);
+  const LoadingCreditCardBillState({required super.creditCardBill});
 }
 
 class SavingCreditCardBillState extends CreditCardBillState {

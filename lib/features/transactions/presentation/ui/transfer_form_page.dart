@@ -229,7 +229,7 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
       if (notifier.value is ErrorTransferState) throw Exception((notifier.value as ErrorTransferState).message);
 
       if (!mounted) return;
-      context.pop(FormResultNavigation.delete());
+      context.pop(FormResultNavigation<TransferEntity>.delete());
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
     }
