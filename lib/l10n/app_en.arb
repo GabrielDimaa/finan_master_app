@@ -180,6 +180,7 @@
   "operationCanceled": "Operation canceled.",
   "optional": "Optional",
   "or": "or",
+  "paid": "Paid",
   "password": "Password",
   "passwordsNotMatch": "The passwords do not match.",
   "paymentExceedBillAmount": "The payment cannot exceed the bill amount.",

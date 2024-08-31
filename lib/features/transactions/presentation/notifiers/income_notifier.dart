@@ -41,6 +41,11 @@ class IncomeNotifier extends ValueNotifier<IncomeState> {
     value = value.changedIncome();
   }
 
+  void setPaid(bool paid) {
+    income.paid = paid;
+    value = value.changedIncome();
+  }
+
   Future<void> save() async {
     try {
       value = value.setSaving();

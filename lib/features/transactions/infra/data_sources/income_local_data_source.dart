@@ -26,6 +26,7 @@ class IncomeLocalDataSource extends LocalDataSource<IncomeModel> implements IInc
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
         description TEXT NOT NULL,
+        paid INTEGER NOT NULL DEFAULT 1,
         id_category TEXT NOT NULL REFERENCES $categoriesTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         id_transaction TEXT NOT NULL REFERENCES ${_transactionDataSource.tableName}(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE CASCADE,
         observation TEXT
@@ -42,6 +43,7 @@ class IncomeLocalDataSource extends LocalDataSource<IncomeModel> implements IInc
       createdAt: base.createdAt,
       deletedAt: base.deletedAt,
       description: map['${prefix}description'],
+      paid: map['${prefix}paid'],
       observation: map['${prefix}observation'],
       idCategory: map['${prefix}id_category'],
       transaction: _transactionDataSource.fromMap(map, prefix: '${_transactionDataSource.tableName}_'),
@@ -74,6 +76,7 @@ class IncomeLocalDataSource extends LocalDataSource<IncomeModel> implements IInc
           $tableName.${Model.createdAtColumnName} AS ${tableName}_${Model.createdAtColumnName},
           $tableName.${Model.deletedAtColumnName} AS ${tableName}_${Model.deletedAtColumnName},
           $tableName.description AS ${tableName}_description,
+          $tableName.paid AS ${tableName}_paid,
           $tableName.id_category AS ${tableName}_id_category,
           $tableName.id_transaction AS ${tableName}_id_transaction,
           $tableName.observation AS ${tableName}_observation,

@@ -7,10 +7,10 @@ import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
 class ExpenseEntity extends Entity implements ITransactionEntity {
   String description;
+  bool paid;
   String? observation;
 
   String? idCategory;
-
   String? idCreditCardTransaction;
 
   late TransactionEntity _transaction;
@@ -35,6 +35,7 @@ class ExpenseEntity extends Entity implements ITransactionEntity {
     required super.createdAt,
     required super.deletedAt,
     required this.description,
+    required this.paid,
     required this.observation,
     required this.idCategory,
     required this.idCreditCardTransaction,
@@ -49,6 +50,7 @@ class ExpenseEntity extends Entity implements ITransactionEntity {
       createdAt: createdAt,
       deletedAt: deletedAt,
       description: description,
+      paid: paid,
       observation: observation,
       idCategory: idCategory,
       idCreditCardTransaction: idCreditCardTransaction,

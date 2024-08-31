@@ -220,16 +220,26 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                 },
                               ),
                               const Spacing.y(),
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.calendar_today_outlined),
-                                  label: Text(strings.date),
-                                ),
-                                readOnly: true,
-                                controller: dateController,
-                                validator: InputRequiredValidator().validate,
-                                enabled: !notifier.isLoading,
-                                onTap: selectDate,
+                              Row(
+                                children: [
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      prefixIcon: const Icon(Icons.calendar_today_outlined),
+                                      label: Text(strings.date),
+                                    ),
+                                    readOnly: true,
+                                    controller: dateController,
+                                    validator: InputRequiredValidator().validate,
+                                    enabled: !notifier.isLoading,
+                                    onTap: selectDate,
+                                  ),
+                                  FilterChip(
+                                    selected: notifier.expense.paid,
+                                    backgroundColor: Colors.transparent,
+                                    label: Text(strings.paid),
+                                    onSelected: notifier.setPaid,
+                                  ),
+                                ],
                               ),
                             ],
                           ),

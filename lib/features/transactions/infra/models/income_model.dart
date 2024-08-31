@@ -4,6 +4,7 @@ import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class IncomeModel extends Model implements ITransactionModel {
   String description;
+  bool paid;
   String? observation;
 
   String idCategory;
@@ -14,6 +15,7 @@ class IncomeModel extends Model implements ITransactionModel {
     required super.createdAt,
     required super.deletedAt,
     required this.description,
+    required this.paid,
     required this.observation,
     required this.idCategory,
     required this.transaction,
@@ -24,6 +26,7 @@ class IncomeModel extends Model implements ITransactionModel {
     return {
       ...baseMap(),
       'description': description,
+      'paid': paid ? 1 : 0,
       'observation': observation,
       'id_category': idCategory,
       'id_transaction': transaction.id,
@@ -37,6 +40,7 @@ class IncomeModel extends Model implements ITransactionModel {
       createdAt: createdAt,
       deletedAt: deletedAt,
       description: description,
+      paid: paid,
       observation: observation,
       idCategory: idCategory,
       transaction: transaction.clone(),

@@ -180,6 +180,7 @@
   "operationCanceled": "Operação cancelada.",
   "optional": "Opcional",
   "or": "ou",
+  "paid": "Pago",
   "password": "Senha",
   "passwordsNotMatch": "As senhas não coincidem.",
   "paymentExceedBillAmount": "O pagamento não pode ser superior ao valor da fatura.",

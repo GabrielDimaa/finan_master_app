@@ -4,10 +4,10 @@ import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class ExpenseModel extends Model implements ITransactionModel {
   String description;
+  bool paid;
   String? observation;
 
   String idCategory;
-
   String? idCreditCardTransaction;
 
   TransactionModel transaction;
@@ -17,6 +17,7 @@ class ExpenseModel extends Model implements ITransactionModel {
     required super.createdAt,
     required super.deletedAt,
     required this.description,
+    required this.paid,
     required this.observation,
     required this.idCategory,
     required this.idCreditCardTransaction,
@@ -28,6 +29,7 @@ class ExpenseModel extends Model implements ITransactionModel {
     return {
       ...baseMap(),
       'description': description,
+      'paid': paid ? 1 : 0,
       'observation': observation,
       'id_category': idCategory,
       'id_credit_card_transaction': idCreditCardTransaction,
@@ -42,6 +44,7 @@ class ExpenseModel extends Model implements ITransactionModel {
       createdAt: createdAt,
       deletedAt: deletedAt,
       description: description,
+      paid: paid,
       observation: observation,
       idCategory: idCategory,
       idCreditCardTransaction: idCreditCardTransaction,

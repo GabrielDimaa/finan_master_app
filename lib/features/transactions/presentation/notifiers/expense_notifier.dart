@@ -41,6 +41,11 @@ class ExpenseNotifier extends ValueNotifier<ExpenseState> {
     value = value.changedExpense();
   }
 
+  void setPaid(bool paid) {
+    expense.paid = paid;
+    value = value.changedExpense();
+  }
+
   Future<void> save() async {
     try {
       value = value.setSaving();

@@ -329,6 +329,8 @@ final class DependencyInjection {
   Future<void> dispose() async {
     await GetIt.I.reset();
 
+    (await DatabaseLocal.getInstance()).dispose();
+
     _instance = null;
   }
 }

@@ -7,6 +7,7 @@ import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
 class IncomeEntity extends Entity implements ITransactionEntity {
   String description;
+  bool paid;
   String? observation;
 
   String? idCategory;
@@ -33,6 +34,7 @@ class IncomeEntity extends Entity implements ITransactionEntity {
     required super.createdAt,
     required super.deletedAt,
     required this.description,
+    required this.paid,
     required this.observation,
     required this.idCategory,
     required TransactionEntity? transaction,

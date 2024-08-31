@@ -39,6 +39,7 @@ abstract class CreditCardTransactionFactory {
       createdAt: null,
       deletedAt: null,
       description: entity.description,
+      paid: true,
       observation: entity.observation,
       idCategory: entity.idCategory,
       idCreditCardTransaction: entity.id,

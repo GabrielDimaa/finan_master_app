@@ -16,6 +16,7 @@ import 'package:finan_master_app/features/transactions/infra/data_sources/income
 import 'package:finan_master_app/features/transactions/infra/data_sources/transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/transfer_local_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/user_account_local_data_source.dart';
+import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_transaction.dart';
@@ -29,7 +30,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 final class DatabaseLocal implements IDatabaseLocal {
   String get _name => "finan_master.db";
 
-  int get _version => 2;
+  int get _version => 3;
 
   late Database database;
 
@@ -49,6 +50,8 @@ final class DatabaseLocal implements IDatabaseLocal {
 
     return _instance!;
   }
+
+  void dispose() => _instance = null;
 
   @override
   Future<File> getFileDatabase() async {
@@ -114,6 +117,11 @@ final class DatabaseLocal implements IDatabaseLocal {
         ..createdAt = DateTime.now();
 
       batch.insert(FirstStepsLocalDataSource(databaseLocal: this).tableName, FirstStepsFactory.fromEntity(entity).toMap());
+    }
+
+    if (oldVersion < 3) {
+      batch.execute('ALTER TABLE $expensesTableName ADD COLUMN paid INTEGER NOT NULL DEFAULT 1;');
+      batch.execute('ALTER TABLE $incomesTableName ADD COLUMN paid INTEGER NOT NULL DEFAULT 1;');
     }
 
     await batch.commit();
