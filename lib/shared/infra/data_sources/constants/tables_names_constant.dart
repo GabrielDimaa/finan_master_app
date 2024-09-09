@@ -9,3 +9,4 @@ const String userAccountTableName = 'user_account';
 const String creditCardsTableName = 'credit_cards';
 const String creditCardTransactionsTableName = 'credit_card_transactions';
 const String creditCardBillsTableName = 'credit_card_bills';
+const String firstStepsTableName = 'first_steps';
