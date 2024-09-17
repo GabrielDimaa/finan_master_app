@@ -1,5 +1,4 @@
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
-import 'package:finan_master_app/features/transactions/helpers/factories/transaction_factory.dart';
 import 'package:finan_master_app/features/transactions/infra/models/income_model.dart';
 
 abstract class IncomeFactory {
@@ -9,10 +8,12 @@ abstract class IncomeFactory {
       createdAt: entity.createdAt,
       deletedAt: entity.deletedAt,
       description: entity.description,
+      amount: entity.amount,
+      date: entity.date,
       paid: entity.paid,
       observation: entity.observation,
+      idAccount: entity.idAccount!,
       idCategory: entity.idCategory!,
-      transaction: TransactionFactory.fromEntity(entity.transaction),
     );
   }
 
@@ -22,10 +23,12 @@ abstract class IncomeFactory {
       createdAt: model.createdAt,
       deletedAt: model.deletedAt,
       description: model.description,
+      amount: model.amount,
+      date: model.date,
       paid: model.paid,
       observation: model.observation,
+      idAccount: model.idAccount,
       idCategory: model.idCategory,
-      transaction: TransactionFactory.toEntity(model.transaction),
     );
   }
 }

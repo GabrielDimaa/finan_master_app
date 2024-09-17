@@ -114,13 +114,13 @@ class _ReportCategoriesChartState extends State<ReportCategoriesChart> with Them
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                         title: Text(expense.description),
                         subtitle: Text(expense.date.format()),
-                        trailing: Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                        trailing: Text(expense.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
                       ),
                     IncomeEntity income => ListTile(
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                         title: Text(income.description),
                         subtitle: Text(income.date.format()),
-                        trailing: Text(income.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                        trailing: Text(income.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
                       ),
                     _ => const SizedBox.shrink(),
                   };

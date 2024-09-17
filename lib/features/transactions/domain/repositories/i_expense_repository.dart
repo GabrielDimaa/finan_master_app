@@ -5,4 +5,8 @@ abstract interface class IExpenseRepository {
   Future<ExpenseEntity> save(ExpenseEntity entity, {ITransactionExecutor? txn});
 
   Future<void> delete(ExpenseEntity entity, {ITransactionExecutor? txn});
+
+  Future<List<ExpenseEntity>> findByPeriod(DateTime startDate, DateTime endDate);
+
+  Future<List<ExpenseEntity>> findByText(String text);
 }

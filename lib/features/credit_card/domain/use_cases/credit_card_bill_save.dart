@@ -62,7 +62,7 @@ class CreditCardBillSave implements ICreditCardBillSave {
     if (creditCardBillClone.status == BillStatusEnum.outstanding) {
       final ExpenseEntity expense = CreditCardTransactionFactory.toExpenseEntity(creditCardTransaction)
         ..amount = creditCardTransaction.amount.abs()
-        ..transaction.idAccount = creditCard.idAccount;
+        ..idAccount = creditCard.idAccount;
 
       await _localDBTransactionRepository.openTransaction((txn) async {
         creditCardTransaction = await _creditCardTransactionRepository.save(creditCardTransaction, txn: txn);
@@ -82,7 +82,7 @@ class CreditCardBillSave implements ICreditCardBillSave {
       for (CreditCardTransactionEntity transaction in creditCardBillClone.transactions) {
         expenses.add(CreditCardTransactionFactory.toExpenseEntity(transaction)
           ..amount = transaction.amount
-          ..transaction.idAccount = creditCard.idAccount);
+          ..idAccount = creditCard.idAccount);
       }
 
       //Atualiza a fatura com status de "Paga"

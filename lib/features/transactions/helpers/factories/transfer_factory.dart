@@ -1,5 +1,4 @@
 import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
-import 'package:finan_master_app/features/transactions/helpers/factories/transaction_factory.dart';
 import 'package:finan_master_app/features/transactions/infra/models/transfer_model.dart';
 
 abstract class TransferFactory {
@@ -8,8 +7,10 @@ abstract class TransferFactory {
       id: entity.id,
       createdAt: entity.createdAt,
       deletedAt: entity.deletedAt,
-      transactionFrom: TransactionFactory.fromEntity(entity.transactionFrom),
-      transactionTo: TransactionFactory.fromEntity(entity.transactionTo),
+      amount: entity.amount,
+      date: entity.date,
+      idAccountFrom: entity.idAccountFrom!,
+      idAccountTo: entity.idAccountTo!,
     );
   }
 
@@ -18,8 +19,10 @@ abstract class TransferFactory {
       id: model.id,
       createdAt: model.createdAt,
       deletedAt: model.deletedAt,
-      transactionFrom: TransactionFactory.toEntity(model.transactionFrom),
-      transactionTo: TransactionFactory.toEntity(model.transactionTo),
+      amount: model.amount,
+      date: model.date,
+      idAccountFrom: model.idAccountFrom,
+      idAccountTo: model.idAccountTo,
     );
   }
 }

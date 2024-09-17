@@ -145,10 +145,10 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
                               onTap: selectAccountFrom,
                               title: strings.from,
                               enabled: !notifier.isLoading,
-                              tile: state.transfer.transactionFrom.idAccount != null
+                              tile: state.transfer.idAccountFrom != null
                                   ? Builder(
                                       builder: (_) {
-                                        final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.transfer.transactionFrom.idAccount);
+                                        final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.transfer.idAccountFrom);
                                         return ListTile(
                                           leading: account.financialInstitution!.icon(),
                                           title: Text(account.description),
@@ -169,10 +169,10 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
                               onTap: selectAccountTo,
                               title: strings.to,
                               enabled: !notifier.isLoading,
-                              tile: state.transfer.transactionTo.idAccount != null
+                              tile: state.transfer.idAccountTo != null
                                   ? Builder(
                                       builder: (_) {
-                                        final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.transfer.transactionTo.idAccount);
+                                        final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.transfer.idAccountTo);
                                         return ListTile(
                                           leading: account.financialInstitution!.icon(),
                                           title: Text(account.description),
@@ -238,7 +238,7 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
   Future<void> selectAccountFrom() async {
     if (initialLoadingNotifier.value || notifier.isLoading) return;
 
-    final AccountEntity? result = await showAccountListBottomSheet(notifier.transfer.transactionFrom.idAccount);
+    final AccountEntity? result = await showAccountListBottomSheet(notifier.transfer.idAccountFrom);
     if (result == null) return;
 
     notifier.setAccountFrom(result.id);
@@ -247,7 +247,7 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
   Future<void> selectAccountTo() async {
     if (initialLoadingNotifier.value || notifier.isLoading) return;
 
-    final AccountEntity? result = await showAccountListBottomSheet(notifier.transfer.transactionTo.idAccount);
+    final AccountEntity? result = await showAccountListBottomSheet(notifier.transfer.idAccountTo);
     if (result == null) return;
 
     notifier.setAccountTo(result.id);

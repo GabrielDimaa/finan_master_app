@@ -25,8 +25,10 @@ class StartTransferState extends TransferState {
             id: null,
             createdAt: null,
             deletedAt: null,
-            transactionFrom: null,
-            transactionTo: null,
+            amount: 0,
+            date: DateTime.now(),
+            idAccountFrom: null,
+            idAccountTo: null,
           ),
         );
 }

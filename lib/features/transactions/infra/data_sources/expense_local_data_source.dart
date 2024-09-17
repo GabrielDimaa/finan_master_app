@@ -1,24 +1,18 @@
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
-import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/expense_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
-import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
-import 'package:finan_master_app/shared/infra/data_sources/database_local/database_operation.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
-import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IExpenseLocalDataSource {
-  final ITransactionLocalDataSource _transactionDataSource;
-
-  ExpenseLocalDataSource({required super.databaseLocal, required ITransactionLocalDataSource transactionDataSource}) : _transactionDataSource = transactionDataSource;
+  ExpenseLocalDataSource({required super.databaseLocal});
 
   @override
   String get tableName => expensesTableName;
 
   @override
-  String get orderByDefault => '${_transactionDataSource.tableName}_date DESC';
+  String get orderByDefault => 'date DESC';
 
   @override
   void createTable(IDatabaseLocalBatch batch) {
@@ -26,10 +20,12 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
         description TEXT NOT NULL,
+        amount REAL NOT NULL,
+        date TEXT NOT NULL,
         paid INTEGER NOT NULL DEFAULT 1,
+        id_account TEXT NOT NULL REFERENCES $accountsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         id_category TEXT NOT NULL REFERENCES $categoriesTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         id_credit_card_transaction TEXT REFERENCES $creditCardTransactionsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
-        id_transaction TEXT NOT NULL REFERENCES ${_transactionDataSource.tableName}(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE CASCADE,
         observation TEXT
       );
     ''');
@@ -44,68 +40,23 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
       createdAt: base.createdAt,
       deletedAt: base.deletedAt,
       description: map['${prefix}description'],
+      amount: map['${prefix}amount'],
+      date: DateTime.tryParse(map['${prefix}date'].toString())!.toLocal(),
       paid: map['${prefix}paid'],
       observation: map['${prefix}observation'],
+      idAccount: map['${prefix}id_account'],
       idCategory: map['${prefix}id_category'],
       idCreditCardTransaction: map['${prefix}id_credit_card_transaction'],
-      transaction: _transactionDataSource.fromMap(map, prefix: '${_transactionDataSource.tableName}_'),
     );
   }
 
   @override
-  Future<List<ExpenseModel>> selectFull({String? id, bool deleted = false, String? where, List? whereArgs, String? orderBy, int? offset, int? limit, ITransactionExecutor? txn}) async {
-    try {
-      List<String> whereListed = [];
-      whereArgs ??= [];
-
-      if (where?.isNotEmpty == true) {
-        whereListed.add(where!);
-      }
-
-      if (id != null) {
-        whereListed.add('${Model.idColumnName} = ?');
-        whereArgs.add(id);
-      }
-
-      if (!deleted) {
-        whereListed.add("$tableName.${Model.deletedAtColumnName} IS NULL");
-      }
-
-      final String sql = '''
-        SELECT
-          -- Expense
-          $tableName.${Model.idColumnName} AS ${tableName}_${Model.idColumnName},
-          $tableName.${Model.createdAtColumnName} AS ${tableName}_${Model.createdAtColumnName},
-          $tableName.${Model.deletedAtColumnName} AS ${tableName}_${Model.deletedAtColumnName},
-          $tableName.description AS ${tableName}_description,
-          $tableName.paid AS ${tableName}_paid,
-          $tableName.id_category AS ${tableName}_id_category,
-          $tableName.id_credit_card_transaction AS ${tableName}_id_credit_card_transaction,
-          $tableName.id_transaction AS ${tableName}_id_transaction,
-          $tableName.observation AS ${tableName}_observation,
-          
-          -- Transaction
-          ${_transactionDataSource.tableName}.${Model.idColumnName} AS ${_transactionDataSource.tableName}_${Model.idColumnName},
-          ${_transactionDataSource.tableName}.${Model.createdAtColumnName} AS ${_transactionDataSource.tableName}_${Model.createdAtColumnName},
-          ${_transactionDataSource.tableName}.${Model.deletedAtColumnName} AS ${_transactionDataSource.tableName}_${Model.deletedAtColumnName},
-          ${_transactionDataSource.tableName}.amount AS ${_transactionDataSource.tableName}_amount,
-          ${_transactionDataSource.tableName}.type AS ${_transactionDataSource.tableName}_type,
-          ${_transactionDataSource.tableName}.date AS ${_transactionDataSource.tableName}_date,
-          ${_transactionDataSource.tableName}.id_account AS ${_transactionDataSource.tableName}_id_account
-        FROM $tableName
-        INNER JOIN ${_transactionDataSource.tableName}
-          ON ${_transactionDataSource.tableName}.${Model.idColumnName} = $tableName.id_transaction
-        ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
-        ORDER BY ${orderBy ?? orderByDefault}
-        ${limit != null ? ' LIMIT $limit' : ''}
-        ${offset != null ? ' OFFSET $offset' : ''};
-      ''';
-
-      final List<Map<String, dynamic>> results = await (txn ?? databaseLocal).raw(sql, DatabaseOperation.select, whereArgs);
-
-      return results.map((e) => fromMap(e, prefix: '${tableName}_')).toList();
-    } on DatabaseLocalException catch (e, stackTrace) {
-      throw throwable(e, stackTrace);
-    }
+  Future<List<ExpenseModel>> findByText(String text) async {
+    return await selectFull(
+      where: 'description LIKE ?',
+      whereArgs: ['%$text%'],
+      groupBy: 'LOWER(description)',
+      limit: 15,
+    );
   }
 }

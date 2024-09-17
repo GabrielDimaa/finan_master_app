@@ -54,7 +54,7 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
   }
 
   @override
-  Future<List<CreditCardBillModel>> selectFull({String? id, bool deleted = false, String? where, List? whereArgs, String? orderBy, int? offset, int? limit, ITransactionExecutor? txn}) async {
+  Future<List<CreditCardBillModel>> selectFull({String? id, bool deleted = false, String? where, List? whereArgs, String? orderBy, int? offset, int? limit, String? groupBy, ITransactionExecutor? txn}) async {
     try {
       List<String> whereListed = [];
       whereArgs ??= [];
@@ -98,6 +98,7 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
           SELECT $tableName.*
           FROM $tableName
           ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
+          ${groupBy?.isNotEmpty == true ? 'GROUP BY $groupBy' : ''}
           ORDER BY ${orderBy ?? orderByDefault}
           ${limit != null ? ' LIMIT $limit' : ''}
           ${offset != null ? ' OFFSET $offset' : ''}

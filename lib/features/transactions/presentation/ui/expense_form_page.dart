@@ -84,7 +84,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
         }
 
         textEditingValue = TextEditingValue(text: notifier.expense.description);
-        dateController.text = notifier.expense.transaction.date.format();
+        dateController.text = notifier.expense.date.format();
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());
@@ -133,7 +133,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                           child: Column(
                             children: [
                               TextFormField(
-                                initialValue: state.expense.transaction.amount.abs().moneyWithoutSymbol,
+                                initialValue: state.expense.amount.abs().moneyWithoutSymbol,
                                 decoration: InputDecoration(
                                   label: Text(strings.amount),
                                   prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
@@ -177,7 +177,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                     onSelected: (ITransactionEntity selection) {
                                       final ExpenseEntity expense = selection as ExpenseEntity;
                                       if (expense.idCategory != null) notifier.setCategory(expense.idCategory!);
-                                      if (categoriesNotifier.value.categories.any((c) => c.id == expense.transaction.idAccount && c.deletedAt == null)) notifier.setAccount(expense.transaction.idAccount!);
+                                      if (categoriesNotifier.value.categories.any((c) => c.id == expense.idAccount && c.deletedAt == null)) notifier.setAccount(expense.idAccount!);
                                       notifier.expense.observation = expense.observation;
                                     },
                                     optionsViewBuilder: (context, onSelected, options) {
@@ -277,10 +277,10 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                           onTap: selectAccount,
                           title: strings.account,
                           enabled: !notifier.isLoading,
-                          tile: state.expense.transaction.idAccount != null
+                          tile: state.expense.idAccount != null
                               ? Builder(
                                   builder: (_) {
-                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.expense.transaction.idAccount);
+                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.expense.idAccount);
                                     return ListTile(
                                       leading: account.financialInstitution!.icon(),
                                       title: Text(account.description),
@@ -374,7 +374,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
 
     final AccountEntity? result = await AccountsListBottomSheet.show(
       context: context,
-      accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == notifier.expense.transaction.idAccount),
+      accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == notifier.expense.idAccount),
       accounts: accountsNotifier.value.accounts.where((account) => account.deletedAt == null).toList(),
       onAccountCreated: (AccountEntity account) => accountsNotifier.value.accounts.add(account),
     );
@@ -387,9 +387,9 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   Future<void> selectDate() async {
     if (initialLoadingNotifier.value || notifier.isLoading) return;
 
-    final DateTime? result = await showDatePickerDefault(context: context, initialDate: notifier.expense.transaction.date);
+    final DateTime? result = await showDatePickerDefault(context: context, initialDate: notifier.expense.date);
 
-    if (result == null || result == notifier.expense.transaction.date) return;
+    if (result == null || result == notifier.expense.date) return;
 
     dateController.text = result.format();
     notifier.setDate(result);
