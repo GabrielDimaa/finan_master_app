@@ -20,12 +20,12 @@ class TransferNotifier extends ValueNotifier<TransferState> {
   void setTransfer(TransferEntity transfer) => value = value.setTransfer(transfer);
 
   void setAccountFrom(String idAccount) {
-    transfer.transactionFrom.idAccount = idAccount;
+    transfer.idAccount = idAccount;
     value = value.changedTransfer();
   }
 
   void setAccountTo(String idAccount) {
-    transfer.transactionTo.idAccount = idAccount;
+    transfer.idAccount = idAccount;
     value = value.changedTransfer();
   }
 

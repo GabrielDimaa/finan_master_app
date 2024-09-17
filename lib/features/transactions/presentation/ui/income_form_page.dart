@@ -66,7 +66,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
   void initState() {
     super.initState();
 
-    dateController.text = notifier.income.transaction.date.format();
+    dateController.text = notifier.income.date.format();
 
     Future(() async {
       try {
@@ -86,7 +86,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
         }
 
         textEditingValue = TextEditingValue(text: notifier.income.description);
-        dateController.text = notifier.income.transaction.date.format();
+        dateController.text = notifier.income.date.format();
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());
@@ -135,7 +135,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                           child: Column(
                             children: [
                               TextFormField(
-                                initialValue: state.income.transaction.amount.abs().moneyWithoutSymbol,
+                                initialValue: state.income.amount.abs().moneyWithoutSymbol,
                                 decoration: InputDecoration(
                                   label: Text(strings.amount),
                                   prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
@@ -179,7 +179,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                                     onSelected: (ITransactionEntity selection) {
                                       final IncomeEntity income = selection as IncomeEntity;
                                       if (income.idCategory != null) notifier.setCategory(income.idCategory!);
-                                      if (categoriesNotifier.value.categories.any((c) => c.id == income.transaction.idAccount && c.deletedAt == null)) notifier.setAccount(income.transaction.idAccount!);
+                                      if (categoriesNotifier.value.categories.any((c) => c.id == income.idAccount && c.deletedAt == null)) notifier.setAccount(income.idAccount!);
                                       notifier.income.observation = income.observation;
                                     },
                                     optionsViewBuilder: (context, onSelected, options) {
@@ -269,10 +269,10 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                           onTap: selectAccount,
                           title: strings.account,
                           enabled: !notifier.isLoading,
-                          tile: state.income.transaction.idAccount != null
+                          tile: state.income.idAccount != null
                               ? Builder(
                                   builder: (_) {
-                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.income.transaction.idAccount);
+                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.income.idAccount);
                                     return ListTile(
                                       leading: account.financialInstitution!.icon(),
                                       title: Text(account.description),
@@ -366,7 +366,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
 
     final AccountEntity? result = await AccountsListBottomSheet.show(
       context: context,
-      accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == notifier.income.transaction.idAccount),
+      accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == notifier.income.idAccount),
       accounts: accountsNotifier.value.accounts.where((account) => account.deletedAt == null).toList(),
       onAccountCreated: (AccountEntity account) => accountsNotifier.value.accounts.add(account),
     );
@@ -381,10 +381,10 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
 
     final DateTime? result = await showDatePickerDefault(
       context: context,
-      initialDate: notifier.income.transaction.date,
+      initialDate: notifier.income.date,
     );
 
-    if (result == null || result == notifier.income.transaction.date) return;
+    if (result == null || result == notifier.income.date) return;
 
     dateController.text = result.format();
     notifier.setDate(result);

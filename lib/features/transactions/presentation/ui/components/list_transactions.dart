@@ -74,10 +74,10 @@ class _ListTransactionsState extends State<ListTransactions> {
                       const Icon(Icons.credit_card_outlined, size: 20),
                       const Spacing.x(),
                     ],
-                    Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                    Text(expense.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
                   ],
                 ),
-                Text(expense.transaction.date.formatDateToRelative()),
+                Text(expense.date.formatDateToRelative()),
               ],
             ),
             onTap: () async {
@@ -108,8 +108,8 @@ class _ListTransactionsState extends State<ListTransactions> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(income.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
-                Text(income.transaction.date.formatDateToRelative()),
+                Text(income.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                Text(income.date.formatDateToRelative()),
               ],
             ),
             onTap: () => goFormsPage(context: context, route: IncomeFormPage.route, entity: income),
@@ -129,7 +129,7 @@ class _ListTransactionsState extends State<ListTransactions> {
                 title: Text(AppLocalizations.of(context)!.transfer),
                 subtitle: Builder(
                   builder: (_) {
-                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.transactionTo.idAccount);
+                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.idAccount);
                     return Text(account.description);
                   },
                 ),
@@ -138,8 +138,8 @@ class _ListTransactionsState extends State<ListTransactions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(transfer.transactionTo.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
-                    Text(transfer.transactionTo.date.formatDateToRelative()),
+                    Text(transfer.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                    Text(transfer.date.formatDateToRelative()),
                   ],
                 ),
                 onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),
@@ -154,7 +154,7 @@ class _ListTransactionsState extends State<ListTransactions> {
                 title: Text(AppLocalizations.of(context)!.transfer),
                 subtitle: Builder(
                   builder: (_) {
-                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.transactionFrom.idAccount);
+                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.idAccount);
                     return Text(account.description);
                   },
                 ),
@@ -163,8 +163,8 @@ class _ListTransactionsState extends State<ListTransactions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(transfer.transactionFrom.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                    Text(transfer.transactionFrom.date.formatDateToRelative()),
+                    Text(transfer.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                    Text(transfer.date.formatDateToRelative()),
                   ],
                 ),
                 onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),

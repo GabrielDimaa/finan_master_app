@@ -59,8 +59,8 @@ class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> impleme
   }
 
   @override
-  Future<List<CreditCardModel>> selectFull({String? id, bool deleted = false, String? where, List? whereArgs, String? orderBy, int? offset, int? limit, ITransactionExecutor? txn}) async {
-    final List<CreditCardModel> creditCards = await super.selectFull(id: id, deleted: deleted, where: where, whereArgs: whereArgs, orderBy: orderBy, offset: offset, limit: limit, txn: txn);
+  Future<List<CreditCardModel>> selectFull({String? id, bool deleted = false, String? where, List? whereArgs, String? orderBy, int? offset, int? limit, String? groupBy, ITransactionExecutor? txn}) async {
+    final List<CreditCardModel> creditCards = await super.selectFull(id: id, deleted: deleted, where: where, whereArgs: whereArgs, orderBy: orderBy, offset: offset, limit: limit, groupBy: groupBy, txn: txn);
 
     if (creditCards.isEmpty) return [];
 

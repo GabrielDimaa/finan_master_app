@@ -4,6 +4,4 @@ import 'package:finan_master_app/features/transactions/domain/entities/transacti
 
 abstract interface class ITransactionFind {
   Future<TransactionsByPeriodEntity> findByPeriod(DateTime startDate, DateTime endDate);
-
-  Future<List<ITransactionEntity>> findByText({required CategoryTypeEnum categoryType, required String text});
 }

@@ -10,10 +10,9 @@ import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credi
 import 'package:finan_master_app/features/first_steps/domain/entities/first_steps_entity.dart';
 import 'package:finan_master_app/features/first_steps/helpers/first_steps_factory.dart';
 import 'package:finan_master_app/features/first_steps/infra/data_sources/first_steps_local_data_source.dart';
+import 'package:finan_master_app/features/statement/infra/data_sources/statement_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/expense_local_data_source.dart';
-import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/income_local_data_source.dart';
-import 'package:finan_master_app/features/transactions/infra/data_sources/transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/transfer_local_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/user_account_local_data_source.dart';
 import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
@@ -92,10 +91,10 @@ final class DatabaseLocal implements IDatabaseLocal {
 
     CategoryLocalDataSource(databaseLocal: this).createTable(batch);
     AccountLocalDataSource(databaseLocal: this).createTable(batch);
-    final ITransactionLocalDataSource transactionDb = TransactionLocalDataSource(databaseLocal: this)..createTable(batch);
-    ExpenseLocalDataSource(databaseLocal: this, transactionDataSource: transactionDb).createTable(batch);
-    IncomeLocalDataSource(databaseLocal: this, transactionDataSource: transactionDb).createTable(batch);
-    TransferLocalDataSource(databaseLocal: this, transactionDataSource: transactionDb).createTable(batch);
+    StatementLocalDataSource(databaseLocal: this).createTable(batch);
+    ExpenseLocalDataSource(databaseLocal: this).createTable(batch);
+    IncomeLocalDataSource(databaseLocal: this).createTable(batch);
+    TransferLocalDataSource(databaseLocal: this).createTable(batch);
     final CreditCardTransactionLocalDataSource creditCardTransactionLocalDataSource = CreditCardTransactionLocalDataSource(databaseLocal: this)..createTable(batch);
     final ICreditCardBillLocalDataSource creditCardBillLocalDataSource = CreditCardBillLocalDataSource(databaseLocal: this, creditCardTransactionLocalDataSource: creditCardTransactionLocalDataSource)..createTable(batch);
     CreditCardLocalDataSource(databaseLocal: this, creditCardBillLocalDataSource: creditCardBillLocalDataSource).createTable(batch);

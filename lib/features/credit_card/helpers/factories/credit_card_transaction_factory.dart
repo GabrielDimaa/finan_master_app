@@ -39,11 +39,13 @@ abstract class CreditCardTransactionFactory {
       createdAt: null,
       deletedAt: null,
       description: entity.description,
+      amount: entity.amount.abs(),
+      date: DateTime.now(),
       paid: true,
       observation: entity.observation,
+      idAccount: null,
       idCategory: entity.idCategory,
       idCreditCardTransaction: entity.id,
-      transaction: null,
     );
   }
 }
