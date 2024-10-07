@@ -7,6 +7,9 @@ import 'package:finan_master_app/features/credit_card/domain/repositories/i_cred
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_transaction_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_bill_save.dart';
 import 'package:finan_master_app/features/credit_card/helpers/factories/credit_card_transaction_factory.dart';
+import 'package:finan_master_app/features/statement/domain/entities/statement_entity.dart';
+import 'package:finan_master_app/features/statement/domain/repositories/i_statement_repository.dart';
+import 'package:finan_master_app/features/statement/helpers/statement_factory.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
 import 'package:finan_master_app/shared/classes/constants.dart';
@@ -20,6 +23,7 @@ class CreditCardBillSave implements ICreditCardBillSave {
   final ICreditCardTransactionRepository _creditCardTransactionRepository;
   final ICreditCardRepository _creditCardRepository;
   final IExpenseRepository _expenseRepository;
+  final IStatementRepository _statementRepository;
   final ILocalDBTransactionRepository _localDBTransactionRepository;
 
   CreditCardBillSave({
@@ -27,11 +31,13 @@ class CreditCardBillSave implements ICreditCardBillSave {
     required ICreditCardTransactionRepository creditCardTransactionRepository,
     required ICreditCardRepository creditCardRepository,
     required IExpenseRepository expenseRepository,
+    required IStatementRepository statementRepository,
     required ILocalDBTransactionRepository localDBTransactionRepository,
   })  : _repository = repository,
         _creditCardTransactionRepository = creditCardTransactionRepository,
         _creditCardRepository = creditCardRepository,
         _expenseRepository = expenseRepository,
+        _statementRepository = statementRepository,
         _localDBTransactionRepository = localDBTransactionRepository;
 
   @override
@@ -45,12 +51,12 @@ class CreditCardBillSave implements ICreditCardBillSave {
 
     final CreditCardBillEntity creditCardBillClone = creditCardBill.clone();
 
-    CreditCardTransactionEntity creditCardTransaction = CreditCardTransactionEntity(
+    final CreditCardTransactionEntity creditCardTransaction = CreditCardTransactionEntity(
       id: null,
       createdAt: null,
       deletedAt: null,
       description: R.strings.billPayment,
-      amount: payValue * (-1),
+      amount: -payValue.abs(),
       date: DateTime.now(),
       idCategory: categoryOthersUuidExpense,
       idCreditCard: creditCardBillClone.idCreditCard,
@@ -58,51 +64,39 @@ class CreditCardBillSave implements ICreditCardBillSave {
       observation: null,
     );
 
-    //Se a fatura estiver em aberto
-    if (creditCardBillClone.status == BillStatusEnum.outstanding) {
-      final ExpenseEntity expense = CreditCardTransactionFactory.toExpenseEntity(creditCardTransaction)
-        ..amount = creditCardTransaction.amount.abs()
-        ..idAccount = creditCard.idAccount;
+    final ExpenseEntity expense = ExpenseEntity(
+      id: null,
+      createdAt: null,
+      deletedAt: null,
+      description: creditCardTransaction.description,
+      amount: creditCardTransaction.amount.abs(),
+      date: DateTime.now(),
+      paid: true,
+      observation: creditCardTransaction.observation,
+      idAccount: creditCard.idAccount,
+      idCategory: creditCardTransaction.idCategory,
+      idCreditCardBill: creditCardTransaction.idCreditCardBill,
+      idCreditCard: creditCardTransaction.idCreditCard,
+    );
 
-      await _localDBTransactionRepository.openTransaction((txn) async {
-        creditCardTransaction = await _creditCardTransactionRepository.save(creditCardTransaction, txn: txn);
-        await _expenseRepository.save(expense, txn: txn);
-      });
-
-      creditCardBillClone.transactions.add(creditCardTransaction);
-      return creditCardBillClone;
-    }
+    if (creditCardBillClone.status == BillStatusEnum.paid) throw ValidationException(R.strings.billAlreadyPaid);
 
     //Se a fatura estiver fechada ou vencida
     if (creditCardBillClone.status == BillStatusEnum.closed || creditCardBillClone.status == BillStatusEnum.overdue) {
       if (payValue != creditCardBill.billAmount.truncateFractionalDigits(2)) throw ValidationException(R.strings.paymentRequirementWhenClosedBill);
 
-      final List<ExpenseEntity> expenses = [];
-
-      for (CreditCardTransactionEntity transaction in creditCardBillClone.transactions) {
-        expenses.add(CreditCardTransactionFactory.toExpenseEntity(transaction)
-          ..amount = transaction.amount
-          ..idAccount = creditCard.idAccount);
-      }
-
       //Atualiza a fatura com status de "Paga"
       creditCardBillClone.paid = true;
-
-      await _localDBTransactionRepository.openTransaction((txn) async {
-        final expenseSaves = expenses.map((expense) => () => _expenseRepository.save(expense, txn: txn));
-
-        creditCardTransaction = await _creditCardTransactionRepository.save(creditCardTransaction, txn: txn);
-
-        await Future.wait([
-          _repository.saveOnlyBill(creditCardBillClone, txn: txn),
-          ...expenseSaves.map((e) => e.call()),
-        ]);
-      });
-
-      creditCardBillClone.transactions.add(creditCardTransaction);
-      return creditCardBillClone;
     }
 
-    throw ValidationException(R.strings.notPossibleToPayBill);
+    await _localDBTransactionRepository.openTransaction((txn) async {
+      await Future.wait([
+        _creditCardTransactionRepository.save(creditCardTransaction, txn: txn).then((value) => creditCardBillClone.transactions.add(value)),
+        _expenseRepository.save(expense, txn: txn),
+        if (creditCardBillClone.paid) _repository.saveOnlyBill(creditCardBillClone, txn: txn),
+      ]);
+    });
+
+    return creditCardBillClone;
   }
 }

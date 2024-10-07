@@ -8,11 +8,8 @@ class TransferEntity extends Entity implements ITransactionEntity {
   @override
   DateTime date;
 
-  @override
-  String? idAccount;
-
-  final String? idAccountFrom;
-  final String? idAccountTo;
+  String? idAccountFrom;
+  String? idAccountTo;
 
   TransferEntity({
     required super.id,

@@ -5,14 +5,11 @@ import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credi
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_transaction_model.dart';
 import 'package:finan_master_app/features/statement/infra/data_sources/i_statement_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
-import 'package:finan_master_app/features/transactions/infra/models/expense_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 
 class CreditCardTransactionRepository implements ICreditCardTransactionRepository {
   final ICreditCardTransactionLocalDataSource _dataSource;
-  final IExpenseLocalDataSource _expenseDataSource;
-  final IStatementLocalDataSource _statementDataSource;
   final IDatabaseLocalTransaction _dbTransaction;
   final EventNotifier _eventNotifier;
 
@@ -23,8 +20,6 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
     required IDatabaseLocalTransaction dbTransaction,
     required EventNotifier eventNotifier,
   })  : _dataSource = dataSource,
-        _expenseDataSource = expenseDataSource,
-        _statementDataSource = statementDataSource,
         _dbTransaction = dbTransaction,
         _eventNotifier = eventNotifier;
 
@@ -53,18 +48,6 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
 
   @override
   Future<void> delete(CreditCardTransactionEntity entity, {ITransactionExecutor? txn}) async {
-    if (txn == null) {
-      await _dbTransaction.openTransaction((txn) => delete(entity, txn: txn));
-      return;
-    }
-
-    final ExpenseModel? expenseModel = await _expenseDataSource.findOne(where: '${_expenseDataSource.tableName}_id_credit_card_transaction = ?', whereArgs: [entity.id], txn: txn);
-
-    if (expenseModel != null) {
-      await _expenseDataSource.delete(expenseModel, txn: txn);
-      await _transactionDataSource.delete(expenseModel.transaction, txn: txn);
-    }
-
     await _dataSource.delete(CreditCardTransactionFactory.fromEntity(entity), txn: txn);
 
     _eventNotifier.notify(EventType.creditCard);

@@ -3,8 +3,13 @@ import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
 class IncomeEntity extends Entity implements ITransactionEntity {
   String description;
+
+  @override
   double amount;
+
+  @override
   DateTime date;
+
   bool paid;
   String? observation;
 

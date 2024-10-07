@@ -25,7 +25,8 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
         paid INTEGER NOT NULL DEFAULT 1,
         id_account TEXT NOT NULL REFERENCES $accountsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         id_category TEXT NOT NULL REFERENCES $categoriesTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
-        id_credit_card_transaction TEXT REFERENCES $creditCardTransactionsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
+        id_credit_card TEXT REFERENCES $creditCardsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
+        id_credit_card_bill TEXT REFERENCES $creditCardBillsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         observation TEXT
       );
     ''');
@@ -46,7 +47,8 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
       observation: map['${prefix}observation'],
       idAccount: map['${prefix}id_account'],
       idCategory: map['${prefix}id_category'],
-      idCreditCardTransaction: map['${prefix}id_credit_card_transaction'],
+      idCreditCard: map['${prefix}id_credit_card'],
+      idCreditCardBill: map['${prefix}id_credit_card_bill'],
     );
   }
 

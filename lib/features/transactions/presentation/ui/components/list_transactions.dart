@@ -70,7 +70,7 @@ class _ListTransactionsState extends State<ListTransactions> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (expense.idCreditCardTransaction != null) ...[
+                    if (expense.idCreditCard != null) ...[
                       const Icon(Icons.credit_card_outlined, size: 20),
                       const Spacing.x(),
                     ],
@@ -82,7 +82,7 @@ class _ListTransactionsState extends State<ListTransactions> {
             ),
             onTap: () async {
               try {
-                if (expense.idCreditCardTransaction != null) throw Exception(R.strings.notPossibleEditTransactionCreditCardPaid);
+                if (expense.idCreditCard != null) throw Exception(R.strings.notPossibleEditTransactionCreditCardPaid);
                 await goFormsPage(context: context, route: ExpenseFormPage.route, entity: expense);
               } catch (e) {
                 if (!context.mounted) return;
@@ -129,7 +129,7 @@ class _ListTransactionsState extends State<ListTransactions> {
                 title: Text(AppLocalizations.of(context)!.transfer),
                 subtitle: Builder(
                   builder: (_) {
-                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.idAccount);
+                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.idAccountTo);
                     return Text(account.description);
                   },
                 ),
@@ -138,7 +138,7 @@ class _ListTransactionsState extends State<ListTransactions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(transfer.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                    Text(transfer.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0xFF3CDE87))),
                     Text(transfer.date.formatDateToRelative()),
                   ],
                 ),
@@ -154,7 +154,7 @@ class _ListTransactionsState extends State<ListTransactions> {
                 title: Text(AppLocalizations.of(context)!.transfer),
                 subtitle: Builder(
                   builder: (_) {
-                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.idAccount);
+                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.idAccountFrom);
                     return Text(account.description);
                   },
                 ),
@@ -163,7 +163,7 @@ class _ListTransactionsState extends State<ListTransactions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(transfer.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                    Text(transfer.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0xFFFF5454))),
                     Text(transfer.date.formatDateToRelative()),
                   ],
                 ),

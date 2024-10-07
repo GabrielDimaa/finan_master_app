@@ -17,7 +17,7 @@ class ExpenseSave implements IExpenseSave {
     required IExpenseRepository repository,
     required IStatementRepository statementRepository,
     required ILocalDBTransactionRepository localDBTransactionRepository,
-  }) : _repository = repository,
+  })  : _repository = repository,
         _statementRepository = statementRepository,
         _localDBTransactionRepository = localDBTransactionRepository;
 

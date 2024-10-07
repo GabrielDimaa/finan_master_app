@@ -9,9 +9,10 @@ class ExpenseEntity extends Entity implements ITransactionEntity {
   String? observation;
 
   String? idCategory;
-  String? idCreditCardTransaction;
 
-  @override
+  String? idCreditCard;
+  String? idCreditCardBill;
+
   String? idAccount;
 
   @override
@@ -33,7 +34,8 @@ class ExpenseEntity extends Entity implements ITransactionEntity {
     required this.observation,
     required this.idAccount,
     required this.idCategory,
-    required this.idCreditCardTransaction,
+    required this.idCreditCard,
+    required this.idCreditCardBill,
   }) {
     this.amount = amount;
   }
