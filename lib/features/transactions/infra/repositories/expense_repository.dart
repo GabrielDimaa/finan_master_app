@@ -9,12 +9,15 @@ import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.da
 
 class ExpenseRepository implements IExpenseRepository {
   final IExpenseLocalDataSource _expenseLocalDataSource;
+  final IDatabaseLocalTransaction _dbTransaction;
   final EventNotifier _eventNotifier;
 
   ExpenseRepository({
     required IExpenseLocalDataSource expenseLocalDataSource,
+    required IDatabaseLocalTransaction dbTransaction,
     required EventNotifier eventNotifier,
   })  : _expenseLocalDataSource = expenseLocalDataSource,
+        _dbTransaction = dbTransaction,
         _eventNotifier = eventNotifier;
 
   @override
@@ -31,6 +34,18 @@ class ExpenseRepository implements IExpenseRepository {
     await _expenseLocalDataSource.delete(ExpenseFactory.fromEntity(entity), txn: txn);
 
     _eventNotifier.notify(EventType.expense);
+  }
+
+  @override
+  Future<void> deleteMany(List<ExpenseEntity> entities, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      await _dbTransaction.openTransaction((newTxn) => deleteMany(entities, txn: newTxn));
+      return;
+    }
+
+    for (final entity in entities) {
+      await delete(entity, txn: txn);
+    }
   }
 
   @override
@@ -52,5 +67,12 @@ class ExpenseRepository implements IExpenseRepository {
               observation: model.observation,
             ))
         .toList();
+  }
+
+  @override
+  Future<List<ExpenseEntity>> findByIdCreditCardTransaction(List<String> ids) async {
+    final List<ExpenseModel> models = await _expenseLocalDataSource.findAll(where: 'id_credit_card_transaction in (${ids.map((e) => '?').join(', ')})', whereArgs: [ids]);
+
+    return models.map((model) => ExpenseFactory.toEntity(model)).toList();
   }
 }

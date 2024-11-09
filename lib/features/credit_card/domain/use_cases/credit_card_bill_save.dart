@@ -7,6 +7,7 @@ import 'package:finan_master_app/features/credit_card/domain/repositories/i_cred
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_transaction_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_bill_save.dart';
 import 'package:finan_master_app/features/statement/domain/repositories/i_statement_repository.dart';
+import 'package:finan_master_app/features/statement/helpers/statement_factory.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
 import 'package:finan_master_app/shared/classes/constants.dart';
@@ -72,7 +73,7 @@ class CreditCardBillSave implements ICreditCardBillSave {
       observation: creditCardTransaction.observation,
       idAccount: creditCard.idAccount,
       idCategory: creditCardTransaction.idCategory,
-      idCreditCardBill: creditCardTransaction.idCreditCardBill,
+      idCreditCardTransaction: creditCardTransaction.idCreditCardBill,
       idCreditCard: creditCardTransaction.idCreditCard,
     );
 
@@ -91,6 +92,7 @@ class CreditCardBillSave implements ICreditCardBillSave {
         _creditCardTransactionRepository.save(creditCardTransaction, txn: txn).then((value) => creditCardBillClone.transactions.add(value)),
         _expenseRepository.save(expense, txn: txn),
         if (creditCardBillClone.paid) _repository.saveOnlyBill(creditCardBillClone, txn: txn),
+        _statementRepository.save(StatementFactory.fromExpense(expense), txn: txn),
       ]);
     });
 

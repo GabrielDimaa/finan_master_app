@@ -11,7 +11,7 @@ class ExpenseEntity extends Entity implements ITransactionEntity {
   String? idCategory;
 
   String? idCreditCard;
-  String? idCreditCardBill;
+  String? idCreditCardTransaction;
 
   String? idAccount;
 
@@ -35,7 +35,7 @@ class ExpenseEntity extends Entity implements ITransactionEntity {
     required this.idAccount,
     required this.idCategory,
     required this.idCreditCard,
-    required this.idCreditCardBill,
+    required this.idCreditCardTransaction,
   }) {
     this.amount = amount;
   }

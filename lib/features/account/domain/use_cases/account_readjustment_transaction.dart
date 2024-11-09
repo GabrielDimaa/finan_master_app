@@ -51,7 +51,7 @@ class AccountReadjustmentTransaction implements IAccountReadjustmentTransaction 
         idAccount: account.id,
         idCategory: categoryOthersUuidExpense,
         idCreditCard: null,
-        idCreditCardBill: null,
+        idCreditCardTransaction: null,
       );
 
       await _expenseSave.save(expense);

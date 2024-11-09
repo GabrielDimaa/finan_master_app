@@ -15,7 +15,7 @@ abstract class ExpenseFactory {
       idAccount: entity.idAccount!,
       idCategory: entity.idCategory!,
       idCreditCard: entity.idCreditCard,
-      idCreditCardBill: entity.idCreditCardBill,
+      idCreditCardTransaction: entity.idCreditCardTransaction,
     );
   }
 
@@ -32,7 +32,7 @@ abstract class ExpenseFactory {
       idAccount: model.idAccount,
       idCategory: model.idCategory,
       idCreditCard: model.idCreditCard,
-      idCreditCardBill: model.idCreditCardBill,
+      idCreditCardTransaction: model.idCreditCardTransaction,
     );
   }
 }

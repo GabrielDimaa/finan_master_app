@@ -33,7 +33,7 @@ class StartExpenseState extends ExpenseState {
             idAccount: null,
             idCategory: null,
             idCreditCard: null,
-            idCreditCardBill: null,
+            idCreditCardTransaction: null,
           ),
         );
 }

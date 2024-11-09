@@ -11,7 +11,7 @@ class ExpenseModel extends Model {
   String idCategory;
 
   String? idCreditCard;
-  String? idCreditCardBill;
+  String? idCreditCardTransaction;
 
   ExpenseModel({
     required super.id,
@@ -25,7 +25,7 @@ class ExpenseModel extends Model {
     required this.idAccount,
     required this.idCategory,
     required this.idCreditCard,
-    required this.idCreditCardBill,
+    required this.idCreditCardTransaction,
   });
 
   @override
@@ -40,7 +40,7 @@ class ExpenseModel extends Model {
       'id_account': idAccount,
       'id_category': idCategory,
       'id_credit_card': idCreditCard,
-      'id_credit_card_bill': idCreditCardBill,
+      'id_credit_card_transaction': idCreditCardTransaction,
     };
   }
 
@@ -58,7 +58,7 @@ class ExpenseModel extends Model {
       idAccount: idAccount,
       idCategory: idCategory,
       idCreditCard: idCreditCard,
-      idCreditCardBill: idCreditCardBill,
+      idCreditCardTransaction: idCreditCardTransaction,
     );
   }
 }

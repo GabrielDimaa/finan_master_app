@@ -7,8 +7,11 @@ import 'package:finan_master_app/shared/infra/data_sources/database_local/i_data
 
 class StatementRepository implements IStatementRepository {
   final IStatementLocalDataSource _dataSource;
+  final IDatabaseLocalTransaction _dbTransaction;
 
-  StatementRepository({required IStatementLocalDataSource dataSource}) : _dataSource = dataSource;
+  StatementRepository({required IStatementLocalDataSource dataSource, required IDatabaseLocalTransaction dbTransaction,})
+      : _dataSource = dataSource,
+        _dbTransaction = dbTransaction;
 
   @override
   Future<StatementEntity> save(StatementEntity entity, {ITransactionExecutor? txn}) async {
@@ -40,6 +43,18 @@ class StatementRepository implements IStatementRepository {
 
   @override
   Future<void> deleteByIdExpense(String id, {ITransactionExecutor? txn}) => _dataSource.deleteByIdExpense(id, txn: txn);
+
+  @override
+  Future<void> deleteByIdsExpense(List<String> ids, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      await _dbTransaction.openTransaction((newTxn) => deleteByIdsExpense(ids, txn: newTxn));
+      return;
+    }
+
+    for (final id in ids) {
+      await deleteByIdExpense(id, txn: txn);
+    }
+  }
 
   @override
   Future<void> deleteByIdIncome(String id, {ITransactionExecutor? txn}) => _dataSource.deleteByIdIncome(id, txn: txn);

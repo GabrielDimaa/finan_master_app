@@ -12,6 +12,8 @@ abstract interface class IStatementRepository {
 
   Future<void> deleteByIdExpense(String id, {ITransactionExecutor? txn});
 
+  Future<void> deleteByIdsExpense(List<String> ids, {ITransactionExecutor? txn});
+
   Future<void> deleteByIdIncome(String id, {ITransactionExecutor? txn});
 
   Future<void> deleteByIdTransfer(String id, {ITransactionExecutor? txn});

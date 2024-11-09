@@ -24,6 +24,13 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
         _eventNotifier = eventNotifier;
 
   @override
+  Future<CreditCardTransactionEntity?> findById(String id) async {
+    final CreditCardTransactionModel? result = await _dataSource.findOne(where: 'id = ?', whereArgs: [id]);
+
+    return result != null ? CreditCardTransactionFactory.toEntity(result) : null;
+  }
+
+  @override
   Future<CreditCardTransactionEntity> save(CreditCardTransactionEntity entity, {ITransactionExecutor? txn}) async {
     final CreditCardTransactionModel transaction = await _dataSource.upsert(CreditCardTransactionFactory.fromEntity(entity), txn: txn);
 
@@ -54,7 +61,11 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
   }
 
   @override
-  Future<void> deleteMany(List<CreditCardTransactionEntity> entities) async {
+  Future<void> deleteMany(List<CreditCardTransactionEntity> entities, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      return await _dbTransaction.openTransaction((newTxn) => deleteMany(entities, txn: newTxn));
+    }
+
     await _dbTransaction.openTransaction((txn) async {
       for (final entity in entities) {
         await delete(entity, txn: txn);
