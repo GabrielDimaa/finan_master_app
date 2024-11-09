@@ -1,4 +1,5 @@
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transaction_by_text_entity.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 
 abstract interface class IExpenseRepository {
@@ -8,5 +9,5 @@ abstract interface class IExpenseRepository {
 
   Future<List<ExpenseEntity>> findByPeriod(DateTime startDate, DateTime endDate);
 
-  Future<List<ExpenseEntity>> findByText(String text);
+  Future<List<TransactionByTextEntity>> findByText(String text);
 }

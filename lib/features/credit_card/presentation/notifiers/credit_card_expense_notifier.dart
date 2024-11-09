@@ -2,7 +2,7 @@ import 'package:finan_master_app/features/credit_card/domain/entities/credit_car
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_delete.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_save.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_expense_state.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transaction_by_text_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_find.dart';
 import 'package:flutter/foundation.dart';
 
@@ -63,5 +63,5 @@ class CreditCardExpenseNotifier extends ValueNotifier<CreditCardExpenseState> {
     }
   }
 
-  Future<List<ExpenseEntity>> findByText(String text) => _expenseFind.findByText(text);
+  Future<List<TransactionByTextEntity>> findByText(String text) => _expenseFind.findByText(text);
 }

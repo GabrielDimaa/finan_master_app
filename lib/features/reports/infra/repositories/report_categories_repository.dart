@@ -6,14 +6,12 @@ import 'package:finan_master_app/features/category/infra/models/category_model.d
 import 'package:finan_master_app/features/reports/domain/entities/report_category_entity.dart';
 import 'package:finan_master_app/features/reports/domain/repositories/i_report_categories_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
 import 'package:finan_master_app/features/transactions/helpers/factories/expense_factory.dart';
 import 'package:finan_master_app/features/transactions/helpers/factories/income_factory.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_income_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/expense_model.dart';
 import 'package:finan_master_app/features/transactions/infra/models/income_model.dart';
-import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class ReportCategoriesRepository implements IReportCategoriesRepository {
   final IExpenseLocalDataSource _expenseLocalDataSource;

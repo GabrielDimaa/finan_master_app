@@ -1,4 +1,5 @@
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transaction_by_text_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_save.dart';
@@ -65,5 +66,5 @@ class ExpenseNotifier extends ValueNotifier<ExpenseState> {
     }
   }
 
-  Future<List<ExpenseEntity>> findByText(String text) => _expenseFind.findByText(text);
+  Future<List<TransactionByTextEntity>> findByText(String text) => _expenseFind.findByText(text);
 }

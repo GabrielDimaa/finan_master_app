@@ -12,8 +12,8 @@ import 'package:finan_master_app/features/category/domain/enums/category_type_en
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/categories_list_bottom_sheet.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transaction_by_text_entity.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/income_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/states/income_state.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
@@ -59,7 +59,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController dateController = TextEditingController();
 
-  List<IncomeEntity> transactionsOldAutoComplete = [];
+  List<TransactionByTextEntity> transactionsOldAutoComplete = [];
   late TextEditingValue textEditingValue;
 
   @override
@@ -150,9 +150,9 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                               const Spacing.y(),
                               LayoutBuilder(
                                 builder: (context, constraints) {
-                                  return Autocomplete<IncomeEntity>(
+                                  return Autocomplete<TransactionByTextEntity>(
                                     initialValue: textEditingValue,
-                                    displayStringForOption: (IncomeEntity option) => option.description,
+                                    displayStringForOption: (TransactionByTextEntity option) => option.description,
                                     fieldViewBuilder: (_, textController, focusNode, ___) {
                                       return TextFormField(
                                         decoration: InputDecoration(label: Text(strings.description)),
@@ -176,18 +176,17 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                                       this.textEditingValue = textEditingValue;
                                       return transactionsOldAutoComplete;
                                     },
-                                    onSelected: (ITransactionEntity selection) {
-                                      final IncomeEntity income = selection as IncomeEntity;
-                                      if (income.idCategory != null) notifier.setCategory(income.idCategory!);
-                                      if (categoriesNotifier.value.categories.any((c) => c.id == income.idAccount && c.deletedAt == null)) notifier.setAccount(income.idAccount!);
-                                      notifier.income.observation = income.observation;
+                                    onSelected: (TransactionByTextEntity selection) {
+                                      notifier.setCategory(selection.idCategory);
+                                      if (categoriesNotifier.value.categories.any((c) => c.id == selection.idAccount && c.deletedAt == null)) notifier.setAccount(selection.idAccount);
+                                      notifier.income.observation = selection.observation;
                                     },
                                     optionsViewBuilder: (context, onSelected, options) {
                                       return Align(
                                         alignment: Alignment.topLeft,
                                         child: Material(
                                           elevation: 12,
-                                          color: colorScheme.surfaceContainerHighest,
+                                          color: colorScheme.surface,
                                           shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4.0))),
                                           child: SizedBox(
                                             height: min(160, 80.0 * options.length),
@@ -197,7 +196,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                                               padding: EdgeInsets.zero,
                                               itemCount: options.length,
                                               itemBuilder: (_, index) {
-                                                final IncomeEntity income = options.elementAt(index);
+                                                final TransactionByTextEntity income = options.elementAt(index);
                                                 final category = categoriesNotifier.value.categories.firstWhereOrNull((category) => category.id == income.idCategory);
                                                 if (category == null) return const SizedBox.shrink();
 

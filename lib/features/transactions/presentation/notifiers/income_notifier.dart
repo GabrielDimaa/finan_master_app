@@ -1,4 +1,5 @@
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transaction_by_text_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_save.dart';
@@ -65,5 +66,5 @@ class IncomeNotifier extends ValueNotifier<IncomeState> {
     }
   }
 
-  Future<List<IncomeEntity>> findByText(String text) => _incomeFind.findByText(text);
+  Future<List<TransactionByTextEntity>> findByText(String text) => _incomeFind.findByText(text);
 }
