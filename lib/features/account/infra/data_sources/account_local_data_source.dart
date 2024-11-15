@@ -78,7 +78,7 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       final String sql = '''
         SELECT
           $tableName.*,
-          COALESCE(SUM(transactions.amount), 0.0) as transactions_amount
+          COALESCE(SUM($statementsTableName.amount), 0.0) as transactions_amount
         FROM $tableName
         LEFT JOIN $statementsTableName
           ON $tableName.id = $statementsTableName.id_account AND $statementsTableName.${Model.deletedAtColumnName} IS NULL
@@ -103,7 +103,7 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       const String sql = '''
         SELECT
           SUM(amount) + (SELECT SUM(initial_amount) FROM accounts WHERE accounts.${Model.deletedAtColumnName} IS NULL) AS balance
-        FROM transactions
+        FROM $statementsTableName
         WHERE date <= ? AND ${Model.deletedAtColumnName} IS NULL;
       ''';
 

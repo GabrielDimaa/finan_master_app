@@ -93,7 +93,7 @@ class StatementLocalDataSource extends LocalDataSource<StatementModel> implement
         SELECT
           STRFTIME('%Y-%m-01', date) AS month,
           ROUND(SUM(amount), 2) AS monthly_sum
-        FROM transactions
+        FROM $statementsTableName
         WHERE
           date BETWEEN ? AND ? AND
           ${Model.deletedAtColumnName} IS NULL

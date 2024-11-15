@@ -114,6 +114,7 @@ import 'package:finan_master_app/features/reports/presentation/notifiers/report_
 import 'package:finan_master_app/features/splash/presentation/notifiers/splash_notifier.dart';
 import 'package:finan_master_app/features/statement/domain/repositories/i_statement_repository.dart';
 import 'package:finan_master_app/features/statement/infra/data_sources/i_statement_local_data_source.dart';
+import 'package:finan_master_app/features/statement/infra/data_sources/statement_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_income_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_transfer_repository.dart';
@@ -234,6 +235,7 @@ final class DependencyInjection {
     getIt.registerFactory<ITransferLocalDataSource>(() => TransferLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<IUserAccountLocalDataSource>(() => UserAccountLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<IUserAccountCloudDataSource>(() => UserAccountCloudDataSource(firestore: getIt.get<FirebaseFirestore>()));
+    getIt.registerFactory<IStatementLocalDataSource>(() => StatementLocalDataSource(databaseLocal: databaseLocal));
 
     //Repositories
     getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>(), creditCardLocalDataSource: getIt.get<ICreditCardLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
