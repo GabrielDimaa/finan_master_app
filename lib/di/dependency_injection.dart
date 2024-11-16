@@ -115,10 +115,12 @@ import 'package:finan_master_app/features/splash/presentation/notifiers/splash_n
 import 'package:finan_master_app/features/statement/domain/repositories/i_statement_repository.dart';
 import 'package:finan_master_app/features/statement/infra/data_sources/i_statement_local_data_source.dart';
 import 'package:finan_master_app/features/statement/infra/data_sources/statement_local_data_source.dart';
+import 'package:finan_master_app/features/statement/infra/repositories/statement_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_income_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_transfer_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/expense_delete.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/expense_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/expense_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_find.dart';
@@ -131,6 +133,7 @@ import 'package:finan_master_app/features/transactions/domain/use_cases/i_transa
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/income_delete.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/income_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/income_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/transaction_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/transaction_find.dart';
@@ -254,6 +257,7 @@ final class DependencyInjection {
     getIt.registerFactory<ILocalDBTransactionRepository>(() => LocalDBTransactionRepository(databaseLocalTransaction: databaseLocal.transactionInstance()));
     getIt.registerFactory<IReportCategoriesRepository>(() => ReportCategoriesRepository(expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), categoriesLocalDataSource: getIt.get<ICategoryLocalDataSource>()));
     getIt.registerFactory<ITransferRepository>(() => TransferRepository(transferLocalDataSource: getIt.get<ITransferLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
+    getIt.registerFactory<IStatementRepository>(() => StatementRepository(dataSource: getIt.get<IStatementLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
 
     //Use cases
     getIt.registerFactory<IAccountDelete>(() => AccountDelete(repository: getIt.get<IAccountRepository>()));
@@ -277,11 +281,13 @@ final class DependencyInjection {
     getIt.registerFactory<IDeleteAppData>(() => DeleteAppData(repository: getIt.get<IDeleteAppDataRepository>()));
     getIt.registerFactory<IExpenseDelete>(() => ExpenseDelete(repository: getIt.get<IExpenseRepository>(), statementRepository: getIt.get<IStatementRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
     getIt.registerFactory<IExpenseSave>(() => ExpenseSave(repository: getIt.get<IExpenseRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<IExpenseFind>(() => ExpenseFind(repository: getIt.get<IExpenseRepository>()));
     getIt.registerFactory<IFirstStepsFind>(() => FirstStepsFind(repository: getIt.get<IFirstStepsRepository>()));
     getIt.registerFactory<IFirstStepsSave>(() => FirstStepsSave(repository: getIt.get<IFirstStepsRepository>()));
     getIt.registerFactory<IHomeMonthlyBalance>(() => HomeMonthlyBalance(repository: getIt.get<IHomeMonthlyBalanceRepository>()));
     getIt.registerFactory<IIncomeDelete>(() => IncomeDelete(repository: getIt.get<IIncomeRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
     getIt.registerFactory<IIncomeSave>(() => IncomeSave(repository: getIt.get<IIncomeRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<IIncomeFind>(() => IncomeFind(repository: getIt.get<IIncomeRepository>()));
     getIt.registerFactory<ICreditCardBillDates>(() => CreditCardBillDates());
     getIt.registerFactory<ILoginAuth>(() => LoginAuth(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<IReportCategoriesFind>(() => ReportCategoriesFind(repository: getIt.get<IReportCategoriesRepository>()));
