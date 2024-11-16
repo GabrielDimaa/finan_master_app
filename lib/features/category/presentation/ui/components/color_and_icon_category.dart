@@ -29,6 +29,8 @@ class _ColorAndIconCategoryState extends State<ColorAndIconCategory> with ThemeC
   Color? colorSelected;
   IconData? iconSelected;
 
+  final GlobalKey iconGlobalKey = GlobalKey();
+
   bool get confirmButtonEnabled => colorSelected != null && iconSelected != null;
 
   @override
@@ -66,14 +68,21 @@ class _ColorAndIconCategoryState extends State<ColorAndIconCategory> with ThemeC
                               shape: const CircleBorder(),
                               fillColor: color,
                               child: Icon(Icons.check, color: colorSelected == color ? Colors.white : Colors.transparent),
-                              onPressed: () => setState(() => colorSelected = color),
+                              onPressed: () {
+                                setState(() => colorSelected = color);
+                                Scrollable.ensureVisible(iconGlobalKey.currentContext!, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
+                              },
                             ),
                           )
                           .toList(),
                     ),
                   ),
                   const Spacing.y(2),
-                  Text(strings.icon, style: textTheme.titleMedium),
+                  Text(
+                    key: iconGlobalKey,
+                    strings.icon,
+                    style: textTheme.titleMedium,
+                  ),
                   const Spacing.y(1.5),
                   Align(
                     alignment: Alignment.center,
