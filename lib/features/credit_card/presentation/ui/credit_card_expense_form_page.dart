@@ -362,7 +362,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
       context: context,
       creditCardSelected: creditCardsNotifier.value.creditCards.firstWhereOrNull((creditCard) => creditCard.id == notifier.creditCardExpense.idCreditCard),
       creditCards: creditCardsNotifier.value.creditCards.where((creditCard) => creditCard.deletedAt == null).toList(),
-      onCreditCardCreated: (CreditCardEntity creditCard) => creditCardsNotifier.value.creditCards.add(creditCard),
+      onCreditCardCreated: (CreditCardEntity creditCard) => creditCardsNotifier.setCreditCards([...creditCardsNotifier.value.creditCards, creditCard]),
     );
 
     if (result == null) return;

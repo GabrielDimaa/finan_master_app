@@ -41,7 +41,7 @@ class IncomeLocalDataSource extends LocalDataSource<IncomeModel> implements IInc
       description: map['${prefix}description'],
       amount: map['${prefix}amount'],
       date: DateTime.tryParse(map['${prefix}date'].toString())!.toLocal(),
-      paid: map['${prefix}paid'],
+      paid: map['${prefix}paid'] == 1,
       observation: map['${prefix}observation'],
       idAccount: map['${prefix}id_account'],
       idCategory: map['${prefix}id_category'],

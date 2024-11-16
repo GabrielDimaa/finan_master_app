@@ -222,17 +222,20 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                               const Spacing.y(),
                               Row(
                                 children: [
-                                  TextFormField(
-                                    decoration: InputDecoration(
-                                      prefixIcon: const Icon(Icons.calendar_today_outlined),
-                                      label: Text(strings.date),
+                                  Expanded(
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        prefixIcon: const Icon(Icons.calendar_today_outlined),
+                                        label: Text(strings.date),
+                                      ),
+                                      readOnly: true,
+                                      controller: dateController,
+                                      validator: InputRequiredValidator().validate,
+                                      enabled: !notifier.isLoading,
+                                      onTap: selectDate,
                                     ),
-                                    readOnly: true,
-                                    controller: dateController,
-                                    validator: InputRequiredValidator().validate,
-                                    enabled: !notifier.isLoading,
-                                    onTap: selectDate,
                                   ),
+                                  const Spacing.x(),
                                   FilterChip(
                                     selected: notifier.expense.paid,
                                     backgroundColor: Colors.transparent,
