@@ -56,7 +56,7 @@ class CreditCardBillSave implements ICreditCardBillSave {
       description: R.strings.billPayment,
       amount: -payValue.abs(),
       date: DateTime.now(),
-      idCategory: categoryOthersUuidExpense,
+      idCategory: categoryBillUuidExpense,
       idCreditCard: creditCardBillClone.idCreditCard,
       idCreditCardBill: creditCardBillClone.id,
       observation: null,
@@ -73,7 +73,7 @@ class CreditCardBillSave implements ICreditCardBillSave {
       observation: creditCardTransaction.observation,
       idAccount: creditCard.idAccount,
       idCategory: creditCardTransaction.idCategory,
-      idCreditCardTransaction: creditCardTransaction.idCreditCardBill,
+      idCreditCardTransaction: creditCardTransaction.id,
       idCreditCard: creditCardTransaction.idCreditCard,
     );
 

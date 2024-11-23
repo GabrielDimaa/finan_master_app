@@ -71,7 +71,7 @@ class ExpenseRepository implements IExpenseRepository {
 
   @override
   Future<List<ExpenseEntity>> findByIdCreditCardTransaction(List<String> ids) async {
-    final List<ExpenseModel> models = await _expenseLocalDataSource.findAll(where: 'id_credit_card_transaction in (${ids.map((e) => '?').join(', ')})', whereArgs: [ids]);
+    final List<ExpenseModel> models = await _expenseLocalDataSource.findAll(where: 'id_credit_card_transaction in (${ids.map((e) => '?').join(', ')})', whereArgs: ids);
 
     return models.map((model) => ExpenseFactory.toEntity(model)).toList();
   }

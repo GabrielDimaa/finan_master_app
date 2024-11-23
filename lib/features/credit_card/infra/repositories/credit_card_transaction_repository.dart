@@ -6,6 +6,7 @@ import 'package:finan_master_app/features/credit_card/infra/models/credit_card_t
 import 'package:finan_master_app/features/statement/infra/data_sources/i_statement_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
+import 'package:finan_master_app/shared/infra/models/model.dart';
 import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 
 class CreditCardTransactionRepository implements ICreditCardTransactionRepository {
@@ -24,8 +25,12 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
         _eventNotifier = eventNotifier;
 
   @override
-  Future<CreditCardTransactionEntity?> findById(String id) async {
-    final CreditCardTransactionModel? result = await _dataSource.findOne(where: 'id = ?', whereArgs: [id]);
+  Future<CreditCardTransactionEntity?> findById(String id, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      return await _dbTransaction.openTransaction((newTxn) => findById(id, txn: newTxn));
+    }
+
+    final CreditCardTransactionModel? result = await _dataSource.findOne(where: '${Model.idColumnName} = ?', whereArgs: [id], txn: txn);
 
     return result != null ? CreditCardTransactionFactory.toEntity(result) : null;
   }
@@ -66,11 +71,9 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
       return await _dbTransaction.openTransaction((newTxn) => deleteMany(entities, txn: newTxn));
     }
 
-    await _dbTransaction.openTransaction((txn) async {
-      for (final entity in entities) {
-        await delete(entity, txn: txn);
-      }
-    });
+    for (final entity in entities) {
+      await delete(entity, txn: txn);
+    }
 
     _eventNotifier.notify(EventType.creditCard);
   }

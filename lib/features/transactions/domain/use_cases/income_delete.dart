@@ -3,6 +3,7 @@ import 'package:finan_master_app/features/transactions/domain/entities/income_en
 import 'package:finan_master_app/features/transactions/domain/repositories/i_income_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_delete.dart';
 import 'package:finan_master_app/shared/domain/repositories/i_local_db_transaction_repository.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 
 class IncomeDelete implements IIncomeDelete {
   final IIncomeRepository _repository;
@@ -18,12 +19,14 @@ class IncomeDelete implements IIncomeDelete {
         _localDBTransactionRepository = localDBTransactionRepository;
 
   @override
-  Future<void> delete(IncomeEntity entity) async {
-    await _localDBTransactionRepository.openTransaction((txn) async {
-      await Future.wait([
-        _repository.delete(entity, txn: txn),
-        _statementRepository.deleteByIdIncome(entity.id, txn: txn),
-      ]);
-    });
+  Future<void> delete(IncomeEntity entity, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      return await _localDBTransactionRepository.openTransaction((newTxn) => delete(entity, txn: newTxn));
+    }
+
+    await Future.wait([
+      _repository.delete(entity, txn: txn),
+      _statementRepository.deleteByIdIncome(entity.id, txn: txn),
+    ]);
   }
 }

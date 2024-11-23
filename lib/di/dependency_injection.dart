@@ -295,7 +295,7 @@ final class DependencyInjection {
     getIt.registerFactory<IRestoreBackup>(() => RestoreBackup(repository: getIt.get<IBackupRepository>()));
     getIt.registerFactory<ISignupAuth>(() => SignupAuth(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<ITransactionFind>(() => TransactionFind(expenseRepository: getIt.get<IExpenseRepository>(), incomeRepository: getIt.get<IIncomeRepository>(), transferRepository: getIt.get<ITransferRepository>()));
-    getIt.registerFactory<ITransactionDelete>(() => TransactionDelete(incomeRepository: getIt.get<IIncomeRepository>(), expenseRepository: getIt.get<IExpenseRepository>(), transferRepository: getIt.get<ITransferRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<ITransactionDelete>(() => TransactionDelete(incomeDelete: getIt.get<IIncomeDelete>(), expenseDelete: getIt.get<IExpenseDelete>(), transferDelete: getIt.get<ITransferDelete>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
     getIt.registerFactory<ITransferDelete>(() => TransferDelete(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
     getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
 
