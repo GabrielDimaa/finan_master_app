@@ -31,8 +31,7 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
         ${baseColumnsSql()},
         bill_closing_date TEXT NOT NULL,
         bill_due_date TEXT NOT NULL,
-        id_credit_card TEXT NOT NULL REFERENCES $creditCardsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
-        paid INTEGER NOT NULL DEFAULT 0
+        id_credit_card TEXT NOT NULL REFERENCES $creditCardsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT
       );
     ''');
   }
@@ -48,8 +47,7 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
       billClosingDate: DateTime.tryParse(map['${prefix}bill_closing_date'].toString())!.toLocal(),
       billDueDate: DateTime.tryParse(map['${prefix}bill_due_date'].toString())!.toLocal(),
       idCreditCard: map['${prefix}id_credit_card'],
-      transactions: [],
-      paid: map['${prefix}paid'] == 1,
+      transactions: []
     );
   }
 
@@ -73,6 +71,15 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
       }
 
       final String sql = '''
+        WITH bills_with_total_amount AS (
+          SELECT
+            $tableName.*,
+            SUM(${creditCardTransactionLocalDataSource.tableName}.amount) AS total_amount
+          FROM $tableName
+          LEFT JOIN ${creditCardTransactionLocalDataSource.tableName}
+            ON $tableName.${Model.idColumnName} = ${creditCardTransactionLocalDataSource.tableName}.id_credit_card_bill AND ${creditCardTransactionLocalDataSource.tableName}.${Model.deletedAtColumnName} IS NULL
+          GROUP BY ${groupBy ?? '$tableName.${Model.idColumnName}'}
+        )
         SELECT
           -- Bills
           $tableName.${Model.idColumnName} AS ${tableName}_${Model.idColumnName},
@@ -81,7 +88,6 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
           $tableName.bill_closing_date AS ${tableName}_bill_closing_date,
           $tableName.bill_due_date AS ${tableName}_bill_due_date,
           $tableName.id_credit_card AS ${tableName}_id_credit_card,
-          $tableName.paid AS ${tableName}_paid,
           
           -- Transactions
           ${creditCardTransactionLocalDataSource.tableName}.${Model.idColumnName} AS ${creditCardTransactionLocalDataSource.tableName}_${Model.idColumnName},
@@ -96,7 +102,7 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
           ${creditCardTransactionLocalDataSource.tableName}.observation AS ${creditCardTransactionLocalDataSource.tableName}_observation
         FROM (
           SELECT $tableName.*
-          FROM $tableName
+          FROM bills_with_total_amount AS $tableName
           ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
           ${groupBy?.isNotEmpty == true ? 'GROUP BY $groupBy' : ''}
           ORDER BY ${orderBy ?? orderByDefault}
@@ -107,7 +113,7 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
           ON $tableName.id_credit_card = credit_cards.${Model.idColumnName}
         LEFT JOIN ${creditCardTransactionLocalDataSource.tableName}
           ON $tableName.${Model.idColumnName} = ${creditCardTransactionLocalDataSource.tableName}.id_credit_card_bill AND ${creditCardTransactionLocalDataSource.tableName}.${Model.deletedAtColumnName} IS NULL
-        ORDER BY $tableName.${Model.idColumnName}, ${creditCardTransactionLocalDataSource.tableName}.date DESC;
+        ORDER BY $tableName.bill_closing_date, ${creditCardTransactionLocalDataSource.tableName}.date DESC;
       ''';
 
       final List<Map<String, dynamic>> results = await (txn ?? databaseLocal).raw(sql, DatabaseOperation.select, whereArgs);

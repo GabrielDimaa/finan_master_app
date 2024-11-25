@@ -65,8 +65,8 @@ class CreditCardLocalDataSource extends LocalDataSource<CreditCardModel> impleme
     if (creditCards.isEmpty) return [];
 
     final List<CreditCardBillModel> bills = await _creditCardBillLocalDataSource.findAll(
-      where: 'id_credit_card IN (${creditCards.map((_) => '?').join(', ')}) AND paid = 0',
-      whereArgs: creditCards.map((e) => e.id).toList(),
+      where: 'id_credit_card IN (${creditCards.map((_) => '?').join(', ')}) AND total_amount > ?',
+      whereArgs: [...creditCards.map((e) => e.id), 0],
       txn: txn,
     );
 

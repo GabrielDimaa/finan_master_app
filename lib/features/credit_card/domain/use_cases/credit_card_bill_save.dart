@@ -13,11 +13,9 @@ import 'package:finan_master_app/features/transactions/domain/repositories/i_exp
 import 'package:finan_master_app/shared/classes/constants.dart';
 import 'package:finan_master_app/shared/domain/repositories/i_local_db_transaction_repository.dart';
 import 'package:finan_master_app/shared/exceptions/exceptions.dart';
-import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class CreditCardBillSave implements ICreditCardBillSave {
-  final ICreditCardBillRepository _repository;
   final ICreditCardTransactionRepository _creditCardTransactionRepository;
   final ICreditCardRepository _creditCardRepository;
   final IExpenseRepository _expenseRepository;
@@ -31,8 +29,7 @@ class CreditCardBillSave implements ICreditCardBillSave {
     required IExpenseRepository expenseRepository,
     required IStatementRepository statementRepository,
     required ILocalDBTransactionRepository localDBTransactionRepository,
-  })  : _repository = repository,
-        _creditCardTransactionRepository = creditCardTransactionRepository,
+  })  : _creditCardTransactionRepository = creditCardTransactionRepository,
         _creditCardRepository = creditCardRepository,
         _expenseRepository = expenseRepository,
         _statementRepository = statementRepository,
@@ -79,19 +76,10 @@ class CreditCardBillSave implements ICreditCardBillSave {
 
     if (creditCardBillClone.status == BillStatusEnum.paid) throw ValidationException(R.strings.billAlreadyPaid);
 
-    //Se a fatura estiver fechada ou vencida
-    if (creditCardBillClone.status == BillStatusEnum.closed || creditCardBillClone.status == BillStatusEnum.overdue) {
-      if (payValue != creditCardBill.billAmount.truncateFractionalDigits(2)) throw ValidationException(R.strings.paymentRequirementWhenClosedBill);
-
-      //Atualiza a fatura com status de "Paga"
-      creditCardBillClone.paid = true;
-    }
-
     await _localDBTransactionRepository.openTransaction((txn) async {
       await Future.wait([
         _creditCardTransactionRepository.save(creditCardTransaction, txn: txn).then((value) => creditCardBillClone.transactions.add(value)),
         _expenseRepository.save(expense, txn: txn),
-        if (creditCardBillClone.paid) _repository.saveOnlyBill(creditCardBillClone, txn: txn),
         _statementRepository.save(StatementFactory.fromExpense(expense), txn: txn),
       ]);
     });

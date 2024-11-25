@@ -333,7 +333,7 @@ class _BillState extends State<_Bill> with ThemeContext {
   void initState() {
     super.initState();
 
-    widget.billNotifier.value.bills.removeWhere((e) => e.paid && e.billClosingDate.isBefore(DateTime(DateTime.now().year, DateTime.now().month)));
+    widget.billNotifier.value.bills.removeWhere((e) => e.status == BillStatusEnum.paid && e.billClosingDate.isBefore(DateTime(DateTime.now().year, DateTime.now().month)));
 
     final DateTime billFirst = widget.billNotifier.value.bills.firstOrNull?.billClosingDate ?? DateTime(DateTime.now().year, DateTime.now().month, widget.creditCard.billClosingDay);
     final DateTime billLast = widget.billNotifier.value.bills.lastOrNull?.billClosingDate ?? billFirst;
@@ -352,7 +352,6 @@ class _BillState extends State<_Bill> with ThemeContext {
           billDueDate: generateDates(date).dueDate,
           idCreditCard: widget.creditCard.id,
           transactions: [],
-          paid: false,
         ),
       );
 
