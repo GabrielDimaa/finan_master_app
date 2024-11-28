@@ -59,7 +59,7 @@ class CategoryLocalDataSource extends LocalDataSource<CategoryModel> implements 
         ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryRestaurant}', ${CategoryTypeEnum.expense.value}, 'FFFE4848', ${Icons.fastfood_outlined.codePoint}),
         ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryEducation}', ${CategoryTypeEnum.expense.value}, 'FF374F51', ${Icons.school_outlined.codePoint}),
         ('$categoryOthersUuidExpense', '$createdAt', '${R.strings.categoryOthers}', ${CategoryTypeEnum.expense.value}, 'FF626262', ${Icons.more_outlined.codePoint}),
-        ('$categoryBillUuidExpense', '$createdAt', '${R.strings.bill}', ${CategoryTypeEnum.expense.value}, 'FF46A66C', ${Icons.monetization_on_outlined.codePoint});
+        ('$categoryBillUuidExpense', '$createdAt', '${R.strings.bill}', ${CategoryTypeEnum.expense.value}, 'FF46A66C', ${Icons.credit_score_outlined.codePoint});
     ''');
   }
 
