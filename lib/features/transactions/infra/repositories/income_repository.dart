@@ -4,6 +4,7 @@ import 'package:finan_master_app/features/transactions/domain/repositories/i_inc
 import 'package:finan_master_app/features/transactions/helpers/factories/income_factory.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_income_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/income_model.dart';
+import 'package:finan_master_app/features/transactions/infra/models/transaction_by_text_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 
@@ -42,15 +43,16 @@ class IncomeRepository implements IIncomeRepository {
 
   @override
   Future<List<TransactionByTextEntity>> findByText(String text) async {
-    final List<IncomeModel> models = await _incomeLocalDataSource.findByText(text);
+    final List<TransactionByTextModel> models = await _incomeLocalDataSource.findByText(text);
 
     return models
         .map((model) => TransactionByTextEntity(
-      description: model.description,
-      idCategory: model.idCategory,
-      idAccount: model.idAccount,
-      observation: model.observation,
-    ))
+              description: model.description,
+              idCategory: model.idCategory,
+              idAccount: model.idAccount,
+              idCreditCard: model.idCreditCard,
+              observation: model.observation,
+            ))
         .toList();
   }
 }

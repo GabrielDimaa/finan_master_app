@@ -175,10 +175,9 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                       return transactionsOldAutoComplete;
                                     },
                                     onSelected: (TransactionByTextEntity selection) {
-                                      final ExpenseEntity expense = selection as ExpenseEntity;
-                                      if (expense.idCategory != null) notifier.setCategory(expense.idCategory!);
-                                      if (categoriesNotifier.value.categories.any((c) => c.id == expense.idAccount && c.deletedAt == null)) notifier.setAccount(expense.idAccount!);
-                                      notifier.expense.observation = expense.observation;
+                                      notifier.setCategory(selection.idCategory);
+                                      if (selection.idAccount != null && accountsNotifier.value.accounts.any((c) => c.id == selection.idAccount && c.deletedAt == null)) notifier.setAccount(selection.idAccount!);
+                                      notifier.expense.observation = selection.observation;
                                     },
                                     optionsViewBuilder: (context, onSelected, options) {
                                       return Align(

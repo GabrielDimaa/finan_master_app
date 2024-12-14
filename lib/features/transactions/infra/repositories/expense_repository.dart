@@ -4,6 +4,7 @@ import 'package:finan_master_app/features/transactions/domain/repositories/i_exp
 import 'package:finan_master_app/features/transactions/helpers/factories/expense_factory.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/expense_model.dart';
+import 'package:finan_master_app/features/transactions/infra/models/transaction_by_text_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 
@@ -57,13 +58,14 @@ class ExpenseRepository implements IExpenseRepository {
 
   @override
   Future<List<TransactionByTextEntity>> findByText(String text) async {
-    final List<ExpenseModel> models = await _expenseLocalDataSource.findByText(text);
+    final List<TransactionByTextModel> models = await _expenseLocalDataSource.findByText(text);
 
     return models
         .map((model) => TransactionByTextEntity(
               description: model.description,
               idCategory: model.idCategory,
               idAccount: model.idAccount,
+              idCreditCard: model.idCreditCard,
               observation: model.observation,
             ))
         .toList();
