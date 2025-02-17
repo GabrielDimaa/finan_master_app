@@ -67,16 +67,7 @@ class _ListTransactionsState extends State<ListTransactions> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (expense.idCreditCard != null) ...[
-                      const Icon(Icons.credit_card_outlined, size: 20),
-                      const Spacing.x(),
-                    ],
-                    Text(expense.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                  ],
-                ),
+                Text(expense.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
                 Text(expense.date.formatDateToRelative()),
               ],
             ),

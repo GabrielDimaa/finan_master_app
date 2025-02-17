@@ -29,7 +29,7 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
         id_account TEXT NOT NULL REFERENCES $accountsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         id_category TEXT NOT NULL REFERENCES $categoriesTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         id_credit_card TEXT REFERENCES $creditCardsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
-        id_credit_card_transaction TEXT REFERENCES $creditCardBillsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
+        id_credit_card_transaction TEXT REFERENCES $creditCardTransactionsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         observation TEXT
       );
     ''');

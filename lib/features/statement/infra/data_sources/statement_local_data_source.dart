@@ -16,7 +16,7 @@ class StatementLocalDataSource extends LocalDataSource<StatementModel> implement
   String get tableName => statementsTableName;
 
   @override
-  String get orderByDefault => '${tableName}_date DESC';
+  String get orderByDefault => '$tableName.date DESC';
 
   @override
   void createTable(IDatabaseLocalBatch batch) {

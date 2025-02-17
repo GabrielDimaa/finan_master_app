@@ -74,7 +74,7 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
         WITH bills_with_total_amount AS (
           SELECT
             $tableName.*,
-            SUM(${creditCardTransactionLocalDataSource.tableName}.amount) AS total_amount
+            ROUND(SUM(${creditCardTransactionLocalDataSource.tableName}.amount)) AS total_amount
           FROM $tableName
           LEFT JOIN ${creditCardTransactionLocalDataSource.tableName}
             ON $tableName.${Model.idColumnName} = ${creditCardTransactionLocalDataSource.tableName}.id_credit_card_bill AND ${creditCardTransactionLocalDataSource.tableName}.${Model.deletedAtColumnName} IS NULL
