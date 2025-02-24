@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/reports/domain/entities/report_category_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
@@ -114,13 +115,19 @@ class _ReportCategoriesChartState extends State<ReportCategoriesChart> with Them
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                         title: Text(expense.description),
                         subtitle: Text(expense.date.format()),
-                        trailing: Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                        trailing: Text(expense.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
                       ),
+                    CreditCardTransactionEntity creditCardTransaction => ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                      title: Text(creditCardTransaction.description),
+                      subtitle: Text(creditCardTransaction.date.format()),
+                      trailing: Text(creditCardTransaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                    ),
                     IncomeEntity income => ListTile(
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                         title: Text(income.description),
                         subtitle: Text(income.date.format()),
-                        trailing: Text(income.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                        trailing: Text(income.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
                       ),
                     _ => const SizedBox.shrink(),
                   };

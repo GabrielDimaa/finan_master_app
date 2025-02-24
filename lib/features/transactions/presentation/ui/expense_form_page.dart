@@ -13,7 +13,7 @@ import 'package:finan_master_app/features/category/presentation/notifiers/catego
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/categories_list_bottom_sheet.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transaction_by_text_entity.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/expense_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/states/expense_state.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
@@ -59,7 +59,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController dateController = TextEditingController();
 
-  List<ExpenseEntity> transactionsOldAutoComplete = [];
+  List<TransactionByTextEntity> transactionsOldAutoComplete = [];
   late TextEditingValue textEditingValue;
 
   @override
@@ -84,7 +84,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
         }
 
         textEditingValue = TextEditingValue(text: notifier.expense.description);
-        dateController.text = notifier.expense.transaction.date.format();
+        dateController.text = notifier.expense.date.format();
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());
@@ -133,7 +133,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                           child: Column(
                             children: [
                               TextFormField(
-                                initialValue: state.expense.transaction.amount.abs().moneyWithoutSymbol,
+                                initialValue: state.expense.amount.abs().moneyWithoutSymbol,
                                 decoration: InputDecoration(
                                   label: Text(strings.amount),
                                   prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
@@ -148,9 +148,9 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                               const Spacing.y(),
                               LayoutBuilder(
                                 builder: (context, constraints) {
-                                  return Autocomplete<ExpenseEntity>(
+                                  return Autocomplete<TransactionByTextEntity>(
                                     initialValue: textEditingValue,
-                                    displayStringForOption: (ExpenseEntity option) => option.description,
+                                    displayStringForOption: (TransactionByTextEntity option) => option.description,
                                     fieldViewBuilder: (_, textController, focusNode, ___) {
                                       return TextFormField(
                                         decoration: InputDecoration(label: Text(strings.description)),
@@ -174,11 +174,10 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                       this.textEditingValue = textEditingValue;
                                       return transactionsOldAutoComplete;
                                     },
-                                    onSelected: (ITransactionEntity selection) {
-                                      final ExpenseEntity expense = selection as ExpenseEntity;
-                                      if (expense.idCategory != null) notifier.setCategory(expense.idCategory!);
-                                      if (categoriesNotifier.value.categories.any((c) => c.id == expense.transaction.idAccount && c.deletedAt == null)) notifier.setAccount(expense.transaction.idAccount!);
-                                      notifier.expense.observation = expense.observation;
+                                    onSelected: (TransactionByTextEntity selection) {
+                                      notifier.setCategory(selection.idCategory);
+                                      if (selection.idAccount != null && accountsNotifier.value.accounts.any((c) => c.id == selection.idAccount && c.deletedAt == null)) notifier.setAccount(selection.idAccount!);
+                                      notifier.expense.observation = selection.observation;
                                     },
                                     optionsViewBuilder: (context, onSelected, options) {
                                       return Align(
@@ -195,7 +194,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                               padding: EdgeInsets.zero,
                                               itemCount: options.length,
                                               itemBuilder: (_, index) {
-                                                final ExpenseEntity expense = options.elementAt(index);
+                                                final TransactionByTextEntity expense = options.elementAt(index);
                                                 final category = categoriesNotifier.value.categories.firstWhereOrNull((category) => category.id == expense.idCategory);
                                                 if (category == null) return const SizedBox.shrink();
 
@@ -222,17 +221,20 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                               const Spacing.y(),
                               Row(
                                 children: [
-                                  TextFormField(
-                                    decoration: InputDecoration(
-                                      prefixIcon: const Icon(Icons.calendar_today_outlined),
-                                      label: Text(strings.date),
+                                  Expanded(
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        prefixIcon: const Icon(Icons.calendar_today_outlined),
+                                        label: Text(strings.date),
+                                      ),
+                                      readOnly: true,
+                                      controller: dateController,
+                                      validator: InputRequiredValidator().validate,
+                                      enabled: !notifier.isLoading,
+                                      onTap: selectDate,
                                     ),
-                                    readOnly: true,
-                                    controller: dateController,
-                                    validator: InputRequiredValidator().validate,
-                                    enabled: !notifier.isLoading,
-                                    onTap: selectDate,
                                   ),
+                                  const Spacing.x(),
                                   FilterChip(
                                     selected: notifier.expense.paid,
                                     backgroundColor: Colors.transparent,
@@ -277,10 +279,10 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                           onTap: selectAccount,
                           title: strings.account,
                           enabled: !notifier.isLoading,
-                          tile: state.expense.transaction.idAccount != null
+                          tile: state.expense.idAccount != null
                               ? Builder(
                                   builder: (_) {
-                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.expense.transaction.idAccount);
+                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.expense.idAccount);
                                     return ListTile(
                                       leading: account.financialInstitution!.icon(),
                                       title: Text(account.description),
@@ -374,7 +376,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
 
     final AccountEntity? result = await AccountsListBottomSheet.show(
       context: context,
-      accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == notifier.expense.transaction.idAccount),
+      accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == notifier.expense.idAccount),
       accounts: accountsNotifier.value.accounts.where((account) => account.deletedAt == null).toList(),
       onAccountCreated: (AccountEntity account) => accountsNotifier.value.accounts.add(account),
     );
@@ -387,9 +389,9 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   Future<void> selectDate() async {
     if (initialLoadingNotifier.value || notifier.isLoading) return;
 
-    final DateTime? result = await showDatePickerDefault(context: context, initialDate: notifier.expense.transaction.date);
+    final DateTime? result = await showDatePickerDefault(context: context, initialDate: notifier.expense.date);
 
-    if (result == null || result == notifier.expense.transaction.date) return;
+    if (result == null || result == notifier.expense.date) return;
 
     dateController.text = result.format();
     notifier.setDate(result);

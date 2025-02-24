@@ -1,24 +1,21 @@
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_income_local_data_source.dart';
-import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/models/income_model.dart';
+import 'package:finan_master_app/features/transactions/infra/models/transaction_by_text_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_operation.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
-import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class IncomeLocalDataSource extends LocalDataSource<IncomeModel> implements IIncomeLocalDataSource {
-  final ITransactionLocalDataSource _transactionDataSource;
-
-  IncomeLocalDataSource({required super.databaseLocal, required ITransactionLocalDataSource transactionDataSource}) : _transactionDataSource = transactionDataSource;
+  IncomeLocalDataSource({required super.databaseLocal});
 
   @override
   String get tableName => incomesTableName;
 
   @override
-  String get orderByDefault => '${_transactionDataSource.tableName}_date DESC';
+  String get orderByDefault => 'date DESC';
 
   @override
   void createTable(IDatabaseLocalBatch batch) {
@@ -26,9 +23,11 @@ class IncomeLocalDataSource extends LocalDataSource<IncomeModel> implements IInc
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
         description TEXT NOT NULL,
+        amount REAL NOT NULL,
+        date TEXT NOT NULL,
         paid INTEGER NOT NULL DEFAULT 1,
+        id_account TEXT NOT NULL REFERENCES $accountsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         id_category TEXT NOT NULL REFERENCES $categoriesTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
-        id_transaction TEXT NOT NULL REFERENCES ${_transactionDataSource.tableName}(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE CASCADE,
         observation TEXT
       );
     ''');
@@ -43,69 +42,53 @@ class IncomeLocalDataSource extends LocalDataSource<IncomeModel> implements IInc
       createdAt: base.createdAt,
       deletedAt: base.deletedAt,
       description: map['${prefix}description'],
-      paid: map['${prefix}paid'],
+      amount: map['${prefix}amount'],
+      date: DateTime.tryParse(map['${prefix}date'].toString())!.toLocal(),
+      paid: map['${prefix}paid'] == 1,
       observation: map['${prefix}observation'],
+      idAccount: map['${prefix}id_account'],
       idCategory: map['${prefix}id_category'],
-      transaction: _transactionDataSource.fromMap(map, prefix: '${_transactionDataSource.tableName}_'),
     );
   }
 
   @override
-  Future<List<IncomeModel>> selectFull({String? id, bool deleted = false, String? where, List? whereArgs, String? orderBy, int? offset, int? limit, ITransactionExecutor? txn}) async {
+  Future<List<TransactionByTextModel>> findByText(String text) async {
     try {
-      List<String> whereListed = [];
-      whereArgs ??= [];
-
-      if (where?.isNotEmpty == true) {
-        whereListed.add(where!);
-      }
-
-      if (id != null) {
-        whereListed.add('${Model.idColumnName} = ?');
-        whereArgs.add(id);
-      }
-
-      if (!deleted) {
-        whereListed.add("$tableName.${Model.deletedAtColumnName} IS NULL");
-      }
-
       final String sql = '''
         SELECT
-          -- Income
-          $tableName.${Model.idColumnName} AS ${tableName}_${Model.idColumnName},
-          $tableName.${Model.createdAtColumnName} AS ${tableName}_${Model.createdAtColumnName},
-          $tableName.${Model.deletedAtColumnName} AS ${tableName}_${Model.deletedAtColumnName},
-          $tableName.description AS ${tableName}_description,
-          $tableName.paid AS ${tableName}_paid,
-          $tableName.id_category AS ${tableName}_id_category,
-          $tableName.id_transaction AS ${tableName}_id_transaction,
-          $tableName.observation AS ${tableName}_observation,
-          
-          -- Transaction
-          ${_transactionDataSource.tableName}.${Model.idColumnName} AS ${_transactionDataSource.tableName}_${Model.idColumnName},
-          ${_transactionDataSource.tableName}.${Model.createdAtColumnName} AS ${_transactionDataSource.tableName}_${Model.createdAtColumnName},
-          ${_transactionDataSource.tableName}.${Model.deletedAtColumnName} AS ${_transactionDataSource.tableName}_${Model.deletedAtColumnName},
-          ${_transactionDataSource.tableName}.amount AS ${_transactionDataSource.tableName}_amount,
-          ${_transactionDataSource.tableName}.type AS ${_transactionDataSource.tableName}_type,
-          ${_transactionDataSource.tableName}.date AS ${_transactionDataSource.tableName}_date,
-          ${_transactionDataSource.tableName}.id_account AS ${_transactionDataSource.tableName}_id_account
-        FROM $tableName
-        INNER JOIN ${_transactionDataSource.tableName}
-          ON ${_transactionDataSource.tableName}.${Model.idColumnName} = $tableName.id_transaction
-        ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
-        ORDER BY ${orderBy ?? orderByDefault}
-        ${limit != null ? ' LIMIT $limit' : ''}
-        ${offset != null ? ' OFFSET $offset' : ''};
+          description,
+          id_category,
+          id_account,
+          observation
+        FROM
+          $tableName
+        WHERE
+          LOWER(description) LIKE LOWER(?)
+        GROUP BY description, id_category
+        ORDER BY
+          CASE
+            WHEN LOWER(description) LIKE LOWER(?) THEN 1
+            WHEN LOWER(description) LIKE LOWER(?) THEN 2
+            ELSE 3
+          END,
+          MAX(${Model.createdAtColumnName}) DESC,
+          description
+        LIMIT 20;
       ''';
 
-      final List<Map<String, dynamic>> results = await (txn ?? databaseLocal).raw(sql, DatabaseOperation.select, whereArgs);
+      final List<Map<String, dynamic>> results = await databaseLocal.raw(sql, DatabaseOperation.select, ['%$text%', '%$text%', text, '$text%']);
 
-      return results.map((e) => fromMap(e, prefix: '${tableName}_')).toList();
+      return results
+          .map((e) => TransactionByTextModel(
+                description: e['description'],
+                idCategory: e['id_category'],
+                idAccount: e['id_account'],
+                idCreditCard: null,
+                observation: e['observation'],
+              ))
+          .toList();
     } on DatabaseLocalException catch (e, stackTrace) {
       throw throwable(e, stackTrace);
     }
   }
-
-  @override
-  Future<List<IncomeModel>> findByPeriod(DateTime start, DateTime end) => selectFull(where: '${_transactionDataSource.tableName}.date BETWEEN ? AND ?', whereArgs: [start.toIso8601String(), end.toIso8601String()]);
 }

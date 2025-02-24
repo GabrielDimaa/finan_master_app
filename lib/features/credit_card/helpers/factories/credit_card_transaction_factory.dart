@@ -1,6 +1,5 @@
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_transaction_model.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 
 abstract class CreditCardTransactionFactory {
   static CreditCardTransactionModel fromEntity(CreditCardTransactionEntity entity) {
@@ -30,20 +29,6 @@ abstract class CreditCardTransactionFactory {
       idCreditCard: model.idCreditCard,
       idCreditCardBill: model.idCreditCardBill,
       observation: model.observation,
-    );
-  }
-
-  static ExpenseEntity toExpenseEntity(CreditCardTransactionEntity entity) {
-    return ExpenseEntity(
-      id: null,
-      createdAt: null,
-      deletedAt: null,
-      description: entity.description,
-      paid: true,
-      observation: entity.observation,
-      idCategory: entity.idCategory,
-      idCreditCardTransaction: entity.id,
-      transaction: null,
     );
   }
 }

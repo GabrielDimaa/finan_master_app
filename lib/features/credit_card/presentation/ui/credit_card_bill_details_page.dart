@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
@@ -228,7 +230,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                                           crossAxisAlignment: CrossAxisAlignment.end,
                                           children: [
                                             Text(strings.amountOutstanding, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                            Text(notifier.creditCardBill!.billAmount.money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
+                                            Text(max(notifier.creditCardBill!.billAmount, 0.0).money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
                                           ],
                                         ),
                                       ),

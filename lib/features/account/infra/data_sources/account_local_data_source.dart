@@ -55,7 +55,7 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
   }
 
   @override
-  Future<List<AccountModel>> selectFull({String? id, bool deleted = false, String? where, List? whereArgs, String? orderBy, int? offset, int? limit, ITransactionExecutor? txn}) async {
+  Future<List<AccountModel>> selectFull({String? id, bool deleted = false, String? where, List? whereArgs, String? orderBy, int? offset, int? limit, String? groupBy, ITransactionExecutor? txn}) async {
     try {
       List<String> whereListed = [];
       whereArgs ??= [];
@@ -73,17 +73,17 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
         whereListed.add('$tableName.${Model.deletedAtColumnName} IS NULL');
       }
 
-      whereListed.add('$transactionsTableName.${Model.deletedAtColumnName} IS NULL');
+      whereListed.add('$statementsTableName.${Model.deletedAtColumnName} IS NULL');
 
       final String sql = '''
         SELECT
           $tableName.*,
-          COALESCE(SUM(transactions.amount), 0.0) as transactions_amount
+          COALESCE(SUM($statementsTableName.amount), 0.0) as transactions_amount
         FROM $tableName
-        LEFT JOIN $transactionsTableName
-          ON $tableName.id = $transactionsTableName.id_account AND $transactionsTableName.${Model.deletedAtColumnName} IS NULL
+        LEFT JOIN $statementsTableName
+          ON $tableName.id = $statementsTableName.id_account AND $statementsTableName.${Model.deletedAtColumnName} IS NULL
         ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
-        GROUP BY $tableName.${Model.idColumnName}, description
+        GROUP BY ${groupBy?.isNotEmpty == true ? '$groupBy' : '$tableName.${Model.idColumnName}, description'}
         ORDER BY ${orderBy ?? orderByDefault}
         ${limit != null ? ' LIMIT $limit' : ''}
         ${offset != null ? ' OFFSET $offset' : ''};
@@ -103,7 +103,7 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       const String sql = '''
         SELECT
           SUM(amount) + (SELECT SUM(initial_amount) FROM accounts WHERE accounts.${Model.deletedAtColumnName} IS NULL) AS balance
-        FROM transactions
+        FROM $statementsTableName
         WHERE date <= ? AND ${Model.deletedAtColumnName} IS NULL;
       ''';
 

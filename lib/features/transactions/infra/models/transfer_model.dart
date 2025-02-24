@@ -1,25 +1,30 @@
-import 'package:finan_master_app/features/transactions/infra/models/i_transaction_model.dart';
-import 'package:finan_master_app/features/transactions/infra/models/transaction_model.dart';
 import 'package:finan_master_app/shared/infra/models/model.dart';
 
-class TransferModel extends Model implements ITransactionModel {
-  TransactionModel transactionFrom;
-  TransactionModel transactionTo;
+class TransferModel extends Model {
+  final double amount;
+  final DateTime date;
+
+  final String idAccountFrom;
+  final String idAccountTo;
 
   TransferModel({
     required super.id,
     required super.createdAt,
     required super.deletedAt,
-    required this.transactionFrom,
-    required this.transactionTo,
+    required this.amount,
+    required this.date,
+    required this.idAccountFrom,
+    required this.idAccountTo,
   });
 
   @override
   Map<String, dynamic> toMap() {
     return {
       ...baseMap(),
-      'id_transaction_from': transactionFrom.id,
-      'id_transaction_to': transactionTo.id,
+      'amount': amount,
+      'date': date.toIso8601String(),
+      'id_account_from': idAccountFrom,
+      'id_account_to': idAccountTo,
     };
   }
 
@@ -29,8 +34,10 @@ class TransferModel extends Model implements ITransactionModel {
       id: id,
       createdAt: createdAt,
       deletedAt: deletedAt,
-      transactionFrom: transactionFrom.clone(),
-      transactionTo: transactionTo.clone(),
+      amount: amount,
+      date: date,
+      idAccountFrom: idAccountFrom,
+      idAccountTo: idAccountTo,
     );
   }
 }

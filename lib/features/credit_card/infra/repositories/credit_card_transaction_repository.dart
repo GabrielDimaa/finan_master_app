@@ -3,30 +3,37 @@ import 'package:finan_master_app/features/credit_card/domain/repositories/i_cred
 import 'package:finan_master_app/features/credit_card/helpers/factories/credit_card_transaction_factory.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_transaction_model.dart';
+import 'package:finan_master_app/features/statement/infra/data_sources/i_statement_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
-import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
-import 'package:finan_master_app/features/transactions/infra/models/expense_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
+import 'package:finan_master_app/shared/infra/models/model.dart';
 import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 
 class CreditCardTransactionRepository implements ICreditCardTransactionRepository {
   final ICreditCardTransactionLocalDataSource _dataSource;
-  final IExpenseLocalDataSource _expenseDataSource;
-  final ITransactionLocalDataSource _transactionDataSource;
   final IDatabaseLocalTransaction _dbTransaction;
   final EventNotifier _eventNotifier;
 
   CreditCardTransactionRepository({
     required ICreditCardTransactionLocalDataSource dataSource,
     required IExpenseLocalDataSource expenseDataSource,
-    required ITransactionLocalDataSource transactionDataSource,
+    required IStatementLocalDataSource statementDataSource,
     required IDatabaseLocalTransaction dbTransaction,
     required EventNotifier eventNotifier,
   })  : _dataSource = dataSource,
-        _expenseDataSource = expenseDataSource,
-        _transactionDataSource = transactionDataSource,
         _dbTransaction = dbTransaction,
         _eventNotifier = eventNotifier;
+
+  @override
+  Future<CreditCardTransactionEntity?> findById(String id, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      return await _dbTransaction.openTransaction((newTxn) => findById(id, txn: newTxn));
+    }
+
+    final CreditCardTransactionModel? result = await _dataSource.findOne(where: '${Model.idColumnName} = ?', whereArgs: [id], txn: txn);
+
+    return result != null ? CreditCardTransactionFactory.toEntity(result) : null;
+  }
 
   @override
   Future<CreditCardTransactionEntity> save(CreditCardTransactionEntity entity, {ITransactionExecutor? txn}) async {
@@ -53,30 +60,20 @@ class CreditCardTransactionRepository implements ICreditCardTransactionRepositor
 
   @override
   Future<void> delete(CreditCardTransactionEntity entity, {ITransactionExecutor? txn}) async {
-    if (txn == null) {
-      await _dbTransaction.openTransaction((txn) => delete(entity, txn: txn));
-      return;
-    }
-
-    final ExpenseModel? expenseModel = await _expenseDataSource.findOne(where: '${_expenseDataSource.tableName}_id_credit_card_transaction = ?', whereArgs: [entity.id], txn: txn);
-
-    if (expenseModel != null) {
-      await _expenseDataSource.delete(expenseModel, txn: txn);
-      await _transactionDataSource.delete(expenseModel.transaction, txn: txn);
-    }
-
     await _dataSource.delete(CreditCardTransactionFactory.fromEntity(entity), txn: txn);
 
     _eventNotifier.notify(EventType.creditCard);
   }
 
   @override
-  Future<void> deleteMany(List<CreditCardTransactionEntity> entities) async {
-    await _dbTransaction.openTransaction((txn) async {
-      for (final entity in entities) {
-        await delete(entity, txn: txn);
-      }
-    });
+  Future<void> deleteMany(List<CreditCardTransactionEntity> entities, {ITransactionExecutor? txn}) async {
+    if (txn == null) {
+      return await _dbTransaction.openTransaction((newTxn) => deleteMany(entities, txn: newTxn));
+    }
+
+    for (final entity in entities) {
+      await delete(entity, txn: txn);
+    }
 
     _eventNotifier.notify(EventType.creditCard);
   }

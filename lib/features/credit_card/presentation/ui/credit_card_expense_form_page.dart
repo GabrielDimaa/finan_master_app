@@ -14,8 +14,7 @@ import 'package:finan_master_app/features/credit_card/presentation/notifiers/cre
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_expense_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_cards_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_cards_list_bottom_sheet.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transaction_by_text_entity.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
@@ -58,7 +57,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController dateController = TextEditingController();
 
-  List<ExpenseEntity> transactionsOldAutoComplete = [];
+  List<TransactionByTextEntity> transactionsOldAutoComplete = [];
   TextEditingValue textEditingValue = const TextEditingValue(text: '');
 
   @override
@@ -145,9 +144,9 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                               const Spacing.y(),
                               LayoutBuilder(
                                 builder: (context, constraints) {
-                                  return Autocomplete<ExpenseEntity>(
+                                  return Autocomplete<TransactionByTextEntity>(
                                     initialValue: textEditingValue,
-                                    displayStringForOption: (ExpenseEntity option) => option.description,
+                                    displayStringForOption: (TransactionByTextEntity option) => option.description,
                                     fieldViewBuilder: (_, textController, focusNode, ___) {
                                       return TextFormField(
                                         decoration: InputDecoration(label: Text(strings.description)),
@@ -171,10 +170,9 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                                       this.textEditingValue = textEditingValue;
                                       return transactionsOldAutoComplete;
                                     },
-                                    onSelected: (ITransactionEntity selection) {
-                                      final ExpenseEntity expense = selection as ExpenseEntity;
-                                      if (expense.idCategory != null) notifier.setCategory(expense.idCategory!);
-                                      notifier.creditCardExpense.observation = expense.observation;
+                                    onSelected: (TransactionByTextEntity selection) {
+                                      notifier.setCategory(selection.idCategory);
+                                      notifier.creditCardExpense.observation = selection.observation;
                                     },
                                     optionsViewBuilder: (context, onSelected, options) {
                                       return Align(
@@ -191,7 +189,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                                               padding: EdgeInsets.zero,
                                               itemCount: options.length,
                                               itemBuilder: (_, index) {
-                                                final ExpenseEntity expense = options.elementAt(index);
+                                                final TransactionByTextEntity expense = options.elementAt(index);
                                                 final category = categoriesNotifier.value.categories.firstWhereOrNull((category) => category.id == expense.idCategory);
                                                 if (category == null) return const SizedBox.shrink();
 
@@ -362,7 +360,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
       context: context,
       creditCardSelected: creditCardsNotifier.value.creditCards.firstWhereOrNull((creditCard) => creditCard.id == notifier.creditCardExpense.idCreditCard),
       creditCards: creditCardsNotifier.value.creditCards.where((creditCard) => creditCard.deletedAt == null).toList(),
-      onCreditCardCreated: (CreditCardEntity creditCard) => creditCardsNotifier.value.creditCards.add(creditCard),
+      onCreditCardCreated: (CreditCardEntity creditCard) => creditCardsNotifier.setCreditCards([...creditCardsNotifier.value.creditCards, creditCard]),
     );
 
     if (result == null) return;

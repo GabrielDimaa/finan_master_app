@@ -11,8 +11,6 @@ class CreditCardBillModel extends Model {
 
   final List<CreditCardTransactionModel> transactions;
 
-  final bool paid;
-
   double get totalSpent => transactions.map((transaction) => transaction.amount > 0 ? transaction.amount : 0).sum.toDouble();
 
   double get totalPaid => transactions.map((transaction) => transaction.amount < 0 ? transaction.amount : 0).sum.toDouble();
@@ -28,7 +26,6 @@ class CreditCardBillModel extends Model {
     required this.billDueDate,
     required this.idCreditCard,
     required this.transactions,
-    required this.paid,
   });
 
   @override
@@ -41,7 +38,6 @@ class CreditCardBillModel extends Model {
       billDueDate: billDueDate,
       idCreditCard: idCreditCard,
       transactions: transactions.map((transaction) => transaction.clone()).toList(),
-      paid: paid,
     );
   }
 
@@ -52,7 +48,6 @@ class CreditCardBillModel extends Model {
       'bill_closing_date': billClosingDate.toIso8601String(),
       'bill_due_date': billDueDate.toIso8601String(),
       'id_credit_card': idCreditCard,
-      'paid': paid ? 1 : 0,
     };
   }
 }

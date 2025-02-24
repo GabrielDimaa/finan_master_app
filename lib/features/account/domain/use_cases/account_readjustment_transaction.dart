@@ -29,14 +29,13 @@ class AccountReadjustmentTransaction implements IAccountReadjustmentTransaction 
         createdAt: null,
         deletedAt: null,
         description: description,
+        amount: readjustmentValue.abs(),
+        date: DateTime.now(),
         paid: true,
         observation: null,
+        idAccount: account.id,
         idCategory: categoryOthersUuidIncome,
-        transaction: null,
       );
-
-      income.amount = readjustmentValue.abs();
-      income.transaction.idAccount = account.id;
 
       await _incomeSave.save(income);
     } else {
@@ -45,15 +44,15 @@ class AccountReadjustmentTransaction implements IAccountReadjustmentTransaction 
         createdAt: null,
         deletedAt: null,
         description: description,
+        amount: readjustmentValue.abs(),
+        date: DateTime.now(),
         paid: true,
         observation: null,
+        idAccount: account.id,
         idCategory: categoryOthersUuidExpense,
+        idCreditCard: null,
         idCreditCardTransaction: null,
-        transaction: null,
       );
-
-      expense.amount = readjustmentValue.abs();
-      expense.transaction.idAccount = account.id;
 
       await _expenseSave.save(expense);
     }

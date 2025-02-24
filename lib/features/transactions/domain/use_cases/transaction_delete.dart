@@ -2,26 +2,26 @@ import 'package:finan_master_app/features/transactions/domain/entities/expense_e
 import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
-import 'package:finan_master_app/features/transactions/domain/repositories/i_income_repository.dart';
-import 'package:finan_master_app/features/transactions/domain/repositories/i_transfer_repository.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_delete.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_delete.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_delete.dart';
 import 'package:finan_master_app/shared/domain/repositories/i_local_db_transaction_repository.dart';
 
 class TransactionDelete implements ITransactionDelete {
-  final IIncomeRepository _incomeRepository;
-  final IExpenseRepository _expenseRepository;
-  final ITransferRepository _transferRepository;
+  final IIncomeDelete _incomeDelete;
+  final IExpenseDelete _expenseDelete;
+  final ITransferDelete _transferDelete;
   final ILocalDBTransactionRepository _localDBTransactionRepository;
 
   TransactionDelete({
-    required IIncomeRepository incomeRepository,
-    required IExpenseRepository expenseRepository,
-    required ITransferRepository transferRepository,
+    required IIncomeDelete incomeDelete,
+    required IExpenseDelete expenseDelete,
+    required ITransferDelete transferDelete,
     required ILocalDBTransactionRepository localDBTransactionRepository,
-  })  : _incomeRepository = incomeRepository,
-        _expenseRepository = expenseRepository,
-        _transferRepository = transferRepository,
+  })  : _incomeDelete = incomeDelete,
+        _expenseDelete = expenseDelete,
+        _transferDelete = transferDelete,
         _localDBTransactionRepository = localDBTransactionRepository;
 
   @override
@@ -32,9 +32,9 @@ class TransactionDelete implements ITransactionDelete {
       for (final transaction in transactions) {
         functions.add(
           switch (transaction) {
-            IncomeEntity _ => () async => _incomeRepository.delete(transaction, txn: txn),
-            ExpenseEntity _ => () async => _expenseRepository.delete(transaction, txn: txn),
-            TransferEntity _ => () async => _transferRepository.delete(transaction, txn: txn),
+            IncomeEntity _ => () async => _incomeDelete.delete(transaction, txn: txn),
+            ExpenseEntity _ => () async => _expenseDelete.delete(transaction, txn: txn),
+            TransferEntity _ => () async => _transferDelete.delete(transaction, txn: txn),
             _ => () async {},
           },
         );

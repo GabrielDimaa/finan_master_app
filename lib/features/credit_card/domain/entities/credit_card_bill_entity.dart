@@ -12,8 +12,6 @@ class CreditCardBillEntity extends Entity {
 
   List<CreditCardTransactionEntity> transactions = [];
 
-  bool paid;
-
   double get totalSpent => transactions.map((transaction) => transaction.amount > 0 ? transaction.amount : 0).sum.toDouble();
 
   double get totalPaid => transactions.map((transaction) => transaction.amount < 0 ? transaction.amount : 0).sum.toDouble();
@@ -22,17 +20,15 @@ class CreditCardBillEntity extends Entity {
   double get billAmount => (totalSpent + totalPaid).truncateFractionalDigits(2);
 
   BillStatusEnum get status {
-    final dateTimeNow = DateTime.now();
+    final now = DateTime.now();
 
-    if (paid) return BillStatusEnum.paid;
+    if (now == billClosingDate || now.isAfter(billClosingDate)) {
+      if (billAmount <= 0) return BillStatusEnum.paid;
 
-    if (dateTimeNow == billClosingDate || dateTimeNow.isAfter(billClosingDate)) {
-      if (totalSpent == 0) return BillStatusEnum.paid;
-
-      if (dateTimeNow == billDueDate || dateTimeNow.isBefore(billDueDate)) return BillStatusEnum.closed;
+      if (now == billDueDate || now.isBefore(billDueDate)) return BillStatusEnum.closed;
     }
 
-    if (dateTimeNow.isAfter(billDueDate)) return BillStatusEnum.overdue;
+    if (now.isAfter(billDueDate)) return BillStatusEnum.overdue;
 
     return BillStatusEnum.outstanding;
   }
@@ -45,7 +41,6 @@ class CreditCardBillEntity extends Entity {
     required this.billDueDate,
     required this.idCreditCard,
     required this.transactions,
-    required this.paid,
   });
 
   CreditCardBillEntity clone() {
@@ -57,7 +52,6 @@ class CreditCardBillEntity extends Entity {
       billDueDate: billDueDate,
       idCreditCard: idCreditCard,
       transactions: transactions.map((transaction) => transaction.clone()).toList(),
-      paid: paid,
     );
   }
 }

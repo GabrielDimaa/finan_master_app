@@ -83,7 +83,7 @@ class CreditCardRepository implements ICreditCardRepository {
 
     for (final creditCard in creditCards) {
       final CreditCardBillModel? bill = await _billDataSource.findOne(
-        where: '${_billDataSource.tableName}.paid = ? AND ${_billDataSource.tableName}.id_credit_card = ?',
+        where: '${_billDataSource.tableName}.total_amount > ? AND ${_billDataSource.tableName}.id_credit_card = ?',
         whereArgs: [0, creditCard.id],
       );
 

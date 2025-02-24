@@ -7,6 +7,7 @@ import 'package:finan_master_app/features/auth/presentation/ui/email_verificatio
 import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/reset_password_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
+import 'package:finan_master_app/features/auth/presentation/ui/signup_password_page.dart';
 import 'package:finan_master_app/features/backup/presentation/ui/backup_page.dart';
 import 'package:finan_master_app/features/backup/presentation/ui/restore_backup_page.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
@@ -37,8 +38,6 @@ import 'package:finan_master_app/features/transactions/presentation/ui/transfer_
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_bar_rail.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../features/auth/presentation/ui/signup_password_page.dart';
 
 sealed class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();

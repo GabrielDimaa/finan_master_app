@@ -188,7 +188,6 @@ class _ListState extends State<_List> with ThemeContext {
           billDueDate: generateDates(date).dueDate,
           idCreditCard: widget.creditCard.id,
           transactions: [],
-          paid: false,
         ),
       );
 

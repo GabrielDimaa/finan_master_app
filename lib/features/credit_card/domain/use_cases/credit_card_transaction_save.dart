@@ -39,9 +39,6 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
     if (!entity.isNew && entity.idCreditCardBill != null) {
       final CreditCardBillEntity? bill = await _creditCardBillRepository.findById(entity.idCreditCardBill!);
       if (bill == null) throw ValidationException(R.strings.creditCardBillNotFound);
-
-      //Não é possível editar uma transação de uma fatura paga
-      if (bill.paid) throw ValidationException(R.strings.notPossibleEditTransactionCreditCardPaid);
     }
 
     CreditCardBillEntity? bill = await _creditCardBillRepository.findFirstAfterDate(date: entity.date, idCreditCard: creditCard.id);
@@ -60,7 +57,6 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
         billDueDate: dates.dueDate,
         idCreditCard: creditCard.id,
         transactions: [],
-        paid: false,
       );
     }
 

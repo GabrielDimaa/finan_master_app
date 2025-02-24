@@ -1,60 +1,42 @@
-import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/transaction_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/enums/transaction_type_enum.dart';
-import 'package:finan_master_app/features/transactions/helpers/factories/transaction_factory.dart';
 import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
 class ExpenseEntity extends Entity implements ITransactionEntity {
   String description;
+  late double _amount;
+
   bool paid;
   String? observation;
 
   String? idCategory;
+
+  String? idCreditCard;
   String? idCreditCardTransaction;
 
-  late TransactionEntity _transaction;
-
-  TransactionEntity get transaction => _transaction;
-
-  set transaction(TransactionEntity value) => _transaction = value..type = TransactionTypeEnum.expense;
-
-  set amount(double value) => _transaction.amount = value * -1;
+  String? idAccount;
 
   @override
-  double get amount => transaction.amount;
+  DateTime date;
 
   @override
-  DateTime get date => transaction.date;
+  double get amount => _amount;
 
-  @override
-  CategoryTypeEnum? get categoryType => CategoryTypeEnum.expense;
+  set amount(double value) => _amount = -value.abs();
 
   ExpenseEntity({
     required super.id,
     required super.createdAt,
     required super.deletedAt,
     required this.description,
+    required double amount,
+    required this.date,
     required this.paid,
     required this.observation,
+    required this.idAccount,
     required this.idCategory,
+    required this.idCreditCard,
     required this.idCreditCardTransaction,
-    required TransactionEntity? transaction,
   }) {
-    this.transaction = transaction ?? TransactionFactory.newEntity(TransactionTypeEnum.expense);
-  }
-
-  ExpenseEntity clone() {
-    return ExpenseEntity(
-      id: id,
-      createdAt: createdAt,
-      deletedAt: deletedAt,
-      description: description,
-      paid: paid,
-      observation: observation,
-      idCategory: idCategory,
-      idCreditCardTransaction: idCreditCardTransaction,
-      transaction: transaction,
-    );
+    this.amount = amount;
   }
 }

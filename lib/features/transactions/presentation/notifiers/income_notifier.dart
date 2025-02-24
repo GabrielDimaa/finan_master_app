@@ -1,23 +1,23 @@
-import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transaction_by_text_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_delete.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_save.dart';
-import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_find.dart';
 import 'package:finan_master_app/features/transactions/presentation/states/income_state.dart';
 import 'package:flutter/foundation.dart';
 
 class IncomeNotifier extends ValueNotifier<IncomeState> {
   final IIncomeSave _incomeSave;
   final IIncomeDelete _incomeDelete;
-  final ITransactionFind _transactionFind;
+  final IIncomeFind _incomeFind;
 
   IncomeNotifier({
     required IIncomeSave incomeSave,
     required IIncomeDelete incomeDelete,
-    required ITransactionFind transactionFind,
+    required IIncomeFind incomeFind,
   })  : _incomeSave = incomeSave,
         _incomeDelete = incomeDelete,
-        _transactionFind = transactionFind,
+        _incomeFind = incomeFind,
         super(IncomeState.start());
 
   IncomeEntity get income => value.income;
@@ -32,12 +32,12 @@ class IncomeNotifier extends ValueNotifier<IncomeState> {
   }
 
   void setAccount(String idAccount) {
-    income.transaction.idAccount = idAccount;
+    income.idAccount = idAccount;
     value = value.changedIncome();
   }
 
   void setDate(DateTime date) {
-    income.transaction.date = date;
+    income.date = date;
     value = value.changedIncome();
   }
 
@@ -66,5 +66,5 @@ class IncomeNotifier extends ValueNotifier<IncomeState> {
     }
   }
 
-  Future<List<IncomeEntity>> findByText(String text) async => (await _transactionFind.findByText(categoryType: CategoryTypeEnum.income, text: text)).map((e) => e as IncomeEntity).toList();
+  Future<List<TransactionByTextEntity>> findByText(String text) => _incomeFind.findByText(text);
 }

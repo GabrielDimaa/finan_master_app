@@ -74,7 +74,6 @@ class CreditCardSave implements ICreditCardSave {
                 billDueDate: dates.dueDate,
                 idCreditCard: entity.id,
                 transactions: [],
-                paid: false,
               );
 
               billsChanged.add(bill);

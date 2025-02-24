@@ -1,5 +1,4 @@
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
-import 'package:finan_master_app/features/transactions/helpers/factories/transaction_factory.dart';
 import 'package:finan_master_app/features/transactions/infra/models/expense_model.dart';
 
 abstract class ExpenseFactory {
@@ -9,11 +8,14 @@ abstract class ExpenseFactory {
       createdAt: entity.createdAt,
       deletedAt: entity.deletedAt,
       description: entity.description,
+      amount: entity.amount,
+      date: entity.date,
       paid: entity.paid,
       observation: entity.observation,
+      idAccount: entity.idAccount!,
       idCategory: entity.idCategory!,
+      idCreditCard: entity.idCreditCard,
       idCreditCardTransaction: entity.idCreditCardTransaction,
-      transaction: TransactionFactory.fromEntity(entity.transaction),
     );
   }
 
@@ -23,11 +25,14 @@ abstract class ExpenseFactory {
       createdAt: model.createdAt,
       deletedAt: model.deletedAt,
       description: model.description,
+      amount: model.amount,
+      date: model.date,
       paid: model.paid,
       observation: model.observation,
+      idAccount: model.idAccount,
       idCategory: model.idCategory,
+      idCreditCard: model.idCreditCard,
       idCreditCardTransaction: model.idCreditCardTransaction,
-      transaction: TransactionFactory.toEntity(model.transaction),
     );
   }
 }
