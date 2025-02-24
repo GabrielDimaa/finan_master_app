@@ -14,7 +14,6 @@ import 'package:finan_master_app/features/credit_card/presentation/notifiers/cre
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_expense_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_cards_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_cards_list_bottom_sheet.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transaction_by_text_entity.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
@@ -172,9 +171,8 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                                       return transactionsOldAutoComplete;
                                     },
                                     onSelected: (TransactionByTextEntity selection) {
-                                      final ExpenseEntity expense = selection as ExpenseEntity;
-                                      if (expense.idCategory != null) notifier.setCategory(expense.idCategory!);
-                                      notifier.creditCardExpense.observation = expense.observation;
+                                      notifier.setCategory(selection.idCategory);
+                                      notifier.creditCardExpense.observation = selection.observation;
                                     },
                                     optionsViewBuilder: (context, onSelected, options) {
                                       return Align(

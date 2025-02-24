@@ -3,6 +3,10 @@ import 'package:finan_master_app/features/category/domain/enums/category_type_en
 import 'package:finan_master_app/features/category/helpers/factories/category_factory.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/i_category_local_data_source.dart';
 import 'package:finan_master_app/features/category/infra/models/category_model.dart';
+import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
+import 'package:finan_master_app/features/credit_card/helpers/factories/credit_card_transaction_factory.dart';
+import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_transaction_local_data_source.dart';
+import 'package:finan_master_app/features/credit_card/infra/models/credit_card_transaction_model.dart';
 import 'package:finan_master_app/features/reports/domain/entities/report_category_entity.dart';
 import 'package:finan_master_app/features/reports/domain/repositories/i_report_categories_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
@@ -18,11 +22,17 @@ import 'package:finan_master_app/features/transactions/infra/models/income_model
 class ReportCategoriesRepository implements IReportCategoriesRepository {
   final IExpenseLocalDataSource _expenseLocalDataSource;
   final IIncomeLocalDataSource _incomeLocalDataSource;
+  final ICreditCardTransactionLocalDataSource _creditCardTransactionLocalDataSource;
   final ICategoryLocalDataSource _categoriesLocalDataSource;
 
-  ReportCategoriesRepository({required IExpenseLocalDataSource expenseLocalDataSource, required IIncomeLocalDataSource incomeLocalDataSource, required ICategoryLocalDataSource categoriesLocalDataSource})
-      : _expenseLocalDataSource = expenseLocalDataSource,
+  ReportCategoriesRepository({
+    required IExpenseLocalDataSource expenseLocalDataSource,
+    required IIncomeLocalDataSource incomeLocalDataSource,
+    required ICreditCardTransactionLocalDataSource creditCardTransactionLocalDataSource,
+    required ICategoryLocalDataSource categoriesLocalDataSource,
+  })  : _expenseLocalDataSource = expenseLocalDataSource,
         _incomeLocalDataSource = incomeLocalDataSource,
+        _creditCardTransactionLocalDataSource = creditCardTransactionLocalDataSource,
         _categoriesLocalDataSource = categoriesLocalDataSource;
 
   @override
@@ -42,10 +52,16 @@ class ReportCategoriesRepository implements IReportCategoriesRepository {
 
     final List<ITransactionEntity> transactions = [];
 
-    if (type == CategoryTypeEnum.income) {
-      final List<ExpenseModel> expenses = await _expenseLocalDataSource.findAll(where: where.join(' AND '), whereArgs: whereArgs);
+    if (type == CategoryTypeEnum.expense) {
+      final List<ExpenseModel> expenses = await _expenseLocalDataSource.findAll(where: [...where, 'id_credit_card_transaction IS NULL'].join(' AND '), whereArgs: whereArgs);
+      final List<CreditCardTransactionModel> creditCardTransactions = await _creditCardTransactionLocalDataSource.findByPeriod(startDate: startDate, endDate: endDate, onlyPaid: true, ignoreBillPayment: true);
 
-      transactions.addAll(expenses.map((e) => ExpenseFactory.toEntity(e)));
+      transactions.addAll([
+        ...expenses.map((e) => ExpenseFactory.toEntity(e)),
+        ...creditCardTransactions.map((e) => CreditCardTransactionFactory.toEntity(e)..amount = -e.amount.abs()),
+      ]);
+
+      transactions.sortBy((e) => e.date);
     } else {
       final List<IncomeModel> incomes = await _incomeLocalDataSource.findAll(where: where.join(' AND '), whereArgs: whereArgs);
 
@@ -54,18 +70,18 @@ class ReportCategoriesRepository implements IReportCategoriesRepository {
 
     final List<CategoryModel> categories = await _categoriesLocalDataSource.findAll(
       where: 'id IN (${transactions.map((_) => '?').join(', ')})',
-      whereArgs: transactions.map((e) => e is ExpenseEntity ? e.idCategory : (e as IncomeEntity).idCategory).toList(),
+      whereArgs: transactions.map((e) => e is ExpenseEntity ? e.idCategory : (e is CreditCardTransactionEntity ? e.idCategory : (e as IncomeEntity).idCategory)).toList(),
       deleted: true,
     );
 
     final List<ReportCategoryEntity> result = [];
 
-    final Map<String, List<ITransactionEntity>> group = groupBy(transactions, (e) => e is ExpenseEntity ? e.idCategory! : (e as IncomeEntity).idCategory!);
+    final Map<String, List<ITransactionEntity>> group = groupBy(transactions, (e) => e is ExpenseEntity ? e.idCategory! : (e is CreditCardTransactionEntity ? e.idCategory! : (e as IncomeEntity).idCategory!));
 
     group.forEach((key, value) {
-      result.add(ReportCategoryEntity(category: CategoryFactory.toEntity(categories.firstWhere((e) => e.id == key)), transactions: transactions));
+      result.add(ReportCategoryEntity(category: CategoryFactory.toEntity(categories.firstWhere((e) => e.id == key)), transactions: value));
     });
 
-    return result;
+    return result.sortedBy((e) => e.category.description);
   }
 }

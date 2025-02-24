@@ -18,7 +18,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/item_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_tile_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_view_selectable.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';

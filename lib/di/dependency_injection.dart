@@ -255,7 +255,7 @@ final class DependencyInjection {
     getIt.registerFactory<IHomeMonthlyBalanceRepository>(() => HomeMonthlyBalanceRepository(dataSource: getIt.get<IStatementLocalDataSource>()));
     getIt.registerFactory<IIncomeRepository>(() => IncomeRepository(incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<ILocalDBTransactionRepository>(() => LocalDBTransactionRepository(databaseLocalTransaction: databaseLocal.transactionInstance()));
-    getIt.registerFactory<IReportCategoriesRepository>(() => ReportCategoriesRepository(expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), categoriesLocalDataSource: getIt.get<ICategoryLocalDataSource>()));
+    getIt.registerFactory<IReportCategoriesRepository>(() => ReportCategoriesRepository(expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), creditCardTransactionLocalDataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), categoriesLocalDataSource: getIt.get<ICategoryLocalDataSource>()));
     getIt.registerFactory<ITransferRepository>(() => TransferRepository(transferLocalDataSource: getIt.get<ITransferLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<IStatementRepository>(() => StatementRepository(dataSource: getIt.get<IStatementLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
 

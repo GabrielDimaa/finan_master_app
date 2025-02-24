@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:finan_master_app/features/account/infra/data_sources/account_local_data_source.dart';
 import 'package:finan_master_app/features/auth/infra/data_sources/auth_local_data_source.dart';
-import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/category_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_bill_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_local_data_source.dart';
