@@ -12,7 +12,6 @@ abstract class CreditCardBillFactory {
       billDueDate: entity.billDueDate,
       idCreditCard: entity.idCreditCard,
       transactions: entity.transactions.map((transaction) => CreditCardTransactionFactory.fromEntity(transaction)).toList(),
-      paid: entity.paid,
     );
   }
 
@@ -25,7 +24,6 @@ abstract class CreditCardBillFactory {
       billDueDate: model.billDueDate,
       idCreditCard: model.idCreditCard,
       transactions: model.transactions.map((transaction) => CreditCardTransactionFactory.toEntity(transaction)).toList(),
-      paid: model.paid,
     );
   }
 }

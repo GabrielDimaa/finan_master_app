@@ -4,12 +4,16 @@ import 'package:finan_master_app/features/home/presentation/notifiers/home_accou
 import 'package:finan_master_app/features/home/presentation/notifiers/home_bills_credit_card_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_transaction_notifier.dart';
+import 'package:finan_master_app/features/home/presentation/notifiers/home_transactions_unpaid_unreceived_notifier.dart';
+import 'package:finan_master_app/features/home/presentation/states/home_transactions_unpaid_unreceived_state.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_alert_first_steps.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_accounts_balance.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_bill_credit_card.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_monthly_balance.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_monthly_transaction.dart';
+import 'package:finan_master_app/features/home/presentation/ui/components/home_card_transaction_unpaid_unreceived.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/fab_transactions.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/transactions_unpaid_unreceived_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
@@ -29,6 +33,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
   final EventNotifier eventNotifier = DI.get<EventNotifier>();
   final HomeAccountsBalanceNotifier accountsBalanceNotifier = DI.get<HomeAccountsBalanceNotifier>();
   final HomeMonthlyTransactionNotifier monthlyTransactionNotifier = DI.get<HomeMonthlyTransactionNotifier>();
+  final HomeTransactionsUnpaidUnreceivedNotifier transactionUnpaidNotifier = DI.get<HomeTransactionsUnpaidUnreceivedNotifier>();
   final HomeBillsCreditCardNotifier billsCreditCardNotifier = DI.get<HomeBillsCreditCardNotifier>();
   final HomeMonthlyBalanceNotifier monthlyBalanceNotifier = DI.get<HomeMonthlyBalanceNotifier>();
   final FirstStepsNotifier firstStepsNotifier = DI.get<FirstStepsNotifier>();
@@ -50,6 +55,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
     await Future.wait([
       accountsBalanceNotifier.load(),
       monthlyTransactionNotifier.load(),
+      transactionUnpaidNotifier.load(),
       billsCreditCardNotifier.load(),
       monthlyBalanceNotifier.load(),
     ]);
@@ -97,6 +103,28 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                         ),
                       ),
                       const Spacing.y(),
+                      ValueListenableBuilder(
+                        valueListenable: transactionUnpaidNotifier,
+                        builder: (_, state, __) {
+                          if (transactionUnpaidNotifier.value.amountsIncome == 0 && transactionUnpaidNotifier.value.amountsExpense == 0) return const SizedBox.shrink();
+
+                          return Column(
+                            children: [
+                              IntrinsicHeight(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(child: HomeCardTransactionUnpaidUnreceived.income(notifier: transactionUnpaidNotifier)),
+                                    const Spacing.x(),
+                                    Expanded(child: HomeCardTransactionUnpaidUnreceived.expense(notifier: transactionUnpaidNotifier)),
+                                  ],
+                                ),
+                              ),
+                              const Spacing.y(),
+                            ],
+                          );
+                        },
+                      ),
                       ValueListenableBuilder(
                         valueListenable: billsCreditCardNotifier,
                         builder: (_, __, ___) {

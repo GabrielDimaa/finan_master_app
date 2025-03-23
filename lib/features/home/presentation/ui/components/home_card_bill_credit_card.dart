@@ -112,7 +112,7 @@ class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with Th
                                   },
                                 ),
                                 const SizedBox(height: 4),
-                                Text((state.creditCardsWithBill[index].bill?.billAmount ?? 0).money, style: textTheme.titleLarge?.copyWith(fontSize: 18)),
+                                Text((state.creditCardsWithBill[index].bill?.totalSpent ?? 0).money, style: textTheme.titleLarge?.copyWith(fontSize: 18)),
                                 const SizedBox(height: 4),
                                 Text('${strings.availableLimit} ${(state.creditCardsWithBill[index].creditCard.amountLimit).money}', style: textTheme.labelMedium),
                               ],

@@ -1,24 +1,23 @@
-import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_delete.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_save.dart';
 import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_expense_state.dart';
-import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
-import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_find.dart';
+import 'package:finan_master_app/features/transactions/domain/entities/transaction_by_text_entity.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_find.dart';
 import 'package:flutter/foundation.dart';
 
 class CreditCardExpenseNotifier extends ValueNotifier<CreditCardExpenseState> {
   final ICreditCardTransactionSave _creditCardTransactionSave;
   final ICreditCardTransactionDelete _creditCardTransactionDelete;
-  final ITransactionFind _transactionFind;
+  final IExpenseFind _expenseFind;
 
   CreditCardExpenseNotifier({
     required ICreditCardTransactionSave creditCardTransactionSave,
     required ICreditCardTransactionDelete creditCardTransactionDelete,
-    required ITransactionFind transactionFind,
+    required IExpenseFind expenseFind,
   })  : _creditCardTransactionSave = creditCardTransactionSave,
         _creditCardTransactionDelete = creditCardTransactionDelete,
-        _transactionFind = transactionFind,
+        _expenseFind = expenseFind,
         super(CreditCardExpenseState.start());
 
   CreditCardTransactionEntity get creditCardExpense => value.creditCardExpense;
@@ -64,5 +63,5 @@ class CreditCardExpenseNotifier extends ValueNotifier<CreditCardExpenseState> {
     }
   }
 
-  Future<List<ExpenseEntity>> findByText(String text) async => (await _transactionFind.findByText(categoryType: CategoryTypeEnum.expense, text: text)).map((e) => e as ExpenseEntity).toList();
+  Future<List<TransactionByTextEntity>> findByText(String text) => _expenseFind.findByText(text);
 }

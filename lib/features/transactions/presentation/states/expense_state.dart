@@ -26,10 +26,14 @@ class StartExpenseState extends ExpenseState {
             createdAt: null,
             deletedAt: null,
             description: '',
+            amount: 0,
+            date: DateTime.now(),
+            paid: true,
             observation: null,
+            idAccount: null,
             idCategory: null,
+            idCreditCard: null,
             idCreditCardTransaction: null,
-            transaction: null,
           ),
         );
 }

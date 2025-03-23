@@ -1,5 +1,6 @@
 import 'package:finan_master_app/features/first_steps/infra/data_sources/i_first_steps_local_data_source.dart';
 import 'package:finan_master_app/features/first_steps/infra/models/first_steps_model.dart';
+import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/local_data_source.dart';
 
@@ -7,7 +8,7 @@ class FirstStepsLocalDataSource extends LocalDataSource<FirstStepsModel> impleme
   FirstStepsLocalDataSource({required super.databaseLocal});
 
   @override
-  String get tableName => 'first_steps';
+  String get tableName => firstStepsTableName;
 
   @override
   void createTable(IDatabaseLocalBatch batch) {

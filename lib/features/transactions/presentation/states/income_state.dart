@@ -26,9 +26,12 @@ class StartIncomeState extends IncomeState {
             createdAt: null,
             deletedAt: null,
             description: '',
+            amount: 0,
+            date: DateTime.now(),
+            received: true,
             observation: null,
+            idAccount: null,
             idCategory: null,
-            transaction: null,
           ),
         );
 }

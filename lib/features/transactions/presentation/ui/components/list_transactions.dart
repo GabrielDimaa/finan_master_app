@@ -13,6 +13,7 @@ import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
+import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/item_selectable.dart';
@@ -41,7 +42,7 @@ class ListTransactions extends StatefulWidget {
   State<ListTransactions> createState() => _ListTransactionsState();
 }
 
-class _ListTransactionsState extends State<ListTransactions> {
+class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
   @override
   Widget build(BuildContext context) {
     return ListViewSelectable.separated(
@@ -56,6 +57,7 @@ class _ListTransactionsState extends State<ListTransactions> {
           final category = widget.categories.firstWhere((category) => category.id == expense.idCategory);
           return ListTileSelectable<ITransactionEntity>(
             value: item,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             leading: CircleAvatar(
               backgroundColor: Color(category.color.toColor()!),
               child: Icon(category.icon.parseIconData(), color: Colors.white),
@@ -70,19 +72,19 @@ class _ListTransactionsState extends State<ListTransactions> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (expense.idCreditCardTransaction != null) ...[
-                      const Icon(Icons.credit_card_outlined, size: 20),
-                      const Spacing.x(),
+                    if (!expense.paid) ...[
+                      const Icon(Icons.push_pin_outlined, size: 18),
+                      const Spacing.x(0.5),
                     ],
-                    Text(expense.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                    Text(expense.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
                   ],
                 ),
-                Text(expense.transaction.date.formatDateToRelative()),
+                Text(expense.date.formatDateToRelative()),
               ],
             ),
             onTap: () async {
               try {
-                if (expense.idCreditCardTransaction != null) throw Exception(R.strings.notPossibleEditTransactionCreditCardPaid);
+                if (expense.idCreditCard != null) throw Exception(R.strings.notPossibleEditTransactionCreditCardPaid);
                 await goFormsPage(context: context, route: ExpenseFormPage.route, entity: expense);
               } catch (e) {
                 if (!context.mounted) return;
@@ -97,6 +99,7 @@ class _ListTransactionsState extends State<ListTransactions> {
           final category = widget.categories.firstWhere((category) => category.id == income.idCategory);
           return ListTileSelectable<ITransactionEntity>(
             value: item,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             leading: CircleAvatar(
               backgroundColor: Color(category.color.toColor()!),
               child: Icon(category.icon.parseIconData(), color: Colors.white),
@@ -108,8 +111,17 @@ class _ListTransactionsState extends State<ListTransactions> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(income.transaction.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
-                Text(income.transaction.date.formatDateToRelative()),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (!income.received) ...[
+                      const Icon(Icons.push_pin_outlined, size: 18),
+                      const Spacing.x(0.5),
+                    ],
+                    Text(income.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                  ],
+                ),
+                Text(income.date.formatDateToRelative()),
               ],
             ),
             onTap: () => goFormsPage(context: context, route: IncomeFormPage.route, entity: income),
@@ -122,6 +134,7 @@ class _ListTransactionsState extends State<ListTransactions> {
             children: [
               ListTileSelectable<ITransactionEntity>(
                 value: item,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 leading: CircleAvatar(
                   backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
                   child: const Icon(Icons.move_up_outlined),
@@ -129,7 +142,7 @@ class _ListTransactionsState extends State<ListTransactions> {
                 title: Text(AppLocalizations.of(context)!.transfer),
                 subtitle: Builder(
                   builder: (_) {
-                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.transactionTo.idAccount);
+                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.idAccountTo);
                     return Text(account.description);
                   },
                 ),
@@ -138,8 +151,8 @@ class _ListTransactionsState extends State<ListTransactions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(transfer.transactionTo.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
-                    Text(transfer.transactionTo.date.formatDateToRelative()),
+                    Text(transfer.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0xFF3CDE87))),
+                    Text(transfer.date.formatDateToRelative()),
                   ],
                 ),
                 onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),
@@ -154,7 +167,7 @@ class _ListTransactionsState extends State<ListTransactions> {
                 title: Text(AppLocalizations.of(context)!.transfer),
                 subtitle: Builder(
                   builder: (_) {
-                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.transactionFrom.idAccount);
+                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.idAccountFrom);
                     return Text(account.description);
                   },
                 ),
@@ -163,8 +176,8 @@ class _ListTransactionsState extends State<ListTransactions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(transfer.transactionFrom.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
-                    Text(transfer.transactionFrom.date.formatDateToRelative()),
+                    Text(transfer.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0xFFFF5454))),
+                    Text(transfer.date.formatDateToRelative()),
                   ],
                 ),
                 onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),

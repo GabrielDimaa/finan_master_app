@@ -1,9 +1,15 @@
+import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/shared/domain/entities/entity.dart';
 
-class CreditCardTransactionEntity extends Entity {
+class CreditCardTransactionEntity extends Entity implements ITransactionEntity {
   String description;
+
+  @override
   double amount;
+
+  @override
   DateTime date;
+
   String? idCategory;
 
   String? idCreditCard;

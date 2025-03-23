@@ -1,7 +1,7 @@
 import 'package:uuid/uuid.dart';
 
 abstract class Entity {
-  late final String id;
+  final String id;
   DateTime? createdAt;
   DateTime? deletedAt;
 
@@ -11,7 +11,5 @@ abstract class Entity {
     required String? id,
     required this.createdAt,
     required this.deletedAt,
-  }) {
-    this.id = id ?? const Uuid().v1();
-  }
+  }) : id = id ?? const Uuid().v1();
 }

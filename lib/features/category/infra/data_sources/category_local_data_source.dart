@@ -43,22 +43,23 @@ class CategoryLocalDataSource extends LocalDataSource<CategoryModel> implements 
     ''');
 
     batch.execute('''
-      INSERT INTO $tableName (${Model.idColumnName}, ${Model.createdAtColumnName}, description, type, color, icon)
+      INSERT INTO $tableName (${Model.idColumnName}, ${Model.createdAtColumnName}, ${Model.deletedAtColumnName}, description, type, color, icon)
       VALUES
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryHome}', ${CategoryTypeEnum.expense.value}, 'FF005BC0', ${Icons.home_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryServices}', ${CategoryTypeEnum.expense.value}, 'FF8200E9', ${Icons.handyman_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryGifts}', ${CategoryTypeEnum.expense.value}, 'FFE80000', ${Icons.card_giftcard_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryFuel}', ${CategoryTypeEnum.expense.value}, 'FFCF7C00', ${Icons.local_gas_station_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryLeisure}', ${CategoryTypeEnum.expense.value}, 'FF1C9687', ${Icons.beach_access_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryTravel}', ${CategoryTypeEnum.expense.value}, 'FF1178D8', ${Icons.airplane_ticket_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryTransport}', ${CategoryTypeEnum.expense.value}, 'FF7A7A7A', ${Icons.directions_bus_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryClothing}', ${CategoryTypeEnum.expense.value}, 'FF40977D', ${Icons.checkroom_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryMarket}', ${CategoryTypeEnum.expense.value}, 'FFFE4848', ${Icons.shopping_cart_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryEvents}', ${CategoryTypeEnum.expense.value}, 'FFB0BF00', ${Icons.festival_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryHealth}', ${CategoryTypeEnum.expense.value}, 'FF9D4141', ${Icons.medical_services_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryRestaurant}', ${CategoryTypeEnum.expense.value}, 'FFFE4848', ${Icons.fastfood_outlined.codePoint}),
-        ('${const Uuid().v1()}', '$createdAt', '${R.strings.categoryEducation}', ${CategoryTypeEnum.expense.value}, 'FF374F51', ${Icons.school_outlined.codePoint}),
-        ('$categoryOthersUuidExpense', '$createdAt', '${R.strings.categoryOthers}', ${CategoryTypeEnum.expense.value}, 'FF626262', ${Icons.more_outlined.codePoint});
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryHome}', ${CategoryTypeEnum.expense.value}, 'FF005BC0', ${Icons.home_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryServices}', ${CategoryTypeEnum.expense.value}, 'FF8200E9', ${Icons.handyman_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryGifts}', ${CategoryTypeEnum.expense.value}, 'FFE80000', ${Icons.card_giftcard_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryFuel}', ${CategoryTypeEnum.expense.value}, 'FFCF7C00', ${Icons.local_gas_station_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryLeisure}', ${CategoryTypeEnum.expense.value}, 'FF1C9687', ${Icons.beach_access_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryTravel}', ${CategoryTypeEnum.expense.value}, 'FF1178D8', ${Icons.airplane_ticket_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryTransport}', ${CategoryTypeEnum.expense.value}, 'FF7A7A7A', ${Icons.directions_bus_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryClothing}', ${CategoryTypeEnum.expense.value}, 'FF40977D', ${Icons.checkroom_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryMarket}', ${CategoryTypeEnum.expense.value}, 'FFFE4848', ${Icons.shopping_cart_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryEvents}', ${CategoryTypeEnum.expense.value}, 'FFB0BF00', ${Icons.festival_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryHealth}', ${CategoryTypeEnum.expense.value}, 'FF9D4141', ${Icons.medical_services_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryRestaurant}', ${CategoryTypeEnum.expense.value}, 'FFFE4848', ${Icons.fastfood_outlined.codePoint}),
+        ('${const Uuid().v1()}', '$createdAt', NULL, '${R.strings.categoryEducation}', ${CategoryTypeEnum.expense.value}, 'FF374F51', ${Icons.school_outlined.codePoint}),
+        ('$categoryOthersUuidExpense', '$createdAt', NULL, '${R.strings.categoryOthers}', ${CategoryTypeEnum.expense.value}, 'FF626262', ${Icons.more_outlined.codePoint}),
+        ('$categoryBillUuidExpense', '$createdAt', '$createdAt', '${R.strings.creditCard}', ${CategoryTypeEnum.expense.value}, 'FF46A66C', ${Icons.credit_score_outlined.codePoint});
     ''');
   }
 

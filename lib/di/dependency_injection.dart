@@ -106,29 +106,35 @@ import 'package:finan_master_app/features/home/presentation/notifiers/home_accou
 import 'package:finan_master_app/features/home/presentation/notifiers/home_bills_credit_card_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_transaction_notifier.dart';
+import 'package:finan_master_app/features/home/presentation/notifiers/home_transactions_unpaid_unreceived_notifier.dart';
 import 'package:finan_master_app/features/reports/domain/repositories/i_report_categories_repository.dart';
 import 'package:finan_master_app/features/reports/domain/use_cases/i_report_categories_find.dart';
 import 'package:finan_master_app/features/reports/domain/use_cases/report_categories_find.dart';
-import 'package:finan_master_app/features/reports/infra/data_sources/i_report_categories_data_source.dart';
-import 'package:finan_master_app/features/reports/infra/data_sources/report_categories_data_source.dart';
 import 'package:finan_master_app/features/reports/infra/repositories/report_categories_repository.dart';
 import 'package:finan_master_app/features/reports/presentation/notifiers/report_categories_notifier.dart';
 import 'package:finan_master_app/features/splash/presentation/notifiers/splash_notifier.dart';
+import 'package:finan_master_app/features/statement/domain/repositories/i_statement_repository.dart';
+import 'package:finan_master_app/features/statement/infra/data_sources/i_statement_local_data_source.dart';
+import 'package:finan_master_app/features/statement/infra/data_sources/statement_local_data_source.dart';
+import 'package:finan_master_app/features/statement/infra/repositories/statement_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_income_repository.dart';
-import 'package:finan_master_app/features/transactions/domain/repositories/i_transaction_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_transfer_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/expense_delete.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/expense_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/expense_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_delete.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_expense_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_delete.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_income_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/income_delete.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/income_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/income_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/transaction_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/transaction_find.dart';
@@ -137,18 +143,16 @@ import 'package:finan_master_app/features/transactions/domain/use_cases/transfer
 import 'package:finan_master_app/features/transactions/infra/data_sources/expense_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_income_local_data_source.dart';
-import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transfer_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/income_local_data_source.dart';
-import 'package:finan_master_app/features/transactions/infra/data_sources/transaction_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/transfer_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/repositories/expense_repository.dart';
 import 'package:finan_master_app/features/transactions/infra/repositories/income_repository.dart';
-import 'package:finan_master_app/features/transactions/infra/repositories/transaction_repository.dart';
 import 'package:finan_master_app/features/transactions/infra/repositories/transfer_repository.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/expense_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/income_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
+import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_unpaid_unreceived_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transfer_notifier.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_cloud_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_local_data_source.dart';
@@ -230,14 +234,13 @@ final class DependencyInjection {
     getIt.registerFactory<ICreditCardTransactionLocalDataSource>(() => CreditCardTransactionLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<ICreditCardBillLocalDataSource>(() => CreditCardBillLocalDataSource(databaseLocal: databaseLocal, creditCardTransactionLocalDataSource: getIt.get<ICreditCardTransactionLocalDataSource>()));
     getIt.registerFactory<ICreditCardLocalDataSource>(() => CreditCardLocalDataSource(databaseLocal: databaseLocal, creditCardBillLocalDataSource: getIt.get<ICreditCardBillLocalDataSource>()));
-    getIt.registerFactory<IExpenseLocalDataSource>(() => ExpenseLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
+    getIt.registerFactory<IExpenseLocalDataSource>(() => ExpenseLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<IFirstStepsLocalDataSource>(() => FirstStepsLocalDataSource(databaseLocal: databaseLocal));
-    getIt.registerFactory<IIncomeLocalDataSource>(() => IncomeLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
-    getIt.registerFactory<IReportCategoriesDataSource>(() => ReportCategoriesDataSource(databaseLocal: databaseLocal));
-    getIt.registerFactory<ITransactionLocalDataSource>(() => TransactionLocalDataSource(databaseLocal: databaseLocal));
-    getIt.registerFactory<ITransferLocalDataSource>(() => TransferLocalDataSource(databaseLocal: databaseLocal, transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
+    getIt.registerFactory<IIncomeLocalDataSource>(() => IncomeLocalDataSource(databaseLocal: databaseLocal));
+    getIt.registerFactory<ITransferLocalDataSource>(() => TransferLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<IUserAccountLocalDataSource>(() => UserAccountLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<IUserAccountCloudDataSource>(() => UserAccountCloudDataSource(firestore: getIt.get<FirebaseFirestore>()));
+    getIt.registerFactory<IStatementLocalDataSource>(() => StatementLocalDataSource(databaseLocal: databaseLocal));
 
     //Repositories
     getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>(), creditCardLocalDataSource: getIt.get<ICreditCardLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
@@ -247,16 +250,16 @@ final class DependencyInjection {
     getIt.registerFactory<IConfigRepository>(() => ConfigRepository(cacheLocal: getIt.get<ICacheLocal>()));
     getIt.registerFactory<ICreditCardRepository>(() => CreditCardRepository(creditCardDataSource: getIt.get<ICreditCardLocalDataSource>(), accountDataSource: getIt.get<IAccountLocalDataSource>(), billDataSource: getIt.get<ICreditCardBillLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<ICreditCardBillRepository>(() => CreditCardBillRepository(localDataSource: getIt.get<ICreditCardBillLocalDataSource>(), creditCardTransactionLocalDataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance(), eventNotifier: getIt.get<EventNotifier>()));
-    getIt.registerFactory<ICreditCardTransactionRepository>(() => CreditCardTransactionRepository(dataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), expenseDataSource: getIt.get<IExpenseLocalDataSource>(), transactionDataSource: getIt.get<ITransactionLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance(), eventNotifier: getIt.get<EventNotifier>()));
+    getIt.registerFactory<ICreditCardTransactionRepository>(() => CreditCardTransactionRepository(dataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<IDeleteAppDataRepository>(() => DeleteAppDataRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>(), authDriver: getIt.get<IAuthDriver>()));
-    getIt.registerFactory<IExpenseRepository>(() => ExpenseRepository(dbTransaction: databaseLocal.transactionInstance(), expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
+    getIt.registerFactory<IExpenseRepository>(() => ExpenseRepository(expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<IFirstStepsRepository>(() => FirstStepsRepository(dataSource: getIt.get<IFirstStepsLocalDataSource>()));
-    getIt.registerFactory<IHomeMonthlyBalanceRepository>(() => HomeMonthlyBalanceRepository(dataSource: getIt.get<ITransactionLocalDataSource>()));
-    getIt.registerFactory<IIncomeRepository>(() => IncomeRepository(dbTransaction: databaseLocal.transactionInstance(), incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
+    getIt.registerFactory<IHomeMonthlyBalanceRepository>(() => HomeMonthlyBalanceRepository(dataSource: getIt.get<IStatementLocalDataSource>()));
+    getIt.registerFactory<IIncomeRepository>(() => IncomeRepository(incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<ILocalDBTransactionRepository>(() => LocalDBTransactionRepository(databaseLocalTransaction: databaseLocal.transactionInstance()));
-    getIt.registerFactory<IReportCategoriesRepository>(() => ReportCategoriesRepository(dataSource: getIt.get<IReportCategoriesDataSource>()));
-    getIt.registerFactory<ITransactionRepository>(() => TransactionRepository(transactionDataSource: getIt.get<ITransactionLocalDataSource>()));
-    getIt.registerFactory<ITransferRepository>(() => TransferRepository(dbTransaction: databaseLocal.transactionInstance(), transferLocalDataSource: getIt.get<ITransferLocalDataSource>(), transactionLocalDataSource: getIt.get<ITransactionLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
+    getIt.registerFactory<IReportCategoriesRepository>(() => ReportCategoriesRepository(expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), creditCardTransactionLocalDataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), categoriesLocalDataSource: getIt.get<ICategoryLocalDataSource>()));
+    getIt.registerFactory<ITransferRepository>(() => TransferRepository(transferLocalDataSource: getIt.get<ITransferLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
+    getIt.registerFactory<IStatementRepository>(() => StatementRepository(dataSource: getIt.get<IStatementLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
 
     //Use cases
     getIt.registerFactory<IAccountDelete>(() => AccountDelete(repository: getIt.get<IAccountRepository>()));
@@ -274,27 +277,29 @@ final class DependencyInjection {
     getIt.registerFactory<ICreditCardFind>(() => CreditCardFind(repository: getIt.get<ICreditCardRepository>()));
     getIt.registerFactory<ICreditCardSave>(() => CreditCardSave(creditCardBillDates: getIt.get<ICreditCardBillDates>(), repository: getIt.get<ICreditCardRepository>(), creditCardBillRepository: getIt.get<ICreditCardBillRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
     getIt.registerFactory<ICreditCardBillFind>(() => CreditCardBillFind(repository: getIt.get<ICreditCardBillRepository>()));
-    getIt.registerFactory<ICreditCardBillSave>(() => CreditCardBillSave(repository: getIt.get<ICreditCardBillRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), creditCardRepository: getIt.get<ICreditCardRepository>(), expenseRepository: getIt.get<IExpenseRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
-    getIt.registerFactory<ICreditCardTransactionDelete>(() => CreditCardTransactionDelete(repository: getIt.get<ICreditCardTransactionRepository>(), creditCardBillRepository: getIt.get<ICreditCardBillRepository>()));
+    getIt.registerFactory<ICreditCardBillSave>(() => CreditCardBillSave(repository: getIt.get<ICreditCardBillRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), creditCardRepository: getIt.get<ICreditCardRepository>(), expenseRepository: getIt.get<IExpenseRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), statementRepository: getIt.get<IStatementRepository>()));
+    getIt.registerFactory<ICreditCardTransactionDelete>(() => CreditCardTransactionDelete(repository: getIt.get<ICreditCardTransactionRepository>(), expenseRepository: getIt.get<IExpenseRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
     getIt.registerFactory<ICreditCardTransactionSave>(() => CreditCardTransactionSave(creditCardBillDates: getIt.get<ICreditCardBillDates>(), repository: getIt.get<ICreditCardRepository>(), creditCardBillRepository: getIt.get<ICreditCardBillRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>()));
     getIt.registerFactory<IDeleteAppData>(() => DeleteAppData(repository: getIt.get<IDeleteAppDataRepository>()));
-    getIt.registerFactory<IExpenseDelete>(() => ExpenseDelete(repository: getIt.get<IExpenseRepository>()));
-    getIt.registerFactory<IExpenseSave>(() => ExpenseSave(repository: getIt.get<IExpenseRepository>()));
+    getIt.registerFactory<IExpenseDelete>(() => ExpenseDelete(repository: getIt.get<IExpenseRepository>(), statementRepository: getIt.get<IStatementRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<IExpenseSave>(() => ExpenseSave(repository: getIt.get<IExpenseRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<IExpenseFind>(() => ExpenseFind(repository: getIt.get<IExpenseRepository>()));
     getIt.registerFactory<IFirstStepsFind>(() => FirstStepsFind(repository: getIt.get<IFirstStepsRepository>()));
     getIt.registerFactory<IFirstStepsSave>(() => FirstStepsSave(repository: getIt.get<IFirstStepsRepository>()));
     getIt.registerFactory<IHomeMonthlyBalance>(() => HomeMonthlyBalance(repository: getIt.get<IHomeMonthlyBalanceRepository>()));
-    getIt.registerFactory<IIncomeDelete>(() => IncomeDelete(repository: getIt.get<IIncomeRepository>()));
-    getIt.registerFactory<IIncomeSave>(() => IncomeSave(repository: getIt.get<IIncomeRepository>()));
+    getIt.registerFactory<IIncomeDelete>(() => IncomeDelete(repository: getIt.get<IIncomeRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<IIncomeSave>(() => IncomeSave(repository: getIt.get<IIncomeRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<IIncomeFind>(() => IncomeFind(repository: getIt.get<IIncomeRepository>()));
     getIt.registerFactory<ICreditCardBillDates>(() => CreditCardBillDates());
     getIt.registerFactory<ILoginAuth>(() => LoginAuth(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<IReportCategoriesFind>(() => ReportCategoriesFind(repository: getIt.get<IReportCategoriesRepository>()));
     getIt.registerFactory<IResetPassword>(() => ResetPassword(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<IRestoreBackup>(() => RestoreBackup(repository: getIt.get<IBackupRepository>()));
     getIt.registerFactory<ISignupAuth>(() => SignupAuth(repository: getIt.get<IAuthRepository>()));
-    getIt.registerFactory<ITransactionFind>(() => TransactionFind(repository: getIt.get<ITransactionRepository>()));
-    getIt.registerFactory<ITransactionDelete>(() => TransactionDelete(incomeRepository: getIt.get<IIncomeRepository>(), expenseRepository: getIt.get<IExpenseRepository>(), transferRepository: getIt.get<ITransferRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
-    getIt.registerFactory<ITransferDelete>(() => TransferDelete(repository: getIt.get<ITransferRepository>()));
-    getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>()));
+    getIt.registerFactory<ITransactionFind>(() => TransactionFind(expenseRepository: getIt.get<IExpenseRepository>(), incomeRepository: getIt.get<IIncomeRepository>(), transferRepository: getIt.get<ITransferRepository>()));
+    getIt.registerFactory<ITransactionDelete>(() => TransactionDelete(incomeDelete: getIt.get<IIncomeDelete>(), expenseDelete: getIt.get<IExpenseDelete>(), transferDelete: getIt.get<ITransferDelete>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<ITransferDelete>(() => TransferDelete(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
 
     //Notifiers
     getIt.registerFactory<AccountNotifier>(() => AccountNotifier(accountFind: getIt.get<IAccountFind>(), accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>(), accountReadjustmentTransaction: getIt.get<IAccountReadjustmentTransaction>()));
@@ -303,18 +308,20 @@ final class DependencyInjection {
     getIt.registerFactory<HomeBillsCreditCardNotifier>(() => HomeBillsCreditCardNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
     getIt.registerFactory<HomeMonthlyBalanceNotifier>(() => HomeMonthlyBalanceNotifier(monthlyBalance: getIt.get<IHomeMonthlyBalance>()));
     getIt.registerFactory<HomeMonthlyTransactionNotifier>(() => HomeMonthlyTransactionNotifier(transactionFind: getIt.get<ITransactionFind>()));
+    getIt.registerFactory<HomeTransactionsUnpaidUnreceivedNotifier>(() => HomeTransactionsUnpaidUnreceivedNotifier(transactionFind: getIt.get<ITransactionFind>()));
+    getIt.registerFactory<TransactionsUnpaidUnreceivedNotifier>(() => TransactionsUnpaidUnreceivedNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>()));
     getIt.registerFactory<BackupNotifier>(() => BackupNotifier(backup: getIt.get<IBackup>(), restoreBackup: getIt.get<IRestoreBackup>(), deleteAppData: getIt.get<IDeleteAppData>()));
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
     getIt.registerFactory<CategoryNotifier>(() => CategoryNotifier(categorySave: getIt.get<ICategorySave>(), categoryDelete: getIt.get<ICategoryDelete>()));
     getIt.registerFactory<CreditCardNotifier>(() => CreditCardNotifier(creditCardSave: getIt.get<ICreditCardSave>(), creditCardDelete: getIt.get<ICreditCardDelete>(), creditCardFind: getIt.get<ICreditCardFind>()));
-    getIt.registerFactory<CreditCardExpenseNotifier>(() => CreditCardExpenseNotifier(creditCardTransactionSave: getIt.get<ICreditCardTransactionSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>(), transactionFind: getIt.get<ITransactionFind>()));
+    getIt.registerFactory<CreditCardExpenseNotifier>(() => CreditCardExpenseNotifier(creditCardTransactionSave: getIt.get<ICreditCardTransactionSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>(), expenseFind: getIt.get<IExpenseFind>()));
     getIt.registerFactory<CreditCardsNotifier>(() => CreditCardsNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
     getIt.registerFactory<CreditCardBillNotifier>(() => CreditCardBillNotifier(creditCardBillFind: getIt.get<ICreditCardBillFind>(), creditCardBillSave: getIt.get<ICreditCardBillSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>()));
     getIt.registerFactory<CreditCardBillsNotifier>(() => CreditCardBillsNotifier(creditCardBillFind: getIt.get<ICreditCardBillFind>()));
     getIt.registerSingleton<EmailVerificationNotifier>(EmailVerificationNotifier(signupAuth: getIt.get<ISignupAuth>()));
-    getIt.registerFactory<ExpenseNotifier>(() => ExpenseNotifier(expenseSave: getIt.get<IExpenseSave>(), expenseDelete: getIt.get<IExpenseDelete>(), transactionFind: getIt.get<ITransactionFind>()));
+    getIt.registerFactory<ExpenseNotifier>(() => ExpenseNotifier(expenseSave: getIt.get<IExpenseSave>(), expenseDelete: getIt.get<IExpenseDelete>(), expenseFind: getIt.get<IExpenseFind>()));
     getIt.registerSingleton<FirstStepsNotifier>(FirstStepsNotifier(firstStepsFind: getIt.get<IFirstStepsFind>(), firstStepsSave: getIt.get<IFirstStepsSave>(), eventNotifier: getIt.get<EventNotifier>()));
-    getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), transactionFind: getIt.get<ITransactionFind>()));
+    getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), incomeFind: getIt.get<IIncomeFind>()));
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<LoginNotifier>(() => LoginNotifier(loginAuth: getIt.get<ILoginAuth>()));
     getIt.registerFactory<ReportCategoriesNotifier>(() => ReportCategoriesNotifier(getIt.get<IReportCategoriesFind>()));
@@ -328,6 +335,8 @@ final class DependencyInjection {
 
   Future<void> dispose() async {
     await GetIt.I.reset();
+
+    (await DatabaseLocal.getInstance()).dispose();
 
     _instance = null;
   }

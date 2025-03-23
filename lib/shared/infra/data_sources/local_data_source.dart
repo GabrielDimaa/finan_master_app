@@ -114,7 +114,7 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
   @override
   Future<List<T>> findAll({String? where, List<dynamic>? whereArgs, bool deleted = false, ITransactionExecutor? txn}) => selectFull(where: where, whereArgs: whereArgs, deleted: deleted, txn: txn);
 
-  Future<List<T>> selectFull({String? id, bool deleted = false, String? where, List<dynamic>? whereArgs, String? orderBy, int? offset, int? limit, ITransactionExecutor? txn}) async {
+  Future<List<T>> selectFull({String? id, bool deleted = false, String? where, List<dynamic>? whereArgs, String? orderBy, int? offset, int? limit, String? groupBy, ITransactionExecutor? txn}) async {
     try {
       List<String> whereListed = [];
       whereArgs ??= [];
@@ -139,6 +139,7 @@ abstract class LocalDataSource<T extends Model> implements ILocalDataSource<T> {
         orderBy: orderBy ?? orderByDefault,
         limit: limit,
         offset: offset,
+        groupBy: groupBy,
       );
 
       return results.map((result) => fromMap(result)).toList();
