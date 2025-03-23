@@ -10,7 +10,7 @@ class IncomeEntity extends Entity implements ITransactionEntity {
   @override
   DateTime date;
 
-  bool paid;
+  bool received;
   String? observation;
 
   String? idAccount;
@@ -23,7 +23,7 @@ class IncomeEntity extends Entity implements ITransactionEntity {
     required this.description,
     required this.amount,
     required this.date,
-    required this.paid,
+    required this.received,
     required this.observation,
     required this.idAccount,
     required this.idCategory,

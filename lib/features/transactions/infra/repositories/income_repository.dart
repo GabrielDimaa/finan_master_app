@@ -55,4 +55,11 @@ class IncomeRepository implements IIncomeRepository {
             ))
         .toList();
   }
+
+  @override
+  Future<List<IncomeEntity>> findUnreceived() async {
+    final List<IncomeModel> models = await _incomeLocalDataSource.findAll(where: 'received = ?', whereArgs: [0]);
+
+    return models.map((model) => IncomeFactory.toEntity(model)).toList();
+  }
 }

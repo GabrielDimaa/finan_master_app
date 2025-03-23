@@ -173,6 +173,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
 
                                       return ListTileSelectable(
                                         value: item,
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                                         leading: CircleAvatar(
                                           backgroundColor: Color(category.color.toColor()!),
                                           child: Icon(category.icon.parseIconData(), color: Colors.white),

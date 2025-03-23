@@ -237,6 +237,13 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                         ),
                         const Spacing.y(),
                         const Divider(),
+                        ListTile(
+                          leading: notifier.income.received ? const Icon(Icons.task_alt_outlined) : const Icon(Icons.push_pin_outlined),
+                          title: Text(notifier.income.received ? strings.received : strings.unReceived),
+                          trailing: Switch(value: notifier.income.received, onChanged: notifier.setReceived),
+                          onTap: () => notifier.setReceived(!notifier.income.received),
+                        ),
+                        const Divider(),
                         GroupTile(
                           onTap: selectCategory,
                           title: strings.category,
@@ -384,6 +391,8 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
     );
 
     if (result == null || result == notifier.income.date) return;
+
+    if (result.isAfter(DateTime.now()) && notifier.income.date.isBefore(DateTime.now())) notifier.setReceived(false);
 
     dateController.text = result.format();
     notifier.setDate(result);

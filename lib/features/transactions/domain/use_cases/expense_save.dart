@@ -41,7 +41,8 @@ class ExpenseSave implements IExpenseSave {
 
       await Future.wait([
         _repository.save(entity, txn: txn).then((value) => entitySaved = value),
-        _statementRepository.save(statement, txn: txn),
+        if (entity.paid) _statementRepository.save(statement, txn: txn),
+        if (!statement.isNew && !entity.paid) _statementRepository.delete(statement, txn: txn),
       ]);
 
       return entitySaved;

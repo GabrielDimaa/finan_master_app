@@ -219,34 +219,28 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                 },
                               ),
                               const Spacing.y(),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                        prefixIcon: const Icon(Icons.calendar_today_outlined),
-                                        label: Text(strings.date),
-                                      ),
-                                      readOnly: true,
-                                      controller: dateController,
-                                      validator: InputRequiredValidator().validate,
-                                      enabled: !notifier.isLoading,
-                                      onTap: selectDate,
-                                    ),
-                                  ),
-                                  const Spacing.x(),
-                                  FilterChip(
-                                    selected: notifier.expense.paid,
-                                    backgroundColor: Colors.transparent,
-                                    label: Text(strings.paid),
-                                    onSelected: notifier.setPaid,
-                                  ),
-                                ],
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  prefixIcon: const Icon(Icons.calendar_today_outlined),
+                                  label: Text(strings.date),
+                                ),
+                                readOnly: true,
+                                controller: dateController,
+                                validator: InputRequiredValidator().validate,
+                                enabled: !notifier.isLoading,
+                                onTap: selectDate,
                               ),
                             ],
                           ),
                         ),
                         const Spacing.y(),
+                        const Divider(),
+                        ListTile(
+                          leading: notifier.expense.paid ? const Icon(Icons.task_alt_outlined) : const Icon(Icons.push_pin_outlined),
+                          title: Text(notifier.expense.paid ? strings.paid : strings.unpaid),
+                          trailing: Switch(value: notifier.expense.paid, onChanged: notifier.setPaid),
+                          onTap: () => notifier.setPaid(!notifier.expense.paid),
+                        ),
                         const Divider(),
                         GroupTile(
                           onTap: selectCategory,
@@ -392,6 +386,8 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
     final DateTime? result = await showDatePickerDefault(context: context, initialDate: notifier.expense.date);
 
     if (result == null || result == notifier.expense.date) return;
+
+    if (result.isAfter(DateTime.now()) && notifier.expense.date.isBefore(DateTime.now())) notifier.setPaid(false);
 
     dateController.text = result.format();
     notifier.setDate(result);

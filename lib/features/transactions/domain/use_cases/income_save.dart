@@ -41,7 +41,8 @@ class IncomeSave implements IIncomeSave {
 
       await Future.wait([
         _repository.save(entity, txn: txn).then((value) => entitySaved = value),
-        _statementRepository.save(statement, txn: txn),
+        if (entity.received) _statementRepository.save(statement, txn: txn),
+        if (!statement.isNew && !entity.received) _statementRepository.delete(statement, txn: txn),
       ]);
 
       return entitySaved;

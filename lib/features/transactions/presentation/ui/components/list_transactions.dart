@@ -13,11 +13,13 @@ import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
+import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/item_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_tile_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_view_selectable.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -40,7 +42,7 @@ class ListTransactions extends StatefulWidget {
   State<ListTransactions> createState() => _ListTransactionsState();
 }
 
-class _ListTransactionsState extends State<ListTransactions> {
+class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
   @override
   Widget build(BuildContext context) {
     return ListViewSelectable.separated(
@@ -55,6 +57,7 @@ class _ListTransactionsState extends State<ListTransactions> {
           final category = widget.categories.firstWhere((category) => category.id == expense.idCategory);
           return ListTileSelectable<ITransactionEntity>(
             value: item,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             leading: CircleAvatar(
               backgroundColor: Color(category.color.toColor()!),
               child: Icon(category.icon.parseIconData(), color: Colors.white),
@@ -66,7 +69,16 @@ class _ListTransactionsState extends State<ListTransactions> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(expense.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (!expense.paid) ...[
+                      const Icon(Icons.push_pin_outlined, size: 18),
+                      const Spacing.x(0.5),
+                    ],
+                    Text(expense.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFFFF5454))),
+                  ],
+                ),
                 Text(expense.date.formatDateToRelative()),
               ],
             ),
@@ -87,6 +99,7 @@ class _ListTransactionsState extends State<ListTransactions> {
           final category = widget.categories.firstWhere((category) => category.id == income.idCategory);
           return ListTileSelectable<ITransactionEntity>(
             value: item,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             leading: CircleAvatar(
               backgroundColor: Color(category.color.toColor()!),
               child: Icon(category.icon.parseIconData(), color: Colors.white),
@@ -98,7 +111,16 @@ class _ListTransactionsState extends State<ListTransactions> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(income.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (!income.received) ...[
+                      const Icon(Icons.push_pin_outlined, size: 18),
+                      const Spacing.x(0.5),
+                    ],
+                    Text(income.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0XFF3CDE87))),
+                  ],
+                ),
                 Text(income.date.formatDateToRelative()),
               ],
             ),
@@ -112,6 +134,7 @@ class _ListTransactionsState extends State<ListTransactions> {
             children: [
               ListTileSelectable<ITransactionEntity>(
                 value: item,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 leading: CircleAvatar(
                   backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
                   child: const Icon(Icons.move_up_outlined),

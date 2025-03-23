@@ -34,6 +34,7 @@ import 'package:finan_master_app/features/transactions/domain/entities/transfer_
 import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transactions_list_page.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/transactions_unpaid_unreceived_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_bar_rail.dart';
 import 'package:flutter/widgets.dart';
@@ -176,6 +177,12 @@ sealed class AppRouter {
           name: ReportCategoriesPage.route,
           path: '/${ReportCategoriesPage.route}',
           builder: (_, __) => const ReportCategoriesPage(),
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: TransactionsUnpaidUnreceivedPage.route,
+          path: '/${TransactionsUnpaidUnreceivedPage.route}',
+          builder: (_, GoRouterState state) => TransactionsUnpaidUnreceivedPage(categoryType: state.extra as CategoryTypeEnum),
         ),
         StatefulShellRoute.indexedStack(
           parentNavigatorKey: _rootNavigatorKey,

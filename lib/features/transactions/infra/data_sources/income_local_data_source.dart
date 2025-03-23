@@ -25,7 +25,7 @@ class IncomeLocalDataSource extends LocalDataSource<IncomeModel> implements IInc
         description TEXT NOT NULL,
         amount REAL NOT NULL,
         date TEXT NOT NULL,
-        paid INTEGER NOT NULL DEFAULT 1,
+        received INTEGER NOT NULL DEFAULT 1,
         id_account TEXT NOT NULL REFERENCES $accountsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         id_category TEXT NOT NULL REFERENCES $categoriesTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         observation TEXT
@@ -44,7 +44,7 @@ class IncomeLocalDataSource extends LocalDataSource<IncomeModel> implements IInc
       description: map['${prefix}description'],
       amount: map['${prefix}amount'],
       date: DateTime.tryParse(map['${prefix}date'].toString())!.toLocal(),
-      paid: map['${prefix}paid'] == 1,
+      received: map['${prefix}received'] == 1,
       observation: map['${prefix}observation'],
       idAccount: map['${prefix}id_account'],
       idCategory: map['${prefix}id_category'],

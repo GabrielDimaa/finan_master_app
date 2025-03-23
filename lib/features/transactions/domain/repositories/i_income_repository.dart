@@ -10,4 +10,6 @@ abstract interface class IIncomeRepository {
   Future<List<IncomeEntity>> findByPeriod(DateTime startDate, DateTime endDate);
 
   Future<List<TransactionByTextEntity>> findByText(String text);
+
+  Future<List<IncomeEntity>> findUnreceived();
 }

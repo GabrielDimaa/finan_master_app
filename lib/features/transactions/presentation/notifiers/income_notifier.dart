@@ -41,8 +41,8 @@ class IncomeNotifier extends ValueNotifier<IncomeState> {
     value = value.changedIncome();
   }
 
-  void setPaid(bool paid) {
-    income.paid = paid;
+  void setReceived(bool received) {
+    income.received = received;
     value = value.changedIncome();
   }
 

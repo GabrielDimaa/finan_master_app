@@ -28,7 +28,7 @@ class StartIncomeState extends IncomeState {
             description: '',
             amount: 0,
             date: DateTime.now(),
-            paid: true,
+            received: true,
             observation: null,
             idAccount: null,
             idCategory: null,

@@ -6,9 +6,9 @@ import 'package:finan_master_app/features/transactions/domain/entities/income_en
 class TransactionsByPeriodEntity {
   final List<ITransactionEntity> transactions;
 
-  double get amountsIncome => transactions.map((transaction) => transaction is IncomeEntity ? transaction.amount : 0).sum.toDouble();
+  double get amountsIncome => transactions.map((transaction) => transaction is IncomeEntity && transaction.received ? transaction.amount : 0).sum.toDouble();
 
-  double get amountsExpense => transactions.map((transaction) => transaction is ExpenseEntity ? transaction.amount : 0).sum.toDouble();
+  double get amountsExpense => transactions.map((transaction) => transaction is ExpenseEntity && transaction.paid ? transaction.amount : 0).sum.toDouble();
 
   //amountsExpense terá valor negativo, portanto, 10000 + (-100).
   double get balance => amountsIncome + amountsExpense;

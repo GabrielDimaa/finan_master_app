@@ -31,7 +31,7 @@ class AccountReadjustmentTransaction implements IAccountReadjustmentTransaction 
         description: description,
         amount: readjustmentValue.abs(),
         date: DateTime.now(),
-        paid: true,
+        received: true,
         observation: null,
         idAccount: account.id,
         idCategory: categoryOthersUuidIncome,

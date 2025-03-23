@@ -11,6 +11,7 @@ class ListTileSelectable<T> extends StatelessWidget {
   final Widget? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
+  final EdgeInsetsGeometry? contentPadding;
 
   const ListTileSelectable({
     Key? key,
@@ -20,6 +21,7 @@ class ListTileSelectable<T> extends StatelessWidget {
     this.subtitle,
     this.trailing,
     this.onTap,
+    this.contentPadding,
   }) : super(key: key);
 
   @override
@@ -44,6 +46,7 @@ class ListTileSelectable<T> extends StatelessWidget {
       tileColor: value.selected ? colorScheme.secondaryContainer : null,
       onTap: modeSelection?.active == true ? () => update(context) : onTap,
       onLongPress: listViewModeSelection != null ? () => update(context) : null,
+      contentPadding: contentPadding,
     );
   }
 

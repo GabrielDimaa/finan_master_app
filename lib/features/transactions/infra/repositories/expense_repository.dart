@@ -77,4 +77,11 @@ class ExpenseRepository implements IExpenseRepository {
 
     return models.map((model) => ExpenseFactory.toEntity(model)).toList();
   }
+
+  @override
+  Future<List<ExpenseEntity>> findUnpaid() async {
+    final List<ExpenseModel> models = await _expenseLocalDataSource.findAll(where: 'paid = ?', whereArgs: [0]);
+
+    return models.map((model) => ExpenseFactory.toEntity(model)).toList();
+  }
 }

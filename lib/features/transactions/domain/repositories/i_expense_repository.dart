@@ -14,4 +14,6 @@ abstract interface class IExpenseRepository {
   Future<List<TransactionByTextEntity>> findByText(String text);
 
   Future<List<ExpenseEntity>> findByIdCreditCardTransaction(List<String> ids);
+
+  Future<List<ExpenseEntity>> findUnpaid();
 }

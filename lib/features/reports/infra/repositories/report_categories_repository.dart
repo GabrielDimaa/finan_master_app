@@ -37,8 +37,8 @@ class ReportCategoriesRepository implements IReportCategoriesRepository {
 
   @override
   Future<List<ReportCategoryEntity>> findByPeriod({required DateTime? startDate, required DateTime? endDate, required CategoryTypeEnum type}) async {
-    final List<String> where = [];
-    final List<dynamic> whereArgs = [];
+    final List<String> where = ['paid = ?'];
+    final List<dynamic> whereArgs = [1];
 
     if (startDate != null) {
       where.add('date >= ?');

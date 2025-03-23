@@ -10,6 +10,8 @@ abstract interface class IStatementRepository {
 
   Future<List<StatementEntity>> findByIdTransfer(String id);
 
+  Future<void> delete(StatementEntity entity, {ITransactionExecutor? txn});
+
   Future<void> deleteByIdExpense(String id, {ITransactionExecutor? txn});
 
   Future<void> deleteByIdsExpense(List<String> ids, {ITransactionExecutor? txn});

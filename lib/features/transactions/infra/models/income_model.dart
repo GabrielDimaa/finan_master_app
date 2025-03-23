@@ -4,7 +4,7 @@ class IncomeModel extends Model {
   String description;
   double amount;
   DateTime date;
-  bool paid;
+  bool received;
   String? observation;
 
   String idAccount;
@@ -17,7 +17,7 @@ class IncomeModel extends Model {
     required this.description,
     required this.amount,
     required this.date,
-    required this.paid,
+    required this.received,
     required this.observation,
     required this.idAccount,
     required this.idCategory,
@@ -30,7 +30,7 @@ class IncomeModel extends Model {
       'description': description,
       'amount': amount,
       'date': date.toIso8601String(),
-      'paid': paid ? 1 : 0,
+      'received': received ? 1 : 0,
       'observation': observation,
       'id_account': idAccount,
       'id_category': idCategory,
@@ -46,7 +46,7 @@ class IncomeModel extends Model {
       description: description,
       amount: amount,
       date: date,
-      paid: paid,
+      received: received,
       observation: observation,
       idAccount: idAccount,
       idCategory: idCategory,

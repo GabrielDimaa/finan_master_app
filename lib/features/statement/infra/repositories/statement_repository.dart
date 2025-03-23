@@ -42,6 +42,9 @@ class StatementRepository implements IStatementRepository {
   }
 
   @override
+  Future<void> delete(StatementEntity entity, {ITransactionExecutor? txn}) => _dataSource.delete(StatementFactory.fromEntity(entity), txn: txn);
+
+  @override
   Future<void> deleteByIdExpense(String id, {ITransactionExecutor? txn}) => _dataSource.deleteByIdExpense(id, txn: txn);
 
   @override
