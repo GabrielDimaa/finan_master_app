@@ -298,7 +298,7 @@ final class DatabaseLocal implements IDatabaseLocal {
         ''');
 
         batch.execute('ALTER TABLE expenses ADD COLUMN paid INTEGER NOT NULL DEFAULT 1;');
-        batch.execute('ALTER TABLE incomes ADD COLUMN paid INTEGER NOT NULL DEFAULT 1;');
+        batch.execute('ALTER TABLE incomes ADD COLUMN received INTEGER NOT NULL DEFAULT 1;');
 
         batch.execute('''
           CREATE TABLE expenses_new (
@@ -347,7 +347,7 @@ final class DatabaseLocal implements IDatabaseLocal {
             description TEXT NOT NULL,
             amount REAL NOT NULL,
             date TEXT NOT NULL,
-            paid INTEGER NOT NULL DEFAULT 1,
+            received INTEGER NOT NULL DEFAULT 1,
             id_account TEXT NOT NULL REFERENCES accounts(id) ON UPDATE CASCADE ON DELETE RESTRICT,
             id_category TEXT NOT NULL REFERENCES categories(id) ON UPDATE CASCADE ON DELETE RESTRICT,
             observation TEXT
@@ -355,7 +355,7 @@ final class DatabaseLocal implements IDatabaseLocal {
         ''');
 
         batch.execute('''
-          INSERT INTO incomes_new (id, created_at, deleted_at, description, amount, date, paid, id_account, id_category, observation)
+          INSERT INTO incomes_new (id, created_at, deleted_at, description, amount, date, received, id_account, id_category, observation)
             SELECT
               incomes.id,
               incomes.created_at,
