@@ -37,8 +37,8 @@ class ReportCategoriesRepository implements IReportCategoriesRepository {
 
   @override
   Future<List<ReportCategoryEntity>> findByPeriod({required DateTime? startDate, required DateTime? endDate, required CategoryTypeEnum type}) async {
-    final List<String> where = ['paid = ?'];
-    final List<dynamic> whereArgs = [1];
+    final List<String> where = [];
+    final List<dynamic> whereArgs = [];
 
     if (startDate != null) {
       where.add('date >= ?');
@@ -53,7 +53,7 @@ class ReportCategoriesRepository implements IReportCategoriesRepository {
     final List<ITransactionEntity> transactions = [];
 
     if (type == CategoryTypeEnum.expense) {
-      final List<ExpenseModel> expenses = await _expenseLocalDataSource.findAll(where: [...where, 'id_credit_card_transaction IS NULL'].join(' AND '), whereArgs: whereArgs);
+      final List<ExpenseModel> expenses = await _expenseLocalDataSource.findAll(where: [...where, 'paid = ?', 'id_credit_card_transaction IS NULL'].join(' AND '), whereArgs: [...whereArgs, 1]);
       final List<CreditCardTransactionModel> creditCardTransactions = await _creditCardTransactionLocalDataSource.findByPeriod(startDate: startDate, endDate: endDate, onlyPaid: true, ignoreBillPayment: true);
 
       transactions.addAll([
@@ -63,7 +63,7 @@ class ReportCategoriesRepository implements IReportCategoriesRepository {
 
       transactions.sortBy((e) => e.date);
     } else {
-      final List<IncomeModel> incomes = await _incomeLocalDataSource.findAll(where: where.join(' AND '), whereArgs: whereArgs);
+      final List<IncomeModel> incomes = await _incomeLocalDataSource.findAll(where: [...where, 'received = ?'].join(' AND '), whereArgs: [...whereArgs, 1]);
 
       transactions.addAll(incomes.map((e) => IncomeFactory.toEntity(e)));
     }
