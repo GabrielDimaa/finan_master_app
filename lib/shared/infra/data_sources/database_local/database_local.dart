@@ -420,7 +420,9 @@ final class DatabaseLocal implements IDatabaseLocal {
         batch.execute('''
           UPDATE expenses
           SET id_category = '00000000-0000-0000-0000-000000000002'
-          WHERE id_credit_card_transaction IS NOT NULL;
+          WHERE 
+            id_credit_card_transaction IS NOT NULL AND
+            deleted_at IS NULL;
         ''');
       }
 

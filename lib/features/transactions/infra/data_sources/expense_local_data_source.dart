@@ -76,7 +76,8 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
           FROM
             $tableName
           WHERE
-            LOWER(description) LIKE LOWER(?)
+            LOWER(description) LIKE LOWER(?) AND
+            ${Model.deletedAtColumnName} IS NULL
 
           UNION
 
@@ -90,7 +91,8 @@ class ExpenseLocalDataSource extends LocalDataSource<ExpenseModel> implements IE
           FROM
             $creditCardTransactionsTableName
           WHERE
-            LOWER(description) LIKE LOWER(?)
+            LOWER(description) LIKE LOWER(?) AND
+            ${Model.deletedAtColumnName} IS NULL
         )
         GROUP BY description, id_category
         ORDER BY
