@@ -211,11 +211,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
         final bool confirm = await ConfirmReadjustBalanceDialog.show(context: context, accountEntity: notifier.account, value: difference, option: readjustmentOption.value);
         if (!confirm) return;
 
-        await notifier.readjustBalance(
-          readjustmentValue: readjustmentOption.value == ReadjustmentOptionEnum.changeInitialAmount ? readjustmentValue : difference,
-          option: readjustmentOption.value,
-          description: transactionDescription?.isNotEmpty == true ? transactionDescription! : strings.readjustmentTransaction,
-        );
+        await notifier.readjustBalance(readjustmentValue: difference, option: readjustmentOption.value, description: transactionDescription?.isNotEmpty == true ? transactionDescription! : strings.readjustmentTransaction,);
 
         if (notifier.value is ErrorAccountState) throw Exception((notifier.value as ErrorAccountState).message);
 
