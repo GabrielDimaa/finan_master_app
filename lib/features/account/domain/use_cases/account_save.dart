@@ -2,6 +2,7 @@ import 'package:finan_master_app/features/account/domain/entities/account_entity
 import 'package:finan_master_app/features/account/domain/repositories/i_account_repository.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_save.dart';
 import 'package:finan_master_app/shared/exceptions/exceptions.dart';
+import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class AccountSave implements IAccountSave {
@@ -12,7 +13,7 @@ class AccountSave implements IAccountSave {
   @override
   Future<AccountEntity> save(AccountEntity entity) async {
     if (entity.description.trim().isEmpty) throw ValidationException(R.strings.uninformedDescription);
-    if (entity.initialAmount < 0) throw ValidationException(R.strings.greaterThanZero);
+    if (entity.isNew && entity.initialAmount < 0) throw ValidationException(R.strings.greaterThanZero);
     if (entity.financialInstitution == null) return throw ValidationException(R.strings.uninformedFinancialInstitution);
 
     return await _repository.save(entity);
@@ -20,9 +21,9 @@ class AccountSave implements IAccountSave {
 
   @override
   Future<AccountEntity> changeInitialAmount({required AccountEntity entity, required double readjustmentValue}) async {
-    if (readjustmentValue < 0) throw ValidationException(R.strings.greaterThanZero);
+    if (readjustmentValue == 0) throw ValidationException(R.strings.greaterThanZero);
 
-    entity.initialAmount = readjustmentValue;
+    entity.initialAmount = (entity.initialAmount + readjustmentValue).toRound(2);
 
     return await save(entity);
   }
