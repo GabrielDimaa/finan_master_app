@@ -1,6 +1,6 @@
 import 'package:finan_master_app/shared/presentation/ui/app.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:finan_master_app/l10n/generated/app_localizations.dart';
 
 class SwitchThemeMode extends StatelessWidget {
   const SwitchThemeMode({Key? key}) : super(key: key);

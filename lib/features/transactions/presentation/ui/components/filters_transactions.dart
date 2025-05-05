@@ -5,7 +5,7 @@ import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/filters/monthly_filter.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:finan_master_app/l10n/generated/app_localizations.dart';
 
 class FiltersTransactions extends StatefulWidget {
   final TransactionsNotifier notifier;

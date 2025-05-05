@@ -49,7 +49,7 @@ android {
 
     defaultConfig {
         applicationId "com.finanmaster.app"
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion localProperties.getProperty('flutter.minSdkVersion')
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -85,7 +85,7 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.20"
     implementation "com.google.firebase:firebase-bom:32.8.0"
     implementation "androidx.multidex:multidex:2.0.1"
 }

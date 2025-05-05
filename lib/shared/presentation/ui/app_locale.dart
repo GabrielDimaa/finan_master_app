@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:finan_master_app/l10n/generated/app_localizations.dart';
 
 abstract class R {
   static Locale get locale => AppLocale().locale;

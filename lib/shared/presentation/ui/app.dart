@@ -3,7 +3,7 @@ import 'package:finan_master_app/features/config/presentation/notifiers/locale_n
 import 'package:finan_master_app/features/config/presentation/notifiers/theme_mode_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:finan_master_app/l10n/generated/app_localizations.dart';
 
 const String appName = 'Finan Master';
 const Color primaryColor = Color(0xFF005BC0);
