@@ -425,9 +425,9 @@ final class DatabaseLocal implements IDatabaseLocal {
             deleted_at IS NULL;
         ''');
       }
-
-      await batch.commit();
     }
+
+    await batch.commit();
   }
 
   Future<String> _getPath() async {

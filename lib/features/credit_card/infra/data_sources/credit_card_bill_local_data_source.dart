@@ -73,7 +73,12 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
       final String sql = '''
         WITH bills_with_total_amount AS (
           SELECT
-            $tableName.*,
+            $tableName.${Model.idColumnName},
+            $tableName.${Model.createdAtColumnName},
+            $tableName.${Model.deletedAtColumnName},
+            $tableName.bill_closing_date,
+            $tableName.bill_due_date,
+            $tableName.id_credit_card,
             ROUND(SUM(${creditCardTransactionLocalDataSource.tableName}.amount)) AS total_amount
           FROM $tableName
           LEFT JOIN ${creditCardTransactionLocalDataSource.tableName}
@@ -101,7 +106,14 @@ class CreditCardBillLocalDataSource extends LocalDataSource<CreditCardBillModel>
           ${creditCardTransactionLocalDataSource.tableName}.id_credit_card_bill AS ${creditCardTransactionLocalDataSource.tableName}_id_credit_card_bill,
           ${creditCardTransactionLocalDataSource.tableName}.observation AS ${creditCardTransactionLocalDataSource.tableName}_observation
         FROM (
-          SELECT $tableName.*
+          SELECT 
+            $tableName.${Model.idColumnName},
+            $tableName.${Model.createdAtColumnName},
+            $tableName.${Model.deletedAtColumnName},
+            $tableName.bill_closing_date,
+            $tableName.bill_due_date,
+            $tableName.id_credit_card,
+            $tableName.total_amount
           FROM bills_with_total_amount AS $tableName
           ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
           ${groupBy?.isNotEmpty == true ? 'GROUP BY $groupBy' : ''}
