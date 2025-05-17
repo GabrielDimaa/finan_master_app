@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/ad/domain/use_cases/i_ad_access.dart';
 import 'package:finan_master_app/features/statement/domain/entities/statement_entity.dart';
 import 'package:finan_master_app/features/statement/domain/repositories/i_statement_repository.dart';
 import 'package:finan_master_app/features/statement/helpers/statement_factory.dart';
@@ -12,14 +13,17 @@ class ExpenseSave implements IExpenseSave {
   final IExpenseRepository _repository;
   final IStatementRepository _statementRepository;
   final ILocalDBTransactionRepository _localDBTransactionRepository;
+  final IAdAccess _adAccess;
 
   ExpenseSave({
     required IExpenseRepository repository,
     required IStatementRepository statementRepository,
     required ILocalDBTransactionRepository localDBTransactionRepository,
+    required IAdAccess adAccess,
   })  : _repository = repository,
         _statementRepository = statementRepository,
-        _localDBTransactionRepository = localDBTransactionRepository;
+        _localDBTransactionRepository = localDBTransactionRepository,
+        _adAccess = adAccess;
 
   @override
   Future<ExpenseEntity> save(ExpenseEntity entity) async {
@@ -44,6 +48,8 @@ class ExpenseSave implements IExpenseSave {
         if (entity.paid) _statementRepository.save(statement, txn: txn),
         if (!statement.isNew && !entity.paid) _statementRepository.delete(statement, txn: txn),
       ]);
+
+      _adAccess.consumeUse();
 
       return entitySaved;
     });

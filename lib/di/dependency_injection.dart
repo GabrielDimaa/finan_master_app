@@ -13,6 +13,14 @@ import 'package:finan_master_app/features/account/infra/data_sources/i_account_l
 import 'package:finan_master_app/features/account/infra/repositories/account_repository.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
+import 'package:finan_master_app/features/ad/domain/repositories/i_ad_access_repository.dart';
+import 'package:finan_master_app/features/ad/domain/repositories/i_ad_repository.dart';
+import 'package:finan_master_app/features/ad/domain/use_cases/ad.dart';
+import 'package:finan_master_app/features/ad/domain/use_cases/ad_access.dart';
+import 'package:finan_master_app/features/ad/domain/use_cases/i_ad.dart';
+import 'package:finan_master_app/features/ad/domain/use_cases/i_ad_access.dart';
+import 'package:finan_master_app/features/ad/infra/repositories/ad_access_repository.dart';
+import 'package:finan_master_app/features/ad/infra/repositories/ad_repository.dart';
 import 'package:finan_master_app/features/auth/domain/repositories/i_auth_repository.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/auth_find.dart';
 import 'package:finan_master_app/features/auth/domain/use_cases/i_auth_find.dart';
@@ -167,6 +175,8 @@ import 'package:finan_master_app/shared/infra/data_sources/cache_local/cache_loc
 import 'package:finan_master_app/shared/infra/data_sources/cache_local/i_cache_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local.dart';
+import 'package:finan_master_app/shared/infra/drivers/ad/ad_driver.dart';
+import 'package:finan_master_app/shared/infra/drivers/ad/i_ad_driver.dart';
 import 'package:finan_master_app/shared/infra/drivers/auth/auth_driver.dart';
 import 'package:finan_master_app/shared/infra/drivers/auth/i_auth_driver.dart';
 import 'package:finan_master_app/shared/infra/drivers/crypt/crypt_aes.dart';
@@ -225,6 +235,7 @@ final class DependencyInjection {
 
     getIt.registerSingleton<IDatabaseLocal>(databaseLocal);
     getIt.registerSingleton<SharedPreferences>(sharedPreferences);
+    getIt.registerSingleton<IAdDriver>(AdDriver());
     getIt.registerFactory<ICacheLocal>(() => CacheLocal(sharedPreferences: sharedPreferences));
 
     getIt.registerFactory<IAccountLocalDataSource>(() => AccountLocalDataSource(databaseLocal: databaseLocal));
@@ -244,6 +255,8 @@ final class DependencyInjection {
 
     //Repositories
     getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>(), creditCardLocalDataSource: getIt.get<ICreditCardLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
+    getIt.registerFactory<IAdRepository>(() => AdRepository(driver: getIt.get<IAdDriver>()));
+    getIt.registerFactory<IAdAccessRepository>(() => AdAccessRepository(cacheLocal: getIt.get<ICacheLocal>()));
     getIt.registerFactory<IAuthRepository>(() => AuthRepository(authDataSource: getIt.get<IAuthLocalDataSource>(), userAccountLocalDataSource: getIt.get<IUserAccountLocalDataSource>(), userAccountCloudDataSource: getIt.get<IUserAccountCloudDataSource>(), authDriver: getIt.get<IAuthDriver>(), databaseLocalTransaction: databaseLocal.transactionInstance(), cryptAES: getIt.get<ICryptAES>()));
     getIt.registerFactory<IBackupRepository>(() => BackupRepository(databaseLocal: databaseLocal, cacheLocal: getIt.get<ICacheLocal>(), shareDriver: getIt.get<IShareDriver>(), filePickerDriver: getIt.get<IFilePickerDriver>()));
     getIt.registerFactory<ICategoryRepository>(() => CategoryRepository(dataSource: getIt.get<ICategoryLocalDataSource>()));
@@ -262,33 +275,35 @@ final class DependencyInjection {
     getIt.registerFactory<IStatementRepository>(() => StatementRepository(dataSource: getIt.get<IStatementLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
 
     //Use cases
-    getIt.registerFactory<IAccountDelete>(() => AccountDelete(repository: getIt.get<IAccountRepository>()));
+    getIt.registerFactory<IAccountDelete>(() => AccountDelete(repository: getIt.get<IAccountRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<IAccountFind>(() => AccountFind(repository: getIt.get<IAccountRepository>()));
     getIt.registerFactory<IAccountReadjustmentTransaction>(() => AccountReadjustmentTransaction(incomeSave: getIt.get<IIncomeSave>(), expenseSave: getIt.get<IExpenseSave>(), repository: getIt.get<IAccountRepository>()));
-    getIt.registerFactory<IAccountSave>(() => AccountSave(repository: getIt.get<IAccountRepository>()));
+    getIt.registerFactory<IAccountSave>(() => AccountSave(repository: getIt.get<IAccountRepository>(), adAccess: getIt.get<IAdAccess>()));
+    getIt.registerFactory<IAd>(() => Ad(repository: getIt.get<IAdRepository>(), adAccess: getIt.get<IAdAccess>()));
+    getIt.registerFactory<IAdAccess>(() => AdAccess(repository: getIt.get<IAdAccessRepository>()));
     getIt.registerFactory<IAuthFind>(() => AuthFind(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<IBackup>(() => Backup(repository: getIt.get<IBackupRepository>()));
-    getIt.registerFactory<ICategoryDelete>(() => CategoryDelete(repository: getIt.get<ICategoryRepository>()));
+    getIt.registerFactory<ICategoryDelete>(() => CategoryDelete(repository: getIt.get<ICategoryRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<ICategoryFind>(() => CategoryFind(repository: getIt.get<ICategoryRepository>()));
-    getIt.registerFactory<ICategorySave>(() => CategorySave(repository: getIt.get<ICategoryRepository>()));
+    getIt.registerFactory<ICategorySave>(() => CategorySave(repository: getIt.get<ICategoryRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<IConfigFind>(() => ConfigFind(repository: getIt.get<IConfigRepository>()));
     getIt.registerFactory<IConfigSave>(() => ConfigSave(repository: getIt.get<IConfigRepository>()));
-    getIt.registerFactory<ICreditCardDelete>(() => CreditCardDelete(repository: getIt.get<ICreditCardRepository>()));
+    getIt.registerFactory<ICreditCardDelete>(() => CreditCardDelete(repository: getIt.get<ICreditCardRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<ICreditCardFind>(() => CreditCardFind(repository: getIt.get<ICreditCardRepository>()));
-    getIt.registerFactory<ICreditCardSave>(() => CreditCardSave(creditCardBillDates: getIt.get<ICreditCardBillDates>(), repository: getIt.get<ICreditCardRepository>(), creditCardBillRepository: getIt.get<ICreditCardBillRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<ICreditCardSave>(() => CreditCardSave(creditCardBillDates: getIt.get<ICreditCardBillDates>(), repository: getIt.get<ICreditCardRepository>(), creditCardBillRepository: getIt.get<ICreditCardBillRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<ICreditCardBillFind>(() => CreditCardBillFind(repository: getIt.get<ICreditCardBillRepository>()));
     getIt.registerFactory<ICreditCardBillSave>(() => CreditCardBillSave(repository: getIt.get<ICreditCardBillRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), creditCardRepository: getIt.get<ICreditCardRepository>(), expenseRepository: getIt.get<IExpenseRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), statementRepository: getIt.get<IStatementRepository>()));
-    getIt.registerFactory<ICreditCardTransactionDelete>(() => CreditCardTransactionDelete(repository: getIt.get<ICreditCardTransactionRepository>(), expenseRepository: getIt.get<IExpenseRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
-    getIt.registerFactory<ICreditCardTransactionSave>(() => CreditCardTransactionSave(creditCardBillDates: getIt.get<ICreditCardBillDates>(), repository: getIt.get<ICreditCardRepository>(), creditCardBillRepository: getIt.get<ICreditCardBillRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>()));
+    getIt.registerFactory<ICreditCardTransactionDelete>(() => CreditCardTransactionDelete(repository: getIt.get<ICreditCardTransactionRepository>(), expenseRepository: getIt.get<IExpenseRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
+    getIt.registerFactory<ICreditCardTransactionSave>(() => CreditCardTransactionSave(creditCardBillDates: getIt.get<ICreditCardBillDates>(), repository: getIt.get<ICreditCardRepository>(), creditCardBillRepository: getIt.get<ICreditCardBillRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<IDeleteAppData>(() => DeleteAppData(repository: getIt.get<IDeleteAppDataRepository>()));
-    getIt.registerFactory<IExpenseDelete>(() => ExpenseDelete(repository: getIt.get<IExpenseRepository>(), statementRepository: getIt.get<IStatementRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
-    getIt.registerFactory<IExpenseSave>(() => ExpenseSave(repository: getIt.get<IExpenseRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<IExpenseDelete>(() => ExpenseDelete(repository: getIt.get<IExpenseRepository>(), statementRepository: getIt.get<IStatementRepository>(), creditCardTransactionRepository: getIt.get<ICreditCardTransactionRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
+    getIt.registerFactory<IExpenseSave>(() => ExpenseSave(repository: getIt.get<IExpenseRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<IExpenseFind>(() => ExpenseFind(repository: getIt.get<IExpenseRepository>()));
     getIt.registerFactory<IFirstStepsFind>(() => FirstStepsFind(repository: getIt.get<IFirstStepsRepository>()));
     getIt.registerFactory<IFirstStepsSave>(() => FirstStepsSave(repository: getIt.get<IFirstStepsRepository>()));
     getIt.registerFactory<IHomeMonthlyBalance>(() => HomeMonthlyBalance(repository: getIt.get<IHomeMonthlyBalanceRepository>()));
-    getIt.registerFactory<IIncomeDelete>(() => IncomeDelete(repository: getIt.get<IIncomeRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
-    getIt.registerFactory<IIncomeSave>(() => IncomeSave(repository: getIt.get<IIncomeRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<IIncomeDelete>(() => IncomeDelete(repository: getIt.get<IIncomeRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
+    getIt.registerFactory<IIncomeSave>(() => IncomeSave(repository: getIt.get<IIncomeRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<IIncomeFind>(() => IncomeFind(repository: getIt.get<IIncomeRepository>()));
     getIt.registerFactory<ICreditCardBillDates>(() => CreditCardBillDates());
     getIt.registerFactory<ILoginAuth>(() => LoginAuth(repository: getIt.get<IAuthRepository>()));
@@ -298,8 +313,8 @@ final class DependencyInjection {
     getIt.registerFactory<ISignupAuth>(() => SignupAuth(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<ITransactionFind>(() => TransactionFind(expenseRepository: getIt.get<IExpenseRepository>(), incomeRepository: getIt.get<IIncomeRepository>(), transferRepository: getIt.get<ITransferRepository>()));
     getIt.registerFactory<ITransactionDelete>(() => TransactionDelete(incomeDelete: getIt.get<IIncomeDelete>(), expenseDelete: getIt.get<IExpenseDelete>(), transferDelete: getIt.get<ITransferDelete>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
-    getIt.registerFactory<ITransferDelete>(() => TransferDelete(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
-    getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
+    getIt.registerFactory<ITransferDelete>(() => TransferDelete(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
+    getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
 
     //Notifiers
     getIt.registerFactory<AccountNotifier>(() => AccountNotifier(accountFind: getIt.get<IAccountFind>(), accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>(), accountReadjustmentTransaction: getIt.get<IAccountReadjustmentTransaction>()));

@@ -8,6 +8,7 @@ import 'package:finan_master_app/features/account/presentation/ui/components/rea
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/confim_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/sliver/sliver_app_bar_medium.dart';
@@ -178,7 +179,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
   Future<void> goAccountForm() async {
     if (isLoading) return;
 
-    final FormResultNavigation? result = await context.pushNamed(AccountFormPage.route, extra: notifier.account);
+    final FormResultNavigation? result = await context.pushNamedWithAd(AccountFormPage.route, extra: notifier.account);
 
     if (result?.isSave ?? false) {
       notifier.setAccount(result!.value);
