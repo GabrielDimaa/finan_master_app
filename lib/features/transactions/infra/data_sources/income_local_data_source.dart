@@ -76,7 +76,7 @@ class IncomeLocalDataSource extends LocalDataSource<IncomeModel> implements IInc
         LIMIT 20;
       ''';
 
-      final List<Map<String, dynamic>> results = await databaseLocal.raw(sql, DatabaseOperation.select, ['%$text%', '%$text%', text, '$text%']);
+      final List<Map<String, dynamic>> results = await databaseLocal.raw(sql, DatabaseOperation.select, ['%$text%', text, '$text%']);
 
       return results
           .map((e) => TransactionByTextModel(
