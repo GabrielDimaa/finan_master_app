@@ -21,6 +21,7 @@ import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
@@ -192,7 +193,7 @@ class _CreditCardsDetailsPageState extends State<CreditCardsDetailsPage> with Th
   }
 
   Future<void> goCreditCard([CreditCardEntity? creditCard]) async {
-    final FormResultNavigation<CreditCardEntity>? result = await context.pushNamed(CreditCardFormPage.route, extra: creditCard);
+    final FormResultNavigation<CreditCardEntity>? result = await context.pushNamedWithAd(CreditCardFormPage.route, extra: creditCard);
     if (result == null) return;
 
     if (result.isSave) {
@@ -212,7 +213,7 @@ class _CreditCardsDetailsPageState extends State<CreditCardsDetailsPage> with Th
   }
 
   Future<void> goCreditCardExpenseForm({required BuildContext context}) async {
-    final FormResultNavigation? result = await context.pushNamed(CreditCardExpensePage.route);
+    final FormResultNavigation? result = await context.pushNamedWithAd(CreditCardExpensePage.route);
     if (result != null) await refreshCreditCard();
   }
 

@@ -9,6 +9,7 @@ import 'package:finan_master_app/features/home/presentation/states/home_bills_cr
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -158,7 +159,7 @@ class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with Th
   }
 
   Future<void> goCreditCardForm() async {
-    final FormResultNavigation<CreditCardEntity>? result = await context.pushNamed(CreditCardFormPage.route);
+    final FormResultNavigation<CreditCardEntity>? result = await context.pushNamedWithAd(CreditCardFormPage.route);
 
     if (result?.isSave == true && result?.value != null) widget.notifier.load();
   }

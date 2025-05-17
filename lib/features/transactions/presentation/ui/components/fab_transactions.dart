@@ -3,6 +3,7 @@ import 'package:finan_master_app/features/transactions/presentation/ui/expense_f
 import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab_child.dart';
 import 'package:flutter/material.dart';
@@ -44,13 +45,13 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
     );
   }
 
-  Future<void> goExpenseFormPage() => context.pushNamed(ExpenseFormPage.route);
+  Future<void> goExpenseFormPage() => context.pushNamedWithAd(ExpenseFormPage.route);
 
-  Future<void> goIncomeFormPage() => context.pushNamed(IncomeFormPage.route);
+  Future<void> goIncomeFormPage() => context.pushNamedWithAd(IncomeFormPage.route);
 
-  Future<void> goTransferFormPage() => context.pushNamed(TransferFormPage.route);
+  Future<void> goTransferFormPage() => context.pushNamedWithAd(TransferFormPage.route);
 
-  Future<void> goCreditCardExpenseFormPage() => context.pushNamed(CreditCardExpensePage.route);
+  Future<void> goCreditCardExpenseFormPage() => context.pushNamedWithAd(CreditCardExpensePage.route);
 
   Widget label({required String text}) {
     return Container(

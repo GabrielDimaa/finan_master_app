@@ -4,6 +4,7 @@ import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/draggable_bottom_sheet.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
@@ -108,7 +109,7 @@ class _CategoriesListBottomSheetState extends State<CategoriesListBottomSheet> w
   }
 
   Future<void> goCategory() async {
-    final FormResultNavigation<CategoryEntity>? result = await context.pushNamed(CategoryFormPage.route);
+    final FormResultNavigation<CategoryEntity>? result = await context.pushNamedWithAd(CategoryFormPage.route);
 
     if (result?.isSave == true && result?.value != null && widget.categories.any((category) => category.type == result?.value?.type)) {
       widget.categories.add(result!.value!);

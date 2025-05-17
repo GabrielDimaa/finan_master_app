@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/ad/domain/use_cases/i_ad_access.dart';
 import 'package:finan_master_app/features/statement/domain/repositories/i_statement_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_income_repository.dart';
@@ -9,14 +10,17 @@ class IncomeDelete implements IIncomeDelete {
   final IIncomeRepository _repository;
   final IStatementRepository _statementRepository;
   final ILocalDBTransactionRepository _localDBTransactionRepository;
+  final IAdAccess _adAccess;
 
   IncomeDelete({
     required IIncomeRepository repository,
     required IStatementRepository statementRepository,
     required ILocalDBTransactionRepository localDBTransactionRepository,
+    required IAdAccess adAccess,
   })  : _repository = repository,
         _statementRepository = statementRepository,
-        _localDBTransactionRepository = localDBTransactionRepository;
+        _localDBTransactionRepository = localDBTransactionRepository,
+        _adAccess = adAccess;
 
   @override
   Future<void> delete(IncomeEntity entity, {ITransactionExecutor? txn}) async {
@@ -28,5 +32,7 @@ class IncomeDelete implements IIncomeDelete {
       _repository.delete(entity, txn: txn),
       _statementRepository.deleteByIdIncome(entity.id, txn: txn),
     ]);
+
+    _adAccess.consumeUse();
   }
 }

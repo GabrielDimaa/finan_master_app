@@ -7,6 +7,7 @@ import 'package:finan_master_app/features/account/presentation/ui/account_form_p
 import 'package:finan_master_app/features/account/presentation/ui/components/account_list_tile.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
@@ -89,7 +90,7 @@ class _AccountsListPageState extends State<AccountsListPage> with ThemeContext {
     late final FormResultNavigation<AccountEntity>? result;
 
     if (account == null) {
-      result = await context.pushNamed(AccountFormPage.route, extra: account);
+      result = await context.pushNamedWithAd(AccountFormPage.route, extra: account);
     } else {
       result = await context.pushNamed(AccountDetailsPage.route, extra: account);
     }

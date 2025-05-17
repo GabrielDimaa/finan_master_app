@@ -1,14 +1,16 @@
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/repositories/i_account_repository.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_save.dart';
+import 'package:finan_master_app/features/ad/domain/use_cases/i_ad_access.dart';
 import 'package:finan_master_app/shared/exceptions/exceptions.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class AccountSave implements IAccountSave {
   final IAccountRepository _repository;
+  final IAdAccess _adAccess;
 
-  AccountSave({required IAccountRepository repository}) : _repository = repository;
+  AccountSave({required IAccountRepository repository, required IAdAccess adAccess}) : _repository = repository, _adAccess = adAccess;
 
   @override
   Future<AccountEntity> save(AccountEntity entity) async {
@@ -16,7 +18,11 @@ class AccountSave implements IAccountSave {
     if (entity.isNew && entity.initialAmount < 0) throw ValidationException(R.strings.greaterThanZero);
     if (entity.financialInstitution == null) return throw ValidationException(R.strings.uninformedFinancialInstitution);
 
-    return await _repository.save(entity);
+    final AccountEntity result = await _repository.save(entity);
+
+    _adAccess.consumeUse();
+
+    return result;
   }
 
   @override

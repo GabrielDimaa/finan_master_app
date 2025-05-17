@@ -6,6 +6,7 @@ import 'package:finan_master_app/features/category/presentation/ui/category_form
 import 'package:finan_master_app/features/category/presentation/ui/components/tab_bar_view_categories.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
@@ -76,7 +77,7 @@ class _CategoriesListPageState extends State<CategoriesListPage> with ThemeConte
   }
 
   Future<void> goCategory() async {
-    final FormResultNavigation<CategoryEntity>? result = await context.pushNamed(CategoryFormPage.route);
+    final FormResultNavigation<CategoryEntity>? result = await context.pushNamedWithAd(CategoryFormPage.route);
     if (result == null) return;
 
     notifier.findAll();
