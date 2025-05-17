@@ -140,7 +140,7 @@ class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with Th
                               height: itemCarrouselCurrent == index ? 10 : 6,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: colorScheme.primary.withOpacity(itemCarrouselCurrent == index ? 1 : 0.4),
+                                color: colorScheme.primary.withValues(alpha: itemCarrouselCurrent == index ? 1 : 0.4),
                               ),
                             ),
                           ),

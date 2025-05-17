@@ -6,7 +6,6 @@ import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/fab/expandable_fab_child.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class FabTransactions extends StatefulWidget {
   const FabTransactions({super.key});

@@ -81,7 +81,7 @@ class _IntroductionPageState extends State<IntroductionPage> with ThemeContext {
                                 height: itemCarrouselCurrent == index ? 12 : 6,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: colorScheme.primary.withOpacity(itemCarrouselCurrent == index ? 1 : 0.4),
+                                  color: colorScheme.primary.withValues(alpha: itemCarrouselCurrent == index ? 1 : 0.4),
                                 ),
                               ),
                             );

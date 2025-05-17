@@ -10,7 +10,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/message_error
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class CategoriesListPage extends StatefulWidget {
   static const String route = 'categories-list';

@@ -171,6 +171,6 @@ class _CategoryFormPageState extends State<CategoryFormPage> with ThemeContext {
     );
     if (result == null) return;
 
-    notifier.setColorIcon(color: result.color.value.toRadixString(16), icon: result.icon.codePoint);
+    notifier.setColorIcon(color: result.color.toARGB32().toRadixString(16), icon: result.icon.codePoint);
   }
 }

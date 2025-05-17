@@ -18,7 +18,7 @@ class SwitchThemeMode extends StatelessWidget {
           thumbIcon: WidgetStateProperty.resolveWith((Set states) => states.contains(WidgetState.selected) ? const Icon(Icons.dark_mode, color: Colors.white) : const Icon(Icons.light_mode, color: Colors.white)),
           thumbColor: WidgetStateProperty.resolveWith((Set states) => states.contains(WidgetState.selected) ? Colors.indigo[900] : Colors.amber[900]),
           trackOutlineColor: WidgetStateProperty.resolveWith((Set states) => Colors.grey),
-          trackColor: WidgetStateProperty.resolveWith((Set states) => states.contains(WidgetState.selected) ? Colors.indigo[900]?.withOpacity(0.3) : Colors.amber[900]?.withOpacity(0.3)),
+          trackColor: WidgetStateProperty.resolveWith((Set states) => states.contains(WidgetState.selected) ? Colors.indigo[900]?.withValues(alpha: 0.3) : Colors.amber[900]?.withValues(alpha: 0.3)),
           onChanged: (bool value) => App.themeNotifier.changeAndSave(value ? ThemeMode.dark : ThemeMode.light),
         );
       },
