@@ -1,7 +1,11 @@
+import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/presentation/ui/account_details_page.dart';
 import 'package:finan_master_app/features/account/presentation/ui/account_form_page.dart';
 import 'package:finan_master_app/features/account/presentation/ui/accounts_list_page.dart';
+import 'package:finan_master_app/features/ad/domain/use_cases/i_ad.dart';
+import 'package:finan_master_app/features/ad/domain/use_cases/i_ad_access.dart';
+import 'package:finan_master_app/features/ad/presentation/ui/pages/ad_page.dart';
 import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/email_verification_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
@@ -52,6 +56,12 @@ sealed class AppRouter {
       navigatorKey: _rootNavigatorKey,
       initialLocation: '/${SplashPage.route}',
       routes: [
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          name: AdPage.route,
+          path: '/${AdPage.route}',
+          builder: (_, __) => const AdPage(),
+        ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,
           name: SplashPage.route,
@@ -256,5 +266,18 @@ sealed class AppRouter {
         ),
       ],
     );
+  }
+}
+
+extension GoRouterExtension on BuildContext {
+  Future<T?> pushNamedWithAd<T extends Object?>(String name, {Object? extra}) async {
+    if (!mounted) throw Exception('Context not mounted.');
+
+    final IAdAccess adAccess = DI.get<IAdAccess>();
+    final IAd ad = DI.get<IAd>();
+
+    if (adAccess.canShowAd() && ad.hasInterstitialAd) await pushNamed(AdPage.route);
+
+    return pushNamed(name, extra: extra);
   }
 }

@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/ad/domain/use_cases/i_ad_access.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_bill_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
@@ -14,16 +15,19 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
   final ICreditCardRepository _repository;
   final ICreditCardBillRepository _creditCardBillRepository;
   final ICreditCardTransactionRepository _creditCardTransactionRepository;
+  final IAdAccess _adAccess;
 
   CreditCardTransactionSave({
     required ICreditCardBillDates creditCardBillDates,
     required ICreditCardRepository repository,
     required ICreditCardBillRepository creditCardBillRepository,
     required ICreditCardTransactionRepository creditCardTransactionRepository,
+    required IAdAccess adAccess,
   })  : _creditCardBillDates = creditCardBillDates,
         _repository = repository,
         _creditCardBillRepository = creditCardBillRepository,
-        _creditCardTransactionRepository = creditCardTransactionRepository;
+        _creditCardTransactionRepository = creditCardTransactionRepository,
+        _adAccess = adAccess;
 
   @override
   Future<CreditCardTransactionEntity> save(CreditCardTransactionEntity entity) async {
@@ -72,9 +76,16 @@ class CreditCardTransactionSave implements ICreditCardTransactionSave {
     //Se for uma nova fatura, salva a transação com a fatura
     if (bill.isNew) {
       final billResult = await _creditCardBillRepository.save(bill);
+
+      _adAccess.consumeUse();
+
       return billResult.transactions.firstWhere((e) => e.id == entity.id);
     } else {
-      return await _creditCardTransactionRepository.save(entity);
+      final CreditCardTransactionEntity result = await _creditCardTransactionRepository.save(entity);
+
+      _adAccess.consumeUse();
+
+      return result;
     }
   }
 }

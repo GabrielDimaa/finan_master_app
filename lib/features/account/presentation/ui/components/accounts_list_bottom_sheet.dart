@@ -3,6 +3,7 @@ import 'package:finan_master_app/features/account/domain/enums/financial_institu
 import 'package:finan_master_app/features/account/presentation/ui/account_form_page.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
+import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/draggable_bottom_sheet.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +110,7 @@ class _AccountsListBottomSheetState extends State<AccountsListBottomSheet> with 
   }
 
   Future<void> goAccount() async {
-    final FormResultNavigation<AccountEntity>? result = await context.pushNamed(AccountFormPage.route);
+    final FormResultNavigation<AccountEntity>? result = await context.pushNamedWithAd(AccountFormPage.route);
 
     if (result?.isSave == true && result?.value != null) {
       widget.accounts.add(result!.value!);

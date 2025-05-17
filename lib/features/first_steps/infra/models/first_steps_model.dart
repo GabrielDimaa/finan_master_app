@@ -33,10 +33,10 @@ class FirstStepsModel extends Model {
   Map<String, dynamic> toMap() {
     return {
       ...baseMap(),
-      'account_step_done': accountStepDone,
-      'credit_card_step_done': creditCardStepDone,
-      'income_step_done': incomeStepDone,
-      'expense_step_done': expenseStepDone,
+      'account_step_done': accountStepDone ? 1 : 0,
+      'credit_card_step_done': creditCardStepDone ? 1 : 0,
+      'income_step_done': incomeStepDone ? 1 : 0,
+      'expense_step_done': expenseStepDone ? 1 : 0,
     };
   }
 }

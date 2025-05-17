@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:finan_master_app/features/ad/domain/use_cases/i_ad_access.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_bill_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
@@ -17,6 +18,7 @@ class CreditCardSave implements ICreditCardSave {
   final ICreditCardBillRepository _creditCardBillRepository;
   final ICreditCardTransactionRepository _creditCardTransactionRepository;
   final ILocalDBTransactionRepository _localDBTransactionRepository;
+  final IAdAccess _adAccess;
 
   CreditCardSave({
     required ICreditCardBillDates creditCardBillDates,
@@ -24,11 +26,13 @@ class CreditCardSave implements ICreditCardSave {
     required ICreditCardBillRepository creditCardBillRepository,
     required ICreditCardTransactionRepository creditCardTransactionRepository,
     required ILocalDBTransactionRepository localDBTransactionRepository,
+    required IAdAccess adAccess,
   })  : _creditCardBillDates = creditCardBillDates,
         _repository = repository,
         _creditCardBillRepository = creditCardBillRepository,
         _creditCardTransactionRepository = creditCardTransactionRepository,
-        _localDBTransactionRepository = localDBTransactionRepository;
+        _localDBTransactionRepository = localDBTransactionRepository,
+        _adAccess = adAccess;
 
   @override
   Future<CreditCardEntity> save(CreditCardEntity entity) async {
@@ -40,7 +44,7 @@ class CreditCardSave implements ICreditCardSave {
     if (entity.brand == null) return throw ValidationException(R.strings.uninformedCardBrand);
     if (entity.idAccount == null) return throw ValidationException(R.strings.uninformedAccount);
 
-    return _localDBTransactionRepository.openTransaction<CreditCardEntity>((txn) async {
+    final CreditCardEntity result = await _localDBTransactionRepository.openTransaction<CreditCardEntity>((txn) async {
       if (!entity.isNew) {
         final CreditCardEntity? creditCardSaved = await _repository.findById(entity.id, txn: txn);
         if (creditCardSaved == null) throw ValidationException(R.strings.creditCardNotFound);
@@ -95,5 +99,9 @@ class CreditCardSave implements ICreditCardSave {
 
       return await _repository.save(entity, txn: txn);
     });
+
+    _adAccess.consumeUse();
+
+    return result;
   }
 }

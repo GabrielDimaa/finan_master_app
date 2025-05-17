@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/ad/domain/use_cases/i_ad_access.dart';
 import 'package:finan_master_app/features/statement/domain/entities/statement_entity.dart';
 import 'package:finan_master_app/features/statement/domain/repositories/i_statement_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
@@ -11,14 +12,17 @@ class TransferSave implements ITransferSave {
   final ITransferRepository _repository;
   final IStatementRepository _statementRepository;
   final ILocalDBTransactionRepository _localDBTransactionRepository;
+  final IAdAccess _adAccess;
 
   TransferSave({
     required ITransferRepository repository,
     required IStatementRepository statementRepository,
     required ILocalDBTransactionRepository localDBTransactionRepository,
+    required IAdAccess adAccess,
   })  : _repository = repository,
         _statementRepository = statementRepository,
-        _localDBTransactionRepository = localDBTransactionRepository;
+        _localDBTransactionRepository = localDBTransactionRepository,
+        _adAccess = adAccess;
 
   @override
   Future<TransferEntity> save(TransferEntity entity) async {
@@ -60,7 +64,7 @@ class TransferSave implements ITransferSave {
       statements.addAll(result.map((e) => e..updateFromTransfer(entity)));
     }
 
-    return await _localDBTransactionRepository.openTransaction<TransferEntity>((txn) async {
+    final TransferEntity result =  await _localDBTransactionRepository.openTransaction<TransferEntity>((txn) async {
       late final TransferEntity entitySaved;
 
       await Future.wait([
@@ -74,5 +78,9 @@ class TransferSave implements ITransferSave {
 
       return entitySaved;
     });
+
+    _adAccess.consumeUse();
+
+    return result;
   }
 }

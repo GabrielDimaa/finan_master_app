@@ -22,7 +22,7 @@ class AuthModel extends Model {
     return {
       ...baseMap(),
       'email': email,
-      'email_verified': emailVerified,
+      'email_verified': emailVerified ? 1 : 0,
       'password': password,
       'type': type.value,
     };

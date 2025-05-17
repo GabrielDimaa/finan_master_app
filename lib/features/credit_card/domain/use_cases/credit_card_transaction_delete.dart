@@ -1,3 +1,4 @@
+import 'package:finan_master_app/features/ad/domain/use_cases/i_ad_access.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_transaction_repository.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_delete.dart';
@@ -11,16 +12,19 @@ class CreditCardTransactionDelete implements ICreditCardTransactionDelete {
   final IExpenseRepository _expenseRepository;
   final IStatementRepository _statementRepository;
   final ILocalDBTransactionRepository _localDBTransactionRepository;
+  final IAdAccess _adAccess;
 
   CreditCardTransactionDelete({
     required ICreditCardTransactionRepository repository,
     required IExpenseRepository expenseRepository,
     required IStatementRepository statementRepository,
     required ILocalDBTransactionRepository localDBTransactionRepository,
+    required IAdAccess adAccess,
   })  : _repository = repository,
         _expenseRepository = expenseRepository,
         _statementRepository = statementRepository,
-        _localDBTransactionRepository = localDBTransactionRepository;
+        _localDBTransactionRepository = localDBTransactionRepository,
+        _adAccess = adAccess;
 
   @override
   Future<void> delete(CreditCardTransactionEntity entity) => _delete([entity]);
@@ -38,5 +42,7 @@ class CreditCardTransactionDelete implements ICreditCardTransactionDelete {
         _statementRepository.deleteByIdsExpense(expenses.map((e) => e.id).toList(), txn: txn),
       ]);
     });
+
+    _adAccess.consumeUse();
   }
 }
