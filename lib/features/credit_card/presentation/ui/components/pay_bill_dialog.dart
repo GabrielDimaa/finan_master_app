@@ -27,6 +27,7 @@ class PayBillDialog extends StatefulWidget {
   static Future<CreditCardBillEntity?> show({required BuildContext context, required CreditCardBillEntity bill}) async {
     return await showDialog(
       context: context,
+      useSafeArea: false,
       builder: (_) => PayBillDialog(bill: bill),
     );
   }
@@ -81,40 +82,42 @@ class _PayBillDialogState extends State<PayBillDialog> with ThemeContext {
               ],
               bottom: isLoading ? const LinearProgressIndicatorAppBar() : null,
             ),
-            body: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Spacing.y(),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w400),
-                          text: '${strings.openBillAmount} ',
-                        ),
-                        TextSpan(
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(color: colorScheme.primary),
-                          text: notifier.creditCardBill!.billAmount.money,
-                          recognizer: TapGestureRecognizer()..onTap = () => textController.text = notifier.creditCardBill!.billAmount.moneyWithoutSymbol,
-                        ),
-                      ],
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Spacing.y(),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w400),
+                            text: '${strings.openBillAmount} ',
+                          ),
+                          TextSpan(
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: colorScheme.primary),
+                            text: notifier.creditCardBill!.billAmount.money,
+                            recognizer: TapGestureRecognizer()..onTap = () => textController.text = notifier.creditCardBill!.billAmount.moneyWithoutSymbol,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const Spacing.y(),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    autofocus: true,
-                    decoration: InputDecoration(label: Text(strings.value), prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol),
-                    controller: textController,
-                    validator: InputValidators([InputRequiredValidator(), InputGreaterThanValueValidator(0)]).validate,
-                    enabled: !isLoading,
-                    keyboardType: TextInputType.number,
-                    textInputAction: TextInputAction.done,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
-                  ),
-                ],
+                    const Spacing.y(),
+                    TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      autofocus: true,
+                      decoration: InputDecoration(label: Text(strings.value), prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol),
+                      controller: textController,
+                      validator: InputValidators([InputRequiredValidator(), InputGreaterThanValueValidator(0)]).validate,
+                      enabled: !isLoading,
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.done,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
+                    ),
+                  ],
+                ),
               ),
             ),
           );

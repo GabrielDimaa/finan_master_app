@@ -85,173 +85,175 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
         list: listSelectable,
         updateList: (List value) => setState(() => listSelectable = value.cast<CreditCardTransactionEntity>()),
         child: Scaffold(
-          body: ValueListenableBuilder(
-            valueListenable: categoriesNotifier,
-            builder: (_, categoriesState, __) {
-              return switch (categoriesState) {
-                LoadingCategoriesState _ => const Center(child: CircularProgressIndicator()),
-                StartCategoriesState _ => const SizedBox.shrink(),
-                ErrorCategoriesState error => MessageErrorWidget(error.message),
-                ListCategoriesState _ || EmptyCategoriesState _ => Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: CustomScrollView(
-                          slivers: [
-                            SliverAppBarMedium(
-                              title: Text(strings.bill),
-                              loading: notifier.isLoading,
-                              actionsInModeSelection: [
-                                IconButton(
-                                  tooltip: strings.delete,
-                                  onPressed: deleteTransactions,
-                                  icon: const Icon(Icons.delete_outline),
-                                ),
-                              ],
-                            ),
-                            SliverToBoxAdapter(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  const Spacing.y(),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              width: 8,
-                                              height: 18,
-                                              decoration: BoxDecoration(
-                                                color: notifier.creditCardBill!.status.color,
-                                                borderRadius: BorderRadius.circular(100),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 10),
-                                            Text(notifier.creditCardBill!.status.description, style: textTheme.bodyLarge),
-                                          ],
-                                        ),
-                                        const Spacing.y(1.5),
-                                        Text(widget.args.creditCard.description, style: textTheme.bodyLarge),
-                                        const Spacing.y(0.5),
-                                        Row(
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(strings.closureDate, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                                Text(notifier.creditCardBill!.billClosingDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
-                                              ],
-                                            ),
-                                            const Spacer(),
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                Text(strings.dueDate, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                                Text(notifier.creditCardBill!.billDueDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        const Spacing.y(2),
-                                        if (notifier.creditCardBill!.transactions.isNotEmpty) Text(strings.transactions, style: textTheme.bodyLarge),
-                                      ],
-                                    ),
-                                  ),
-                                  ListViewSelectable.separated(
-                                    key: ObjectKey(notifier.creditCardBill!.transactions),
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets.zero,
-                                    list: notifier.creditCardBill!.transactions,
-                                    itemBuilder: (ItemSelectable<CreditCardTransactionEntity> item) {
-                                      final transaction = item.value;
-                                      final category = categoriesNotifier.value.categories.firstWhere((category) => category.id == transaction.idCategory);
-
-                                      return ListTileSelectable(
-                                        value: item,
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                                        leading: CircleAvatar(
-                                          backgroundColor: Color(category.color.toColor()!),
-                                          child: Icon(category.icon.parseIconData(), color: Colors.white),
-                                        ),
-                                        title: Text(transaction.description),
-                                        subtitle: Text(category.description),
-                                        trailing: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              transaction.amount.money,
-                                              style: Theme.of(context).textTheme.labelLarge?.copyWith(color: transaction.amount < 0 ? const Color(0XFF3CDE87) : null),
-                                            ),
-                                            Text(transaction.date.formatDateToRelative()),
-                                          ],
-                                        ),
-                                        onTap: () => goCreditCardExpenseForm(transaction),
-                                      );
-                                    },
+          body: SafeArea(
+            child: ValueListenableBuilder(
+              valueListenable: categoriesNotifier,
+              builder: (_, categoriesState, __) {
+                return switch (categoriesState) {
+                  LoadingCategoriesState _ => const Center(child: CircularProgressIndicator()),
+                  StartCategoriesState _ => const SizedBox.shrink(),
+                  ErrorCategoriesState error => MessageErrorWidget(error.message),
+                  ListCategoriesState _ || EmptyCategoriesState _ => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: CustomScrollView(
+                            slivers: [
+                              SliverAppBarMedium(
+                                title: Text(strings.bill),
+                                loading: notifier.isLoading,
+                                actionsInModeSelection: [
+                                  IconButton(
+                                    tooltip: strings.delete,
+                                    onPressed: deleteTransactions,
+                                    icon: const Icon(Icons.delete_outline),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (listSelectable.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(16).copyWith(top: 0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Card(
-                                color: colorScheme.surfaceContainer,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(strings.totalSpent, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                            Text(notifier.creditCardBill!.totalSpent.money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
-                                          ],
-                                        ),
+                              SliverToBoxAdapter(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    const Spacing.y(),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                width: 8,
+                                                height: 18,
+                                                decoration: BoxDecoration(
+                                                  color: notifier.creditCardBill!.status.color,
+                                                  borderRadius: BorderRadius.circular(100),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Text(notifier.creditCardBill!.status.description, style: textTheme.bodyLarge),
+                                            ],
+                                          ),
+                                          const Spacing.y(1.5),
+                                          Text(widget.args.creditCard.description, style: textTheme.bodyLarge),
+                                          const Spacing.y(0.5),
+                                          Row(
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(strings.closureDate, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
+                                                  Text(notifier.creditCardBill!.billClosingDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                                ],
+                                              ),
+                                              const Spacer(),
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(strings.dueDate, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
+                                                  Text(notifier.creditCardBill!.billDueDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          const Spacing.y(2),
+                                          if (notifier.creditCardBill!.transactions.isNotEmpty) Text(strings.transactions, style: textTheme.bodyLarge),
+                                        ],
                                       ),
-                                      const SizedBox(height: 30, child: VerticalDivider()),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.end,
-                                          children: [
-                                            Text(strings.amountOutstanding, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                            Text(max(notifier.creditCardBill!.billAmount, 0.0).money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                    ListViewSelectable.separated(
+                                      key: ObjectKey(notifier.creditCardBill!.transactions),
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      padding: EdgeInsets.zero,
+                                      list: notifier.creditCardBill!.transactions,
+                                      itemBuilder: (ItemSelectable<CreditCardTransactionEntity> item) {
+                                        final transaction = item.value;
+                                        final category = categoriesNotifier.value.categories.firstWhere((category) => category.id == transaction.idCategory);
+
+                                        return ListTileSelectable(
+                                          value: item,
+                                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                          leading: CircleAvatar(
+                                            backgroundColor: Color(category.color.toColor()!),
+                                            child: Icon(category.icon.parseIconData(), color: Colors.white),
+                                          ),
+                                          title: Text(transaction.description),
+                                          subtitle: Text(category.description),
+                                          trailing: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                transaction.amount.money,
+                                                style: Theme.of(context).textTheme.labelLarge?.copyWith(color: transaction.amount < 0 ? const Color(0XFF3CDE87) : null),
+                                              ),
+                                              Text(transaction.date.formatDateToRelative()),
+                                            ],
+                                          ),
+                                          onTap: () => goCreditCardExpenseForm(transaction),
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              const Spacing.y(1.5),
-                              FilledButton.icon(
-                                onPressed: (notifier.creditCardBill?.totalSpent ?? 0) > 0 && (notifier.creditCardBill?.billAmount ?? 0) > 0 ? payBill : null,
-                                icon: const Icon(Icons.credit_score_outlined),
-                                label: Text(strings.payBill),
                               ),
                             ],
                           ),
                         ),
-                    ],
-                  ),
-              };
-            },
+                        if (listSelectable.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(16).copyWith(top: 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Card(
+                                  color: colorScheme.surfaceContainer,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(strings.totalSpent, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
+                                              Text(notifier.creditCardBill!.totalSpent.money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 30, child: VerticalDivider()),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            children: [
+                                              Text(strings.amountOutstanding, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
+                                              Text(max(notifier.creditCardBill!.billAmount, 0.0).money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const Spacing.y(1.5),
+                                FilledButton.icon(
+                                  onPressed: (notifier.creditCardBill?.totalSpent ?? 0) > 0 && (notifier.creditCardBill?.billAmount ?? 0) > 0 ? payBill : null,
+                                  icon: const Icon(Icons.credit_score_outlined),
+                                  label: Text(strings.payBill),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                };
+              },
+            ),
           ),
         ),
       ),
