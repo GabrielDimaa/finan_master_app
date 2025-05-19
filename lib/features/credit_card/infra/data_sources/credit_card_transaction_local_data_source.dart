@@ -101,7 +101,7 @@ class CreditCardTransactionLocalDataSource extends LocalDataSource<CreditCardTra
           $tableName.id_category,
           $tableName.id_credit_card,
           $tableName.id_credit_card_bill,
-          $tableName.observation,
+          $tableName.observation
         FROM $tableName
         INNER JOIN bills_with_total_amount
           ON bills_with_total_amount.${Model.idColumnName} = $tableName.id_credit_card_bill
