@@ -77,114 +77,116 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                 child: notifier.isLoading ? const LinearProgressIndicator() : const SizedBox(height: 4),
               ),
             ),
-            body: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Spacing.y(2),
-                    TextFormField(
-                      initialValue: notifier.account.balance.moneyWithoutSymbol,
-                      decoration: InputDecoration(label: Text(strings.accountBalance), prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol),
-                      validator: InputRequiredValidator().validate,
-                      enabled: !notifier.isLoading,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.done,
-                      onSaved: (String? value) => readjustmentValue = (value ?? '').moneyToDouble(),
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
-                    ),
-                    const Spacing.y(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(strings.initialAccountBalance, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
-                        Text(notifier.account.initialAmount.money, style: textTheme.labelMedium?.copyWith(color: colorScheme.outline)),
-                      ],
-                    ),
-                    const Spacing.y(),
-                    ValueListenableBuilder(
-                      valueListenable: readjustmentOption,
-                      builder: (_, value, __) {
-                        return Column(
-                          children: [
-                            IntrinsicHeight(
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Card(
-                                      elevation: 0,
-                                      margin: EdgeInsets.zero,
-                                      clipBehavior: Clip.hardEdge,
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(color: value == ReadjustmentOptionEnum.createTransaction ? colorScheme.primary : colorScheme.outline),
-                                        borderRadius: const BorderRadius.all(Radius.circular(12)),
-                                      ),
-                                      child: InkWell(
-                                        onTap: () {
-                                          if (notifier.isLoading) return;
-                                          readjustmentOption.value = ReadjustmentOptionEnum.createTransaction;
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(16),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(strings.createTransaction, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOptionEnum.createTransaction ? colorScheme.primary : null)),
-                                              const Spacing.y(0.5),
-                                              Text(strings.createTransactionExplication, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
-                                            ],
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Spacing.y(2),
+                      TextFormField(
+                        initialValue: notifier.account.balance.moneyWithoutSymbol,
+                        decoration: InputDecoration(label: Text(strings.accountBalance), prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol),
+                        validator: InputRequiredValidator().validate,
+                        enabled: !notifier.isLoading,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        onSaved: (String? value) => readjustmentValue = (value ?? '').moneyToDouble(),
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
+                      ),
+                      const Spacing.y(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(strings.initialAccountBalance, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
+                          Text(notifier.account.initialAmount.money, style: textTheme.labelMedium?.copyWith(color: colorScheme.outline)),
+                        ],
+                      ),
+                      const Spacing.y(),
+                      ValueListenableBuilder(
+                        valueListenable: readjustmentOption,
+                        builder: (_, value, __) {
+                          return Column(
+                            children: [
+                              IntrinsicHeight(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Card(
+                                        elevation: 0,
+                                        margin: EdgeInsets.zero,
+                                        clipBehavior: Clip.hardEdge,
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(color: value == ReadjustmentOptionEnum.createTransaction ? colorScheme.primary : colorScheme.outline),
+                                          borderRadius: const BorderRadius.all(Radius.circular(12)),
+                                        ),
+                                        child: InkWell(
+                                          onTap: () {
+                                            if (notifier.isLoading) return;
+                                            readjustmentOption.value = ReadjustmentOptionEnum.createTransaction;
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(strings.createTransaction, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOptionEnum.createTransaction ? colorScheme.primary : null)),
+                                                const Spacing.y(0.5),
+                                                Text(strings.createTransactionExplication, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Card(
-                                      elevation: 0,
-                                      margin: EdgeInsets.zero,
-                                      clipBehavior: Clip.hardEdge,
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(color: value == ReadjustmentOptionEnum.changeInitialAmount ? colorScheme.primary : colorScheme.outline),
-                                        borderRadius: const BorderRadius.all(Radius.circular(12)),
-                                      ),
-                                      child: InkWell(
-                                        onTap: () {
-                                          if (notifier.isLoading) return;
-                                          readjustmentOption.value = ReadjustmentOptionEnum.changeInitialAmount;
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(16),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(strings.changeInitialAmount, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOptionEnum.changeInitialAmount ? colorScheme.primary : null)),
-                                              const Spacing.y(0.5),
-                                              Text(strings.changeInitialAmountExplication, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
-                                            ],
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Card(
+                                        elevation: 0,
+                                        margin: EdgeInsets.zero,
+                                        clipBehavior: Clip.hardEdge,
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(color: value == ReadjustmentOptionEnum.changeInitialAmount ? colorScheme.primary : colorScheme.outline),
+                                          borderRadius: const BorderRadius.all(Radius.circular(12)),
+                                        ),
+                                        child: InkWell(
+                                          onTap: () {
+                                            if (notifier.isLoading) return;
+                                            readjustmentOption.value = ReadjustmentOptionEnum.changeInitialAmount;
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(strings.changeInitialAmount, style: textTheme.titleMedium?.copyWith(color: value == ReadjustmentOptionEnum.changeInitialAmount ? colorScheme.primary : null)),
+                                                const Spacing.y(0.5),
+                                                Text(strings.changeInitialAmountExplication, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            const Spacing.y(),
-                            TextFormField(
-                              decoration: InputDecoration(label: Text(strings.transactionDescription)),
-                              textInputAction: TextInputAction.done,
-                              textCapitalization: TextCapitalization.sentences,
-                              enabled: !notifier.isLoading && readjustmentOption.value == ReadjustmentOptionEnum.createTransaction,
-                              onSaved: (String? value) => transactionDescription = value,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
+                              const Spacing.y(),
+                              TextFormField(
+                                decoration: InputDecoration(label: Text(strings.transactionDescription)),
+                                textInputAction: TextInputAction.done,
+                                textCapitalization: TextCapitalization.sentences,
+                                enabled: !notifier.isLoading && readjustmentOption.value == ReadjustmentOptionEnum.createTransaction,
+                                onSaved: (String? value) => transactionDescription = value,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -62,43 +62,45 @@ class _CreditCardBillsPageState extends State<CreditCardBillsPage> with ThemeCon
         return true;
       },
       child: Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBarMedium(
-              title: Text(strings.bills),
-              actions: [
-                IconButton(
-                  tooltip: strings.filters,
-                  onPressed: filters,
-                  icon: const Icon(Icons.filter_list_outlined),
-                ),
-              ],
-            ),
-            SliverPadding(
-              padding: EdgeInsets.zero,
-              sliver: SliverPersistentHeader(
-                delegate: _CreditCardPersistentHeader(widget.creditCard),
-                pinned: true,
+        body: SafeArea(
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBarMedium(
+                title: Text(strings.bills),
+                actions: [
+                  IconButton(
+                    tooltip: strings.filters,
+                    onPressed: filters,
+                    icon: const Icon(Icons.filter_list_outlined),
+                  ),
+                ],
               ),
-            ),
-            ValueListenableBuilder(
-              valueListenable: notifier,
-              builder: (_, state, __) {
-                return switch (state) {
-                  LoadingCreditCardBillsState _ || StartCreditCardBillsState _ => const SliverFillRemaining(hasScrollBody: false, child: Center(child: CircularProgressIndicator())),
-                  ErrorCreditCardBillsState error => SliverFillRemaining(hasScrollBody: false, child: MessageErrorWidget(error.message)),
-                  ListCreditCardBillsState _ => _List(
-                      key: ObjectKey(state),
-                      bills: state.bills,
-                      creditCard: widget.creditCard,
-                      onBillChanged: onBillChanged,
-                      startDate: startDate,
-                      endDate: endDate,
-                    ),
-                };
-              },
-            ),
-          ],
+              SliverPadding(
+                padding: EdgeInsets.zero,
+                sliver: SliverPersistentHeader(
+                  delegate: _CreditCardPersistentHeader(widget.creditCard),
+                  pinned: true,
+                ),
+              ),
+              ValueListenableBuilder(
+                valueListenable: notifier,
+                builder: (_, state, __) {
+                  return switch (state) {
+                    LoadingCreditCardBillsState _ || StartCreditCardBillsState _ => const SliverFillRemaining(hasScrollBody: false, child: Center(child: CircularProgressIndicator())),
+                    ErrorCreditCardBillsState error => SliverFillRemaining(hasScrollBody: false, child: MessageErrorWidget(error.message)),
+                    ListCreditCardBillsState _ => _List(
+                        key: ObjectKey(state),
+                        bills: state.bills,
+                        creditCard: widget.creditCard,
+                        onBillChanged: onBillChanged,
+                        startDate: startDate,
+                        endDate: endDate,
+                      ),
+                  };
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

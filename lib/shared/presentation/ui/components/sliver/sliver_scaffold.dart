@@ -27,14 +27,16 @@ class _SliverScaffoldState extends State<SliverScaffold> {
       key: widget.scaffoldKey,
       drawer: widget.drawer,
       floatingActionButton: widget.floatingActionButton,
-      body: CustomScrollView(
-        slivers: [
-          SliverVisibility(
-            visible: widget.appBar != null,
-            sliver: widget.appBar ?? const SizedBox(),
-          ),
-          SliverToBoxAdapter(child: widget.body),
-        ],
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverVisibility(
+              visible: widget.appBar != null,
+              sliver: widget.appBar ?? const SizedBox(),
+            ),
+            SliverToBoxAdapter(child: widget.body),
+          ],
+        ),
       ),
     );
   }
