@@ -24,7 +24,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountNotFound => 'Account not found.';
 
   @override
-  String get accountUsedCreditCard => 'This account is being used by a credit card.';
+  String get accountUsedCreditCard =>
+      'This account is being used by a credit card.';
 
   @override
   String get accounts => 'Accounts';
@@ -60,7 +61,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupButtonFinalized => 'Finalized';
 
   @override
-  String get backupSubtitleExplication => 'Making backups is essential to keep your data protected against unexpected events.';
+  String get backupSubtitleExplication =>
+      'Making backups is essential to keep your data protected against unexpected events.';
 
   @override
   String get backupTitleExplication => 'Preserve your important information!';
@@ -75,13 +77,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get billAlreadyPaid => 'Bill already paid.';
 
   @override
-  String get billClosedInDateTransaction => 'The bill is already closed on this transaction date.';
+  String get billClosedInDateTransaction =>
+      'The bill is already closed on this transaction date.';
 
   @override
   String get billClosed => 'Closed';
 
   @override
-  String get billGreaterThanZero => 'Bill amount needs to be greater than zero.';
+  String get billGreaterThanZero =>
+      'Bill amount needs to be greater than zero.';
 
   @override
   String get billNoMovements => 'No movements';
@@ -186,10 +190,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changeInitialAmount => 'Change initial amount';
 
   @override
-  String get changeInitialAmountExplication => 'Your initial balance will be changed, and your current balance will be adjusted, resulting in possible variations in balances at the end of the month.';
+  String get changeInitialAmountExplication =>
+      'Your initial balance will be changed, and your current balance will be adjusted, resulting in possible variations in balances at the end of the month.';
 
   @override
-  String get changeInitialAmountConfirmation => 'Readjust initial account balance?';
+  String get changeInitialAmountConfirmation =>
+      'Readjust initial account balance?';
 
   @override
   String get clear => 'Clear';
@@ -219,7 +225,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmEmail => 'Confirm email';
 
   @override
-  String get confirmEmailExplication => 'We have sent a confirmation to your email address.\nLocate it in your inbox and follow the procedure.';
+  String get confirmEmailExplication =>
+      'We have sent a confirmation to your email address.\nLocate it in your inbox and follow the procedure.';
 
   @override
   String get confirmPassword => 'Confirm password';
@@ -243,7 +250,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createTransaction => 'Create transaction';
 
   @override
-  String get createTransactionExplication => 'A transaction will be created to adjust the current balance.';
+  String get createTransactionExplication =>
+      'A transaction will be created to adjust the current balance.';
 
   @override
   String get createTransactionConfirmation => 'Create adjustment transaction?';
@@ -264,13 +272,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccount => 'Delete account';
 
   @override
-  String get deleteAccountConfirmation => 'Do you really want to delete this account?';
+  String get deleteAccountConfirmation =>
+      'Do you really want to delete this account?';
 
   @override
   String get deleteData => 'Delete data';
 
   @override
-  String get deleteDataExplication => 'Permanently delete your data from the system.';
+  String get deleteDataExplication =>
+      'Permanently delete your data from the system.';
 
   @override
   String get deletingTransactions => 'Deleting transactions...';
@@ -303,7 +313,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emailNotVerified => 'Email not verified.';
 
   @override
-  String get errorStartDateAfterEndDate => 'The start date cannot be after the end date.';
+  String get errorStartDateAfterEndDate =>
+      'The start date cannot be after the end date.';
 
   @override
   String get expense => 'Expense';
@@ -366,7 +377,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get includeTotalBalance => 'Include total balance';
 
   @override
-  String get includeTotalBalanceExplication => 'The balance of this account will be taken into consideration in the calculation of the total displayed balance.';
+  String get includeTotalBalanceExplication =>
+      'The balance of this account will be taken into consideration in the calculation of the total displayed balance.';
 
   @override
   String get incorrectPassword => 'Incorrect password.';
@@ -381,19 +393,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get introduction1Title => 'Manage your finances in one place';
 
   @override
-  String get introduction1subtitle => 'Track your expenses and income, and have an overview of your finances.';
+  String get introduction1subtitle =>
+      'Track your expenses and income, and have an overview of your finances.';
 
   @override
   String get introduction2Title => 'Simplify your transactions';
 
   @override
-  String get introduction2subtitle => 'Organize your expenses and income efficiently, eliminating paperwork and streamlining your financial life.';
+  String get introduction2subtitle =>
+      'Organize your expenses and income efficiently, eliminating paperwork and streamlining your financial life.';
 
   @override
   String get introduction3Title => 'Balance your finances for success';
 
   @override
-  String get introduction3subtitle => 'Master financial organization and unleash your power to reach new levels of stability and personal fulfillment.';
+  String get introduction3subtitle =>
+      'Master financial organization and unleash your power to reach new levels of stability and personal fulfillment.';
 
   @override
   String get invalidValue => 'Invalid value.';
@@ -486,16 +501,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notPossibleShare => 'It was not possible to share.';
 
   @override
-  String get notPossibleEditTransactionCreditCardPaid => 'It is not possible to edit a credit card transaction that is already paid.';
+  String get notPossibleEditTransactionCreditCardPaid =>
+      'It is not possible to edit a credit card transaction that is already paid.';
 
   @override
-  String get notPossibleEditTransactionBillClosed => 'It\'s not possible to edit a transaction on a closed bill.';
+  String get notPossibleEditTransactionBillClosed =>
+      'It\'s not possible to edit a transaction on a closed bill.';
 
   @override
-  String get notPossibleDeleteTransactionCreditCardPaid => 'It\'s not possible to delete a credit card transaction that is already paid.';
+  String get notPossibleDeleteTransactionCreditCardPaid =>
+      'It\'s not possible to delete a credit card transaction that is already paid.';
 
   @override
-  String get notPossibleDeleteTransactionBillClosed => 'It\'s not possible to delete a transaction on a closed bill.';
+  String get notPossibleDeleteTransactionBillClosed =>
+      'It\'s not possible to delete a transaction on a closed bill.';
 
   @override
   String get noTransactionsRegistered => 'No transactions registered.';
@@ -505,7 +524,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String nSelected(num count) {
-    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(locale: localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -550,10 +571,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get payable => 'Payable';
 
   @override
-  String get paymentExceedBillAmount => 'The payment cannot exceed the bill amount.';
+  String get paymentExceedBillAmount =>
+      'The payment cannot exceed the bill amount.';
 
   @override
-  String get paymentRequirementWhenClosedBill => 'The full bill amount must be paid when it is closed.';
+  String get paymentRequirementWhenClosedBill =>
+      'The full bill amount must be paid when it is closed.';
 
   @override
   String get payBill => 'Pay the bill';
@@ -601,7 +624,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetPassword => 'Reset password';
 
   @override
-  String get resetPasswordExplication => 'An email with instructions to reset your password will be sent.';
+  String get resetPasswordExplication =>
+      'An email with instructions to reset your password will be sent.';
 
   @override
   String get resetPasswordNotification => 'Password reset sent to your email.';
@@ -610,7 +634,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get restoreBackup => 'Restore backup';
 
   @override
-  String get restoreBackupExplication => 'Restore a backup to replace your current data with the backup data.';
+  String get restoreBackupExplication =>
+      'Restore a backup to replace your current data with the backup data.';
 
   @override
   String get requiredField => 'Required field.';
@@ -669,7 +694,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sevenDays => '7D';
 
   @override
-  String get shortPassword => 'The password must be at least eight characters long.';
+  String get shortPassword =>
+      'The password must be at least eight characters long.';
 
   @override
   String get showPassword => 'Show password';
@@ -696,7 +722,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stepIncome => 'Register your first income';
 
   @override
-  String get sourceAccountAndDestinationEquals => 'The source account and the destination account must be different.';
+  String get sourceAccountAndDestinationEquals =>
+      'The source account and the destination account must be different.';
 
   @override
   String get theme => 'Theme';
@@ -729,7 +756,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get totalSpent => 'Total spent';
 
   @override
-  String get transactionAmountExceedLimitBill => 'The transaction amount cannot exceed the available credit limit on the bill.';
+  String get transactionAmountExceedLimitBill =>
+      'The transaction amount cannot exceed the available credit limit on the bill.';
 
   @override
   String get transactions => 'Transactions';
@@ -744,7 +772,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transfer => 'Transfer';
 
   @override
-  String get transferAmountDivergent => 'Outgoing and incoming account values are divergent.';
+  String get transferAmountDivergent =>
+      'Outgoing and incoming account values are divergent.';
 
   @override
   String get typeCategory => 'Category type';
@@ -771,7 +800,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uninformedEmail => 'Uninformed email.';
 
   @override
-  String get uninformedFinancialInstitution => 'Uninformed financial institution.';
+  String get uninformedFinancialInstitution =>
+      'Uninformed financial institution.';
 
   @override
   String get uninformedIcon => 'Uninformed icon.';

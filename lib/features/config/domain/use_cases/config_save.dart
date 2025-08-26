@@ -12,4 +12,7 @@ class ConfigSave implements IConfigSave {
 
   @override
   Future<void> saveLocale(Locale locale) => _repository.saveLocale(locale);
+
+  @override
+  Future<void> saveHideAmounts(bool hideAmounts) => _repository.saveHideAmounts(hideAmounts);
 }

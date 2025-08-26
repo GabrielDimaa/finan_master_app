@@ -22,4 +22,11 @@ class ConfigFind implements IConfigFind {
 
     return locale ?? Locale(Platform.localeName.split('_').first);
   }
+
+  @override
+  bool findHideAmounts() {
+    final bool? hideAmounts = _repository.findHideAmounts();
+
+    return hideAmounts ?? false;
+  }
 }

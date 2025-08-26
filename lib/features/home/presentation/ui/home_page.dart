@@ -1,4 +1,5 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
+import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
 import 'package:finan_master_app/features/first_steps/presentation/notifiers/first_steps_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_bills_credit_card_notifier.dart';
@@ -35,6 +36,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
   final HomeBillsCreditCardNotifier billsCreditCardNotifier = DI.get<HomeBillsCreditCardNotifier>();
   final HomeMonthlyBalanceNotifier monthlyBalanceNotifier = DI.get<HomeMonthlyBalanceNotifier>();
   final FirstStepsNotifier firstStepsNotifier = DI.get<FirstStepsNotifier>();
+  final HideAmountsNotifier hideAmountsNotifier = DI.get<HideAmountsNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -71,6 +73,24 @@ class _HomePageState extends State<HomePage> with ThemeContext {
         ),
         title: Text(strings.home),
         centerTitle: true,
+        actions: [
+          ValueListenableBuilder(
+            valueListenable: hideAmountsNotifier,
+            builder: (_, state, __) {
+              if (state) {
+                return IconButton(
+                  icon: const Icon(Icons.visibility_off_outlined),
+                  onPressed: () => hideAmountsNotifier.changeAndSave(!hideAmountsNotifier.value),
+                );
+              }
+
+              return IconButton(
+                icon: const Icon(Icons.visibility_outlined),
+                onPressed: () => hideAmountsNotifier.changeAndSave(!hideAmountsNotifier.value),
+              );
+            }
+          ),
+        ],
       ),
       drawer: const NavDrawer(),
       floatingActionButton: const FabTransactions(),
@@ -88,15 +108,15 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Spacing.y(),
-                      HomeCardAccountsBalance(notifier: accountsBalanceNotifier),
+                      HomeCardAccountsBalance(notifier: accountsBalanceNotifier, hideAmountsNotifier: hideAmountsNotifier),
                       const Spacing.y(),
                       IntrinsicHeight(
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Expanded(child: HomeCardMonthlyTransaction.income(notifier: monthlyTransactionNotifier)),
+                            Expanded(child: HomeCardMonthlyTransaction.income(notifier: monthlyTransactionNotifier, hideAmountsNotifier: hideAmountsNotifier)),
                             const Spacing.x(),
-                            Expanded(child: HomeCardMonthlyTransaction.expense(notifier: monthlyTransactionNotifier)),
+                            Expanded(child: HomeCardMonthlyTransaction.expense(notifier: monthlyTransactionNotifier, hideAmountsNotifier: hideAmountsNotifier)),
                           ],
                         ),
                       ),
@@ -130,13 +150,13 @@ class _HomePageState extends State<HomePage> with ThemeContext {
 
                           return Column(
                             children: [
-                              HomeCardBillCreditCard(notifier: billsCreditCardNotifier),
+                              HomeCardBillCreditCard(notifier: billsCreditCardNotifier, hideAmountsNotifier: hideAmountsNotifier),
                               const Spacing.y(),
                             ],
                           );
                         },
                       ),
-                      HomeCardMonthlyBalance(notifier: monthlyBalanceNotifier),
+                      HomeCardMonthlyBalance(notifier: monthlyBalanceNotifier, hideAmountsNotifier: hideAmountsNotifier),
                       const SizedBox(height: 100),
                     ],
                   ),
