@@ -62,6 +62,7 @@ import 'package:finan_master_app/features/config/domain/use_cases/config_save.da
 import 'package:finan_master_app/features/config/domain/use_cases/i_config_find.dart';
 import 'package:finan_master_app/features/config/domain/use_cases/i_config_save.dart';
 import 'package:finan_master_app/features/config/infra/repositories/config_repository.dart';
+import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/locale_notifier.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/theme_mode_notifier.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_bill_repository.dart';
@@ -338,6 +339,7 @@ final class DependencyInjection {
     getIt.registerSingleton<FirstStepsNotifier>(FirstStepsNotifier(firstStepsFind: getIt.get<IFirstStepsFind>(), firstStepsSave: getIt.get<IFirstStepsSave>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), incomeFind: getIt.get<IIncomeFind>()));
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
+    getIt.registerSingleton<HideAmountsNotifier>(HideAmountsNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<LoginNotifier>(() => LoginNotifier(loginAuth: getIt.get<ILoginAuth>()));
     getIt.registerFactory<ReportCategoriesNotifier>(() => ReportCategoriesNotifier(getIt.get<IReportCategoriesFind>()));
     getIt.registerFactory<ResetPasswordNotifier>(() => ResetPasswordNotifier(getIt.get<IResetPassword>()));

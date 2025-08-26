@@ -24,7 +24,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get accountNotFound => 'Conta não encontrada.';
 
   @override
-  String get accountUsedCreditCard => 'Esta conta está sendo utilizada por um cartão de crédito.';
+  String get accountUsedCreditCard =>
+      'Esta conta está sendo utilizada por um cartão de crédito.';
 
   @override
   String get accounts => 'Contas';
@@ -60,7 +61,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get backupButtonFinalized => 'Finalizado';
 
   @override
-  String get backupSubtitleExplication => 'Realizar backups é essencial para manter seus dados protegidos contra imprevistos.';
+  String get backupSubtitleExplication =>
+      'Realizar backups é essencial para manter seus dados protegidos contra imprevistos.';
 
   @override
   String get backupTitleExplication => 'Preserve suas informações importantes!';
@@ -75,13 +77,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get billAlreadyPaid => 'Fatura já paga.';
 
   @override
-  String get billClosedInDateTransaction => 'A fatura já está fechada nesta data da transação.';
+  String get billClosedInDateTransaction =>
+      'A fatura já está fechada nesta data da transação.';
 
   @override
   String get billClosed => 'Fechada';
 
   @override
-  String get billGreaterThanZero => 'O valor da fatura deve ser maior que zero.';
+  String get billGreaterThanZero =>
+      'O valor da fatura deve ser maior que zero.';
 
   @override
   String get billNoMovements => 'Sem movimentações';
@@ -186,10 +190,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get changeInitialAmount => 'Alterar valor inicial';
 
   @override
-  String get changeInitialAmountExplication => 'Será alterado seu saldo inicial e reajustado seu saldo atual, o que resultará em possíveis variações nos saldos ao final do mês.';
+  String get changeInitialAmountExplication =>
+      'Será alterado seu saldo inicial e reajustado seu saldo atual, o que resultará em possíveis variações nos saldos ao final do mês.';
 
   @override
-  String get changeInitialAmountConfirmation => 'Reajustar saldo inicial da conta?';
+  String get changeInitialAmountConfirmation =>
+      'Reajustar saldo inicial da conta?';
 
   @override
   String get clear => 'Limpar';
@@ -219,7 +225,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get confirmEmail => 'Confirmar email';
 
   @override
-  String get confirmEmailExplication => 'Enviamos uma confirmação para seu endereço de email.\nLocalize-o na sua caixa de entrada e siga o procedimento.';
+  String get confirmEmailExplication =>
+      'Enviamos uma confirmação para seu endereço de email.\nLocalize-o na sua caixa de entrada e siga o procedimento.';
 
   @override
   String get confirmPassword => 'Confirme sua senha';
@@ -243,7 +250,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get createTransaction => 'Criar transação';
 
   @override
-  String get createTransactionExplication => 'Será criado uma transação para reajustar o saldo atual.';
+  String get createTransactionExplication =>
+      'Será criado uma transação para reajustar o saldo atual.';
 
   @override
   String get createTransactionConfirmation => 'Criar transação de reajuste?';
@@ -252,7 +260,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get creditCardNotFound => 'Cartão de crédito não encontrado.';
 
   @override
-  String get creditCardBillNotFound => 'Fatura do cartão de crédito não encontrada.';
+  String get creditCardBillNotFound =>
+      'Fatura do cartão de crédito não encontrada.';
 
   @override
   String get date => 'Data';
@@ -264,13 +273,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get deleteAccount => 'Excluir conta';
 
   @override
-  String get deleteAccountConfirmation => 'Deseja realmente excluir esta conta?';
+  String get deleteAccountConfirmation =>
+      'Deseja realmente excluir esta conta?';
 
   @override
   String get deleteData => 'Apagar dados';
 
   @override
-  String get deleteDataExplication => 'Apague seus dados permanentemente do sistema.';
+  String get deleteDataExplication =>
+      'Apague seus dados permanentemente do sistema.';
 
   @override
   String get deletingTransactions => 'Excluindo transações...';
@@ -303,7 +314,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get emailNotVerified => 'Email não verificado.';
 
   @override
-  String get errorStartDateAfterEndDate => 'A data inicial deve ser anterior a data final.';
+  String get errorStartDateAfterEndDate =>
+      'A data inicial deve ser anterior a data final.';
 
   @override
   String get expense => 'Despesa';
@@ -366,7 +378,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get includeTotalBalance => 'Contabilizar no saldo total';
 
   @override
-  String get includeTotalBalanceExplication => 'O saldo desta conta será considerado no cálculo do saldo total exibido.';
+  String get includeTotalBalanceExplication =>
+      'O saldo desta conta será considerado no cálculo do saldo total exibido.';
 
   @override
   String get incorrectPassword => 'Senha incorreta.';
@@ -381,19 +394,22 @@ class AppLocalizationsPt extends AppLocalizations {
   String get introduction1Title => 'Controle suas finanças em um só lugar';
 
   @override
-  String get introduction1subtitle => 'Acompanhe suas despesas e receitas, e tenha uma visão geral de suas finanças.';
+  String get introduction1subtitle =>
+      'Acompanhe suas despesas e receitas, e tenha uma visão geral de suas finanças.';
 
   @override
   String get introduction2Title => 'Simplifique suas transações';
 
   @override
-  String get introduction2subtitle => 'Organize suas despesas e receitas de forma eficiente, eliminando a papelada e simplificando sua vida financeira.';
+  String get introduction2subtitle =>
+      'Organize suas despesas e receitas de forma eficiente, eliminando a papelada e simplificando sua vida financeira.';
 
   @override
   String get introduction3Title => 'Equilibre suas finanças para o sucesso';
 
   @override
-  String get introduction3subtitle => 'Domine a organização financeira e libere seu poder para alcançar novos patamares de estabilidade e realização pessoal.';
+  String get introduction3subtitle =>
+      'Domine a organização financeira e libere seu poder para alcançar novos patamares de estabilidade e realização pessoal.';
 
   @override
   String get invalidValue => 'Valor inválido.';
@@ -486,26 +502,33 @@ class AppLocalizationsPt extends AppLocalizations {
   String get notPossibleShare => 'Não foi possível compartilhar.';
 
   @override
-  String get notPossibleEditTransactionCreditCardPaid => 'Não é possível editar uma transação de cartão de crédito já paga.';
+  String get notPossibleEditTransactionCreditCardPaid =>
+      'Não é possível editar uma transação de cartão de crédito já paga.';
 
   @override
-  String get notPossibleEditTransactionBillClosed => 'Não é possível editar uma transação de uma fatura fechada.';
+  String get notPossibleEditTransactionBillClosed =>
+      'Não é possível editar uma transação de uma fatura fechada.';
 
   @override
-  String get notPossibleDeleteTransactionCreditCardPaid => 'Não é possível excluir uma transação de cartão de crédito já paga.';
+  String get notPossibleDeleteTransactionCreditCardPaid =>
+      'Não é possível excluir uma transação de cartão de crédito já paga.';
 
   @override
-  String get notPossibleDeleteTransactionBillClosed => 'Não é possível excluir uma transação de uma fatura fechada.';
+  String get notPossibleDeleteTransactionBillClosed =>
+      'Não é possível excluir uma transação de uma fatura fechada.';
 
   @override
   String get noTransactionsRegistered => 'Nenhuma transação cadastrada.';
 
   @override
-  String get notPossibleToPayBill => 'O pagamento dessa fatura não pode ser realizado.';
+  String get notPossibleToPayBill =>
+      'O pagamento dessa fatura não pode ser realizado.';
 
   @override
   String nSelected(num count) {
-    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(locale: localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -551,10 +574,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get payable => 'A pagar';
 
   @override
-  String get paymentExceedBillAmount => 'O pagamento não pode ser superior ao valor da fatura.';
+  String get paymentExceedBillAmount =>
+      'O pagamento não pode ser superior ao valor da fatura.';
 
   @override
-  String get paymentRequirementWhenClosedBill => 'É necessário pagar o valor total da fatura quando ela estiver fechada.';
+  String get paymentRequirementWhenClosedBill =>
+      'É necessário pagar o valor total da fatura quando ela estiver fechada.';
 
   @override
   String get payBill => 'Pagar fatura';
@@ -602,16 +627,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get resetPassword => 'Redefinir senha';
 
   @override
-  String get resetPasswordExplication => 'Será enviado um email com instruções para redefinir sua senha.';
+  String get resetPasswordExplication =>
+      'Será enviado um email com instruções para redefinir sua senha.';
 
   @override
-  String get resetPasswordNotification => 'Redefinição de senha enviada para seu email.';
+  String get resetPasswordNotification =>
+      'Redefinição de senha enviada para seu email.';
 
   @override
   String get restoreBackup => 'Restaurar backup';
 
   @override
-  String get restoreBackupExplication => 'Restaure um backup para substituir seus dados atuais pelos dados do backup.';
+  String get restoreBackupExplication =>
+      'Restaure um backup para substituir seus dados atuais pelos dados do backup.';
 
   @override
   String get requiredField => 'Campo obrigatório.';
@@ -697,7 +725,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get stepIncome => 'Cadastre sua primeira receita';
 
   @override
-  String get sourceAccountAndDestinationEquals => 'A conta de origem e a conta de destino devem ser diferentes.';
+  String get sourceAccountAndDestinationEquals =>
+      'A conta de origem e a conta de destino devem ser diferentes.';
 
   @override
   String get theme => 'Tema';
@@ -730,7 +759,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get totalSpent => 'Total gasto';
 
   @override
-  String get transactionAmountExceedLimitBill => 'O valor da transação não pode exceder o limite disponível na fatura.';
+  String get transactionAmountExceedLimitBill =>
+      'O valor da transação não pode exceder o limite disponível na fatura.';
 
   @override
   String get transactions => 'Transações';
@@ -745,7 +775,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get transfer => 'Transferência';
 
   @override
-  String get transferAmountDivergent => 'Valor da conta de saída e de entrada estão divergentes.';
+  String get transferAmountDivergent =>
+      'Valor da conta de saída e de entrada estão divergentes.';
 
   @override
   String get typeCategory => 'Tipo de categoria';
@@ -772,7 +803,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get uninformedEmail => 'Email não informado.';
 
   @override
-  String get uninformedFinancialInstitution => 'Instituição financeira não informada.';
+  String get uninformedFinancialInstitution =>
+      'Instituição financeira não informada.';
 
   @override
   String get uninformedIcon => 'Ícone não informado.';

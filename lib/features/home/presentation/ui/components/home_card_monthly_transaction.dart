@@ -1,4 +1,5 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
+import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_transaction_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/states/home_monthly_transaction_state.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transactions_list_page.dart';
@@ -12,11 +13,12 @@ enum _Type { income, expense }
 
 class HomeCardMonthlyTransaction extends StatefulWidget {
   final HomeMonthlyTransactionNotifier notifier;
+  final HideAmountsNotifier hideAmountsNotifier;
   final _Type _type;
 
-  const HomeCardMonthlyTransaction.income({super.key, required this.notifier}) : _type = _Type.income;
+  const HomeCardMonthlyTransaction.income({super.key, required this.notifier, required this.hideAmountsNotifier}) : _type = _Type.income;
 
-  const HomeCardMonthlyTransaction.expense({super.key, required this.notifier}) : _type = _Type.expense;
+  const HomeCardMonthlyTransaction.expense({super.key, required this.notifier, required this.hideAmountsNotifier}) : _type = _Type.expense;
 
   @override
   State<HomeCardMonthlyTransaction> createState() => _HomeCardMonthlyTransactionState();
@@ -92,9 +94,16 @@ class _HomeCardMonthlyTransactionState extends State<HomeCardMonthlyTransaction>
                             );
                           }
 
-                          return Text(
-                            widget._type == _Type.expense ? widget.notifier.value.amountsExpense.money : widget.notifier.value.amountsIncome.money,
-                            style: textTheme.titleLarge?.copyWith(fontSize: 18),
+                          return ValueListenableBuilder(
+                            valueListenable: widget.hideAmountsNotifier,
+                            builder: (_, state, __) {
+                              if (state) return Text('●●●●', style: textTheme.titleLarge?.copyWith(fontSize: 18));
+
+                              return Text(
+                                widget._type == _Type.expense ? widget.notifier.value.amountsExpense.money : widget.notifier.value.amountsIncome.money,
+                                style: textTheme.titleLarge?.copyWith(fontSize: 18),
+                              );
+                            },
                           );
                         },
                       ),

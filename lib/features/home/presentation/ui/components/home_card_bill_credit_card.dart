@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_enum.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_card_simple_widget.dart';
@@ -15,8 +16,9 @@ import 'package:go_router/go_router.dart';
 
 class HomeCardBillCreditCard extends StatefulWidget {
   final HomeBillsCreditCardNotifier notifier;
+  final HideAmountsNotifier hideAmountsNotifier;
 
-  const HomeCardBillCreditCard({super.key, required this.notifier});
+  const HomeCardBillCreditCard({super.key, required this.notifier, required this.hideAmountsNotifier});
 
   @override
   State<HomeCardBillCreditCard> createState() => _HomeCardBillCreditCardState();
@@ -113,9 +115,23 @@ class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with Th
                                   },
                                 ),
                                 const SizedBox(height: 4),
-                                Text((state.creditCardsWithBill[index].bill?.totalSpent ?? 0).money, style: textTheme.titleLarge?.copyWith(fontSize: 18)),
-                                const SizedBox(height: 4),
-                                Text('${strings.availableLimit} ${(state.creditCardsWithBill[index].creditCard.amountLimit).money}', style: textTheme.labelMedium),
+                                ValueListenableBuilder(
+                                  valueListenable: widget.hideAmountsNotifier,
+                                  builder: (_, stateHideAmounts, __) {
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        if (stateHideAmounts) ...[
+                                          Text('●●●●', style: textTheme.titleLarge?.copyWith(fontSize: 18)),
+                                        ] else ...[
+                                          Text((state.creditCardsWithBill[index].bill?.totalSpent ?? 0).money, style: textTheme.titleLarge?.copyWith(fontSize: 18)),
+                                        ],
+                                        const SizedBox(height: 4),
+                                        Text('${strings.availableLimit} ${stateHideAmounts ? '●●●●' : (state.creditCardsWithBill[index].creditCard.amountLimit).money}', style: textTheme.labelMedium),
+                                      ],
+                                    );
+                                  },
+                                ),
                               ],
                             ),
                           ),

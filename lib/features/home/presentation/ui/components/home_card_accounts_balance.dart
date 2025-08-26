@@ -1,4 +1,5 @@
 import 'package:finan_master_app/features/account/presentation/ui/accounts_list_page.dart';
+import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/states/home_accounts_balance_state.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
@@ -8,8 +9,9 @@ import 'package:go_router/go_router.dart';
 
 class HomeCardAccountsBalance extends StatefulWidget {
   final HomeAccountsBalanceNotifier notifier;
+  final HideAmountsNotifier hideAmountsNotifier;
 
-  const HomeCardAccountsBalance({super.key, required this.notifier});
+  const HomeCardAccountsBalance({super.key, required this.notifier, required this.hideAmountsNotifier});
 
   @override
   State<HomeCardAccountsBalance> createState() => _HomeCardAccountsBalanceState();
@@ -70,7 +72,14 @@ class _HomeCardAccountsBalanceState extends State<HomeCardAccountsBalance> with 
                             );
                           }
 
-                          return Text(widget.notifier.balance.money, style: textTheme.headlineSmall);
+                          return ValueListenableBuilder(
+                            valueListenable: widget.hideAmountsNotifier,
+                            builder: (_, state, __) {
+                              if (state) return Text('●●●●', style: textTheme.headlineSmall);
+
+                              return Text(widget.notifier.balance.money, style: textTheme.headlineSmall);
+                            },
+                          );
                         },
                       ),
                     ),

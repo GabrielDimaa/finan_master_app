@@ -8,4 +8,8 @@ abstract interface class IConfigRepository {
   Locale? findLocale();
 
   Future<void> saveLocale(Locale locale);
+
+  bool? findHideAmounts();
+
+  Future<void> saveHideAmounts(bool hideAmounts);
 }

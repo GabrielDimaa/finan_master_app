@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
 import 'package:finan_master_app/features/home/domain/entities/home_monthly_balance_entity.dart';
 import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/states/home_monthly_balance_state.dart';
@@ -13,8 +14,9 @@ import 'package:flutter/material.dart';
 
 class HomeCardMonthlyBalance extends StatefulWidget {
   final HomeMonthlyBalanceNotifier notifier;
+  final HideAmountsNotifier hideAmountsNotifier;
 
-  const HomeCardMonthlyBalance({super.key, required this.notifier});
+  const HomeCardMonthlyBalance({super.key, required this.notifier, required this.hideAmountsNotifier});
 
   @override
   State<HomeCardMonthlyBalance> createState() => _HomeCardMonthlyBalanceState();
@@ -87,9 +89,14 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
                             reservedSize: 80,
                             getTitlesWidget: (double value, TitleMeta meta) => SideTitleWidget(
                               axisSide: meta.axisSide,
-                              child: Text(
-                                value.money,
-                                style: textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.w300),
+                              child: ValueListenableBuilder(
+                                valueListenable: widget.hideAmountsNotifier,
+                                builder: (_, state, __) {
+                                  return Text(
+                                    state ? '●●●●' : value.money,
+                                    style: textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.w300),
+                                  );
+                                }
                               ),
                             ),
                           ),

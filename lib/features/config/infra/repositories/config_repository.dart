@@ -10,6 +10,7 @@ class ConfigRepository implements IConfigRepository {
 
   static const String themeModeKey = "theme_mode";
   static const String localeKey = "locale";
+  static const String hideAmountsKey = "hide_amounts";
 
   @override
   ThemeMode? findThemeMode() {
@@ -34,4 +35,10 @@ class ConfigRepository implements IConfigRepository {
 
   @override
   Future<void> saveLocale(Locale locale) => _cacheLocal.save(localeKey, locale.languageCode);
+
+  @override
+  bool? findHideAmounts() => _cacheLocal.get<bool>(hideAmountsKey);
+
+  @override
+  Future<void> saveHideAmounts(bool hideAmounts) => _cacheLocal.save(hideAmountsKey, hideAmounts);
 }
