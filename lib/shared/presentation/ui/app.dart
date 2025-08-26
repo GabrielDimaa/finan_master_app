@@ -85,7 +85,7 @@ class _AppState extends State<App> {
             appBarTheme: const AppBarTheme(
               scrolledUnderElevation: 0,
             ),
-            cardTheme: const CardTheme(
+            cardTheme: const CardThemeData(
               elevation: 0,
               margin: EdgeInsets.zero,
             ),

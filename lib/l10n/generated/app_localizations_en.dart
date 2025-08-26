@@ -505,10 +505,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String nSelected(num count) {
-    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
-      locale: localeName,
-      
-    );
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(locale: localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
