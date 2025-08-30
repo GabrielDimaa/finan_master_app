@@ -86,6 +86,7 @@
   "deleteAccount": "Excluir conta",
   "deleteAccountConfirmation": "Deseja realmente excluir esta conta?",
   "deleteData": "Apagar dados",
+  "deleteDataConfirmation": "Deseja realmente apagar seus dados permanentemente do sistema?",
   "deleteDataExplication": "Apague seus dados permanentemente do sistema.",
   "deletingTransactions": "Excluindo transações...",
   "description": "Descrição",

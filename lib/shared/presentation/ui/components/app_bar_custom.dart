@@ -4,7 +4,7 @@ import 'package:finan_master_app/shared/presentation/ui/components/list/selectab
 import 'package:flutter/material.dart';
 
 class AppBarCustom extends StatefulWidget implements PreferredSizeWidget {
-  final Widget title;
+  final Widget? title;
   final bool? centerTitle;
   final List<Widget>? actions;
   final List<Widget>? actionsInModeSelection;
@@ -13,7 +13,7 @@ class AppBarCustom extends StatefulWidget implements PreferredSizeWidget {
 
   const AppBarCustom({
     Key? key,
-    required this.title,
+    this.title,
     this.centerTitle,
     this.actions,
     this.actionsInModeSelection,

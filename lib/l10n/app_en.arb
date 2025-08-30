@@ -86,6 +86,7 @@
   "deleteAccount": "Delete account",
   "deleteAccountConfirmation": "Do you really want to delete this account?",
   "deleteData": "Delete data",
+  "deleteDataConfirmation": "Do you truly wish to permanently delete your data from the system?",
   "deleteDataExplication": "Permanently delete your data from the system.",
   "deletingTransactions": "Deleting transactions...",
   "description": "Description",

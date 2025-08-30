@@ -280,6 +280,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get deleteData => 'Apagar dados';
 
   @override
+  String get deleteDataConfirmation =>
+      'Deseja realmente apagar seus dados permanentemente do sistema?';
+
+  @override
   String get deleteDataExplication =>
       'Apague seus dados permanentemente do sistema.';
 

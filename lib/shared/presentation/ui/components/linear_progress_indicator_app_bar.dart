@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class LinearProgressIndicatorAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const LinearProgressIndicatorAppBar({super.key});
+  final bool show;
+
+  const LinearProgressIndicatorAppBar({super.key, this.show = true});
 
   @override
-  Widget build(BuildContext context) => const LinearProgressIndicator();
+  Size get preferredSize => const Size(double.infinity, 4);
 
   @override
-  Size get preferredSize => const Size(double.infinity, 1);
+  Widget build(BuildContext context) => show ? const LinearProgressIndicator(minHeight: 4) : const SizedBox.shrink();
 }

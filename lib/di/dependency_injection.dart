@@ -46,7 +46,8 @@ import 'package:finan_master_app/features/backup/domain/use_cases/i_backup.dart'
 import 'package:finan_master_app/features/backup/domain/use_cases/i_restore_backup.dart';
 import 'package:finan_master_app/features/backup/domain/use_cases/restore_backup.dart';
 import 'package:finan_master_app/features/backup/infra/repositories/backup_repository.dart';
-import 'package:finan_master_app/features/backup/presentation/notifiers/backup_notifier.dart';
+import 'package:finan_master_app/features/backup/presentation/view_models/backup_view_model.dart';
+import 'package:finan_master_app/features/backup/presentation/view_models/restore_backup_view_model.dart';
 import 'package:finan_master_app/features/category/domain/repositories/i_category_repository.dart';
 import 'package:finan_master_app/features/category/domain/use_cases/category_delete.dart';
 import 'package:finan_master_app/features/category/domain/use_cases/category_find.dart';
@@ -329,6 +330,8 @@ final class DependencyInjection {
     getIt.registerFactory<LoginViewModel>(() => LoginViewModel(loginAuth: getIt.get<ILoginAuth>()));
     getIt.registerFactory<ResetPasswordViewModel>(() => ResetPasswordViewModel(resetPassword: getIt.get<IResetPassword>()));
     getIt.registerFactory<SignupViewModel>(() => SignupViewModel(signupAuth: getIt.get<ISignupAuth>()));
+    getIt.registerFactory<BackupViewModel>(() => BackupViewModel(backup: getIt.get<IBackup>()));
+    getIt.registerFactory<RestoreBackupViewModel>(() => RestoreBackupViewModel(restoreBackup: getIt.get<IRestoreBackup>(), deleteAppData: getIt.get<IDeleteAppData>()));
 
     //Notifiers
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
@@ -338,7 +341,6 @@ final class DependencyInjection {
     getIt.registerFactory<HomeMonthlyTransactionNotifier>(() => HomeMonthlyTransactionNotifier(transactionFind: getIt.get<ITransactionFind>()));
     getIt.registerFactory<HomeTransactionsUnpaidUnreceivedNotifier>(() => HomeTransactionsUnpaidUnreceivedNotifier(transactionFind: getIt.get<ITransactionFind>()));
     getIt.registerFactory<TransactionsUnpaidUnreceivedNotifier>(() => TransactionsUnpaidUnreceivedNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>()));
-    getIt.registerFactory<BackupNotifier>(() => BackupNotifier(backup: getIt.get<IBackup>(), restoreBackup: getIt.get<IRestoreBackup>(), deleteAppData: getIt.get<IDeleteAppData>()));
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
     getIt.registerFactory<CategoryNotifier>(() => CategoryNotifier(categorySave: getIt.get<ICategorySave>(), categoryDelete: getIt.get<ICategoryDelete>()));
     getIt.registerFactory<CreditCardNotifier>(() => CreditCardNotifier(creditCardSave: getIt.get<ICreditCardSave>(), creditCardDelete: getIt.get<ICreditCardDelete>(), creditCardFind: getIt.get<ICreditCardFind>()));

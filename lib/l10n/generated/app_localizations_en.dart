@@ -279,6 +279,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteData => 'Delete data';
 
   @override
+  String get deleteDataConfirmation =>
+      'Do you truly wish to permanently delete your data from the system?';
+
+  @override
   String get deleteDataExplication =>
       'Permanently delete your data from the system.';
 

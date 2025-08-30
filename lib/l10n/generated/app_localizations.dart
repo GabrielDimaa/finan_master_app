@@ -620,6 +620,12 @@ abstract class AppLocalizations {
   /// **'Delete data'**
   String get deleteData;
 
+  /// No description provided for @deleteDataConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you truly wish to permanently delete your data from the system?'**
+  String get deleteDataConfirmation;
+
   /// No description provided for @deleteDataExplication.
   ///
   /// In en, this message translates to:
