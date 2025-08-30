@@ -25,4 +25,16 @@ abstract class CategoryFactory {
       icon: model.icon,
     );
   }
+
+  static CategoryEntity newEntity() {
+    return CategoryEntity(
+      id: null,
+      createdAt: null,
+      deletedAt: null,
+      description: '',
+      type: null,
+      color: '',
+      icon: 0,
+    );
+  }
 }

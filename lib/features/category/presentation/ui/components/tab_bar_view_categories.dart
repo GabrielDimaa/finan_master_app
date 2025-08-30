@@ -1,7 +1,7 @@
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
-import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/ui/category_form_page.dart';
+import 'package:finan_master_app/features/category/presentation/view_models/categories_list_view_model.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
@@ -9,13 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class TabBarViewCategories extends StatelessWidget {
-  final CategoriesNotifier notifier;
+  final CategoriesViewModel viewModel;
 
-  const TabBarViewCategories({Key? key, required this.notifier}) : super(key: key);
+  const TabBarViewCategories({Key? key, required this.viewModel}) : super(key: key);
 
-  List<CategoryEntity> get expenses => notifier.value.categories.where((category) => category.type == CategoryTypeEnum.expense).toList();
+  List<CategoryEntity> get expenses => viewModel.findAll.result!.where((category) => category.type == CategoryTypeEnum.expense).toList();
 
-  List<CategoryEntity> get incomes => notifier.value.categories.where((category) => category.type == CategoryTypeEnum.income).toList();
+  List<CategoryEntity> get incomes => viewModel.findAll.result!.where((category) => category.type == CategoryTypeEnum.income).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class TabBarViewCategories extends StatelessWidget {
         final FormResultNavigation<CategoryEntity>? result = await context.pushNamed(CategoryFormPage.route, extra: category);
         if (result == null) return;
 
-        notifier.findAll();
+        viewModel.findAll.execute();
       },
     );
   }

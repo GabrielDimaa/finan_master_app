@@ -74,7 +74,7 @@ class _SliverAppBarMediumState extends State<SliverAppBarMedium> with ThemeConte
           const Padding(padding: EdgeInsets.only(right: 8)),
         ],
         leading: widget.leading ?? const BackButton(),
-        bottom: widget.loading == true ? const LinearProgressIndicatorAppBar() : null,
+        bottom: LinearProgressIndicatorAppBar(show: widget.loading == true),
       );
     }
   }

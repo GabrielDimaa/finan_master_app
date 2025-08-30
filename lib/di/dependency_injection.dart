@@ -59,7 +59,8 @@ import 'package:finan_master_app/features/category/infra/data_sources/category_l
 import 'package:finan_master_app/features/category/infra/data_sources/i_category_local_data_source.dart';
 import 'package:finan_master_app/features/category/infra/repositories/category_repository.dart';
 import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
-import 'package:finan_master_app/features/category/presentation/notifiers/category_notifier.dart';
+import 'package:finan_master_app/features/category/presentation/view_models/categories_list_view_model.dart';
+import 'package:finan_master_app/features/category/presentation/view_models/category_form_view_model.dart';
 import 'package:finan_master_app/features/config/domain/repositories/i_config_repository.dart';
 import 'package:finan_master_app/features/config/domain/use_cases/config_find.dart';
 import 'package:finan_master_app/features/config/domain/use_cases/config_save.dart';
@@ -332,6 +333,8 @@ final class DependencyInjection {
     getIt.registerFactory<SignupViewModel>(() => SignupViewModel(signupAuth: getIt.get<ISignupAuth>()));
     getIt.registerFactory<BackupViewModel>(() => BackupViewModel(backup: getIt.get<IBackup>()));
     getIt.registerFactory<RestoreBackupViewModel>(() => RestoreBackupViewModel(restoreBackup: getIt.get<IRestoreBackup>(), deleteAppData: getIt.get<IDeleteAppData>()));
+    getIt.registerFactory<CategoryFormViewModel>(() => CategoryFormViewModel(categorySave: getIt.get<ICategorySave>(), categoryDelete: getIt.get<ICategoryDelete>()));
+    getIt.registerFactory<CategoriesViewModel>(() => CategoriesViewModel(categoryFind: getIt.get<ICategoryFind>()));
 
     //Notifiers
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
@@ -342,7 +345,6 @@ final class DependencyInjection {
     getIt.registerFactory<HomeTransactionsUnpaidUnreceivedNotifier>(() => HomeTransactionsUnpaidUnreceivedNotifier(transactionFind: getIt.get<ITransactionFind>()));
     getIt.registerFactory<TransactionsUnpaidUnreceivedNotifier>(() => TransactionsUnpaidUnreceivedNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>()));
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
-    getIt.registerFactory<CategoryNotifier>(() => CategoryNotifier(categorySave: getIt.get<ICategorySave>(), categoryDelete: getIt.get<ICategoryDelete>()));
     getIt.registerFactory<CreditCardNotifier>(() => CreditCardNotifier(creditCardSave: getIt.get<ICreditCardSave>(), creditCardDelete: getIt.get<ICreditCardDelete>(), creditCardFind: getIt.get<ICreditCardFind>()));
     getIt.registerFactory<CreditCardExpenseNotifier>(() => CreditCardExpenseNotifier(creditCardTransactionSave: getIt.get<ICreditCardTransactionSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>(), expenseFind: getIt.get<IExpenseFind>()));
     getIt.registerFactory<CreditCardsNotifier>(() => CreditCardsNotifier(creditCardFind: getIt.get<ICreditCardFind>()));

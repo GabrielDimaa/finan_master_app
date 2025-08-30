@@ -16,4 +16,16 @@ class CategoryEntity extends Entity {
     required this.color,
     required this.icon,
   });
+
+  CategoryEntity clone() {
+    return CategoryEntity(
+      id: id,
+      createdAt: createdAt,
+      deletedAt: deletedAt,
+      description: description,
+      type: type,
+      color: color,
+      icon: icon,
+    );
+  }
 }
