@@ -21,9 +21,4 @@ class CategoriesNotifier extends ValueNotifier<CategoriesState> {
       value = value.setError(e.toString());
     }
   }
-
-  Future<void> onRefresh({bool deleted = false}) async {
-    final List<CategoryEntity> categories = await _categoryFind.findAll(deleted: deleted);
-    value = value.setCategories(categories);
-  }
 }

@@ -1,9 +1,8 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/enums/adjustment_option_enum.dart';
-import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
-import 'package:finan_master_app/features/account/presentation/states/account_state.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/confirm_readjust_balance_dialog.dart';
+import 'package:finan_master_app/features/account/presentation/view_models/readjust_balance_view_model.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -35,7 +34,7 @@ class ReadjustBalance extends StatefulWidget {
 }
 
 class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
-  final AccountNotifier notifier = DI.get<AccountNotifier>();
+  final ReadjustBalanceViewModel viewModel = DI.get<ReadjustBalanceViewModel>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -46,15 +45,15 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
   @override
   void initState() {
     super.initState();
-    notifier.setAccount(widget.account);
+    viewModel.setAccount(widget.account);
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog.fullscreen(
-      child: ValueListenableBuilder(
-        valueListenable: notifier,
-        builder: (_, state, __) {
+      child: ListenableBuilder(
+        listenable: Listenable.merge([viewModel, viewModel.readjustBalance]),
+        builder: (_, __) {
           return Scaffold(
             appBar: AppBar(
               leading: IconButton(
@@ -74,7 +73,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
               ],
               bottom: PreferredSize(
                 preferredSize: Size.zero,
-                child: notifier.isLoading ? const LinearProgressIndicator() : const SizedBox(height: 4),
+                child: viewModel.readjustBalance.running ? const LinearProgressIndicator() : const SizedBox(height: 4),
               ),
             ),
             body: SafeArea(
@@ -87,10 +86,10 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                     children: [
                       const Spacing.y(2),
                       TextFormField(
-                        initialValue: notifier.account.balance.moneyWithoutSymbol,
+                        initialValue: viewModel.account.balance.moneyWithoutSymbol,
                         decoration: InputDecoration(label: Text(strings.accountBalance), prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol),
                         validator: InputRequiredValidator().validate,
-                        enabled: !notifier.isLoading,
+                        enabled: !viewModel.readjustBalance.running,
                         keyboardType: TextInputType.number,
                         textInputAction: TextInputAction.done,
                         onSaved: (String? value) => readjustmentValue = (value ?? '').moneyToDouble(),
@@ -101,7 +100,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(strings.initialAccountBalance, style: textTheme.bodySmall?.copyWith(color: colorScheme.outline)),
-                          Text(notifier.account.initialAmount.money, style: textTheme.labelMedium?.copyWith(color: colorScheme.outline)),
+                          Text(viewModel.account.initialAmount.money, style: textTheme.labelMedium?.copyWith(color: colorScheme.outline)),
                         ],
                       ),
                       const Spacing.y(),
@@ -124,7 +123,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                                         ),
                                         child: InkWell(
                                           onTap: () {
-                                            if (notifier.isLoading) return;
+                                            if (viewModel.readjustBalance.running) return;
                                             readjustmentOption.value = ReadjustmentOptionEnum.createTransaction;
                                           },
                                           child: Padding(
@@ -153,7 +152,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                                         ),
                                         child: InkWell(
                                           onTap: () {
-                                            if (notifier.isLoading) return;
+                                            if (viewModel.readjustBalance.running) return;
                                             readjustmentOption.value = ReadjustmentOptionEnum.changeInitialAmount;
                                           },
                                           child: Padding(
@@ -178,7 +177,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                                 decoration: InputDecoration(label: Text(strings.transactionDescription)),
                                 textInputAction: TextInputAction.done,
                                 textCapitalization: TextCapitalization.sentences,
-                                enabled: !notifier.isLoading && readjustmentOption.value == ReadjustmentOptionEnum.createTransaction,
+                                enabled: !viewModel.readjustBalance.running && readjustmentOption.value == ReadjustmentOptionEnum.createTransaction,
                                 onSaved: (String? value) => transactionDescription = value,
                               ),
                             ],
@@ -198,27 +197,26 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
 
   Future<void> save() async {
     try {
-      if (notifier.isLoading) return;
+      if (viewModel.readjustBalance.running) return;
 
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
 
-        final double difference = readjustmentValue - notifier.account.balance;
+        final double difference = readjustmentValue - viewModel.account.balance;
 
         if (difference == 0) {
           context.pop();
           return;
         }
 
-        final bool confirm = await ConfirmReadjustBalanceDialog.show(context: context, accountEntity: notifier.account, value: difference, option: readjustmentOption.value);
+        final bool confirm = await ConfirmReadjustBalanceDialog.show(context: context, accountEntity: viewModel.account, value: difference, option: readjustmentOption.value);
         if (!confirm) return;
 
-        await notifier.readjustBalance(readjustmentValue: difference, option: readjustmentOption.value, description: transactionDescription?.isNotEmpty == true ? transactionDescription! : strings.readjustmentTransaction,);
-
-        if (notifier.value is ErrorAccountState) throw Exception((notifier.value as ErrorAccountState).message);
+        await viewModel.readjustBalance.execute((readjustmentValue: difference, option: readjustmentOption.value, description: transactionDescription?.isNotEmpty == true ? transactionDescription! : strings.readjustmentTransaction));
+        viewModel.readjustBalance.throwIfError();
 
         if (!mounted) return;
-        context.pop(notifier.account);
+        context.pop(viewModel.account);
       }
     } catch (e) {
       await ErrorDialog.show(context, e.toString());

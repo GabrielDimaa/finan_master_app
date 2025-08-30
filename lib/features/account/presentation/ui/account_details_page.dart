@@ -1,10 +1,9 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
-import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
-import 'package:finan_master_app/features/account/presentation/states/account_state.dart';
 import 'package:finan_master_app/features/account/presentation/ui/account_form_page.dart';
-import 'package:finan_master_app/features/account/presentation/ui/components/readjust_balance.dart';
+import 'package:finan_master_app/features/account/presentation/ui/components/readjust_balance_dialog.dart';
+import 'package:finan_master_app/features/account/presentation/view_models/account_details_view_model.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -29,45 +28,43 @@ class AccountDetailsPage extends StatefulWidget {
 }
 
 class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeContext {
-  final AccountNotifier notifier = DI.get<AccountNotifier>();
+  final AccountDetailsViewModel viewModel = DI.get<AccountDetailsViewModel>();
 
   bool accountChanged = false;
-
-  bool get isLoading => notifier.value is SavingAccountState || notifier.value is DeletingAccountState;
 
   @override
   void initState() {
     super.initState();
 
-    notifier.setAccount(widget.account);
+    viewModel.setAccount(widget.account);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: notifier,
-      builder: (_, state, __) {
+    return ListenableBuilder(
+      listenable: viewModel,
+      builder: (_, __) {
         return WillPopScope(
           // canPop: !accountChanged,
           // onPopInvoked: (_) => context.pop(FormResultNavigation.save(notifier.account)),
           onWillPop: () async {
             if (accountChanged) {
-              context.pop(FormResultNavigation.save(notifier.account));
+              context.pop(FormResultNavigation.save(viewModel.account));
             }
             return true;
           },
           child: SliverScaffold(
             appBar: SliverAppBarMedium(
               title: Text(strings.accountDetails),
-              loading: isLoading,
+              loading: viewModel.delete.running,
               actions: [
                 PopupMenuButton(
                   tooltip: strings.moreOptions,
-                  enabled: !isLoading,
+                  enabled: !viewModel.delete.running,
                   icon: const Icon(Icons.more_vert_outlined),
                   itemBuilder: (BuildContext context) => [
                     PopupMenuItem(
-                      enabled: !isLoading,
+                      enabled: !viewModel.delete.running,
                       onTap: goAccountForm,
                       child: Row(
                         children: [
@@ -78,7 +75,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
                       ),
                     ),
                     PopupMenuItem(
-                      enabled: !isLoading,
+                      enabled: !viewModel.delete.running,
                       onTap: () => WidgetsBinding.instance.addPostFrameCallback((_) => delete()),
                       child: Row(
                         children: [
@@ -101,19 +98,19 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Spacing.y(),
-                      Text(state.account.description, style: textTheme.titleLarge),
+                      Text(viewModel.account.description, style: textTheme.titleLarge),
                       const Spacing.y(1.5),
                       Text(strings.accountBalance),
                       const Spacing.y(0.5),
-                      Text(state.account.balance.money, style: textTheme.headlineLarge),
+                      Text(viewModel.account.balance.money, style: textTheme.headlineLarge),
                       const Spacing.y(0.5),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          state.account.financialInstitution!.icon(24),
+                          viewModel.account.financialInstitution!.icon(24),
                           const Spacing.x(),
-                          Text(state.account.financialInstitution!.description, style: textTheme.titleMedium),
+                          Text(viewModel.account.financialInstitution!.description, style: textTheme.titleMedium),
                         ],
                       ),
                       const Spacing.y(3),
@@ -129,34 +126,6 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
                     ],
                   ),
                 ),
-                // const Divider(),
-                // Padding(
-                //   padding: const EdgeInsets.all(16),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       Expanded(
-                //         child: operation(
-                //           value: "55",
-                //           label: "Receitas",
-                //         ),
-                //       ),
-                //       Expanded(
-                //         child: operation(
-                //           value: "55",
-                //           label: "Despesas",
-                //         ),
-                //       ),
-                //       Expanded(
-                //         child: operation(
-                //           value: "55",
-                //           label: "Transferências",
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // const Divider(),
               ],
             ),
           ),
@@ -177,12 +146,12 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
   }
 
   Future<void> goAccountForm() async {
-    if (isLoading) return;
+    if (viewModel.delete.running) return;
 
-    final FormResultNavigation? result = await context.pushNamedWithAd(AccountFormPage.route, extra: notifier.account);
+    final FormResultNavigation? result = await context.pushNamedWithAd(AccountFormPage.route, extra: viewModel.account);
 
     if (result?.isSave ?? false) {
-      notifier.setAccount(result!.value);
+      viewModel.setAccount(result!.value);
       accountChanged = true;
     }
 
@@ -193,25 +162,25 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
   }
 
   Future<void> readjustBalance() async {
-    if (isLoading) return;
+    if (viewModel.delete.running) return;
 
-    final AccountEntity? account = await ReadjustBalance.show(context: context, account: notifier.account);
+    final AccountEntity? account = await ReadjustBalance.show(context: context, account: viewModel.account);
     if (account == null) return;
 
-    notifier.setAccount(account);
+    viewModel.setAccount(account);
     accountChanged = true;
   }
 
   Future<void> delete() async {
     try {
-      if (isLoading) return;
+      if (viewModel.delete.running) return;
 
       final bool confirm = await ConfirmDialog.show(context: context, title: strings.deleteAccount, message: strings.deleteAccountConfirmation);
       if (!confirm) return;
 
-      await notifier.delete();
+      await viewModel.delete.execute(viewModel.account);
 
-      if (notifier.value is ErrorAccountState) throw Exception((notifier.value as ErrorAccountState).message);
+      viewModel.delete.throwIfError();
 
       if (!mounted) return;
       context.pop(FormResultNavigation<AccountEntity>.delete());

@@ -11,8 +11,11 @@ import 'package:finan_master_app/features/account/domain/use_cases/i_account_sav
 import 'package:finan_master_app/features/account/infra/data_sources/account_local_data_source.dart';
 import 'package:finan_master_app/features/account/infra/data_sources/i_account_local_data_source.dart';
 import 'package:finan_master_app/features/account/infra/repositories/account_repository.dart';
-import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
+import 'package:finan_master_app/features/account/presentation/view_models/account_details_view_model.dart';
+import 'package:finan_master_app/features/account/presentation/view_models/account_form_view_model.dart';
+import 'package:finan_master_app/features/account/presentation/view_models/accounts_list_view_model.dart';
+import 'package:finan_master_app/features/account/presentation/view_models/readjust_balance_view_model.dart';
 import 'package:finan_master_app/features/ad/domain/repositories/i_ad_access_repository.dart';
 import 'package:finan_master_app/features/ad/domain/repositories/i_ad_repository.dart';
 import 'package:finan_master_app/features/ad/domain/use_cases/ad.dart';
@@ -33,10 +36,10 @@ import 'package:finan_master_app/features/auth/domain/use_cases/signup_auth.dart
 import 'package:finan_master_app/features/auth/infra/data_sources/auth_local_data_source.dart';
 import 'package:finan_master_app/features/auth/infra/data_sources/i_auth_local_data_source.dart';
 import 'package:finan_master_app/features/auth/infra/repositories/auth_repository.dart';
-import 'package:finan_master_app/features/auth/presentation/notifiers/email_verification_notifier.dart';
-import 'package:finan_master_app/features/auth/presentation/notifiers/login_notifier.dart';
-import 'package:finan_master_app/features/auth/presentation/notifiers/reset_password_notifier.dart';
-import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
+import 'package:finan_master_app/features/auth/presentation/view_models/email_verification_view_model.dart';
+import 'package:finan_master_app/features/auth/presentation/view_models/login_view_model.dart';
+import 'package:finan_master_app/features/auth/presentation/view_models/reset_password_view_model.dart';
+import 'package:finan_master_app/features/auth/presentation/view_models/signup_view_model.dart';
 import 'package:finan_master_app/features/backup/domain/repositories/i_backup_repository.dart';
 import 'package:finan_master_app/features/backup/domain/use_cases/backup.dart';
 import 'package:finan_master_app/features/backup/domain/use_cases/i_backup.dart';
@@ -317,8 +320,17 @@ final class DependencyInjection {
     getIt.registerFactory<ITransferDelete>(() => TransferDelete(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
 
+    //ViewModel
+    getIt.registerFactory<AccountDetailsViewModel>(() => AccountDetailsViewModel(accountDelete: getIt.get<IAccountDelete>()));
+    getIt.registerFactory<AccountFormViewModel>(() => AccountFormViewModel(accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>()));
+    getIt.registerFactory<AccountsListViewModel>(() => AccountsListViewModel(accountFind: getIt.get<IAccountFind>()));
+    getIt.registerFactory<ReadjustBalanceViewModel>(() => ReadjustBalanceViewModel(accountSave: getIt.get<IAccountSave>(), accountReadjustmentTransaction: getIt.get<IAccountReadjustmentTransaction>()));
+    getIt.registerFactory<EmailVerificationViewModel>(() => EmailVerificationViewModel(signupAuth: getIt.get<ISignupAuth>()));
+    getIt.registerFactory<LoginViewModel>(() => LoginViewModel(loginAuth: getIt.get<ILoginAuth>()));
+    getIt.registerFactory<ResetPasswordViewModel>(() => ResetPasswordViewModel(resetPassword: getIt.get<IResetPassword>()));
+    getIt.registerFactory<SignupViewModel>(() => SignupViewModel(signupAuth: getIt.get<ISignupAuth>()));
+
     //Notifiers
-    getIt.registerFactory<AccountNotifier>(() => AccountNotifier(accountFind: getIt.get<IAccountFind>(), accountSave: getIt.get<IAccountSave>(), accountDelete: getIt.get<IAccountDelete>(), accountReadjustmentTransaction: getIt.get<IAccountReadjustmentTransaction>()));
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<HomeAccountsBalanceNotifier>(() => HomeAccountsBalanceNotifier(accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<HomeBillsCreditCardNotifier>(() => HomeBillsCreditCardNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
@@ -334,16 +346,12 @@ final class DependencyInjection {
     getIt.registerFactory<CreditCardsNotifier>(() => CreditCardsNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
     getIt.registerFactory<CreditCardBillNotifier>(() => CreditCardBillNotifier(creditCardBillFind: getIt.get<ICreditCardBillFind>(), creditCardBillSave: getIt.get<ICreditCardBillSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>()));
     getIt.registerFactory<CreditCardBillsNotifier>(() => CreditCardBillsNotifier(creditCardBillFind: getIt.get<ICreditCardBillFind>()));
-    getIt.registerSingleton<EmailVerificationNotifier>(EmailVerificationNotifier(signupAuth: getIt.get<ISignupAuth>()));
     getIt.registerFactory<ExpenseNotifier>(() => ExpenseNotifier(expenseSave: getIt.get<IExpenseSave>(), expenseDelete: getIt.get<IExpenseDelete>(), expenseFind: getIt.get<IExpenseFind>()));
     getIt.registerSingleton<FirstStepsNotifier>(FirstStepsNotifier(firstStepsFind: getIt.get<IFirstStepsFind>(), firstStepsSave: getIt.get<IFirstStepsSave>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), incomeFind: getIt.get<IIncomeFind>()));
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerSingleton<HideAmountsNotifier>(HideAmountsNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
-    getIt.registerFactory<LoginNotifier>(() => LoginNotifier(loginAuth: getIt.get<ILoginAuth>()));
     getIt.registerFactory<ReportCategoriesNotifier>(() => ReportCategoriesNotifier(getIt.get<IReportCategoriesFind>()));
-    getIt.registerFactory<ResetPasswordNotifier>(() => ResetPasswordNotifier(getIt.get<IResetPassword>()));
-    getIt.registerFactory<SignupNotifier>(() => SignupNotifier(signupAuth: getIt.get<ISignupAuth>()));
     getIt.registerFactory<SplashNotifier>(() => SplashNotifier(authFind: getIt.get<IAuthFind>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<TransactionsNotifier>(() => TransactionsNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>()));

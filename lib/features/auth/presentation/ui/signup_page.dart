@@ -1,8 +1,7 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
-import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
-import 'package:finan_master_app/features/auth/presentation/states/signup_state.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_password_page.dart';
+import 'package:finan_master_app/features/auth/presentation/view_models/signup_view_model.dart';
 import 'package:finan_master_app/features/first_steps/presentation/ui/first_steps_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
@@ -24,7 +23,7 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> with ThemeContext {
-  final SignupNotifier notifier = DI.get<SignupNotifier>();
+  final SignupViewModel viewModel = DI.get<SignupViewModel>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
@@ -59,7 +58,7 @@ class _SignupPageState extends State<SignupPage> with ThemeContext {
                       textInputAction: TextInputAction.next,
                       textCapitalization: TextCapitalization.sentences,
                       validator: InputRequiredValidator().validate,
-                      onSaved: (String? value) => notifier.value.entity.userAccount.name = value?.trim() ?? '',
+                      onSaved: (String? value) => viewModel.signup.userAccount.name = value?.trim() ?? '',
                     ),
                     const Spacing.y(2),
                     TextFormField(
@@ -71,8 +70,8 @@ class _SignupPageState extends State<SignupPage> with ThemeContext {
                         textInputAction: TextInputAction.done,
                         validator: InputValidators([InputRequiredValidator(), InputEmailValidator()]).validate,
                         onSaved: (String? value) {
-                          notifier.value.entity.userAccount.email = value?.trim() ?? '';
-                          notifier.value.entity.auth.email = value?.trim() ?? '';
+                          viewModel.signup.userAccount.email = value?.trim() ?? '';
+                          viewModel.signup.auth.email = value?.trim() ?? '';
                         }),
                     const Spacing.y(3),
                     FilledButton(
@@ -91,14 +90,14 @@ class _SignupPageState extends State<SignupPage> with ThemeContext {
                       ],
                     ),
                     const Spacing.y(),
-                    ValueListenableBuilder(
-                      valueListenable: notifier,
-                      builder: (_, state, __) {
+                    ListenableBuilder(
+                      listenable: Listenable.merge([viewModel.signupWithEmailAndPassword, viewModel.signupWithGoogle]),
+                      builder: (_, __) {
                         return FilledButton.icon(
                           style: FilledButton.styleFrom(backgroundColor: colorScheme.onInverseSurface, foregroundColor: colorScheme.inverseSurface),
                           onPressed: createAccountWithGoogle,
-                          icon: state is SigningUpWithGoogleState ? const SizedBox.shrink() : SvgPicture.asset('assets/icons/google.svg', width: 22, height: 22),
-                          label: state is SigningUpWithGoogleState ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2.5)) : Text(strings.createAccountWithGoogle),
+                          icon: viewModel.isLoading ? const SizedBox.shrink() : SvgPicture.asset('assets/icons/google.svg', width: 22, height: 22),
+                          label: viewModel.isLoading ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2.5)) : Text(strings.createAccountWithGoogle),
                         );
                       }
                     ),
@@ -128,7 +127,7 @@ class _SignupPageState extends State<SignupPage> with ThemeContext {
       if (formKey.currentState?.validate() == true) {
         formKey.currentState!.save();
 
-        context.pushNamed(SignupPasswordPage.route, extra: notifier);
+        context.pushNamed(SignupPasswordPage.route, extra: viewModel);
       } else {
         setState(() => autovalidateMode = AutovalidateMode.always);
       }
@@ -139,10 +138,10 @@ class _SignupPageState extends State<SignupPage> with ThemeContext {
 
   Future<void> createAccountWithGoogle() async {
     try {
-      if (notifier.isLoading) return;
+      if (viewModel.isLoading) return;
 
-      await notifier.signupWithGoogle();
-      if (notifier.value is ErrorSignupState) throw Exception((notifier.value as ErrorSignupState).message);
+      await viewModel.signupWithGoogle.execute();
+      viewModel.signupWithGoogle.throwIfError();
 
       if (!mounted) return;
       context.goNamed(FirstStepsPage.route, extra: true);
