@@ -91,6 +91,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get billNoMovements => 'Sem movimentações';
 
   @override
+  String get billNotFound => 'Fatura não encontrada.';
+
+  @override
   String get billOutstanding => 'Aberta';
 
   @override

@@ -98,11 +98,12 @@ import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credi
 import 'package:finan_master_app/features/credit_card/infra/repositories/credit_card_bill_repository.dart';
 import 'package:finan_master_app/features/credit_card/infra/repositories/credit_card_repository.dart';
 import 'package:finan_master_app/features/credit_card/infra/repositories/credit_card_transaction_repository.dart';
-import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_bill_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_bills_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_expense_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_cards_notifier.dart';
+import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_bill_details_view_model.dart';
+import 'package:finan_master_app/features/credit_card/presentation/view_models/pay_bill_view_model.dart';
 import 'package:finan_master_app/features/first_steps/domain/repositories/i_first_steps_repository.dart';
 import 'package:finan_master_app/features/first_steps/domain/use_Cases/first_steps_find.dart';
 import 'package:finan_master_app/features/first_steps/domain/use_Cases/first_steps_save.dart';
@@ -335,6 +336,8 @@ final class DependencyInjection {
     getIt.registerFactory<RestoreBackupViewModel>(() => RestoreBackupViewModel(restoreBackup: getIt.get<IRestoreBackup>(), deleteAppData: getIt.get<IDeleteAppData>()));
     getIt.registerFactory<CategoryFormViewModel>(() => CategoryFormViewModel(categorySave: getIt.get<ICategorySave>(), categoryDelete: getIt.get<ICategoryDelete>()));
     getIt.registerFactory<CategoriesViewModel>(() => CategoriesViewModel(categoryFind: getIt.get<ICategoryFind>()));
+    getIt.registerFactory<CreditCardBillDetailsViewModel>(() => CreditCardBillDetailsViewModel(creditCardBillFind: getIt.get<ICreditCardBillFind>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>(), categoryFind: getIt.get<ICategoryFind>()));
+    getIt.registerFactory<PayBillViewModel>(() => PayBillViewModel(creditCardBillSave: getIt.get<ICreditCardBillSave>()));
 
     //Notifiers
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
@@ -348,7 +351,6 @@ final class DependencyInjection {
     getIt.registerFactory<CreditCardNotifier>(() => CreditCardNotifier(creditCardSave: getIt.get<ICreditCardSave>(), creditCardDelete: getIt.get<ICreditCardDelete>(), creditCardFind: getIt.get<ICreditCardFind>()));
     getIt.registerFactory<CreditCardExpenseNotifier>(() => CreditCardExpenseNotifier(creditCardTransactionSave: getIt.get<ICreditCardTransactionSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>(), expenseFind: getIt.get<IExpenseFind>()));
     getIt.registerFactory<CreditCardsNotifier>(() => CreditCardsNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
-    getIt.registerFactory<CreditCardBillNotifier>(() => CreditCardBillNotifier(creditCardBillFind: getIt.get<ICreditCardBillFind>(), creditCardBillSave: getIt.get<ICreditCardBillSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>()));
     getIt.registerFactory<CreditCardBillsNotifier>(() => CreditCardBillsNotifier(creditCardBillFind: getIt.get<ICreditCardBillFind>()));
     getIt.registerFactory<ExpenseNotifier>(() => ExpenseNotifier(expenseSave: getIt.get<IExpenseSave>(), expenseDelete: getIt.get<IExpenseDelete>(), expenseFind: getIt.get<IExpenseFind>()));
     getIt.registerSingleton<FirstStepsNotifier>(FirstStepsNotifier(firstStepsFind: getIt.get<IFirstStepsFind>(), firstStepsSave: getIt.get<IFirstStepsSave>(), eventNotifier: getIt.get<EventNotifier>()));

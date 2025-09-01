@@ -25,6 +25,7 @@
   "billClosed": "Fechada",
   "billGreaterThanZero": "O valor da fatura deve ser maior que zero.",
   "billNoMovements": "Sem movimentações",
+  "billNotFound": "Fatura não encontrada.",
   "billOutstanding": "Aberta",
   "billOverdue": "Vencida",
   "billPaid": "Paga",

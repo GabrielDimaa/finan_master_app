@@ -91,6 +91,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get billNoMovements => 'No movements';
 
   @override
+  String get billNotFound => 'Bill not found.';
+
+  @override
   String get billOutstanding => 'Outstanding';
 
   @override

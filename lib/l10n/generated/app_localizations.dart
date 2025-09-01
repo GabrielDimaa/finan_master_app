@@ -254,6 +254,12 @@ abstract class AppLocalizations {
   /// **'No movements'**
   String get billNoMovements;
 
+  /// No description provided for @billNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill not found.'**
+  String get billNotFound;
+
   /// No description provided for @billOutstanding.
   ///
   /// In en, this message translates to:

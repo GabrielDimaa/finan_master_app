@@ -25,6 +25,7 @@
   "billClosed": "Closed",
   "billGreaterThanZero": "Bill amount needs to be greater than zero.",
   "billNoMovements": "No movements",
+  "billNotFound": "Bill not found.",
   "billOutstanding": "Outstanding",
   "billOverdue": "Overdue",
   "billPaid": "Paid",
