@@ -103,6 +103,7 @@ import 'package:finan_master_app/features/credit_card/presentation/notifiers/cre
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_cards_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_bill_details_view_model.dart';
+import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_bills_view_model.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/pay_bill_view_model.dart';
 import 'package:finan_master_app/features/first_steps/domain/repositories/i_first_steps_repository.dart';
 import 'package:finan_master_app/features/first_steps/domain/use_Cases/first_steps_find.dart';
@@ -338,6 +339,7 @@ final class DependencyInjection {
     getIt.registerFactory<CategoriesViewModel>(() => CategoriesViewModel(categoryFind: getIt.get<ICategoryFind>()));
     getIt.registerFactory<CreditCardBillDetailsViewModel>(() => CreditCardBillDetailsViewModel(creditCardBillFind: getIt.get<ICreditCardBillFind>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>(), categoryFind: getIt.get<ICategoryFind>()));
     getIt.registerFactory<PayBillViewModel>(() => PayBillViewModel(creditCardBillSave: getIt.get<ICreditCardBillSave>()));
+    getIt.registerFactory<CreditCardBillsViewModel>(() => CreditCardBillsViewModel(creditCardBillFind: getIt.get<ICreditCardBillFind>()));
 
     //Notifiers
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
