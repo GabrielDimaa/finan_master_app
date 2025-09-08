@@ -12,7 +12,7 @@ class CreditCardsNotifier extends ValueNotifier<CreditCardsState> {
 
   void setCreditCards(List<CreditCardEntity> creditCards) => value = value.setCreditCards(creditCards);
 
-  Future<void> findAll({bool deleted = false}) async {
+  Future<void> findAll() async {
     try {
       value = value.setLoading();
 

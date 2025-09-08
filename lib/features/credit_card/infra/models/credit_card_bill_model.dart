@@ -11,9 +11,9 @@ class CreditCardBillModel extends Model {
 
   final List<CreditCardTransactionModel> transactions;
 
-  double get totalSpent => transactions.map((transaction) => transaction.amount > 0 ? transaction.amount : 0).sum.toDouble();
+  double get totalSpent => transactions.map((transaction) => transaction.amount > 0 ? transaction.amount : 0).sum.toDouble().toRound(2);
 
-  double get totalPaid => transactions.map((transaction) => transaction.amount < 0 ? transaction.amount : 0).sum.toDouble();
+  double get totalPaid => transactions.map((transaction) => transaction.amount < 0 ? transaction.amount : 0).sum.toDouble().toRound(2);
 
   //totalPaid terá valor negativo, portanto, 1000 + (-100).
   double get billAmount => (totalSpent + totalPaid).truncateFractionalDigits(2);

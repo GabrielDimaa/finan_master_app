@@ -34,4 +34,21 @@ abstract class CreditCardFactory {
       amountLimitUtilized: model.amountLimitUtilized,
     );
   }
+
+  static CreditCardEntity newEntity() {
+    return CreditCardEntity(
+      id: null,
+      createdAt: null,
+      deletedAt: null,
+      description: '',
+      amountLimit: 0,
+      billClosingDay: 5,
+      billDueDay: 10,
+      brand: null,
+      idAccount: null,
+      descriptionAccount: '',
+      financialInstitutionAccount: null,
+      amountLimitUtilized: 0,
+    );
+  }
 }
