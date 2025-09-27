@@ -1,7 +1,5 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
-import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_transaction_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/states/home_monthly_transaction_state.dart';
+import 'package:finan_master_app/features/home/presentation/view_models/home_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transactions_list_page.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -12,28 +10,18 @@ import 'package:go_router/go_router.dart';
 enum _Type { income, expense }
 
 class HomeCardMonthlyTransaction extends StatefulWidget {
-  final HomeMonthlyTransactionNotifier notifier;
-  final HideAmountsNotifier hideAmountsNotifier;
+  final HomeViewModel viewModel;
   final _Type _type;
 
-  const HomeCardMonthlyTransaction.income({super.key, required this.notifier, required this.hideAmountsNotifier}) : _type = _Type.income;
+  const HomeCardMonthlyTransaction.income({super.key, required this.viewModel}) : _type = _Type.income;
 
-  const HomeCardMonthlyTransaction.expense({super.key, required this.notifier, required this.hideAmountsNotifier}) : _type = _Type.expense;
+  const HomeCardMonthlyTransaction.expense({super.key, required this.viewModel}) : _type = _Type.expense;
 
   @override
   State<HomeCardMonthlyTransaction> createState() => _HomeCardMonthlyTransactionState();
 }
 
 class _HomeCardMonthlyTransactionState extends State<HomeCardMonthlyTransaction> with ThemeContext {
-  late HomeMonthlyTransactionState state;
-
-  @override
-  void initState() {
-    super.initState();
-
-    state = widget.notifier.value;
-  }
-
   BorderRadius get borderRadius => BorderRadius.circular(18);
 
   @override
@@ -68,22 +56,21 @@ class _HomeCardMonthlyTransactionState extends State<HomeCardMonthlyTransaction>
                   Expanded(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(minHeight: 18),
-                      child: ValueListenableBuilder(
-                        valueListenable: widget.notifier,
-                        builder: (_, state, __) {
-                          final lastState = this.state;
-                          this.state = state;
+                      child: ListenableBuilder(
+                        listenable: widget.viewModel.loadMonthlyTransaction,
+                        builder: (_, __) {
+                          final prev = widget.viewModel.loadMonthlyTransaction.previous;
 
-                          if (state is ErrorHomeMonthlyTransactionState) {
+                          if (widget.viewModel.loadMonthlyTransaction.hasError) {
                             return Text(
-                              state.message.replaceAll('Exception: ', ''),
+                              widget.viewModel.loadMonthlyTransaction.error.toString().replaceAll('Exception: ', ''),
                               style: textTheme.bodyMedium?.copyWith(color: colorScheme.error),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 3,
                             );
                           }
 
-                          if (state is StartHomeMonthlyTransactionState || (state is LoadingHomeMonthlyTransactionState && lastState is! LoadedHomeMonthlyTransactionState)) {
+                          if (widget.viewModel.loadMonthlyTransaction.running && prev?.completed != true) {
                             return const Align(
                               alignment: Alignment.centerLeft,
                               child: SizedBox(
@@ -94,13 +81,13 @@ class _HomeCardMonthlyTransactionState extends State<HomeCardMonthlyTransaction>
                             );
                           }
 
-                          return ValueListenableBuilder(
-                            valueListenable: widget.hideAmountsNotifier,
-                            builder: (_, state, __) {
-                              if (state) return Text('●●●●', style: textTheme.titleLarge?.copyWith(fontSize: 18));
+                          return ListenableBuilder(
+                            listenable: widget.viewModel,
+                            builder: (_, __) {
+                              if (widget.viewModel.hideAmounts) return Text('●●●●', style: textTheme.titleLarge?.copyWith(fontSize: 18));
 
                               return Text(
-                                widget._type == _Type.expense ? widget.notifier.value.amountsExpense.money : widget.notifier.value.amountsIncome.money,
+                                widget._type == _Type.expense ? (widget.viewModel.loadMonthlyTransaction.result?.amountsExpense ?? prev!.result!.amountsExpense).money : (widget.viewModel.loadMonthlyTransaction.result?.amountsIncome ?? prev!.result!.amountsIncome).money,
                                 style: textTheme.titleLarge?.copyWith(fontSize: 18),
                               );
                             },

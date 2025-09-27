@@ -1,6 +1,5 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_transactions_unpaid_unreceived_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/states/home_transactions_unpaid_unreceived_state.dart';
+import 'package:finan_master_app/features/home/presentation/view_models/home_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transactions_unpaid_unreceived_page.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -11,27 +10,18 @@ import 'package:go_router/go_router.dart';
 enum _Type { income, expense }
 
 class HomeCardTransactionUnpaidUnreceived extends StatefulWidget {
-  final HomeTransactionsUnpaidUnreceivedNotifier notifier;
+  final HomeViewModel viewModel;
   final _Type _type;
 
-  const HomeCardTransactionUnpaidUnreceived.income({super.key, required this.notifier}) : _type = _Type.income;
+  const HomeCardTransactionUnpaidUnreceived.income({super.key, required this.viewModel}) : _type = _Type.income;
 
-  const HomeCardTransactionUnpaidUnreceived.expense({super.key, required this.notifier}) : _type = _Type.expense;
+  const HomeCardTransactionUnpaidUnreceived.expense({super.key, required this.viewModel}) : _type = _Type.expense;
 
   @override
   State<HomeCardTransactionUnpaidUnreceived> createState() => _HomeCardTransactionUnpaidUnreceivedState();
 }
 
 class _HomeCardTransactionUnpaidUnreceivedState extends State<HomeCardTransactionUnpaidUnreceived> with ThemeContext {
-  late HomeTransactionsUnpaidUnreceivedState state;
-
-  @override
-  void initState() {
-    super.initState();
-
-    state = widget.notifier.value;
-  }
-
   BorderRadius get borderRadius => BorderRadius.circular(18);
 
   @override
@@ -64,22 +54,21 @@ class _HomeCardTransactionUnpaidUnreceivedState extends State<HomeCardTransactio
                     Text(widget._type == _Type.expense ? strings.payable : strings.receivable, style: textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant)),
                     ConstrainedBox(
                       constraints: const BoxConstraints(minHeight: 18),
-                      child: ValueListenableBuilder(
-                        valueListenable: widget.notifier,
-                        builder: (_, state, __) {
-                          final lastState = this.state;
-                          this.state = state;
+                      child: ListenableBuilder(
+                        listenable: widget.viewModel.loadTransactionsUnpaidUnreceived,
+                        builder: (_, __) {
+                          final prev = widget.viewModel.loadTransactionsUnpaidUnreceived.previous;
 
-                          if (state is ErrorHomeTransactionsUnpaidUnreceivedState) {
+                          if (widget.viewModel.loadTransactionsUnpaidUnreceived.hasError) {
                             return Text(
-                              state.message.replaceAll('Exception: ', ''),
+                              widget.viewModel.loadTransactionsUnpaidUnreceived.error.toString().replaceAll('Exception: ', ''),
                               style: textTheme.bodyMedium?.copyWith(color: colorScheme.error),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 3,
                             );
                           }
 
-                          if (state is StartHomeTransactionsUnpaidUnreceivedState || (state is LoadingHomeTransactionsUnpaidUnreceivedState && lastState is! LoadedHomeTransactionsUnpaidUnreceivedState)) {
+                          if (widget.viewModel.loadTransactionsUnpaidUnreceived.running && prev?.completed != true) {
                             return const Align(
                               alignment: Alignment.centerLeft,
                               child: SizedBox(
@@ -90,8 +79,11 @@ class _HomeCardTransactionUnpaidUnreceivedState extends State<HomeCardTransactio
                             );
                           }
 
+                          final amountsExpense = widget.viewModel.loadTransactionsUnpaidUnreceived.result?.amountsExpense ?? prev!.result!.amountsExpense;
+                          final amountsIncome = widget.viewModel.loadTransactionsUnpaidUnreceived.result?.amountsIncome ?? prev!.result!.amountsIncome;
+
                           return Text(
-                            widget._type == _Type.expense ? widget.notifier.value.amountsExpense.money : widget.notifier.value.amountsIncome.money,
+                            widget._type == _Type.expense ? amountsExpense.money : amountsIncome.money,
                             style: textTheme.titleLarge?.copyWith(fontSize: 13),
                           );
                         },

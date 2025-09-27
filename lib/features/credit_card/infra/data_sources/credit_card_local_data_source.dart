@@ -4,7 +4,6 @@ import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credi
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_bill_model.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_model.dart';
-import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/infra/data_sources/constants/tables_names_constant.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';

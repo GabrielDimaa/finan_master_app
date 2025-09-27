@@ -10,6 +10,20 @@ typedef CommandAction0<T> = Future<T> Function();
 /// Used by [Command1] for actions with one argument.
 typedef CommandAction1<T, A> = Future<T> Function(A);
 
+class CommandStateSnapshot<T> {
+  final bool running;
+  final bool completed;
+  final Exception? error;
+  final T? result;
+
+  const CommandStateSnapshot({
+    required this.running,
+    required this.completed,
+    required this.error,
+    required this.result,
+  });
+}
+
 /// Facilitates interaction with a view model.
 ///
 /// Encapsulates an action,
@@ -31,6 +45,8 @@ abstract class Command<T> extends ChangeNotifier {
   bool _completed = false;
 
   T? _result;
+
+  CommandStateSnapshot<T>? previous;
 
   /// Whether the action is running.
   bool get running => _running;
@@ -54,6 +70,13 @@ abstract class Command<T> extends ChangeNotifier {
 
   /// Clears the most recent action's result.
   void clearResult() {
+    previous = CommandStateSnapshot(
+      running: _running,
+      completed: _completed,
+      error: _error,
+      result: _result,
+    );
+
     _result = null;
     _completed = false;
     notifyListeners();
@@ -65,6 +88,13 @@ abstract class Command<T> extends ChangeNotifier {
     // Ensure the action can't launch multiple times.
     // e.g. avoid multiple taps on button
     if (_running) return;
+
+    previous = CommandStateSnapshot(
+      running: _running,
+      completed: _completed,
+      error: _error,
+      result: _result,
+    );
 
     // Notify listeners.
     // e.g. button shows loading state

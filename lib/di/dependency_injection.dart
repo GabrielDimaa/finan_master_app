@@ -67,7 +67,6 @@ import 'package:finan_master_app/features/config/domain/use_cases/config_save.da
 import 'package:finan_master_app/features/config/domain/use_cases/i_config_find.dart';
 import 'package:finan_master_app/features/config/domain/use_cases/i_config_save.dart';
 import 'package:finan_master_app/features/config/infra/repositories/config_repository.dart';
-import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/locale_notifier.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/theme_mode_notifier.dart';
 import 'package:finan_master_app/features/credit_card/domain/repositories/i_credit_card_bill_repository.dart';
@@ -120,11 +119,7 @@ import 'package:finan_master_app/features/home/domain/repositories/i_home_monthl
 import 'package:finan_master_app/features/home/domain/usecases/home_monthly_balance.dart';
 import 'package:finan_master_app/features/home/domain/usecases/i_home_monthly_balance.dart';
 import 'package:finan_master_app/features/home/infra/repositories/home_monthly_balance_repository.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_bills_credit_card_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_transaction_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_transactions_unpaid_unreceived_notifier.dart';
+import 'package:finan_master_app/features/home/presentation/view_models/home_view_model.dart';
 import 'package:finan_master_app/features/reports/domain/repositories/i_report_categories_repository.dart';
 import 'package:finan_master_app/features/reports/domain/use_cases/i_report_categories_find.dart';
 import 'package:finan_master_app/features/reports/domain/use_cases/report_categories_find.dart';
@@ -345,14 +340,10 @@ final class DependencyInjection {
     getIt.registerFactory<CreditCardExpenseFormViewModel>(() => CreditCardExpenseFormViewModel(categoryFind: getIt.get<ICategoryFind>(), creditCardFind: getIt.get<ICreditCardFind>(), creditCardTransactionSave: getIt.get<ICreditCardTransactionSave>(), creditCardTransactionDelete: getIt.get<ICreditCardTransactionDelete>(), expenseFind: getIt.get<IExpenseFind>()));
     getIt.registerFactory<CreditCardFormViewModel>(() => CreditCardFormViewModel(accountFind: getIt.get<IAccountFind>(), creditCardDelete: getIt.get<ICreditCardDelete>(), creditCardSave: getIt.get<ICreditCardSave>()));
     getIt.registerFactory<CreditCardsDetailsViewModel>(() => CreditCardsDetailsViewModel(creditCardBillFind: getIt.get<ICreditCardBillFind>(), creditCardFind: getIt.get<ICreditCardFind>()));
+    getIt.registerFactory<HomeViewModel>(() => HomeViewModel(accountFind: getIt.get<IAccountFind>(), creditCardFind: getIt.get<ICreditCardFind>(), transactionFind: getIt.get<ITransactionFind>(), monthlyBalance: getIt.get<IHomeMonthlyBalance>(), configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
 
     //Notifiers
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
-    getIt.registerFactory<HomeAccountsBalanceNotifier>(() => HomeAccountsBalanceNotifier(accountFind: getIt.get<IAccountFind>()));
-    getIt.registerFactory<HomeBillsCreditCardNotifier>(() => HomeBillsCreditCardNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
-    getIt.registerFactory<HomeMonthlyBalanceNotifier>(() => HomeMonthlyBalanceNotifier(monthlyBalance: getIt.get<IHomeMonthlyBalance>()));
-    getIt.registerFactory<HomeMonthlyTransactionNotifier>(() => HomeMonthlyTransactionNotifier(transactionFind: getIt.get<ITransactionFind>()));
-    getIt.registerFactory<HomeTransactionsUnpaidUnreceivedNotifier>(() => HomeTransactionsUnpaidUnreceivedNotifier(transactionFind: getIt.get<ITransactionFind>()));
     getIt.registerFactory<TransactionsUnpaidUnreceivedNotifier>(() => TransactionsUnpaidUnreceivedNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>()));
     getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
     getIt.registerFactory<CreditCardNotifier>(() => CreditCardNotifier(creditCardSave: getIt.get<ICreditCardSave>(), creditCardDelete: getIt.get<ICreditCardDelete>(), creditCardFind: getIt.get<ICreditCardFind>()));
@@ -362,7 +353,6 @@ final class DependencyInjection {
     getIt.registerSingleton<FirstStepsNotifier>(FirstStepsNotifier(firstStepsFind: getIt.get<IFirstStepsFind>(), firstStepsSave: getIt.get<IFirstStepsSave>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), incomeFind: getIt.get<IIncomeFind>()));
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
-    getIt.registerSingleton<HideAmountsNotifier>(HideAmountsNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<ReportCategoriesNotifier>(() => ReportCategoriesNotifier(getIt.get<IReportCategoriesFind>()));
     getIt.registerFactory<SplashNotifier>(() => SplashNotifier(authFind: getIt.get<IAuthFind>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));

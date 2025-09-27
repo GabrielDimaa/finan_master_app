@@ -32,7 +32,11 @@ class CreditCardsDetailsViewModel extends ChangeNotifier {
   void setCreditCardSelected(CreditCardEntity? value) {
     _creditCardSelected = value;
 
-    billsFind.execute((date: DateTime.now().getInitialMonth().subtractMonths(1), idCreditCard: _creditCardSelected!.id));
+    if (_creditCardSelected == null) {
+      billsFind.clearResult();
+    } else {
+      billsFind.execute((date: DateTime.now().getInitialMonth().subtractMonths(1), idCreditCard: _creditCardSelected!.id));
+    }
 
     notifyListeners();
   }

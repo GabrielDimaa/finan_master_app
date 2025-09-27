@@ -106,7 +106,7 @@ class _CreditCardsDetailsPageState extends State<CreditCardsDetailsPage> with Th
           builder: (_, __) {
             if (viewModel.load.running) return const Center(child: CircularProgressIndicator());
             if (viewModel.load.hasError) return MessageErrorWidget(viewModel.load.error.toString());
-            if (viewModel.creditCards.isEmpty) NoContentWidget(child: Text(strings.noCreditCardRegistered));
+            if (viewModel.creditCards.isEmpty) return NoContentWidget(child: Text(strings.noCreditCardRegistered));
 
             return SingleChildScrollView(
               child: Column(
