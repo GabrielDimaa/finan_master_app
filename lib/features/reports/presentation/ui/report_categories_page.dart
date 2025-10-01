@@ -1,12 +1,10 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/reports/presentation/enums/date_period_enum.dart';
-import 'package:finan_master_app/features/reports/presentation/notifiers/report_categories_notifier.dart';
-import 'package:finan_master_app/features/reports/presentation/states/report_categories_state.dart';
 import 'package:finan_master_app/features/reports/presentation/ui/components/report_categories_chart.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/filters/filters_bottom_sheet.dart';
-import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
+import 'package:finan_master_app/features/reports/presentation/view_models/report_categories_view_model.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/filters/date_period_filter.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/filters/filters_bottom_sheet.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:flutter/material.dart';
@@ -21,14 +19,18 @@ class ReportCategoriesPage extends StatefulWidget {
 }
 
 class _ReportCategoriesPageState extends State<ReportCategoriesPage> with ThemeContext {
-  final ReportCategoriesNotifier notifier = DI.get<ReportCategoriesNotifier>();
+  final ReportCategoriesViewModel viewModel = DI.get<ReportCategoriesViewModel>();
 
   List<Tab> get tabs => [Tab(text: strings.expenses), Tab(text: strings.incomes)];
+
+  DateTime? dateInitialFilter = DatePeriodEnum.oneMonth.getDateTime().start;
+  DateTime? dateFinalFilter = DatePeriodEnum.oneMonth.getDateTime().end;
 
   @override
   void initState() {
     super.initState();
-    notifier.findByPeriod(DateTime.now().getInitialMonth(), DateTime.now().getFinalMonth());
+
+    viewModel.findByPeriod.execute((startDate: dateInitialFilter, endDate: dateFinalFilter));
   }
 
   @override
@@ -49,28 +51,26 @@ class _ReportCategoriesPageState extends State<ReportCategoriesPage> with ThemeC
           bottom: TabBar(tabs: tabs),
         ),
         body: SafeArea(
-          child: ValueListenableBuilder(
-            valueListenable: notifier,
-            builder: (_, ReportCategoriesState state, __) {
-              return switch (state) {
-                LoadingReportCategoriesState _ => const Center(child: CircularProgressIndicator()),
-                ErrorReportCategoriesState state => MessageErrorWidget(state.message),
-                StartReportCategoriesState _ => const SizedBox.shrink(),
-                LoadedReportCategoriesState _ => TabBarView(
-                    children: [
-                      Visibility(
-                        visible: notifier.reportCategoriesExpenses.isNotEmpty,
-                        replacement: NoContentWidget(child: Text(strings.noRecordsFound)),
-                        child: ReportCategoriesChart(entities: notifier.reportCategoriesExpenses, total: notifier.totalExpenses),
-                      ),
-                      Visibility(
-                        visible: notifier.reportCategoriesIncomes.isNotEmpty,
-                        replacement: NoContentWidget(child: Text(strings.noRecordsFound)),
-                        child: ReportCategoriesChart(entities: notifier.reportCategoriesIncomes, total: notifier.totalIncomes),
-                      ),
-                    ],
+          child: ListenableBuilder(
+            listenable: viewModel.findByPeriod,
+            builder: (_, __) {
+              if (viewModel.findByPeriod.running) return const Center(child: CircularProgressIndicator());
+              if (viewModel.findByPeriod.hasError) return MessageErrorWidget(viewModel.findByPeriod.error.toString());
+
+              return TabBarView(
+                children: [
+                  Visibility(
+                    visible: viewModel.reportCategoriesExpenses.isNotEmpty,
+                    replacement: NoContentWidget(child: Text(strings.noRecordsFound)),
+                    child: ReportCategoriesChart(entities: viewModel.reportCategoriesExpenses, total: viewModel.totalExpenses),
                   ),
-              };
+                  Visibility(
+                    visible: viewModel.reportCategoriesIncomes.isNotEmpty,
+                    replacement: NoContentWidget(child: Text(strings.noRecordsFound)),
+                    child: ReportCategoriesChart(entities: viewModel.reportCategoriesIncomes, total: viewModel.totalIncomes),
+                  ),
+                ],
+              );
             },
           ),
         ),
@@ -81,15 +81,15 @@ class _ReportCategoriesPageState extends State<ReportCategoriesPage> with ThemeC
   Future<void> filters() async {
     await FiltersBottomSheet.show(
       context: context,
-      filter: () => notifier.findByPeriod(notifier.dateInitialFilter, notifier.dateFinalFilter),
+      filter: () => viewModel.findByPeriod.execute((startDate: dateInitialFilter, endDate: dateFinalFilter)),
       children: [
         DatePeriodFilter(
           periods: DatePeriodEnum.values,
           onSelected: (DateTime? dateTimeInitial, DateTime? dateTimeFinal) {
-            notifier.dateInitialFilter = dateTimeInitial;
-            notifier.dateFinalFilter = dateTimeFinal;
+            dateInitialFilter = dateTimeInitial;
+            dateFinalFilter = dateTimeFinal;
           },
-          dateRange: DateTimeRange(start: notifier.dateInitialFilter ?? DatePeriodEnum.oneMonth.getDateTime().start, end: notifier.dateFinalFilter ?? DatePeriodEnum.oneMonth.getDateTime().end),
+          dateRange: dateInitialFilter != null && dateFinalFilter != null ? DateTimeRange(start: dateInitialFilter!, end: dateFinalFilter!) : null,
         ),
       ],
     );

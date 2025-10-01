@@ -5,7 +5,7 @@ import 'package:finan_master_app/features/config/domain/use_cases/i_config_save.
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_with_bill_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_find.dart';
 import 'package:finan_master_app/features/home/domain/entities/home_monthly_balance_entity.dart';
-import 'package:finan_master_app/features/home/domain/usecases/i_home_monthly_balance.dart';
+import 'package:finan_master_app/features/home/domain/use_cases/i_home_monthly_balance.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';

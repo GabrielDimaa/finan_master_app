@@ -40,8 +40,9 @@ class _DatePeriodFilterState extends State<DatePeriodFilter> with ThemeContext {
     if (widget.dateRange != null) {
       dateTimeInitial = widget.dateRange!.start;
       dateTimeFinal = widget.dateRange!.end;
-    } else {
-      final DateTimeRange dateRange = (widget.periodSelected ?? widget.periods.first).getDateTime();
+    }
+    if (widget.periodSelected != null) {
+      final DateTimeRange dateRange = widget.periodSelected!.getDateTime();
       dateTimeInitial = dateRange.start;
       dateTimeFinal = dateRange.end;
     }

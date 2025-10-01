@@ -1,6 +1,6 @@
 import 'package:finan_master_app/features/home/domain/entities/home_monthly_balance_entity.dart';
 import 'package:finan_master_app/features/home/domain/repositories/i_home_monthly_balance_repository.dart';
-import 'package:finan_master_app/features/home/domain/usecases/i_home_monthly_balance.dart';
+import 'package:finan_master_app/features/home/domain/use_cases/i_home_monthly_balance.dart';
 
 class HomeMonthlyBalance implements IHomeMonthlyBalance {
   final IHomeMonthlyBalanceRepository _repository;
