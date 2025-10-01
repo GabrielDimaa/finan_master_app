@@ -4,8 +4,7 @@ import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
 import 'package:finan_master_app/features/first_steps/presentation/notifiers/first_steps_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/ui/home_page.dart';
 import 'package:finan_master_app/features/introduction/presentation/ui/introduction_page.dart';
-import 'package:finan_master_app/features/splash/presentation/notifiers/splash_notifier.dart';
-import 'package:finan_master_app/features/splash/presentation/states/splash_state.dart';
+import 'package:finan_master_app/features/splash/presentation/view_models/splash_view_model.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
@@ -23,7 +22,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> with ThemeContext {
-  final SplashNotifier notifier = DI.get<SplashNotifier>();
+  final SplashViewModel viewModel = DI.get<SplashViewModel>();
   final FirstStepsNotifier firstStepsNotifier = DI.get<FirstStepsNotifier>();
 
   @override
@@ -32,19 +31,19 @@ class _SplashPageState extends State<SplashPage> with ThemeContext {
 
     Future(() async {
       await Future.wait([
-        notifier.init(),
+        viewModel.authFind.execute(),
         firstStepsNotifier.find(),
       ]);
 
       if (!mounted) return;
-      if (notifier.value is ErrorSplashState) return;
+      if (viewModel.authFind.hasError) return;
 
-      if (notifier.auth == null) {
+      if (viewModel.authFind.result == null) {
         context.goNamed(IntroductionPage.route);
         return;
       }
 
-      if (!notifier.auth!.emailVerified) {
+      if (!viewModel.authFind.result!.emailVerified) {
         context.goNamed(EmailVerificationPage.route);
         return;
       }
@@ -60,17 +59,17 @@ class _SplashPageState extends State<SplashPage> with ThemeContext {
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
-            child: ValueListenableBuilder(
-              valueListenable: notifier,
-              builder: (_, state, __) {
-                if (state is ErrorSplashState) {
+            child: ListenableBuilder(
+              listenable: viewModel.authFind,
+              builder: (_, __) {
+                if (viewModel.authFind.hasError) {
                   return Column(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(Icons.error_outline, size: 50),
                       const Spacing.y(2),
-                      Text(state.message.replaceAll('Exception: ', '')),
+                      Text(viewModel.authFind.error.toString().replaceAll('Exception: ', '')),
                       const Spacing.y(4),
                       SizedBox(
                         width: double.infinity,

@@ -125,7 +125,7 @@ import 'package:finan_master_app/features/reports/domain/use_cases/i_report_cate
 import 'package:finan_master_app/features/reports/domain/use_cases/report_categories_find.dart';
 import 'package:finan_master_app/features/reports/infra/repositories/report_categories_repository.dart';
 import 'package:finan_master_app/features/reports/presentation/view_models/report_categories_view_model.dart';
-import 'package:finan_master_app/features/splash/presentation/notifiers/splash_notifier.dart';
+import 'package:finan_master_app/features/splash/presentation/view_models/splash_view_model.dart';
 import 'package:finan_master_app/features/statement/domain/repositories/i_statement_repository.dart';
 import 'package:finan_master_app/features/statement/infra/data_sources/i_statement_local_data_source.dart';
 import 'package:finan_master_app/features/statement/infra/data_sources/statement_local_data_source.dart';
@@ -341,6 +341,8 @@ final class DependencyInjection {
     getIt.registerFactory<CreditCardFormViewModel>(() => CreditCardFormViewModel(accountFind: getIt.get<IAccountFind>(), creditCardDelete: getIt.get<ICreditCardDelete>(), creditCardSave: getIt.get<ICreditCardSave>()));
     getIt.registerFactory<CreditCardsDetailsViewModel>(() => CreditCardsDetailsViewModel(creditCardBillFind: getIt.get<ICreditCardBillFind>(), creditCardFind: getIt.get<ICreditCardFind>()));
     getIt.registerFactory<HomeViewModel>(() => HomeViewModel(accountFind: getIt.get<IAccountFind>(), creditCardFind: getIt.get<ICreditCardFind>(), transactionFind: getIt.get<ITransactionFind>(), monthlyBalance: getIt.get<IHomeMonthlyBalance>(), configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
+    getIt.registerFactory<ReportCategoriesViewModel>(() => ReportCategoriesViewModel(reportCategoriesFind: getIt.get<IReportCategoriesFind>()));
+    getIt.registerFactory<SplashViewModel>(() => SplashViewModel(authFind: getIt.get<IAuthFind>()));
 
     //Notifiers
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
@@ -353,8 +355,6 @@ final class DependencyInjection {
     getIt.registerSingleton<FirstStepsNotifier>(FirstStepsNotifier(firstStepsFind: getIt.get<IFirstStepsFind>(), firstStepsSave: getIt.get<IFirstStepsSave>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), incomeFind: getIt.get<IIncomeFind>()));
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
-    getIt.registerFactory<ReportCategoriesViewModel>(() => ReportCategoriesViewModel(reportCategoriesFind: getIt.get<IReportCategoriesFind>()));
-    getIt.registerFactory<SplashNotifier>(() => SplashNotifier(authFind: getIt.get<IAuthFind>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<TransactionsNotifier>(() => TransactionsNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<TransferNotifier>(() => TransferNotifier(transferSave: getIt.get<ITransferSave>(), transferDelete: getIt.get<ITransferDelete>()));

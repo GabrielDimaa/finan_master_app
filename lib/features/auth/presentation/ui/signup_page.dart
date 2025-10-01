@@ -91,7 +91,7 @@ class _SignupPageState extends State<SignupPage> with ThemeContext {
                     ),
                     const Spacing.y(),
                     ListenableBuilder(
-                      listenable: Listenable.merge([viewModel.signupWithEmailAndPassword, viewModel.signupWithGoogle]),
+                      listenable: viewModel.signupWithGoogle,
                       builder: (_, __) {
                         return FilledButton.icon(
                           style: FilledButton.styleFrom(backgroundColor: colorScheme.onInverseSurface, foregroundColor: colorScheme.inverseSurface),

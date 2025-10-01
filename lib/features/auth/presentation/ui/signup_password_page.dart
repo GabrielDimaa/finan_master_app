@@ -38,7 +38,7 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: viewModel,
+      listenable: Listenable.merge([viewModel, viewModel.signupWithEmailAndPassword]),
       builder: (_, __) {
         return Scaffold(
           body: SafeArea(
