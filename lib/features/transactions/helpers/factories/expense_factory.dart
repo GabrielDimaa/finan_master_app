@@ -35,4 +35,21 @@ abstract class ExpenseFactory {
       idCreditCardTransaction: model.idCreditCardTransaction,
     );
   }
+
+  static ExpenseEntity newEntity() {
+    return ExpenseEntity(
+      id: null,
+      createdAt: null,
+      deletedAt: null,
+      description: '',
+      amount: 0,
+      date: DateTime.now(),
+      paid: true,
+      observation: null,
+      idAccount: null,
+      idCategory: null,
+      idCreditCard: null,
+      idCreditCardTransaction: null,
+    );
+  }
 }

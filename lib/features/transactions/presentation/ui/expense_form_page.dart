@@ -4,18 +4,12 @@ import 'package:collection/collection.dart';
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
-import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
-import 'package:finan_master_app/features/account/presentation/states/accounts_state.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/accounts_list_bottom_sheet.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
-import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
-import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
-import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/categories_list_bottom_sheet.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transaction_by_text_entity.dart';
-import 'package:finan_master_app/features/transactions/presentation/notifiers/expense_notifier.dart';
-import 'package:finan_master_app/features/transactions/presentation/states/expense_state.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/expense_form_view_model.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
@@ -50,17 +44,16 @@ class ExpenseFormPage extends StatefulWidget {
 }
 
 class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
-  final ExpenseNotifier notifier = DI.get<ExpenseNotifier>();
-  final CategoriesNotifier categoriesNotifier = DI.get<CategoriesNotifier>();
-  final AccountsNotifier accountsNotifier = DI.get<AccountsNotifier>();
-
-  final ValueNotifier<bool> initialLoadingNotifier = ValueNotifier(true);
+  final ExpenseFormViewModel viewModel = DI.get<ExpenseFormViewModel>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final TextEditingController dateController = TextEditingController();
 
-  List<TransactionByTextEntity> transactionsOldAutoComplete = [];
-  late TextEditingValue textEditingValue;
+  final TextEditingController amountController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController observationController = TextEditingController();
+
+  final FocusNode descriptionFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -68,268 +61,250 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
 
     Future(() async {
       try {
-        await Future.wait([
-          categoriesNotifier.findAll(type: CategoryTypeEnum.expense, deleted: true),
-          accountsNotifier.findAll(deleted: true),
-        ]);
+        await viewModel.init.execute(widget.expense?.clone());
+        viewModel.init.throwIfError();
 
-        if (categoriesNotifier.value is ErrorCategoriesState) throw Exception((categoriesNotifier.value as ErrorCategoriesState).message);
-        if (accountsNotifier.value is ErrorAccountsState) throw Exception((accountsNotifier.value as ErrorAccountsState).message);
-
-        if (widget.expense != null) {
-          notifier.setExpense(widget.expense!);
-        } else {
-          final AccountEntity? account = accountsNotifier.value.accounts.where((account) => account.deletedAt == null).singleOrNull;
-          if (account != null) notifier.setAccount(account.id);
-        }
-
-        textEditingValue = TextEditingValue(text: notifier.expense.description);
-        dateController.text = notifier.expense.date.format();
+        amountController.text = viewModel.expense.amount.abs().moneyWithoutSymbol;
+        descriptionController.text = viewModel.expense.description;
+        dateController.text = viewModel.expense.date.format();
+        observationController.text = viewModel.expense.observation ?? '';
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());
-      } finally {
-        initialLoadingNotifier.value = false;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: initialLoadingNotifier,
-      builder: (_, initialLoading, __) {
-        return ValueListenableBuilder(
-          valueListenable: notifier,
-          builder: (_, state, __) {
-            return SliverScaffold(
-              appBar: SliverAppBarMedium(
-                title: Text(strings.expense),
-                loading: notifier.isLoading,
-                actions: [
-                  FilledButton(
-                    onPressed: save,
-                    child: Text(strings.save),
-                  ),
-                  if (!state.expense.isNew)
-                    IconButton(
-                      tooltip: strings.delete,
-                      onPressed: delete,
-                      icon: const Icon(Icons.delete_outline),
-                    ),
-                ],
+    return ListenableBuilder(
+      listenable: Listenable.merge([viewModel.save, viewModel.delete]),
+      builder: (_, __) {
+        return SliverScaffold(
+          appBar: SliverAppBarMedium(
+            title: Text(strings.expense),
+            loading: viewModel.save.running || viewModel.delete.running,
+            actions: [
+              FilledButton(
+                onPressed: save,
+                child: Text(strings.save),
               ),
-              body: Builder(
-                builder: (_) {
-                  if (initialLoading) return const SizedBox.shrink();
+              if (widget.expense?.isNew == false)
+                IconButton(
+                  tooltip: strings.delete,
+                  onPressed: delete,
+                  icon: const Icon(Icons.delete_outline),
+                ),
+            ],
+          ),
+          body: ListenableBuilder(
+            listenable: Listenable.merge([viewModel, viewModel.init]),
+            builder: (_, __) {
+              if (viewModel.init.running) return const SizedBox.shrink();
 
-                  return Form(
-                    key: formKey,
-                    child: Column(
-                      children: [
-                        const Spacing.y(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                initialValue: state.expense.amount.abs().moneyWithoutSymbol,
-                                decoration: InputDecoration(
-                                  label: Text(strings.amount),
-                                  prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
-                                ),
-                                validator: InputValidators([InputRequiredValidator(), InputGreaterThanValueValidator(0)]).validate,
-                                keyboardType: TextInputType.number,
-                                textInputAction: TextInputAction.next,
-                                enabled: !notifier.isLoading,
-                                onSaved: (String? value) => state.expense.amount = (value ?? '').moneyToDouble(),
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
-                              ),
-                              const Spacing.y(),
-                              LayoutBuilder(
-                                builder: (context, constraints) {
-                                  return Autocomplete<TransactionByTextEntity>(
-                                    initialValue: textEditingValue,
-                                    displayStringForOption: (TransactionByTextEntity option) => option.description,
-                                    fieldViewBuilder: (_, textController, focusNode, ___) {
-                                      return TextFormField(
-                                        decoration: InputDecoration(label: Text(strings.description)),
-                                        textCapitalization: TextCapitalization.sentences,
-                                        controller: textController,
-                                        focusNode: focusNode,
-                                        validator: InputRequiredValidator().validate,
-                                        onSaved: (String? value) => state.expense.description = value?.trim() ?? '',
-                                        enabled: !notifier.isLoading,
-                                      );
-                                    },
-                                    optionsBuilder: (TextEditingValue textEditingValue) async {
-                                      if (textEditingValue.text.length <= 1) {
-                                        this.textEditingValue = textEditingValue;
-                                        return [];
-                                      }
-
-                                      if (textEditingValue.text == this.textEditingValue.text) return [];
-
-                                      transactionsOldAutoComplete = await notifier.findByText(textEditingValue.text);
-                                      this.textEditingValue = textEditingValue;
-                                      return transactionsOldAutoComplete;
-                                    },
-                                    onSelected: (TransactionByTextEntity selection) {
-                                      notifier.setCategory(selection.idCategory);
-                                      if (selection.idAccount != null && accountsNotifier.value.accounts.any((c) => c.id == selection.idAccount && c.deletedAt == null)) notifier.setAccount(selection.idAccount!);
-                                      notifier.expense.observation = selection.observation;
-                                    },
-                                    optionsViewBuilder: (context, onSelected, options) {
-                                      return Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Material(
-                                          elevation: 12,
-                                          color: colorScheme.surfaceContainerHighest,
-                                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4.0))),
-                                          child: SizedBox(
-                                            height: min(160, 80.0 * options.length),
-                                            width: constraints.biggest.width,
-                                            child: ListView.builder(
-                                              physics: const BouncingScrollPhysics(),
-                                              padding: EdgeInsets.zero,
-                                              itemCount: options.length,
-                                              itemBuilder: (_, index) {
-                                                final TransactionByTextEntity expense = options.elementAt(index);
-                                                final category = categoriesNotifier.value.categories.firstWhereOrNull((category) => category.id == expense.idCategory);
-                                                if (category == null) return const SizedBox.shrink();
-
-                                                return ListTile(
-                                                  dense: true,
-                                                  leading: CircleAvatar(
-                                                    radius: 18,
-                                                    backgroundColor: Color(category.color.toColor()!),
-                                                    child: Icon(category.icon.parseIconData(), color: Colors.white),
-                                                  ),
-                                                  title: Text(expense.description),
-                                                  subtitle: Text(category.description),
-                                                  onTap: () => onSelected(expense),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
+              return Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    const Spacing.y(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: amountController,
+                            decoration: InputDecoration(
+                              label: Text(strings.amount),
+                              prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
+                            ),
+                            validator: InputValidators([InputRequiredValidator(), InputGreaterThanValueValidator(0)]).validate,
+                            keyboardType: TextInputType.number,
+                            textInputAction: TextInputAction.next,
+                            enabled: !viewModel.isLoading,
+                            onSaved: (String? value) => viewModel.expense.amount = (value ?? '').moneyToDouble(),
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
+                          ),
+                          const Spacing.y(),
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              return Autocomplete<TransactionByTextEntity>(
+                                textEditingController: descriptionController,
+                                focusNode: descriptionFocusNode,
+                                displayStringForOption: (TransactionByTextEntity option) => option.description,
+                                fieldViewBuilder: (_, textController, focusNode, ___) {
+                                  return TextFormField(
+                                    decoration: InputDecoration(label: Text(strings.description)),
+                                    textCapitalization: TextCapitalization.sentences,
+                                    controller: textController,
+                                    focusNode: focusNode,
+                                    validator: InputRequiredValidator().validate,
+                                    onSaved: (String? value) => viewModel.expense.description = value?.trim() ?? '',
+                                    enabled: !viewModel.isLoading,
                                   );
                                 },
-                              ),
-                              const Spacing.y(),
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.calendar_today_outlined),
-                                  label: Text(strings.date),
-                                ),
-                                readOnly: true,
-                                controller: dateController,
-                                validator: InputRequiredValidator().validate,
-                                enabled: !notifier.isLoading,
-                                onTap: selectDate,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Spacing.y(),
-                        const Divider(),
-                        ListTile(
-                          leading: notifier.expense.paid ? const Icon(Icons.task_alt_outlined) : const Icon(Icons.push_pin_outlined),
-                          title: Text(notifier.expense.paid ? strings.paid : strings.unpaid),
-                          trailing: Switch(value: notifier.expense.paid, onChanged: notifier.setPaid),
-                          onTap: () => notifier.setPaid(!notifier.expense.paid),
-                        ),
-                        const Divider(),
-                        GroupTile(
-                          onTap: selectCategory,
-                          title: strings.category,
-                          enabled: !notifier.isLoading,
-                          tile: state.expense.idCategory != null
-                              ? Builder(
-                                  builder: (_) {
-                                    final CategoryEntity category = categoriesNotifier.value.categories.firstWhere((category) => category.id == state.expense.idCategory);
-                                    return ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: Color(category.color.toColor() ?? 0),
-                                        child: Icon(category.icon.parseIconData(), color: Colors.white),
+                                optionsBuilder: (TextEditingValue textEditingValue) async {
+                                  if (textEditingValue.text.length <= 1) return [];
+
+                                  await viewModel.findByText.execute(textEditingValue.text);
+                                  viewModel.findByText.throwIfError();
+
+                                  return viewModel.findByText.result ?? [];
+                                },
+                                onSelected: (TransactionByTextEntity selection) {
+                                  viewModel.setIdCategory(selection.idCategory);
+                                  if (selection.idAccount != null && viewModel.accounts.any((c) => c.id == selection.idAccount && c.deletedAt == null)) viewModel.setIdAccount(selection.idAccount!);
+                                  viewModel.expense.observation = selection.observation;
+                                  observationController.text = selection.observation ?? '';
+                                },
+                                optionsViewBuilder: (context, onSelected, options) {
+                                  return Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Material(
+                                      elevation: 12,
+                                      color: colorScheme.surfaceContainerHighest,
+                                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4.0))),
+                                      child: SizedBox(
+                                        height: min(160, 80.0 * options.length),
+                                        width: constraints.biggest.width,
+                                        child: ListView.builder(
+                                          physics: const BouncingScrollPhysics(),
+                                          padding: EdgeInsets.zero,
+                                          itemCount: options.length,
+                                          itemBuilder: (_, index) {
+                                            final TransactionByTextEntity expense = options.elementAt(index);
+                                            final category = viewModel.categories.firstWhereOrNull((category) => category.id == expense.idCategory);
+                                            if (category == null) return const SizedBox.shrink();
+
+                                            return ListTile(
+                                              dense: true,
+                                              leading: CircleAvatar(
+                                                radius: 18,
+                                                backgroundColor: Color(category.color.toColor()!),
+                                                child: Icon(category.icon.parseIconData(), color: Colors.white),
+                                              ),
+                                              title: Text(expense.description),
+                                              subtitle: Text(category.description),
+                                              onTap: () => onSelected(expense),
+                                            );
+                                          },
+                                        ),
                                       ),
-                                      title: Text(category.description),
-                                      trailing: const Icon(Icons.chevron_right),
-                                      enabled: !notifier.isLoading,
-                                    );
-                                  },
-                                )
-                              : ListTile(
-                                  leading: const Icon(Icons.category_outlined),
-                                  title: Text(strings.selectCategory),
-                                  trailing: const Icon(Icons.chevron_right),
-                                  enabled: !notifier.isLoading,
-                                ),
-                        ),
-                        const Divider(),
-                        GroupTile(
-                          onTap: selectAccount,
-                          title: strings.account,
-                          enabled: !notifier.isLoading,
-                          tile: state.expense.idAccount != null
-                              ? Builder(
-                                  builder: (_) {
-                                    final AccountEntity account = accountsNotifier.value.accounts.firstWhere((account) => account.id == state.expense.idAccount);
-                                    return ListTile(
-                                      leading: account.financialInstitution!.icon(),
-                                      title: Text(account.description),
-                                      trailing: const Icon(Icons.chevron_right),
-                                      enabled: !notifier.isLoading,
-                                    );
-                                  },
-                                )
-                              : ListTile(
-                                  leading: const Icon(Icons.account_balance_outlined),
-                                  title: Text(strings.selectAccount),
-                                  trailing: const Icon(Icons.chevron_right),
-                                  enabled: !notifier.isLoading,
-                                ),
-                        ),
-                        const Divider(),
-                        const Spacing.y(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: TextFormField(
-                            initialValue: state.expense.observation,
-                            decoration: InputDecoration(label: Text("${strings.observation} (${strings.optional})")),
-                            textCapitalization: TextCapitalization.sentences,
-                            minLines: 2,
-                            maxLines: 5,
-                            onSaved: (String? value) => state.expense.observation = value?.trim() ?? '',
-                            enabled: !notifier.isLoading,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                           ),
-                        ),
-                      ],
+                          const Spacing.y(),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              prefixIcon: const Icon(Icons.calendar_today_outlined),
+                              label: Text(strings.date),
+                            ),
+                            readOnly: true,
+                            controller: dateController,
+                            validator: InputRequiredValidator().validate,
+                            enabled: !viewModel.isLoading,
+                            onTap: selectDate,
+                          ),
+                        ],
+                      ),
                     ),
-                  );
-                },
-              ),
-            );
-          },
+                    const Spacing.y(),
+                    const Divider(),
+                    ListTile(
+                      leading: viewModel.expense.paid ? const Icon(Icons.task_alt_outlined) : const Icon(Icons.push_pin_outlined),
+                      title: Text(viewModel.expense.paid ? strings.paid : strings.unpaid),
+                      trailing: Switch(value: viewModel.expense.paid, onChanged: viewModel.setPaid),
+                      onTap: () => viewModel.setPaid(!viewModel.expense.paid),
+                    ),
+                    const Divider(),
+                    GroupTile(
+                      onTap: selectCategory,
+                      title: strings.category,
+                      enabled: !viewModel.isLoading,
+                      tile: viewModel.expense.idCategory != null
+                          ? Builder(
+                              builder: (_) {
+                                final CategoryEntity category = viewModel.categories.firstWhere((category) => category.id == viewModel.expense.idCategory);
+                                return ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor: Color(category.color.toColor() ?? 0),
+                                    child: Icon(category.icon.parseIconData(), color: Colors.white),
+                                  ),
+                                  title: Text(category.description),
+                                  trailing: const Icon(Icons.chevron_right),
+                                  enabled: !viewModel.isLoading,
+                                );
+                              },
+                            )
+                          : ListTile(
+                              leading: const Icon(Icons.category_outlined),
+                              title: Text(strings.selectCategory),
+                              trailing: const Icon(Icons.chevron_right),
+                              enabled: !viewModel.isLoading,
+                            ),
+                    ),
+                    const Divider(),
+                    GroupTile(
+                      onTap: selectAccount,
+                      title: strings.account,
+                      enabled: !viewModel.isLoading,
+                      tile: viewModel.expense.idAccount != null
+                          ? Builder(
+                              builder: (_) {
+                                final AccountEntity account = viewModel.accounts.firstWhere((account) => account.id == viewModel.expense.idAccount);
+                                return ListTile(
+                                  leading: account.financialInstitution!.icon(),
+                                  title: Text(account.description),
+                                  trailing: const Icon(Icons.chevron_right),
+                                  enabled: !viewModel.isLoading,
+                                );
+                              },
+                            )
+                          : ListTile(
+                              leading: const Icon(Icons.account_balance_outlined),
+                              title: Text(strings.selectAccount),
+                              trailing: const Icon(Icons.chevron_right),
+                              enabled: !viewModel.isLoading,
+                            ),
+                    ),
+                    const Divider(),
+                    const Spacing.y(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: TextFormField(
+                        controller: observationController,
+                        decoration: InputDecoration(label: Text("${strings.observation} (${strings.optional})")),
+                        textCapitalization: TextCapitalization.sentences,
+                        minLines: 2,
+                        maxLines: 5,
+                        onSaved: (String? value) => viewModel.expense.observation = value?.trim() ?? '',
+                        enabled: !viewModel.isLoading,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         );
       },
     );
   }
 
   Future<void> save() async {
-    if (initialLoadingNotifier.value || notifier.isLoading) return;
+    if (viewModel.isLoading) return;
 
     try {
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
 
-        await notifier.save();
-        if (notifier.value is ErrorExpenseState) throw Exception((notifier.value as ErrorExpenseState).message);
+        await viewModel.save.execute(viewModel.expense);
+        viewModel.save.throwIfError();
 
         if (!mounted) return;
-        context.pop(FormResultNavigation.save(notifier.expense));
+        context.pop(FormResultNavigation.save(viewModel.expense));
       }
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
@@ -337,11 +312,11 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   }
 
   Future<void> delete() async {
-    if (initialLoadingNotifier.value || notifier.isLoading) return;
+    if (viewModel.isLoading) return;
 
     try {
-      await notifier.delete();
-      if (notifier.value is ErrorExpenseState) throw Exception((notifier.value as ErrorExpenseState).message);
+      await viewModel.delete.execute(viewModel.expense);
+      viewModel.delete.throwIfError();
 
       if (!mounted) return;
       context.pop(FormResultNavigation<ExpenseEntity>.delete());
@@ -351,45 +326,45 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   }
 
   Future<void> selectCategory() async {
-    if (initialLoadingNotifier.value || notifier.isLoading) return;
+    if (viewModel.isLoading) return;
 
     final CategoryEntity? result = await CategoriesListBottomSheet.show(
       context: context,
-      categorySelected: categoriesNotifier.value.categories.firstWhereOrNull((category) => category.id == notifier.expense.idCategory),
-      categories: categoriesNotifier.value.categories.where((category) => category.deletedAt == null).toList(),
-      onCategoryCreated: (CategoryEntity category) => categoriesNotifier.value.categories.add(category),
+      categorySelected: viewModel.categories.firstWhereOrNull((category) => category.id == viewModel.expense.idCategory),
+      categories: viewModel.categories.where((category) => category.deletedAt == null).toList(),
+      onCategoryCreated: (CategoryEntity category) => viewModel.categories.add(category),
     );
 
     if (result == null) return;
 
-    notifier.setCategory(result.id);
+    viewModel.setIdCategory(result.id);
   }
 
   Future<void> selectAccount() async {
-    if (initialLoadingNotifier.value || notifier.isLoading) return;
+    if (viewModel.isLoading) return;
 
     final AccountEntity? result = await AccountsListBottomSheet.show(
       context: context,
-      accountSelected: accountsNotifier.value.accounts.firstWhereOrNull((account) => account.id == notifier.expense.idAccount),
-      accounts: accountsNotifier.value.accounts.where((account) => account.deletedAt == null).toList(),
-      onAccountCreated: (AccountEntity account) => accountsNotifier.value.accounts.add(account),
+      accountSelected: viewModel.accounts.firstWhereOrNull((account) => account.id == viewModel.expense.idAccount),
+      accounts: viewModel.accounts.where((account) => account.deletedAt == null).toList(),
+      onAccountCreated: (AccountEntity account) => viewModel.accounts.add(account),
     );
 
     if (result == null) return;
 
-    notifier.setAccount(result.id);
+    viewModel.setIdAccount(result.id);
   }
 
   Future<void> selectDate() async {
-    if (initialLoadingNotifier.value || notifier.isLoading) return;
+    if (viewModel.isLoading) return;
 
-    final DateTime? result = await showDatePickerDefault(context: context, initialDate: notifier.expense.date);
+    final DateTime? result = await showDatePickerDefault(context: context, initialDate: viewModel.expense.date);
 
-    if (result == null || result == notifier.expense.date) return;
+    if (result == null || result == viewModel.expense.date) return;
 
-    if (result.isAfter(DateTime.now()) && notifier.expense.date.isBefore(DateTime.now())) notifier.setPaid(false);
+    if (result.isAfter(DateTime.now()) && viewModel.expense.date.isBefore(DateTime.now())) viewModel.setPaid(false);
 
     dateController.text = result.format();
-    notifier.setDate(result);
+    viewModel.setDate(result);
   }
 }

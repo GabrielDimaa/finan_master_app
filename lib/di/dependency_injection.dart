@@ -162,11 +162,12 @@ import 'package:finan_master_app/features/transactions/infra/data_sources/transf
 import 'package:finan_master_app/features/transactions/infra/repositories/expense_repository.dart';
 import 'package:finan_master_app/features/transactions/infra/repositories/income_repository.dart';
 import 'package:finan_master_app/features/transactions/infra/repositories/transfer_repository.dart';
-import 'package:finan_master_app/features/transactions/presentation/notifiers/expense_notifier.dart';
-import 'package:finan_master_app/features/transactions/presentation/notifiers/income_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_unpaid_unreceived_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/notifiers/transfer_notifier.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/expense_form_view_model.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/income_form_view_model.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_list_view_model.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_cloud_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_local_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/user_account_cloud_data_source.dart';
@@ -343,6 +344,9 @@ final class DependencyInjection {
     getIt.registerFactory<HomeViewModel>(() => HomeViewModel(accountFind: getIt.get<IAccountFind>(), creditCardFind: getIt.get<ICreditCardFind>(), transactionFind: getIt.get<ITransactionFind>(), monthlyBalance: getIt.get<IHomeMonthlyBalance>(), configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerFactory<ReportCategoriesViewModel>(() => ReportCategoriesViewModel(reportCategoriesFind: getIt.get<IReportCategoriesFind>()));
     getIt.registerFactory<SplashViewModel>(() => SplashViewModel(authFind: getIt.get<IAuthFind>()));
+    getIt.registerFactory<ExpenseFormViewModel>(() => ExpenseFormViewModel(expenseSave: getIt.get<IExpenseSave>(), expenseDelete: getIt.get<IExpenseDelete>(), expenseFind: getIt.get<IExpenseFind>(), categoryFind: getIt.get<ICategoryFind>(), accountFind: getIt.get<IAccountFind>()));
+    getIt.registerFactory<IncomeFormViewModel>(() => IncomeFormViewModel(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), incomeFind: getIt.get<IIncomeFind>(), categoryFind: getIt.get<ICategoryFind>(), accountFind: getIt.get<IAccountFind>()));
+    getIt.registerFactory<TransactionsListViewModel>(() => TransactionsListViewModel(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>(), categoryFind: getIt.get<ICategoryFind>()));
 
     //Notifiers
     getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
@@ -351,12 +355,9 @@ final class DependencyInjection {
     getIt.registerFactory<CreditCardNotifier>(() => CreditCardNotifier(creditCardSave: getIt.get<ICreditCardSave>(), creditCardDelete: getIt.get<ICreditCardDelete>(), creditCardFind: getIt.get<ICreditCardFind>()));
     getIt.registerFactory<CreditCardsNotifier>(() => CreditCardsNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
     getIt.registerFactory<CreditCardBillsNotifier>(() => CreditCardBillsNotifier(creditCardBillFind: getIt.get<ICreditCardBillFind>()));
-    getIt.registerFactory<ExpenseNotifier>(() => ExpenseNotifier(expenseSave: getIt.get<IExpenseSave>(), expenseDelete: getIt.get<IExpenseDelete>(), expenseFind: getIt.get<IExpenseFind>()));
     getIt.registerSingleton<FirstStepsNotifier>(FirstStepsNotifier(firstStepsFind: getIt.get<IFirstStepsFind>(), firstStepsSave: getIt.get<IFirstStepsSave>(), eventNotifier: getIt.get<EventNotifier>()));
-    getIt.registerFactory<IncomeNotifier>(() => IncomeNotifier(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), incomeFind: getIt.get<IIncomeFind>()));
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
-    getIt.registerFactory<TransactionsNotifier>(() => TransactionsNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<TransferNotifier>(() => TransferNotifier(transferSave: getIt.get<ITransferSave>(), transferDelete: getIt.get<ITransferDelete>()));
   }
 

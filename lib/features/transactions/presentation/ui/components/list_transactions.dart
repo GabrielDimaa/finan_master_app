@@ -4,10 +4,11 @@ import 'package:finan_master_app/features/transactions/domain/entities/expense_e
 import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
-import 'package:finan_master_app/features/transactions/presentation/states/transactions_state.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_list_view_model.dart';
+import 'package:finan_master_app/l10n/generated/app_localizations.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
@@ -21,22 +22,12 @@ import 'package:finan_master_app/shared/presentation/ui/components/list/selectab
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_view_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
-import 'package:finan_master_app/l10n/generated/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 class ListTransactions extends StatefulWidget {
-  final TransactionsState state;
-  final List<CategoryEntity> categories;
-  final List<AccountEntity> accounts;
-  final VoidCallback refreshTransactions;
+  final TransactionsListViewModel viewModel;
 
-  const ListTransactions({
-    Key? key,
-    required this.state,
-    required this.categories,
-    required this.accounts,
-    required this.refreshTransactions,
-  }) : super(key: key);
+  const ListTransactions({Key? key, required this.viewModel}) : super(key: key);
 
   @override
   State<ListTransactions> createState() => _ListTransactionsState();
@@ -46,15 +37,15 @@ class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
   @override
   Widget build(BuildContext context) {
     return ListViewSelectable.separated(
-      key: ObjectKey(widget.state),
+      key: ObjectKey(widget.viewModel.transactions),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       padding: const EdgeInsets.only(bottom: 50),
-      list: widget.state.transactions,
+      list: widget.viewModel.transactions,
       itemBuilder: (ItemSelectable<ITransactionEntity> item) {
         if (item.value is ExpenseEntity) {
           final expense = item.value as ExpenseEntity;
-          final category = widget.categories.firstWhere((category) => category.id == expense.idCategory);
+          final category = widget.viewModel.categories.firstWhere((category) => category.id == expense.idCategory);
           return ListTileSelectable<ITransactionEntity>(
             value: item,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -96,7 +87,7 @@ class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
 
         if (item.value is IncomeEntity) {
           final income = item.value as IncomeEntity;
-          final category = widget.categories.firstWhere((category) => category.id == income.idCategory);
+          final category = widget.viewModel.categories.firstWhere((category) => category.id == income.idCategory);
           return ListTileSelectable<ITransactionEntity>(
             value: item,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -142,7 +133,7 @@ class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
                 title: Text(AppLocalizations.of(context)!.transfer),
                 subtitle: Builder(
                   builder: (_) {
-                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.idAccountTo);
+                    final AccountEntity account = widget.viewModel.accounts.firstWhere((account) => account.id == transfer.idAccountTo);
                     return Text(account.description);
                   },
                 ),
@@ -167,7 +158,7 @@ class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
                 title: Text(AppLocalizations.of(context)!.transfer),
                 subtitle: Builder(
                   builder: (_) {
-                    final AccountEntity account = widget.accounts.firstWhere((account) => account.id == transfer.idAccountFrom);
+                    final AccountEntity account = widget.viewModel.accounts.firstWhere((account) => account.id == transfer.idAccountFrom);
                     return Text(account.description);
                   },
                 ),
@@ -195,6 +186,6 @@ class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
     final FormResultNavigation? result = await context.pushNamed(route, extra: entity);
     if (result == null) return;
 
-    widget.refreshTransactions();
+    widget.viewModel.findByPeriod.execute((startDate: widget.viewModel.startDate, endDate: widget.viewModel.endDate));
   }
 }
