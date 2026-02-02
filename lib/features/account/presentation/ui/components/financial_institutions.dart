@@ -51,30 +51,32 @@ class _FinancialInstitutionsState extends State<FinancialInstitutions> with Them
             ),
             const Spacing.y(1.5),
             Expanded(
-              child: ListView.separated(
-                controller: scrollController,
-                itemCount: list.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (_, index) {
-                  final FinancialInstitutionEnum financialInstitution = list[index];
-                  return RadioListTile<FinancialInstitutionEnum>(
-                    title: Row(
-                      children: [
-                        financialInstitution.icon(),
-                        const Spacing.x(),
-                        Expanded(child: Text(financialInstitution.description)),
-                      ],
-                    ),
-                    controlAffinity: ListTileControlAffinity.trailing,
-                    toggleable: true,
-                    value: financialInstitution,
-                    groupValue: selected,
-                    onChanged: (FinancialInstitutionEnum? value) {
-                      setState(() => selected = value);
-                      context.pop(selected);
-                    },
-                  );
+              child: RadioGroup<FinancialInstitutionEnum>(
+                groupValue: selected,
+                onChanged: (FinancialInstitutionEnum? value) {
+                  setState(() => selected = value);
+                  context.pop(selected);
                 },
+                child: ListView.separated(
+                  controller: scrollController,
+                  itemCount: list.length,
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemBuilder: (_, index) {
+                    final FinancialInstitutionEnum financialInstitution = list[index];
+                    return RadioListTile<FinancialInstitutionEnum>(
+                      title: Row(
+                        children: [
+                          financialInstitution.icon(),
+                          const Spacing.x(),
+                          Expanded(child: Text(financialInstitution.description)),
+                        ],
+                      ),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      toggleable: true,
+                      value: financialInstitution,
+                    );
+                  },
+                ),
               ),
             ),
           ],

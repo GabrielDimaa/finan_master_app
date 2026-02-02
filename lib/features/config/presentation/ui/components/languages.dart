@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:diacritic/diacritic.dart';
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/config/presentation/notifiers/locale_notifier.dart';
@@ -45,24 +46,26 @@ class _LanguagesState extends State<Languages> with ThemeContext {
             ),
             const Spacing.y(1.5),
             Expanded(
-              child: ListView.separated(
-                controller: scrollController,
-                itemCount: locales.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (_, index) {
-                  final Locale locale = locales[index];
-                  return RadioListTile<Locale>(
-                    title: Text(locale.getDisplayLanguage()),
-                    controlAffinity: ListTileControlAffinity.trailing,
-                    toggleable: true,
-                    value: locale,
-                    groupValue: AppLocalizations.of(context)?.localeName == locale.languageCode ? locale : null,
-                    onChanged: (_) {
-                      notifier.changeAndSave(locale);
-                      context.pop(locale);
-                    },
-                  );
+              child: RadioGroup<Locale>(
+                groupValue: locales.firstWhereOrNull((e) => e.languageCode == AppLocalizations.of(context)?.localeName),
+                onChanged: (value) {
+                  if (value != null) notifier.changeAndSave(value);
+                  context.pop(value);
                 },
+                child: ListView.separated(
+                  controller: scrollController,
+                  itemCount: locales.length,
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemBuilder: (_, index) {
+                    final Locale locale = locales[index];
+                    return RadioListTile<Locale>(
+                      title: Text(locale.getDisplayLanguage()),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      toggleable: true,
+                      value: locale,
+                    );
+                  },
+                ),
               ),
             ),
           ],

@@ -61,21 +61,23 @@ class _CreditCardsListBottomSheetState extends State<CreditCardsListBottomSheet>
                       Text(strings.noCreditCardRegistered),
                     ],
                   ),
-                  child: ListView.separated(
-                    controller: scrollController,
-                    itemCount: widget.creditCards.length,
-                    separatorBuilder: (_, __) => const Divider(),
-                    itemBuilder: (_, index) {
-                      final CreditCardEntity creditCard = widget.creditCards[index];
-                      return RadioListTile<CreditCardEntity>(
-                        title: Text(creditCard.description),
-                        controlAffinity: ListTileControlAffinity.trailing,
-                        toggleable: true,
-                        value: creditCard,
-                        groupValue: creditCard.id == widget.creditCardSelected?.id ? creditCard : null,
-                        onChanged: (_) => context.pop(creditCard),
-                      );
-                    },
+                  child: RadioGroup<CreditCardEntity>(
+                    groupValue: widget.creditCardSelected,
+                    onChanged: (value) => context.pop(value),
+                    child: ListView.separated(
+                      controller: scrollController,
+                      itemCount: widget.creditCards.length,
+                      separatorBuilder: (_, __) => const Divider(),
+                      itemBuilder: (_, index) {
+                        final CreditCardEntity creditCard = widget.creditCards[index];
+                        return RadioListTile<CreditCardEntity>(
+                          title: Text(creditCard.description),
+                          controlAffinity: ListTileControlAffinity.trailing,
+                          toggleable: true,
+                          value: creditCard,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

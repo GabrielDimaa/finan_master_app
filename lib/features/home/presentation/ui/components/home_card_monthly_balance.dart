@@ -166,7 +166,6 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
               ),
             ],
           );
-        }).toList() ??
-        [];
+        }).toList();
   }
 }

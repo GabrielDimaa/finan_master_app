@@ -63,30 +63,32 @@ class _CategoriesListBottomSheetState extends State<CategoriesListBottomSheet> w
                       Text(strings.noCategoryRegistered),
                     ],
                   ),
-                  child: ListView.separated(
-                    controller: scrollController,
-                    itemCount: widget.categories.length,
-                    separatorBuilder: (_, __) => const Divider(),
-                    itemBuilder: (_, index) {
-                      final CategoryEntity category = widget.categories[index];
-                      return RadioListTile<CategoryEntity>(
-                        title: Row(
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: Color(category.color.toColor()!),
-                              child: Icon(category.icon.parseIconData(), color: Colors.white),
-                            ),
-                            const Spacing.x(),
-                            Expanded(child: Text(category.description)),
-                          ],
-                        ),
-                        controlAffinity: ListTileControlAffinity.trailing,
-                        toggleable: true,
-                        value: category,
-                        groupValue: category.id == widget.categorySelected?.id ? category : null,
-                        onChanged: (_) => context.pop(category),
-                      );
-                    },
+                  child: RadioGroup<CategoryEntity>(
+                    groupValue: widget.categorySelected,
+                    onChanged: (value) => context.pop(value),
+                    child: ListView.separated(
+                      controller: scrollController,
+                      itemCount: widget.categories.length,
+                      separatorBuilder: (_, __) => const Divider(),
+                      itemBuilder: (_, index) {
+                        final CategoryEntity category = widget.categories[index];
+                        return RadioListTile<CategoryEntity>(
+                          title: Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Color(category.color.toColor()!),
+                                child: Icon(category.icon.parseIconData(), color: Colors.white),
+                              ),
+                              const Spacing.x(),
+                              Expanded(child: Text(category.description)),
+                            ],
+                          ),
+                          controlAffinity: ListTileControlAffinity.trailing,
+                          toggleable: true,
+                          value: category,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

@@ -51,30 +51,32 @@ class _CardBrandListBottomSheetState extends State<CardBrandListBottomSheet> wit
             ),
             const Spacing.y(1.5),
             Expanded(
-              child: ListView.separated(
-                controller: scrollController,
-                itemCount: list.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (_, index) {
-                  final CardBrandEnum cardBrand = list[index];
-                  return RadioListTile<CardBrandEnum>(
-                    title: Row(
-                      children: [
-                        cardBrand.icon(),
-                        const Spacing.x(),
-                        Expanded(child: Text(cardBrand.description)),
-                      ],
-                    ),
-                    controlAffinity: ListTileControlAffinity.trailing,
-                    toggleable: true,
-                    value: cardBrand,
-                    groupValue: selected,
-                    onChanged: (CardBrandEnum? value) {
-                      setState(() => selected = value);
-                      context.pop(selected);
-                    },
-                  );
+              child: RadioGroup<CardBrandEnum>(
+                groupValue: selected,
+                onChanged: (CardBrandEnum? value) {
+                  setState(() => selected = value);
+                  context.pop(selected);
                 },
+                child: ListView.separated(
+                  controller: scrollController,
+                  itemCount: list.length,
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemBuilder: (_, index) {
+                    final CardBrandEnum cardBrand = list[index];
+                    return RadioListTile<CardBrandEnum>(
+                      title: Row(
+                        children: [
+                          cardBrand.icon(),
+                          const Spacing.x(),
+                          Expanded(child: Text(cardBrand.description)),
+                        ],
+                      ),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      toggleable: true,
+                      value: cardBrand,
+                    );
+                  },
+                ),
               ),
             ),
           ],

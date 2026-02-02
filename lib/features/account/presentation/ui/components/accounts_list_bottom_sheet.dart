@@ -67,27 +67,30 @@ class _AccountsListBottomSheetState extends State<AccountsListBottomSheet> with 
                       Text(strings.noAccountsRegistered),
                     ],
                   ),
-                  child: ListView.separated(
-                    controller: scrollController,
-                    itemCount: widget.accounts.length,
-                    separatorBuilder: (_, __) => const Divider(),
-                    itemBuilder: (_, index) {
-                      final AccountEntity account = widget.accounts[index];
-                      return RadioListTile<AccountEntity>(
-                        title: Row(
-                          children: [
-                            account.financialInstitution!.icon(),
-                            const Spacing.x(),
-                            Expanded(child: Text(account.description)),
-                          ],
-                        ),
-                        controlAffinity: ListTileControlAffinity.trailing,
-                        toggleable: true,
-                        value: account,
-                        groupValue: account.id == widget.accountSelected?.id ? account : null,
-                        onChanged: (_) => context.pop(account),
-                      );
-                    },
+                  child: RadioGroup<AccountEntity>(
+                    groupValue: widget.accountSelected,
+                    onChanged: (value) => context.pop(value),
+                    child: ListView.separated(
+                      controller: scrollController,
+                      itemCount: widget.accounts.length,
+                      separatorBuilder: (_, __) => const Divider(),
+                      itemBuilder: (_, index) {
+                        final account = widget.accounts[index];
+
+                        return RadioListTile<AccountEntity>(
+                          value: account,
+                          title: Row(
+                            children: [
+                              account.financialInstitution!.icon(),
+                              const Spacing.x(),
+                              Expanded(child: Text(account.description)),
+                            ],
+                          ),
+                          controlAffinity: ListTileControlAffinity.trailing,
+                          toggleable: true,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
