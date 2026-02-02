@@ -301,7 +301,7 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
         formKey.currentState?.save();
 
         await viewModel.save.execute(viewModel.income);
-        viewModel.delete.throwIfError();
+        viewModel.save.throwIfError();
 
         if (!mounted) return;
         context.pop(FormResultNavigation.save(viewModel.income));

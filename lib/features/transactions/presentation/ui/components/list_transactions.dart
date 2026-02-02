@@ -1,5 +1,4 @@
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
-import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';

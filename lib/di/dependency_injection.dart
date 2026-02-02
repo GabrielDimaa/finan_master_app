@@ -11,7 +11,6 @@ import 'package:finan_master_app/features/account/domain/use_cases/i_account_sav
 import 'package:finan_master_app/features/account/infra/data_sources/account_local_data_source.dart';
 import 'package:finan_master_app/features/account/infra/data_sources/i_account_local_data_source.dart';
 import 'package:finan_master_app/features/account/infra/repositories/account_repository.dart';
-import 'package:finan_master_app/features/account/presentation/notifiers/accounts_notifier.dart';
 import 'package:finan_master_app/features/account/presentation/view_models/account_details_view_model.dart';
 import 'package:finan_master_app/features/account/presentation/view_models/account_form_view_model.dart';
 import 'package:finan_master_app/features/account/presentation/view_models/accounts_list_view_model.dart';
@@ -58,7 +57,6 @@ import 'package:finan_master_app/features/category/domain/use_cases/i_category_s
 import 'package:finan_master_app/features/category/infra/data_sources/category_local_data_source.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/i_category_local_data_source.dart';
 import 'package:finan_master_app/features/category/infra/repositories/category_repository.dart';
-import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
 import 'package:finan_master_app/features/category/presentation/view_models/categories_list_view_model.dart';
 import 'package:finan_master_app/features/category/presentation/view_models/category_form_view_model.dart';
 import 'package:finan_master_app/features/config/domain/repositories/i_config_repository.dart';
@@ -97,9 +95,6 @@ import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credi
 import 'package:finan_master_app/features/credit_card/infra/repositories/credit_card_bill_repository.dart';
 import 'package:finan_master_app/features/credit_card/infra/repositories/credit_card_repository.dart';
 import 'package:finan_master_app/features/credit_card/infra/repositories/credit_card_transaction_repository.dart';
-import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_bills_notifier.dart';
-import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_notifier.dart';
-import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_cards_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_bill_details_view_model.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_bills_view_model.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_expense_form_view_model.dart';
@@ -162,9 +157,6 @@ import 'package:finan_master_app/features/transactions/infra/data_sources/transf
 import 'package:finan_master_app/features/transactions/infra/repositories/expense_repository.dart';
 import 'package:finan_master_app/features/transactions/infra/repositories/income_repository.dart';
 import 'package:finan_master_app/features/transactions/infra/repositories/transfer_repository.dart';
-import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
-import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_unpaid_unreceived_notifier.dart';
-import 'package:finan_master_app/features/transactions/presentation/notifiers/transfer_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/expense_form_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/income_form_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_list_view_model.dart';
@@ -349,16 +341,9 @@ final class DependencyInjection {
     getIt.registerFactory<TransactionsListViewModel>(() => TransactionsListViewModel(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>(), categoryFind: getIt.get<ICategoryFind>()));
 
     //Notifiers
-    getIt.registerFactory<AccountsNotifier>(() => AccountsNotifier(accountFind: getIt.get<IAccountFind>()));
-    getIt.registerFactory<TransactionsUnpaidUnreceivedNotifier>(() => TransactionsUnpaidUnreceivedNotifier(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>()));
-    getIt.registerFactory<CategoriesNotifier>(() => CategoriesNotifier(categoryFind: getIt.get<ICategoryFind>()));
-    getIt.registerFactory<CreditCardNotifier>(() => CreditCardNotifier(creditCardSave: getIt.get<ICreditCardSave>(), creditCardDelete: getIt.get<ICreditCardDelete>(), creditCardFind: getIt.get<ICreditCardFind>()));
-    getIt.registerFactory<CreditCardsNotifier>(() => CreditCardsNotifier(creditCardFind: getIt.get<ICreditCardFind>()));
-    getIt.registerFactory<CreditCardBillsNotifier>(() => CreditCardBillsNotifier(creditCardBillFind: getIt.get<ICreditCardBillFind>()));
     getIt.registerSingleton<FirstStepsNotifier>(FirstStepsNotifier(firstStepsFind: getIt.get<IFirstStepsFind>(), firstStepsSave: getIt.get<IFirstStepsSave>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerSingleton<LocaleNotifier>(LocaleNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
     getIt.registerSingleton<ThemeModeNotifier>(ThemeModeNotifier(configFind: getIt.get<IConfigFind>(), configSave: getIt.get<IConfigSave>()));
-    getIt.registerFactory<TransferNotifier>(() => TransferNotifier(transferSave: getIt.get<ITransferSave>(), transferDelete: getIt.get<ITransferDelete>()));
   }
 
   Future<void> dispose() async {

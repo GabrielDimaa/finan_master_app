@@ -1,5 +1,4 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
-import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_list_view_model.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
