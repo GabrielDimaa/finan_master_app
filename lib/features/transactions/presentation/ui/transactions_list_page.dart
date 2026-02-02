@@ -10,9 +10,9 @@ import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/app_bar_custom.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/dialog/date_picker.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/loading_dialog.dart';
+import 'package:finan_master_app/shared/presentation/ui/components/dialog/month_year_picker/month_year_picker_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_mode_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/message_error_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/navigation/nav_drawer.dart';
@@ -149,7 +149,12 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
   }
 
   Future<void> selectDate() async {
-    final DateTime? date = await showDatePickerDefault(context: context, initialDate: viewModel.startDate);
+    final DateTime? date = await showMonthYearPicker(
+      context: context,
+      initialDate: viewModel.startDate,
+      firstDate: DateTime(2000, 1, 1),
+      lastDate: DateTime(2100, 12, 31),
+    );
 
     if (date != null) await onRefresh(startDate: date.getInitialMonth(), endDate: date.getFinalMonth());
   }

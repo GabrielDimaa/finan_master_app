@@ -1358,6 +1358,12 @@ abstract class AppLocalizations {
   /// **'Select date'**
   String get selectDate;
 
+  /// No description provided for @selectMonthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select month and year'**
+  String get selectMonthDate;
+
   /// No description provided for @selectFileInvalid.
   ///
   /// In en, this message translates to:

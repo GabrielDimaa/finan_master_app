@@ -687,6 +687,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get selectDate => 'Selecionar data';
 
   @override
+  String get selectMonthDate => 'Selecionar mês e ano';
+
+  @override
   String get selectFileInvalid => 'O arquivo selecionado é inválido.';
 
   @override

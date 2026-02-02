@@ -225,6 +225,7 @@
   "selectCategory": "Selecionar categoria",
   "selectCreditCard": "Selecionar cartão de crédito",
   "selectDate": "Selecionar data",
+  "selectMonthDate": "Selecionar mês e ano",
   "selectFileInvalid": "O arquivo selecionado é inválido.",
   "selectIcon": "Selecionar ícone",
   "selectFinancialInstitution": "Selecionar instituição financeira",

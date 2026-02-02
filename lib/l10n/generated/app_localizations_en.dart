@@ -683,6 +683,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectDate => 'Select date';
 
   @override
+  String get selectMonthDate => 'Select month and year';
+
+  @override
   String get selectFileInvalid => 'The selected file is invalid.';
 
   @override
