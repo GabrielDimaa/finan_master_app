@@ -1,22 +1,19 @@
 import 'dart:math';
 
 import 'package:finan_master_app/di/dependency_injection.dart';
-import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
-import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_bill_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_enum.dart';
-import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_bill_notifier.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/pay_bill_dialog.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_bill_details_view_model.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/loading_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/item_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_mode_selectable.dart';
@@ -47,8 +44,7 @@ class CreditCardBillDetailsPage extends StatefulWidget {
 }
 
 class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> with ThemeContext {
-  final CreditCardBillNotifier notifier = DI.get<CreditCardBillNotifier>();
-  final CategoriesNotifier categoriesNotifier = DI.get<CategoriesNotifier>();
+  final CreditCardBillDetailsViewModel viewModel = DI.get<CreditCardBillDetailsViewModel>();
 
   List<CreditCardTransactionEntity> listSelectable = [];
 
@@ -58,18 +54,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
   void initState() {
     super.initState();
 
-    notifier.setBill(widget.args.bill);
-
-    Future(() async {
-      try {
-        await categoriesNotifier.findAll(deleted: true);
-
-        if (categoriesNotifier.value is ErrorCategoriesState) throw Exception((categoriesNotifier.value as ErrorCategoriesState).message);
-      } catch (e) {
-        if (!mounted) return;
-        ErrorDialog.show(context, e.toString());
-      }
-    });
+    viewModel.load.execute(widget.args.bill);
   }
 
   @override
@@ -78,7 +63,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
       // canPop: false,
       // onPopInvoked: (_) => context.pop(changed ? FormResultNavigation.save(notifier.creditCardBill!) : null),
       onWillPop: () async {
-        if (changed) context.pop(FormResultNavigation.save(notifier.creditCardBill!));
+        if (changed) context.pop(FormResultNavigation.save(viewModel.bill));
         return true;
       },
       child: ListModeSelectable(
@@ -86,32 +71,39 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
         updateList: (List value) => setState(() => listSelectable = value.cast<CreditCardTransactionEntity>()),
         child: Scaffold(
           body: SafeArea(
-            child: ValueListenableBuilder(
-              valueListenable: categoriesNotifier,
-              builder: (_, categoriesState, __) {
-                return switch (categoriesState) {
-                  LoadingCategoriesState _ => const Center(child: CircularProgressIndicator()),
-                  StartCategoriesState _ => const SizedBox.shrink(),
-                  ErrorCategoriesState error => MessageErrorWidget(error.message),
-                  ListCategoriesState _ || EmptyCategoriesState _ => Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: CustomScrollView(
-                            slivers: [
-                              SliverAppBarMedium(
-                                title: Text(strings.bill),
-                                loading: notifier.isLoading,
-                                actionsInModeSelection: [
-                                  IconButton(
-                                    tooltip: strings.delete,
-                                    onPressed: deleteTransactions,
-                                    icon: const Icon(Icons.delete_outline),
-                                  ),
-                                ],
+            child: ListenableBuilder(
+              listenable: Listenable.merge([viewModel, viewModel.load, viewModel.refreshBill]),
+              builder: (_, __) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverAppBarMedium(
+                            title: Text(strings.bill),
+                            actionsInModeSelection: [
+                              IconButton(
+                                tooltip: strings.delete,
+                                onPressed: deleteTransactions,
+                                icon: const Icon(Icons.delete_outline),
                               ),
-                              SliverToBoxAdapter(
-                                child: Column(
+                            ],
+                          ),
+                          if (viewModel.load.running || viewModel.refreshBill.running) ...[
+                            const SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Center(child: CircularProgressIndicator()),
+                            ),
+                          ] else if (viewModel.load.hasError || viewModel.refreshBill.hasError) ...[
+                            SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: MessageErrorWidget(viewModel.load.error?.toString() ?? viewModel.refreshBill.error.toString()),
+                            ),
+                          ] else ...[
+                            SliverToBoxAdapter(
+                              child: Builder(builder: (_) {
+                                return Column(
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
                                     const Spacing.y(),
@@ -127,12 +119,12 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                                                 width: 8,
                                                 height: 18,
                                                 decoration: BoxDecoration(
-                                                  color: notifier.creditCardBill!.status.color,
+                                                  color: viewModel.bill.status.color,
                                                   borderRadius: BorderRadius.circular(100),
                                                 ),
                                               ),
                                               const SizedBox(width: 10),
-                                              Text(notifier.creditCardBill!.status.description, style: textTheme.bodyLarge),
+                                              Text(viewModel.bill.status.description, style: textTheme.bodyLarge),
                                             ],
                                           ),
                                           const Spacing.y(1.5),
@@ -144,7 +136,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text(strings.closureDate, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                                  Text(notifier.creditCardBill!.billClosingDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                                  Text(viewModel.bill.billClosingDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
                                                 ],
                                               ),
                                               const Spacer(),
@@ -152,25 +144,25 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                                                 crossAxisAlignment: CrossAxisAlignment.end,
                                                 children: [
                                                   Text(strings.dueDate, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                                  Text(notifier.creditCardBill!.billDueDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                                  Text(viewModel.bill.billDueDate.format(), style: const TextStyle(fontWeight: FontWeight.bold)),
                                                 ],
                                               ),
                                             ],
                                           ),
                                           const Spacing.y(2),
-                                          if (notifier.creditCardBill!.transactions.isNotEmpty) Text(strings.transactions, style: textTheme.bodyLarge),
+                                          if (viewModel.bill.transactions.isNotEmpty) Text(strings.transactions, style: textTheme.bodyLarge),
                                         ],
                                       ),
                                     ),
                                     ListViewSelectable.separated(
-                                      key: ObjectKey(notifier.creditCardBill!.transactions),
+                                      key: ObjectKey(viewModel.bill.transactions),
                                       physics: const NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       padding: EdgeInsets.zero,
-                                      list: notifier.creditCardBill!.transactions,
+                                      list: viewModel.bill.transactions,
                                       itemBuilder: (ItemSelectable<CreditCardTransactionEntity> item) {
                                         final transaction = item.value;
-                                        final category = categoriesNotifier.value.categories.firstWhere((category) => category.id == transaction.idCategory);
+                                        final category = viewModel.categories.firstWhere((category) => category.id == transaction.idCategory);
 
                                         return ListTileSelectable(
                                           value: item,
@@ -198,60 +190,61 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                                       },
                                     ),
                                   ],
+                                );
+                              }),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    if (listSelectable.isEmpty && !viewModel.load.running && !viewModel.refreshBill.running && !viewModel.load.hasError && !viewModel.refreshBill.hasError)
+                      Padding(
+                        padding: const EdgeInsets.all(16).copyWith(top: 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Card(
+                              color: colorScheme.surfaceContainer,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(strings.totalSpent, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
+                                          Text(viewModel.bill.totalSpent.money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 30, child: VerticalDivider()),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Text(strings.amountOutstanding, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
+                                          Text(max(viewModel.bill.billAmount, 0.0).money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        if (listSelectable.isEmpty)
-                          Padding(
-                            padding: const EdgeInsets.all(16).copyWith(top: 0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Card(
-                                  color: colorScheme.surfaceContainer,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(strings.totalSpent, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                              Text(notifier.creditCardBill!.totalSpent.money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 30, child: VerticalDivider()),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.end,
-                                            children: [
-                                              Text(strings.amountOutstanding, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                                              Text(max(notifier.creditCardBill!.billAmount, 0.0).money, style: textTheme.titleMedium?.copyWith(fontSize: 18)),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const Spacing.y(1.5),
-                                FilledButton.icon(
-                                  onPressed: (notifier.creditCardBill?.totalSpent ?? 0) > 0 && (notifier.creditCardBill?.billAmount ?? 0) > 0 ? payBill : null,
-                                  icon: const Icon(Icons.credit_score_outlined),
-                                  label: Text(strings.payBill),
-                                ),
-                              ],
                             ),
-                          ),
-                      ],
-                    ),
-                };
+                            const Spacing.y(1.5),
+                            FilledButton.icon(
+                              onPressed: viewModel.bill.totalSpent > 0 && viewModel.bill.billAmount > 0 ? payBill : null,
+                              icon: const Icon(Icons.credit_score_outlined),
+                              label: Text(strings.payBill),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                );
               },
             ),
           ),
@@ -266,29 +259,27 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
     final FormResultNavigation<CreditCardTransactionEntity>? result = await context.pushNamed(CreditCardExpensePage.route, extra: entity);
     if (result != null) {
       changed = true;
-      await refreshBill();
+      await viewModel.refreshBill.execute();
     }
   }
 
   Future<void> payBill() async {
-    final CreditCardBillEntity? result = await PayBillDialog.show(context: context, bill: notifier.creditCardBill!);
+    final CreditCardBillEntity? result = await PayBillDialog.show(context: context, bill: viewModel.bill);
 
     if (result != null) {
       changed = true;
-      await refreshBill();
+      await viewModel.refreshBill.execute();
     }
   }
 
   Future<void> deleteTransactions() async {
-    await LoadingDialog.show(context: context, message: strings.deletingTransactions, onAction: () => notifier.deleteTransactions(listSelectable));
+    await LoadingDialog.show(context: context, message: strings.deletingTransactions, onAction: () => viewModel.deleteTransactions.execute(listSelectable));
+    viewModel.deleteTransactions.throwIfError();
 
-    changed = true;
-    listSelectable = [];
-    refreshBill();
-  }
-
-  Future<void> refreshBill() async {
-    await notifier.findById(notifier.creditCardBill!.id);
-    setState(() {});
+    setState(() {
+      changed = true;
+      listSelectable = [];
+    });
+    await viewModel.refreshBill.execute();
   }
 }

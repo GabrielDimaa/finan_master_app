@@ -254,6 +254,12 @@ abstract class AppLocalizations {
   /// **'No movements'**
   String get billNoMovements;
 
+  /// No description provided for @billNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill not found.'**
+  String get billNotFound;
+
   /// No description provided for @billOutstanding.
   ///
   /// In en, this message translates to:
@@ -619,6 +625,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete data'**
   String get deleteData;
+
+  /// No description provided for @deleteDataConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you truly wish to permanently delete your data from the system?'**
+  String get deleteDataConfirmation;
 
   /// No description provided for @deleteDataExplication.
   ///

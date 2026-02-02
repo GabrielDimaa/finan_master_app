@@ -1,12 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_enum.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_card_simple_widget.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_cards_details_page.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_bills_credit_card_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/states/home_bills_credit_card_state.dart';
+import 'package:finan_master_app/features/home/presentation/view_models/home_view_model.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -15,34 +13,25 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeCardBillCreditCard extends StatefulWidget {
-  final HomeBillsCreditCardNotifier notifier;
-  final HideAmountsNotifier hideAmountsNotifier;
+  final HomeViewModel viewModel;
 
-  const HomeCardBillCreditCard({super.key, required this.notifier, required this.hideAmountsNotifier});
+  const HomeCardBillCreditCard({super.key, required this.viewModel});
 
   @override
   State<HomeCardBillCreditCard> createState() => _HomeCardBillCreditCardState();
 }
 
 class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with ThemeContext {
-  late HomeBillsCreditCardState state;
-
   final CarouselController carouselController = CarouselController();
   int itemCarrouselCurrent = 0;
 
   BorderRadius get borderRadius => BorderRadius.circular(18);
 
   @override
-  void initState() {
-    super.initState();
-    state = widget.notifier.value;
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.notifier,
-      builder: (_, state, __) {
+    return ListenableBuilder(
+      listenable: widget.viewModel.loadBillsCreditCard,
+      builder: (_, __) {
         return ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 200),
           child: Card(
@@ -53,13 +42,12 @@ class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with Th
               onTap: goCreditCardDetails,
               child: Builder(
                 builder: (_) {
-                  final lastState = this.state;
-                  this.state = state;
+                  final prev = widget.viewModel.loadBillsCreditCard.previous;
 
-                  if (state is ErrorHomeBillsCreditCardState) {
+                  if (widget.viewModel.loadBillsCreditCard.hasError) {
                     return Center(
                       child: Text(
-                        state.message.replaceAll('Exception: ', ''),
+                        widget.viewModel.loadBillsCreditCard.error.toString().replaceAll('Exception: ', ''),
                         style: textTheme.bodyMedium?.copyWith(color: colorScheme.error),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
@@ -67,11 +55,13 @@ class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with Th
                     );
                   }
 
-                  if (state is StartHomeBillsCreditCardState || (state is LoadingHomeBillsCreditCardState && lastState is! ListHomeBillsCreditCardState)) {
+                  if (widget.viewModel.loadBillsCreditCard.running && prev?.completed != true) {
                     return const Center(child: SizedBox(height: 30, width: 30, child: CircularProgressIndicator()));
                   }
 
-                  if (state.creditCardsWithBill.isEmpty) {
+                  final creditCards = widget.viewModel.loadBillsCreditCard.result ?? prev?.result ?? [];
+
+                  if (creditCards.isEmpty) {
                     return Center(
                       child: ElevatedButton.icon(
                         onPressed: goCreditCardForm,
@@ -85,17 +75,17 @@ class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with Th
                     children: [
                       CarouselSlider(
                         items: List.generate(
-                          state.creditCardsWithBill.length,
+                          creditCards.length,
                           (index) => Padding(
                             padding: const EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                CreditCardSimpleWidget(creditCard: state.creditCardsWithBill[index].creditCard),
+                                CreditCardSimpleWidget(creditCard: creditCards[index].creditCard),
                                 const SizedBox(height: 16),
                                 Builder(
                                   builder: (_) {
-                                    final BillStatusEnum status = state.creditCardsWithBill[index].bill?.status ?? BillStatusEnum.outstanding;
+                                    final BillStatusEnum status = creditCards[index].bill?.status ?? BillStatusEnum.outstanding;
 
                                     return Row(
                                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -115,19 +105,19 @@ class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with Th
                                   },
                                 ),
                                 const SizedBox(height: 4),
-                                ValueListenableBuilder(
-                                  valueListenable: widget.hideAmountsNotifier,
-                                  builder: (_, stateHideAmounts, __) {
+                                ListenableBuilder(
+                                  listenable: widget.viewModel,
+                                  builder: (_, __) {
                                     return Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        if (stateHideAmounts) ...[
+                                        if (widget.viewModel.hideAmounts) ...[
                                           Text('●●●●', style: textTheme.titleLarge?.copyWith(fontSize: 18)),
                                         ] else ...[
-                                          Text((state.creditCardsWithBill[index].bill?.totalSpent ?? 0).money, style: textTheme.titleLarge?.copyWith(fontSize: 18)),
+                                          Text((creditCards[index].bill?.totalSpent ?? 0).money, style: textTheme.titleLarge?.copyWith(fontSize: 18)),
                                         ],
                                         const SizedBox(height: 4),
-                                        Text('${strings.availableLimit} ${stateHideAmounts ? '●●●●' : (state.creditCardsWithBill[index].creditCard.amountLimit).money}', style: textTheme.labelMedium),
+                                        Text('${strings.availableLimit} ${widget.viewModel.hideAmounts ? '●●●●' : (creditCards[index].creditCard.amountLimit).money}', style: textTheme.labelMedium),
                                       ],
                                     );
                                   },
@@ -138,7 +128,7 @@ class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with Th
                         ),
                         options: CarouselOptions(
                           height: 172,
-                          padEnds: state.creditCardsWithBill.length == 1,
+                          padEnds: creditCards.length == 1,
                           viewportFraction: 1,
                           enableInfiniteScroll: false,
                           onPageChanged: (index, _) => setState(() => itemCarrouselCurrent = index),
@@ -151,7 +141,7 @@ class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with Th
                           crossAxisAlignment: WrapCrossAlignment.center,
                           spacing: 10,
                           children: List.generate(
-                            state.creditCardsWithBill.length,
+                            creditCards.length,
                             (index) => Container(
                               width: itemCarrouselCurrent == index ? 10 : 6,
                               height: itemCarrouselCurrent == index ? 10 : 6,
@@ -177,8 +167,8 @@ class _HomeCardBillCreditCardState extends State<HomeCardBillCreditCard> with Th
   Future<void> goCreditCardForm() async {
     final FormResultNavigation<CreditCardEntity>? result = await context.pushNamedWithAd(CreditCardFormPage.route);
 
-    if (result?.isSave == true && result?.value != null) widget.notifier.load();
+    if (result?.isSave == true && result?.value != null) widget.viewModel.load();
   }
 
-  void goCreditCardDetails() => context.pushNamed(CreditCardsDetailsPage.route, extra: widget.notifier.creditCardsWithBill[itemCarrouselCurrent].creditCard.id);
+  void goCreditCardDetails() => context.pushNamed(CreditCardsDetailsPage.route, extra: (widget.viewModel.loadBillsCreditCard.result ?? widget.viewModel.loadBillsCreditCard.previous?.result ?? [])[itemCarrouselCurrent].creditCard.id);
 }

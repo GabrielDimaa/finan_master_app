@@ -1,6 +1,5 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
-import 'package:finan_master_app/features/auth/presentation/notifiers/reset_password_notifier.dart';
-import 'package:finan_master_app/features/auth/presentation/states/reset_password_state.dart';
+import 'package:finan_master_app/features/auth/presentation/view_models/reset_password_view_model.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_email_validator.dart';
@@ -19,7 +18,7 @@ class ResetPasswordPage extends StatefulWidget {
 }
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> with ThemeContext {
-  final ResetPasswordNotifier notifier = DI.get<ResetPasswordNotifier>();
+  final ResetPasswordViewModel viewModel = DI.get<ResetPasswordViewModel>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
@@ -27,9 +26,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> with ThemeContext
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: notifier,
-      builder: (_, state, __) {
+    return ListenableBuilder(
+      listenable: viewModel.send,
+      builder: (_, __) {
         return Scaffold(
           body: SafeArea(
             child: Stack(
@@ -63,16 +62,38 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> with ThemeContext
                               ),
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
-                              enabled: !notifier.isLoading && !notifier.isSentResetPassword,
+                              enabled: !viewModel.send.running && !viewModel.send.completed,
                               controller: emailController,
                               validator: InputValidators([InputRequiredValidator(), InputEmailValidator()]).validate,
                             ),
                             const Spacing.y(3),
-                            switch (state) {
-                              SendingResetPasswordState _ => FilledButton(onPressed: resetPassword, child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5))),
-                              SentResetPasswordState _ => FilledButton.icon(onPressed: null, icon: const Icon(Icons.check), label: Text(strings.sent)),
-                              _ => FilledButton(onPressed: resetPassword, child: Text(strings.resetPassword)),
-                            },
+                            Builder(
+                              builder: (_) {
+                                if (viewModel.send.running) {
+                                  return FilledButton(
+                                    onPressed: resetPassword,
+                                    child: SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5),
+                                    ),
+                                  );
+                                }
+
+                                if (viewModel.send.completed) {
+                                  return FilledButton.icon(
+                                    onPressed: null,
+                                    icon: const Icon(Icons.check),
+                                    label: Text(strings.sent),
+                                  );
+                                }
+
+                                return FilledButton(
+                                  onPressed: resetPassword,
+                                  child: Text(strings.resetPassword),
+                                );
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -93,13 +114,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> with ThemeContext
 
   Future<void> resetPassword() async {
     try {
-      if (notifier.isLoading || notifier.isSentResetPassword) return;
+      if (viewModel.send.running || viewModel.send.completed) return;
 
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
 
-        await notifier.send(emailController.text);
-        if (notifier.value is ErrorResetPasswordState) throw Exception((notifier.value as ErrorResetPasswordState).message);
+        await viewModel.send.execute(emailController.text);
+        viewModel.send.throwIfError();
 
         showSnackBar();
       } else {

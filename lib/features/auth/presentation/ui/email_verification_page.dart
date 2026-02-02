@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:finan_master_app/di/dependency_injection.dart';
-import 'package:finan_master_app/features/auth/presentation/notifiers/email_verification_notifier.dart';
-import 'package:finan_master_app/features/auth/presentation/states/email_verification_state.dart';
+import 'package:finan_master_app/features/auth/presentation/view_models/email_verification_view_model.dart';
 import 'package:finan_master_app/features/first_steps/presentation/ui/first_steps_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
@@ -21,7 +20,7 @@ class EmailVerificationPage extends StatefulWidget {
 }
 
 class _EmailVerificationPageState extends State<EmailVerificationPage> with ThemeContext {
-  final EmailVerificationNotifier notifier = DI.get<EmailVerificationNotifier>();
+  final EmailVerificationViewModel viewModel = DI.get<EmailVerificationViewModel>();
 
   static const int maxSeconds = 60;
 
@@ -36,9 +35,9 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> with Them
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: notifier,
-      builder: (_, state, __) {
+    return ListenableBuilder(
+      listenable: Listenable.merge([viewModel.resendEmail, viewModel.completeRegistration]),
+      builder: (_, __) {
         return Scaffold(
           body: SafeArea(
             child: Padding(
@@ -78,7 +77,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> with Them
                               constraints: const BoxConstraints(minWidth: 180),
                               child: Builder(
                                 builder: (_) {
-                                  if (state is ResendingEmailVerificationState) {
+                                  if (viewModel.resendEmail.running) {
                                     return FilledButton.tonal(
                                       onPressed: null,
                                       child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onSecondaryContainer, strokeWidth: 2.5)),
@@ -103,7 +102,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> with Them
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: FilledButton(
                       onPressed: completeRegistration,
-                      child: notifier.value is CompletingRegistrationState ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5)) : Text(strings.completeRegistration),
+                      child: viewModel.completeRegistration.running ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5)) : Text(strings.completeRegistration),
                     ),
                   ),
                 ],
@@ -117,10 +116,10 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> with Them
 
   Future<void> resendEmail() async {
     try {
-      if (notifier.isLoading) return;
+      if (viewModel.isLoading) return;
 
-      await notifier.resendEmail();
-      if (notifier.value is ErrorEmailVerificationState) throw Exception((notifier.value as ErrorEmailVerificationState).message);
+      await viewModel.resendEmail.execute();
+      viewModel.resendEmail.throwIfError();
 
       startTimerResendEmail();
     } catch (e) {
@@ -131,10 +130,10 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> with Them
 
   Future<void> completeRegistration() async {
     try {
-      if (notifier.isLoading) return;
+      if (viewModel.isLoading) return;
 
-      await notifier.completeRegistration();
-      if (notifier.value is ErrorEmailVerificationState) throw Exception((notifier.value as ErrorEmailVerificationState).message);
+      await viewModel.completeRegistration.execute();
+      viewModel.completeRegistration.throwIfError();
 
       if (!mounted) return;
 

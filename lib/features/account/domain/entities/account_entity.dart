@@ -22,4 +22,17 @@ class AccountEntity extends Entity {
     required this.financialInstitution,
     required this.includeTotalBalance,
   });
+
+  AccountEntity clone() {
+    return AccountEntity(
+      id: id,
+      createdAt: createdAt,
+      deletedAt: deletedAt,
+      description: description,
+      transactionsAmount: transactionsAmount,
+      initialAmount: initialAmount,
+      financialInstitution: financialInstitution,
+      includeTotalBalance: includeTotalBalance,
+    );
+  }
 }

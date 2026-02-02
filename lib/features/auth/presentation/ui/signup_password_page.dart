@@ -1,6 +1,5 @@
-import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
-import 'package:finan_master_app/features/auth/presentation/states/signup_state.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/email_verification_page.dart';
+import 'package:finan_master_app/features/auth/presentation/view_models/signup_view_model.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/form/validators/input_confirm_password_validator.dart';
@@ -14,16 +13,16 @@ import 'package:go_router/go_router.dart';
 class SignupPasswordPage extends StatefulWidget {
   static const route = 'signup_password';
 
-  final SignupNotifier notifier;
+  final SignupViewModel viewModel;
 
-  const SignupPasswordPage({super.key, required this.notifier});
+  const SignupPasswordPage({super.key, required this.viewModel});
 
   @override
   State<SignupPasswordPage> createState() => _SignupPasswordPageState();
 }
 
 class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeContext {
-  SignupNotifier get notifier => widget.notifier;
+  SignupViewModel get viewModel => widget.viewModel;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController passwordController = TextEditingController();
@@ -38,9 +37,9 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: notifier,
-      builder: (_, state, __) {
+    return ListenableBuilder(
+      listenable: Listenable.merge([viewModel, viewModel.signupWithEmailAndPassword]),
+      builder: (_, __) {
         return Scaffold(
           body: SafeArea(
             child: Stack(
@@ -77,13 +76,13 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
                                   ),
                                 ),
                               ),
-                              enabled: !notifier.isLoading,
+                              enabled: !viewModel.isLoading,
                               controller: passwordController,
                               keyboardType: TextInputType.visiblePassword,
                               textInputAction: TextInputAction.next,
                               obscureText: !showPassword,
                               validator: InputValidators([InputRequiredValidator(), InputPasswordValidator()]).validate,
-                              onSaved: (String? value) => notifier.value.entity.auth.password = value?.trim() ?? '',
+                              onSaved: (String? value) => viewModel.signup.auth.password = value?.trim() ?? '',
                             ),
                             const Spacing.y(2),
                             TextFormField(
@@ -101,7 +100,7 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
                                   ),
                                 ),
                               ),
-                              enabled: !notifier.isLoading,
+                              enabled: !viewModel.isLoading,
                               keyboardType: TextInputType.visiblePassword,
                               textInputAction: TextInputAction.done,
                               obscureText: !showConfirmPassword,
@@ -110,7 +109,7 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
                             const Spacing.y(3),
                             FilledButton(
                               onPressed: signup,
-                              child: notifier.isLoading ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5)) : Text(strings.signup),
+                              child: viewModel.isLoading ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5)) : Text(strings.signup),
                             ),
                           ],
                         ),
@@ -132,13 +131,13 @@ class _SignupPasswordPageState extends State<SignupPasswordPage> with ThemeConte
 
   Future<void> signup() async {
     try {
-      if (notifier.isLoading) return;
+      if (viewModel.isLoading) return;
 
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
 
-        await notifier.signupWithEmailAndPassword();
-        if (notifier.value is ErrorSignupState) throw Exception((notifier.value as ErrorSignupState).message);
+        await viewModel.signupWithEmailAndPassword.execute();
+        viewModel.signupWithEmailAndPassword.throwIfError();
 
         if (!mounted) return;
         context.goNamed(EmailVerificationPage.route);

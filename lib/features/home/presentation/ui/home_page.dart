@@ -1,17 +1,12 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
-import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
 import 'package:finan_master_app/features/first_steps/presentation/notifiers/first_steps_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_bills_credit_card_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_transaction_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_transactions_unpaid_unreceived_notifier.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_alert_first_steps.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_accounts_balance.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_bill_credit_card.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_monthly_balance.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_monthly_transaction.dart';
 import 'package:finan_master_app/features/home/presentation/ui/components/home_card_transaction_unpaid_unreceived.dart';
+import 'package:finan_master_app/features/home/presentation/view_models/home_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/fab_transactions.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
@@ -29,14 +24,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with ThemeContext {
+  final HomeViewModel viewModel = DI.get<HomeViewModel>();
+
   final EventNotifier eventNotifier = DI.get<EventNotifier>();
-  final HomeAccountsBalanceNotifier accountsBalanceNotifier = DI.get<HomeAccountsBalanceNotifier>();
-  final HomeMonthlyTransactionNotifier monthlyTransactionNotifier = DI.get<HomeMonthlyTransactionNotifier>();
-  final HomeTransactionsUnpaidUnreceivedNotifier transactionUnpaidNotifier = DI.get<HomeTransactionsUnpaidUnreceivedNotifier>();
-  final HomeBillsCreditCardNotifier billsCreditCardNotifier = DI.get<HomeBillsCreditCardNotifier>();
-  final HomeMonthlyBalanceNotifier monthlyBalanceNotifier = DI.get<HomeMonthlyBalanceNotifier>();
   final FirstStepsNotifier firstStepsNotifier = DI.get<FirstStepsNotifier>();
-  final HideAmountsNotifier hideAmountsNotifier = DI.get<HideAmountsNotifier>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -44,21 +35,11 @@ class _HomePageState extends State<HomePage> with ThemeContext {
   void initState() {
     super.initState();
 
-    load();
+    viewModel.initialize();
 
     eventNotifier.addListener(() {
-      if ([EventType.income, EventType.expense, EventType.transfer, EventType.creditCard].contains(eventNotifier.value)) load();
+      if ([EventType.income, EventType.expense, EventType.transfer, EventType.creditCard].contains(eventNotifier.value)) viewModel.load();
     });
-  }
-
-  Future<void> load() async {
-    await Future.wait([
-      accountsBalanceNotifier.load(),
-      monthlyTransactionNotifier.load(),
-      transactionUnpaidNotifier.load(),
-      billsCreditCardNotifier.load(),
-      monthlyBalanceNotifier.load(),
-    ]);
   }
 
   @override
@@ -74,21 +55,21 @@ class _HomePageState extends State<HomePage> with ThemeContext {
         title: Text(strings.home),
         centerTitle: true,
         actions: [
-          ValueListenableBuilder(
-            valueListenable: hideAmountsNotifier,
-            builder: (_, state, __) {
-              if (state) {
+          ListenableBuilder(
+            listenable: viewModel,
+            builder: (_, __) {
+              if (viewModel.hideAmounts) {
                 return IconButton(
                   icon: const Icon(Icons.visibility_off_outlined),
-                  onPressed: () => hideAmountsNotifier.changeAndSave(!hideAmountsNotifier.value),
+                  onPressed: viewModel.toggleHideAmounts,
                 );
               }
 
               return IconButton(
                 icon: const Icon(Icons.visibility_outlined),
-                onPressed: () => hideAmountsNotifier.changeAndSave(!hideAmountsNotifier.value),
+                onPressed: viewModel.toggleHideAmounts,
               );
-            }
+            },
           ),
         ],
       ),
@@ -108,23 +89,27 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Spacing.y(),
-                      HomeCardAccountsBalance(notifier: accountsBalanceNotifier, hideAmountsNotifier: hideAmountsNotifier),
+                      HomeCardAccountsBalance(viewModel: viewModel),
                       const Spacing.y(),
                       IntrinsicHeight(
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Expanded(child: HomeCardMonthlyTransaction.income(notifier: monthlyTransactionNotifier, hideAmountsNotifier: hideAmountsNotifier)),
+                            Expanded(child: HomeCardMonthlyTransaction.income(viewModel: viewModel)),
                             const Spacing.x(),
-                            Expanded(child: HomeCardMonthlyTransaction.expense(notifier: monthlyTransactionNotifier, hideAmountsNotifier: hideAmountsNotifier)),
+                            Expanded(child: HomeCardMonthlyTransaction.expense(viewModel: viewModel)),
                           ],
                         ),
                       ),
                       const Spacing.y(),
-                      ValueListenableBuilder(
-                        valueListenable: transactionUnpaidNotifier,
-                        builder: (_, state, __) {
-                          if (transactionUnpaidNotifier.value.amountsIncome == 0 && transactionUnpaidNotifier.value.amountsExpense == 0) return const SizedBox.shrink();
+                      ListenableBuilder(
+                        listenable: viewModel.loadTransactionsUnpaidUnreceived,
+                        builder: (_, __) {
+                          if (viewModel.loadTransactionsUnpaidUnreceived.running) {
+                            if (viewModel.loadTransactionsUnpaidUnreceived.previous?.error == null && (viewModel.loadTransactionsUnpaidUnreceived.previous?.result?.amountsIncome ?? 0) == 0 && (viewModel.loadTransactionsUnpaidUnreceived.previous?.result?.amountsExpense ?? 0) == 0) return const SizedBox.shrink();
+                          } else if (viewModel.loadTransactionsUnpaidUnreceived.completed && (viewModel.loadTransactionsUnpaidUnreceived.result?.amountsIncome ?? 0) == 0 && (viewModel.loadTransactionsUnpaidUnreceived.result?.amountsExpense ?? 0) == 0) {
+                            return const SizedBox.shrink();
+                          }
 
                           return Column(
                             children: [
@@ -132,9 +117,9 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Expanded(child: HomeCardTransactionUnpaidUnreceived.income(notifier: transactionUnpaidNotifier)),
+                                    Expanded(child: HomeCardTransactionUnpaidUnreceived.income(viewModel: viewModel)),
                                     const Spacing.x(),
-                                    Expanded(child: HomeCardTransactionUnpaidUnreceived.expense(notifier: transactionUnpaidNotifier)),
+                                    Expanded(child: HomeCardTransactionUnpaidUnreceived.expense(viewModel: viewModel)),
                                   ],
                                 ),
                               ),
@@ -143,20 +128,24 @@ class _HomePageState extends State<HomePage> with ThemeContext {
                           );
                         },
                       ),
-                      ValueListenableBuilder(
-                        valueListenable: billsCreditCardNotifier,
-                        builder: (_, __, ___) {
-                          if (billsCreditCardNotifier.value.creditCardsWithBill.isEmpty) return const SizedBox.shrink();
+                      ListenableBuilder(
+                        listenable: viewModel.loadBillsCreditCard,
+                        builder: (_, __) {
+                          if (viewModel.loadBillsCreditCard.running) {
+                            if (viewModel.loadBillsCreditCard.previous?.error == null && viewModel.loadBillsCreditCard.previous?.result?.isEmpty != false) return const SizedBox.shrink();
+                          } else if (viewModel.loadBillsCreditCard.completed && viewModel.loadBillsCreditCard.result?.isEmpty != false) {
+                            return const SizedBox.shrink();
+                          }
 
                           return Column(
                             children: [
-                              HomeCardBillCreditCard(notifier: billsCreditCardNotifier, hideAmountsNotifier: hideAmountsNotifier),
+                              HomeCardBillCreditCard(viewModel: viewModel),
                               const Spacing.y(),
                             ],
                           );
                         },
                       ),
-                      HomeCardMonthlyBalance(notifier: monthlyBalanceNotifier, hideAmountsNotifier: hideAmountsNotifier),
+                      HomeCardMonthlyBalance(viewModel: viewModel),
                       const SizedBox(height: 100),
                     ],
                   ),
@@ -170,7 +159,7 @@ class _HomePageState extends State<HomePage> with ThemeContext {
   }
 
   Future<void> onRefresh() async {
-    load();
+    viewModel.load();
     await Future.delayed(const Duration(milliseconds: 400));
   }
 }

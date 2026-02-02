@@ -1,8 +1,7 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
-import 'package:finan_master_app/features/auth/presentation/notifiers/login_notifier.dart';
-import 'package:finan_master_app/features/auth/presentation/states/login_state.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/reset_password_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
+import 'package:finan_master_app/features/auth/presentation/view_models/login_view_model.dart';
 import 'package:finan_master_app/features/first_steps/presentation/ui/first_steps_page.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
@@ -24,7 +23,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with ThemeContext {
-  final LoginNotifier notifier = DI.get<LoginNotifier>();
+  final LoginViewModel viewModel = DI.get<LoginViewModel>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
@@ -35,9 +34,9 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: notifier,
-      builder: (_, state, __) {
+    return ListenableBuilder(
+      listenable: Listenable.merge([viewModel.loginWithEmailAndPassword, viewModel.loginWithGoogle]),
+      builder: (_, __) {
         return Scaffold(
           body: SafeArea(
             child: SingleChildScrollView(
@@ -64,9 +63,9 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
                           ),
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
-                          enabled: !notifier.isLoading,
+                          enabled: !viewModel.isLoading,
                           validator: InputValidators([InputRequiredValidator(), InputEmailValidator()]).validate,
-                          onSaved: (String? value) => state.entity.email = value?.trim() ?? '',
+                          onSaved: (String? value) => viewModel.auth.email = value?.trim() ?? '',
                         ),
                         const Spacing.y(2),
                         TextFormField(
@@ -84,10 +83,10 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
                           ),
                           keyboardType: TextInputType.visiblePassword,
                           textInputAction: TextInputAction.done,
-                          enabled: !notifier.isLoading,
+                          enabled: !viewModel.isLoading,
                           obscureText: !showPassword,
                           validator: InputRequiredValidator().validate,
-                          onSaved: (String? value) => state.entity.password = value?.trim(),
+                          onSaved: (String? value) => viewModel.auth.password = value?.trim(),
                         ),
                         const Spacing.y(),
                         Align(
@@ -100,7 +99,7 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
                         const Spacing.y(),
                         FilledButton(
                           onPressed: login,
-                          child: notifier.value is LoggingWithEmailAndPasswordState ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5)) : Text(strings.loginButtonName),
+                          child: viewModel.loginWithEmailAndPassword.running ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2.5)) : Text(strings.loginButtonName),
                         ),
                         const Spacing.y(),
                         Row(
@@ -117,8 +116,8 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
                         FilledButton.icon(
                           style: FilledButton.styleFrom(backgroundColor: colorScheme.onInverseSurface, foregroundColor: colorScheme.inverseSurface),
                           onPressed: loginWithGoogle,
-                          icon: notifier.value is LoggingWithGoogleState ? const SizedBox.shrink() : SvgPicture.asset('assets/icons/google.svg', width: 22, height: 22),
-                          label: notifier.value is LoggingWithGoogleState ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2.5)) : Text(strings.loginWithGoogle),
+                          icon: viewModel.loginWithGoogle.running ? const SizedBox.shrink() : SvgPicture.asset('assets/icons/google.svg', width: 22, height: 22),
+                          label: viewModel.loginWithGoogle.running ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2.5)) : Text(strings.loginWithGoogle),
                         ),
                         const Spacing.y(4),
                         Row(
@@ -145,14 +144,14 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
 
   Future<void> login() async {
     try {
-      if (notifier.isLoading) return;
+      if (viewModel.isLoading) return;
 
       if (formKey.currentState?.validate() == true) {
         formKey.currentState!.save();
 
-        await notifier.loginWithEmailAndPassword();
-        if (notifier.value is ErrorLoginState) throw Exception((notifier.value as ErrorLoginState).message);
-
+        await viewModel.loginWithEmailAndPassword.execute();
+        viewModel.loginWithEmailAndPassword.throwIfError();
+        
         if (!mounted) return;
         context.goNamed(FirstStepsPage.route, extra: true);
       } else {
@@ -166,10 +165,10 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
 
   Future<void> loginWithGoogle() async {
     try {
-      if (notifier.isLoading) return;
+      if (viewModel.isLoading) return;
 
-      await notifier.loginWithGoogle();
-      if (notifier.value is ErrorLoginState) throw Exception((notifier.value as ErrorLoginState).message);
+      await viewModel.loginWithGoogle.execute();
+      viewModel.loginWithGoogle.throwIfError();
 
       if (!mounted) return;
       context.goNamed(FirstStepsPage.route, extra: true);
@@ -181,7 +180,7 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
 
   Future<void> forgotPassword() async {
     try {
-      if (notifier.isLoading) return;
+      if (viewModel.isLoading) return;
 
       if (!mounted) return;
       context.pushNamed(ResetPasswordPage.route);
@@ -191,7 +190,7 @@ class _LoginPageState extends State<LoginPage> with ThemeContext {
   }
 
   void toSignup() {
-    if (notifier.isLoading) return;
+    if (viewModel.isLoading) return;
     context.goNamed(SignupPage.route);
   }
 }

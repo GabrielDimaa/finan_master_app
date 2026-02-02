@@ -1,31 +1,20 @@
 import 'package:finan_master_app/features/account/presentation/ui/accounts_list_page.dart';
-import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_accounts_balance_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/states/home_accounts_balance_state.dart';
+import 'package:finan_master_app/features/home/presentation/view_models/home_view_model.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeCardAccountsBalance extends StatefulWidget {
-  final HomeAccountsBalanceNotifier notifier;
-  final HideAmountsNotifier hideAmountsNotifier;
+  final HomeViewModel viewModel;
 
-  const HomeCardAccountsBalance({super.key, required this.notifier, required this.hideAmountsNotifier});
+  const HomeCardAccountsBalance({super.key, required this.viewModel});
 
   @override
   State<HomeCardAccountsBalance> createState() => _HomeCardAccountsBalanceState();
 }
 
 class _HomeCardAccountsBalanceState extends State<HomeCardAccountsBalance> with ThemeContext {
-  late HomeAccountsBalanceState state;
-
-  @override
-  void initState() {
-    super.initState();
-    state = widget.notifier.value;
-  }
-
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
@@ -46,22 +35,21 @@ class _HomeCardAccountsBalanceState extends State<HomeCardAccountsBalance> with 
                     const SizedBox(height: 4),
                     ConstrainedBox(
                       constraints: BoxConstraints(minHeight: textTheme.headlineSmall?.fontSize ?? 20),
-                      child: ValueListenableBuilder(
-                        valueListenable: widget.notifier,
-                        builder: (_, state, __) {
-                          final lastState = this.state;
-                          this.state = state;
+                      child: ListenableBuilder(
+                        listenable: widget.viewModel.loadAccountsBalance,
+                        builder: (_, __) {
+                          final prev = widget.viewModel.loadAccountsBalance.previous;
 
-                          if (state is ErrorHomeAccountsBalanceState) {
+                          if (widget.viewModel.loadAccountsBalance.hasError) {
                             return Text(
-                              state.message.replaceAll('Exception: ', ''),
+                              widget.viewModel.loadAccountsBalance.error.toString().replaceAll('Exception: ', ''),
                               style: textTheme.bodyMedium?.copyWith(color: colorScheme.error),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 3,
                             );
                           }
 
-                          if (state is StartHomeAccountsBalanceState || (state is LoadingHomeAccountsBalanceState && lastState is! LoadedHomeAccountsBalanceState)) {
+                          if (widget.viewModel.loadAccountsBalance.running && prev?.completed != true) {
                             return const Align(
                               alignment: Alignment.centerLeft,
                               child: SizedBox(
@@ -72,12 +60,12 @@ class _HomeCardAccountsBalanceState extends State<HomeCardAccountsBalance> with 
                             );
                           }
 
-                          return ValueListenableBuilder(
-                            valueListenable: widget.hideAmountsNotifier,
-                            builder: (_, state, __) {
-                              if (state) return Text('●●●●', style: textTheme.headlineSmall);
+                          return ListenableBuilder(
+                            listenable: widget.viewModel,
+                            builder: (_, __) {
+                              if (widget.viewModel.hideAmounts) return Text('●●●●', style: textTheme.headlineSmall);
 
-                              return Text(widget.notifier.balance.money, style: textTheme.headlineSmall);
+                              return Text((widget.viewModel.loadAccountsBalance.result ?? prev?.result)!.money, style: textTheme.headlineSmall);
                             },
                           );
                         },

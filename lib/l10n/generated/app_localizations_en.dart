@@ -91,6 +91,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get billNoMovements => 'No movements';
 
   @override
+  String get billNotFound => 'Bill not found.';
+
+  @override
   String get billOutstanding => 'Outstanding';
 
   @override
@@ -277,6 +280,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteData => 'Delete data';
+
+  @override
+  String get deleteDataConfirmation =>
+      'Do you truly wish to permanently delete your data from the system?';
 
   @override
   String get deleteDataExplication =>

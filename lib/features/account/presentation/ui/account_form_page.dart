@@ -1,9 +1,8 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
-import 'package:finan_master_app/features/account/presentation/notifiers/account_notifier.dart';
-import 'package:finan_master_app/features/account/presentation/states/account_state.dart';
 import 'package:finan_master_app/features/account/presentation/ui/components/financial_institutions.dart';
+import 'package:finan_master_app/features/account/presentation/view_models/account_form_view_model.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
@@ -33,7 +32,7 @@ class AccountFormPage extends StatefulWidget {
 }
 
 class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
-  final AccountNotifier notifier = DI.get<AccountNotifier>();
+  final AccountFormViewModel viewModel = DI.get<AccountFormViewModel>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -41,24 +40,26 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
   void initState() {
     super.initState();
 
-    if (widget.account != null) notifier.setAccount(widget.account!);
+    if (widget.account != null) viewModel.load(widget.account!.clone());
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: notifier,
-      builder: (_, state, __) {
+    return ListenableBuilder(
+      listenable: Listenable.merge([viewModel.save, viewModel.delete]),
+      builder: (_, __) {
+        final bool running = viewModel.save.running || viewModel.delete.running;
+
         return SliverScaffold(
           appBar: SliverAppBarMedium(
             title: Text(strings.account),
-            loading: notifier.isLoading,
+            loading: running,
             actions: [
               FilledButton(
                 onPressed: save,
                 child: Text(strings.save),
               ),
-              if (!state.account.isNew)
+              if (!viewModel.account.isNew)
                 IconButton(
                   tooltip: strings.delete,
                   onPressed: delete,
@@ -74,7 +75,7 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: TextFormField(
-                    initialValue: state.account.initialAmount.moneyWithoutSymbol,
+                    initialValue: viewModel.account.initialAmount.moneyWithoutSymbol,
                     decoration: InputDecoration(
                       label: Text(strings.initialAmount),
                       prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
@@ -82,8 +83,8 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
                     validator: InputRequiredValidator().validate,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
-                    enabled: !notifier.isLoading && state.account.isNew,
-                    onSaved: (String? value) => state.account.initialAmount = (value ?? '').moneyToDouble(),
+                    enabled: !running && viewModel.account.isNew,
+                    onSaved: (String? value) => viewModel.account.initialAmount = (value ?? '').moneyToDouble(),
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
                   ),
                 ),
@@ -91,42 +92,50 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: TextFormField(
-                    initialValue: state.account.description,
+                    initialValue: viewModel.account.description,
                     decoration: InputDecoration(label: Text(strings.description)),
                     textCapitalization: TextCapitalization.sentences,
                     validator: InputRequiredValidator().validate,
                     textInputAction: TextInputAction.done,
-                    enabled: !notifier.isLoading,
-                    onSaved: (String? value) => state.account.description = value?.trim() ?? '',
+                    enabled: !running,
+                    onSaved: (String? value) => viewModel.account.description = value?.trim() ?? '',
                   ),
                 ),
                 const Spacing.y(),
                 const Divider(),
-                GroupTile(
-                  title: strings.financialInstitution,
-                  onTap: selectFinancialInstitution,
-                  enabled: !notifier.isLoading,
-                  tile: state.account.financialInstitution == null
-                      ? ListTile(
-                          leading: const Icon(Icons.account_balance_outlined),
-                          title: Text(strings.selectFinancialInstitution),
-                          trailing: const Icon(Icons.chevron_right),
-                          enabled: !notifier.isLoading,
-                        )
-                      : ListTile(
-                          leading: state.account.financialInstitution?.icon(),
-                          title: Text(state.account.financialInstitution?.description ?? ''),
-                          trailing: const Icon(Icons.chevron_right),
-                          enabled: !notifier.isLoading,
-                        ),
-                ),
-                const Divider(),
-                SwitchListTile(
-                  title: Text(strings.includeTotalBalance),
-                  subtitle: Text(strings.includeTotalBalanceExplication),
-                  value: state.account.includeTotalBalance,
-                  onChanged: notifier.isLoading ? null : notifier.setIncludeTotalBalance,
-                ),
+                ListenableBuilder(
+                    listenable: viewModel,
+                    builder: (_, __) {
+                      return Column(
+                        children: [
+                          GroupTile(
+                            title: strings.financialInstitution,
+                            onTap: selectFinancialInstitution,
+                            enabled: !running,
+                            tile: viewModel.account.financialInstitution == null
+                                ? ListTile(
+                                    leading: const Icon(Icons.account_balance_outlined),
+                                    title: Text(strings.selectFinancialInstitution),
+                                    trailing: const Icon(Icons.chevron_right),
+                                    enabled: !running,
+                                  )
+                                : ListTile(
+                                    leading: viewModel.account.financialInstitution?.icon(),
+                                    title: Text(viewModel.account.financialInstitution?.description ?? ''),
+                                    trailing: const Icon(Icons.chevron_right),
+                                    enabled: !running,
+                                  ),
+                          ),
+                          const Divider(),
+                          SwitchListTile(
+                            title: Text(strings.includeTotalBalance),
+                            subtitle: Text(strings.includeTotalBalanceExplication),
+                            value: viewModel.account.includeTotalBalance,
+                            onChanged: running ? null : viewModel.setIncludeTotalBalance,
+                          ),
+                        ],
+                      );
+                    }),
                 const Divider(),
               ],
             ),
@@ -137,17 +146,17 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
   }
 
   Future<void> save() async {
-    if (notifier.isLoading) return;
+    if (viewModel.save.running || viewModel.delete.running) return;
 
     try {
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
 
-        await notifier.save();
-        if (notifier.value is ErrorAccountState) throw Exception((notifier.value as ErrorAccountState).message);
+        await viewModel.save.execute(viewModel.account);
+        viewModel.save.throwIfError();
 
         if (!mounted) return;
-        context.pop(FormResultNavigation.save(notifier.account));
+        context.pop(FormResultNavigation.save(viewModel.account));
       }
     } catch (e) {
       await ErrorDialog.show(context, e.toString());
@@ -155,11 +164,11 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
   }
 
   Future<void> delete() async {
-    if (notifier.isLoading) return;
+    if (viewModel.save.running || viewModel.delete.running) return;
 
     try {
-      await notifier.delete();
-      if (notifier.value is ErrorAccountState) throw Exception((notifier.value as ErrorAccountState).message);
+      await viewModel.delete.execute(viewModel.account);
+      viewModel.delete.throwIfError();
 
       if (!mounted) return;
       context.pop(FormResultNavigation<AccountEntity>.delete());
@@ -169,9 +178,9 @@ class _AccountFormPageState extends State<AccountFormPage> with ThemeContext {
   }
 
   Future<void> selectFinancialInstitution() async {
-    final FinancialInstitutionEnum? financialInstitution = await FinancialInstitutions.show(context: context, financialInstitution: notifier.account.financialInstitution);
+    final FinancialInstitutionEnum? financialInstitution = await FinancialInstitutions.show(context: context, financialInstitution: viewModel.account.financialInstitution);
     if (financialInstitution == null) return;
 
-    notifier.setFinancialInstitution(financialInstitution);
+    viewModel.setFinancialInstitution(financialInstitution);
   }
 }

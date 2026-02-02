@@ -1,9 +1,8 @@
 import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
-import 'package:finan_master_app/features/category/presentation/notifiers/categories_notifier.dart';
-import 'package:finan_master_app/features/category/presentation/states/categories_state.dart';
 import 'package:finan_master_app/features/category/presentation/ui/category_form_page.dart';
 import 'package:finan_master_app/features/category/presentation/ui/components/tab_bar_view_categories.dart';
+import 'package:finan_master_app/features/category/presentation/view_models/categories_list_view_model.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_router.dart';
@@ -23,7 +22,7 @@ class CategoriesListPage extends StatefulWidget {
 }
 
 class _CategoriesListPageState extends State<CategoriesListPage> with ThemeContext {
-  final CategoriesNotifier notifier = DI.get<CategoriesNotifier>();
+  final CategoriesViewModel viewModel = DI.get<CategoriesViewModel>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -32,7 +31,7 @@ class _CategoriesListPageState extends State<CategoriesListPage> with ThemeConte
   @override
   void initState() {
     super.initState();
-    notifier.findAll();
+    viewModel.findAll.execute();
   }
 
   @override
@@ -59,16 +58,14 @@ class _CategoriesListPageState extends State<CategoriesListPage> with ThemeConte
           child: const Icon(Icons.add),
         ),
         body: SafeArea(
-          child: ValueListenableBuilder(
-            valueListenable: notifier,
-            builder: (_, CategoriesState state, __) {
-              return switch (state) {
-                LoadingCategoriesState _ => const Center(child: CircularProgressIndicator()),
-                ListCategoriesState _ => TabBarViewCategories(notifier: notifier),
-                ErrorCategoriesState state => MessageErrorWidget(state.message),
-                EmptyCategoriesState _ => NoContentWidget(child: Text(strings.noCategoryRegistered)),
-                StartCategoriesState _ => const SizedBox.shrink(),
-              };
+          child: ListenableBuilder(
+            listenable: viewModel.findAll,
+            builder: (_, __) {
+              if (viewModel.findAll.running) return const Center(child: CircularProgressIndicator());
+              if (viewModel.findAll.hasError) return MessageErrorWidget(viewModel.findAll.error.toString());
+              if (viewModel.findAll.result?.isEmpty == true) return NoContentWidget(child: Text(strings.noCategoryRegistered));
+
+              return TabBarViewCategories(viewModel: viewModel);
             },
           ),
         ),
@@ -80,6 +77,6 @@ class _CategoriesListPageState extends State<CategoriesListPage> with ThemeConte
     final FormResultNavigation<CategoryEntity>? result = await context.pushNamedWithAd(CategoryFormPage.route);
     if (result == null) return;
 
-    notifier.findAll();
+    viewModel.findAll.execute();
   }
 }

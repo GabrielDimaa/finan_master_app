@@ -6,12 +6,12 @@ import 'package:finan_master_app/features/account/presentation/ui/accounts_list_
 import 'package:finan_master_app/features/ad/domain/use_cases/i_ad.dart';
 import 'package:finan_master_app/features/ad/domain/use_cases/i_ad_access.dart';
 import 'package:finan_master_app/features/ad/presentation/ui/pages/ad_page.dart';
-import 'package:finan_master_app/features/auth/presentation/notifiers/signup_notifier.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/email_verification_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/login_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/reset_password_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_page.dart';
 import 'package:finan_master_app/features/auth/presentation/ui/signup_password_page.dart';
+import 'package:finan_master_app/features/auth/presentation/view_models/signup_view_model.dart';
 import 'package:finan_master_app/features/backup/presentation/ui/backup_page.dart';
 import 'package:finan_master_app/features/backup/presentation/ui/restore_backup_page.dart';
 import 'package:finan_master_app/features/category/domain/entities/category_entity.dart';
@@ -90,7 +90,7 @@ sealed class AppRouter {
           parentNavigatorKey: _rootNavigatorKey,
           name: SignupPasswordPage.route,
           path: '/${SignupPasswordPage.route}',
-          builder: (_, GoRouterState state) => SignupPasswordPage(notifier: state.extra as SignupNotifier),
+          builder: (_, GoRouterState state) => SignupPasswordPage(viewModel: state.extra as SignupViewModel),
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,

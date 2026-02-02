@@ -27,4 +27,17 @@ abstract class AccountFactory {
       includeTotalBalance: model.includeTotalBalance,
     );
   }
+
+  static AccountEntity newEntity() {
+    return AccountEntity(
+      id: null,
+      createdAt: null,
+      deletedAt: null,
+      description: '',
+      transactionsAmount: 0,
+      initialAmount: 0,
+      financialInstitution: null,
+      includeTotalBalance: true,
+    );
+  }
 }

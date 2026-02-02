@@ -23,7 +23,7 @@ class ReportCategoriesChart extends StatefulWidget {
 
 class _ReportCategoriesChartState extends State<ReportCategoriesChart> with ThemeContext {
   List<GlobalObjectKey> globalKeys = [];
-  List<ExpansionTileController> expansionTileControllers = [];
+  List<ExpansibleController> expansionControllers = [];
 
   int touchedIndex = -1;
 
@@ -33,7 +33,7 @@ class _ReportCategoriesChartState extends State<ReportCategoriesChart> with Them
 
     for (final entity in widget.entities) {
       globalKeys.add(GlobalObjectKey(entity));
-      expansionTileControllers.add(ExpansionTileController());
+      expansionControllers.add(ExpansibleController());
     }
   }
 
@@ -64,7 +64,7 @@ class _ReportCategoriesChartState extends State<ReportCategoriesChart> with Them
                       touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
 
                       if ((event is FlTapUpEvent || event is FlTapDownEvent)  && touchedIndex >= 0) {
-                        expansionTileControllers[touchedIndex].expand();
+                        expansionControllers[touchedIndex].expand();
                         Scrollable.ensureVisible(
                           globalKeys[touchedIndex].currentContext!,
                           duration: const Duration(milliseconds: 200),
@@ -98,7 +98,7 @@ class _ReportCategoriesChartState extends State<ReportCategoriesChart> with Them
               final ReportCategoryEntity entity = widget.entities[index];
               return ExpansionTile(
                 key: globalKeys[index],
-                controller: expansionTileControllers[index],
+                controller: expansionControllers[index],
                 leading: Container(
                   width: 16,
                   height: 16,

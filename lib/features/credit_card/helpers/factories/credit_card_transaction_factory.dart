@@ -31,4 +31,19 @@ abstract class CreditCardTransactionFactory {
       observation: model.observation,
     );
   }
+
+  static CreditCardTransactionEntity newEntity() {
+    return CreditCardTransactionEntity(
+      id: null,
+      createdAt: null,
+      deletedAt: null,
+      description: '',
+      amount: 0,
+      date: DateTime.now(),
+      idCategory: null,
+      idCreditCard: null,
+      idCreditCardBill: null,
+      observation: null,
+    );
+  }
 }

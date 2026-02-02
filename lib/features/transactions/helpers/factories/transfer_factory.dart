@@ -25,4 +25,16 @@ abstract class TransferFactory {
       idAccountTo: model.idAccountTo,
     );
   }
+
+  static TransferEntity newEntity() {
+    return TransferEntity(
+      id: null,
+      createdAt: null,
+      deletedAt: null,
+      amount: 0,
+      date: DateTime.now(),
+      idAccountFrom: null,
+      idAccountTo: null,
+    );
+  }
 }

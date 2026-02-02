@@ -6,16 +6,12 @@ import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_bill_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_enum.dart';
-import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_bills_notifier.dart';
-import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_notifier.dart';
-import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_cards_notifier.dart';
-import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_bills_state.dart';
-import 'package:finan_master_app/features/credit_card/presentation/states/credit_cards_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_card_widget.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_bill_details_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_bills_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_form_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_cards_details_view_model.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
@@ -42,9 +38,7 @@ class CreditCardsDetailsPage extends StatefulWidget {
 }
 
 class _CreditCardsDetailsPageState extends State<CreditCardsDetailsPage> with ThemeContext {
-  final CreditCardsNotifier creditCardsListNotifier = DI.get<CreditCardsNotifier>();
-  final CreditCardBillsNotifier billsNotifier = DI.get<CreditCardBillsNotifier>();
-  final CreditCardNotifier creditCardSelectedNotifier = DI.get<CreditCardNotifier>();
+  final CreditCardsDetailsViewModel viewModel = DI.get<CreditCardsDetailsViewModel>();
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -55,24 +49,12 @@ class _CreditCardsDetailsPageState extends State<CreditCardsDetailsPage> with Th
     super.initState();
 
     Future(() async {
-      await creditCardsListNotifier.findAll();
+      await viewModel.load.execute(widget.idCreditCard);
 
-      creditCardSelectedNotifier.addListener(() {
-        if (creditCardSelectedNotifier.value.creditCard.isNew) {
-          billsNotifier.setBills([]);
-        } else {
-          billsNotifier.findAllAfterDate(date: DateTime.now().getInitialMonth().subtractMonths(1), idCreditCard: creditCardSelectedNotifier.value.creditCard.id);
-        }
-      });
-
-      if (creditCardsListNotifier.value.creditCards.isNotEmpty) {
-        final CreditCardEntity? creditCard = widget.idCreditCard == null ? null : creditCardsListNotifier.value.creditCards.firstWhereOrNull((creditCard) => creditCard.id == widget.idCreditCard);
-
-        creditCardSelectedNotifier.setCreditCard(creditCard ?? creditCardsListNotifier.value.creditCards.first);
-
+      if (viewModel.creditCardSelected != null) {
         Future.delayed(const Duration(milliseconds: 200), () {
           carouselController.animateToPage(
-            creditCardsListNotifier.value.creditCards.indexWhere((creditCard) => creditCard.id == creditCardSelectedNotifier.value.creditCard.id),
+            viewModel.creditCards.indexWhere((creditCard) => creditCard.id == viewModel.creditCardSelected!.id),
             duration: const Duration(milliseconds: 500),
             curve: Curves.ease,
           );
@@ -119,73 +101,65 @@ class _CreditCardsDetailsPageState extends State<CreditCardsDetailsPage> with Th
         child: const Icon(Icons.add),
       ),
       body: SafeArea(
-        child: ValueListenableBuilder(
-          valueListenable: creditCardsListNotifier,
-          builder: (_, CreditCardsState state, __) {
-            return switch (state) {
-              StartCreditCardsState _ => const SizedBox.shrink(),
-              LoadingCreditCardsState _ => const Center(child: CircularProgressIndicator()),
-              ErrorCreditCardsState _ => MessageErrorWidget(state.message),
-              EmptyCreditCardsState _ => NoContentWidget(child: Text(strings.noCreditCardRegistered)),
-              ListCreditCardsState state => SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const Spacing.y(),
-                      CarouselSlider(
-                        carouselController: carouselController,
-                        items: List.generate(
-                          state.creditCards.length,
-                          (index) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: CreditCardWidget(
-                              creditCard: state.creditCards[index],
-                              onTap: () => goCreditCard(state.creditCards[index]),
-                            ),
-                          ),
-                        ),
-                        options: CarouselOptions(
-                          padEnds: state.creditCards.length == 1,
-                          viewportFraction: 0.85,
-                          aspectRatio: 2.4,
-                          enableInfiniteScroll: false,
-                          onPageChanged: (index, _) => creditCardSelectedNotifier.setCreditCard(creditCardsListNotifier.value.creditCards[index]),
+        child: ListenableBuilder(
+          listenable: Listenable.merge([viewModel, viewModel.load]),
+          builder: (_, __) {
+            if (viewModel.load.running) return const Center(child: CircularProgressIndicator());
+            if (viewModel.load.hasError) return MessageErrorWidget(viewModel.load.error.toString());
+            if (viewModel.creditCards.isEmpty) return NoContentWidget(child: Text(strings.noCreditCardRegistered));
+
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Spacing.y(),
+                  CarouselSlider(
+                    carouselController: carouselController,
+                    items: List.generate(
+                      viewModel.creditCards.length,
+                      (index) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: CreditCardWidget(
+                          creditCard: viewModel.creditCards[index],
+                          onTap: () => goCreditCard(viewModel.creditCards[index]),
                         ),
                       ),
-                      const Spacing.y(4),
-                      ValueListenableBuilder(
-                        valueListenable: creditCardSelectedNotifier,
-                        builder: (_, __, ___) {
-                          return _Limit(
-                            amountLimit: creditCardSelectedNotifier.value.creditCard.amountLimit,
-                            amountLimitUtilized: creditCardSelectedNotifier.value.creditCard.amountLimitUtilized,
-                          );
-                        },
-                      ),
-                      const Spacing.y(2),
-                      ValueListenableBuilder(
-                        valueListenable: billsNotifier,
-                        builder: (_, state, __) {
-                          return AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 500),
-                            child: switch (state) {
-                              ErrorCreditCardBillsState state => MessageErrorWidget(state.message),
-                              ListCreditCardBillsState _ => _Bill(
-                                  creditCard: creditCardSelectedNotifier.value.creditCard,
-                                  creditCardsNotifier: creditCardsListNotifier,
-                                  billNotifier: billsNotifier,
-                                  onRefreshCreditCard: refreshCreditCard,
-                                ),
-                              _ => const SizedBox.shrink(),
-                            },
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 50),
-                    ],
+                    ),
+                    options: CarouselOptions(
+                      padEnds: viewModel.creditCards.length == 1,
+                      viewportFraction: 0.85,
+                      aspectRatio: 2.4,
+                      enableInfiniteScroll: false,
+                      onPageChanged: (index, _) => viewModel.setCreditCardSelected(viewModel.creditCards[index]),
+                    ),
                   ),
-                ),
-            };
+                  const Spacing.y(4),
+                  _Limit(
+                    amountLimit: viewModel.creditCardSelected?.amountLimit ?? 0,
+                    amountLimitUtilized: viewModel.creditCardSelected?.amountLimitUtilized ?? 0,
+                  ),
+                  const Spacing.y(2),
+                  ListenableBuilder(
+                    listenable: viewModel.billsFind,
+                    builder: (_, __) {
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 500),
+                        child: viewModel.billsFind.hasError
+                            ? MessageErrorWidget(viewModel.billsFind.error.toString())
+                            : viewModel.billsFind.completed
+                                ? _Bill(
+                                    creditCard: viewModel.creditCardSelected!,
+                                    bills: viewModel.billsFind.result ?? [],
+                                    onRefreshCreditCard: viewModel.refreshCreditCard,
+                                  )
+                                : const SizedBox.shrink(),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 50),
+                ],
+              ),
+            );
           },
         ),
       ),
@@ -198,39 +172,23 @@ class _CreditCardsDetailsPageState extends State<CreditCardsDetailsPage> with Th
 
     if (result.isSave) {
       if (creditCard == null) {
-        creditCardsListNotifier.setCreditCards([result.value!, ...creditCardsListNotifier.value.creditCards]);
-        creditCardSelectedNotifier.setCreditCard(creditCardsListNotifier.value.creditCards.first);
+        viewModel.setCreditCards([result.value!, ...viewModel.creditCards]);
+        viewModel.setCreditCardSelected(viewModel.creditCards.first);
         carouselController.animateToPage(0, duration: const Duration(milliseconds: 500), curve: Curves.ease);
         return;
       }
 
-      await refreshCreditCard();
+      await viewModel.refreshCreditCard();
     }
 
     if (result.isDelete) {
-      creditCardsListNotifier.setCreditCards(creditCardsListNotifier.value.creditCards..removeWhere((e) => e.id == creditCard?.id));
+      viewModel.setCreditCards(viewModel.creditCards..removeWhere((e) => e.id == creditCard?.id));
     }
   }
 
   Future<void> goCreditCardExpenseForm({required BuildContext context}) async {
     final FormResultNavigation? result = await context.pushNamedWithAd(CreditCardExpensePage.route);
-    if (result != null) await refreshCreditCard();
-  }
-
-  Future<void> refreshCreditCard() async {
-    await creditCardSelectedNotifier.refresh();
-
-    final int index = creditCardsListNotifier.value.creditCards.indexWhere((e) => e.id == creditCardSelectedNotifier.creditCard.id);
-
-    if (index >= 0) {
-      creditCardsListNotifier.setCreditCards(creditCardsListNotifier.value.creditCards..[index] = creditCardSelectedNotifier.creditCard);
-    }
-  }
-
-  @override
-  void dispose() {
-    creditCardSelectedNotifier.dispose();
-    super.dispose();
+    if (result != null) await viewModel.refreshCreditCard();
   }
 }
 
@@ -318,10 +276,10 @@ class _LimitState extends State<_Limit> with ThemeContext {
 
 class _Bill extends StatefulWidget {
   final CreditCardEntity creditCard;
-  final CreditCardBillsNotifier billNotifier;
+  final List<CreditCardBillEntity> bills;
   final VoidCallback onRefreshCreditCard;
 
-  const _Bill({required this.creditCard, required this.billNotifier, required CreditCardsNotifier creditCardsNotifier, required this.onRefreshCreditCard});
+  const _Bill({required this.creditCard, required this.bills, required this.onRefreshCreditCard});
 
   @override
   State<_Bill> createState() => _BillState();
@@ -334,16 +292,16 @@ class _BillState extends State<_Bill> with ThemeContext {
   void initState() {
     super.initState();
 
-    widget.billNotifier.value.bills.removeWhere((e) => e.status == BillStatusEnum.paid && e.billClosingDate.isBefore(DateTime(DateTime.now().year, DateTime.now().month)));
+    widget.bills.removeWhere((e) => e.status == BillStatusEnum.paid && e.billClosingDate.isBefore(DateTime(DateTime.now().year, DateTime.now().month)));
 
-    final DateTime billFirst = widget.billNotifier.value.bills.firstOrNull?.billClosingDate ?? DateTime(DateTime.now().year, DateTime.now().month, widget.creditCard.billClosingDay);
-    final DateTime billLast = widget.billNotifier.value.bills.lastOrNull?.billClosingDate ?? billFirst;
+    final DateTime billFirst = widget.bills.firstOrNull?.billClosingDate ?? DateTime(DateTime.now().year, DateTime.now().month, widget.creditCard.billClosingDay);
+    final DateTime billLast = widget.bills.lastOrNull?.billClosingDate ?? billFirst;
 
     DateTime date = billFirst;
 
     while (date.isBefore(billLast) || date.isAtSameMomentAs(billLast) || bills.length < 12) {
       // Verificar se há uma fatura para o mês atual
-      final CreditCardBillEntity bill = widget.billNotifier.value.bills.firstWhere(
+      final CreditCardBillEntity bill = widget.bills.firstWhere(
         (bill) => bill.billClosingDate.year == date.year && bill.billClosingDate.month == date.month,
         orElse: () => CreditCardBillEntity(
           id: null,

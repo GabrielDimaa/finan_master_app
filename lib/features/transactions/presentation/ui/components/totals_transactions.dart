@@ -1,29 +1,29 @@
 import 'package:finan_master_app/features/category/domain/enums/category_type_enum.dart';
-import 'package:finan_master_app/features/transactions/presentation/notifiers/transactions_notifier.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_list_view_model.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:finan_master_app/l10n/generated/app_localizations.dart';
 
 class TotalsTransactions extends StatelessWidget {
-  final TransactionsNotifier notifier;
+  final TransactionsListViewModel viewModel;
 
-  const TotalsTransactions({Key? key, required this.notifier}) : super(key: key);
+  const TotalsTransactions({Key? key, required this.viewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (notifier.filterType.firstOrNull == CategoryTypeEnum.expense) {
+    if (viewModel.filterType.firstOrNull == CategoryTypeEnum.expense) {
       return _total(
         context: context,
         label: AppLocalizations.of(context)!.monthlyExpense,
-        value: notifier.transactionsByPeriod.amountsExpense,
+        value: viewModel.transactionsByPeriod.amountsExpense,
       );
     }
 
-    if (notifier.filterType.firstOrNull == CategoryTypeEnum.income) {
+    if (viewModel.filterType.firstOrNull == CategoryTypeEnum.income) {
       return _total(
         context: context,
         label: AppLocalizations.of(context)!.monthlyIncome,
-        value: notifier.transactionsByPeriod.amountsIncome,
+        value: viewModel.transactionsByPeriod.amountsIncome,
       );
     }
 
@@ -33,12 +33,12 @@ class TotalsTransactions extends StatelessWidget {
         _total(
           context: context,
           label: AppLocalizations.of(context)!.monthlyBalanceCumulative,
-          value: notifier.monthlyBalanceCumulative,
+          value: viewModel.monthlyBalanceCumulative,
         ),
         _total(
           context: context,
           label: AppLocalizations.of(context)!.monthlyBalance,
-          value: notifier.transactionsByPeriod.balance,
+          value: viewModel.transactionsByPeriod.balance,
           crossAxisAlignment: CrossAxisAlignment.end,
         ),
       ],

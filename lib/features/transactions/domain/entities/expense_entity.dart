@@ -39,4 +39,21 @@ class ExpenseEntity extends Entity implements ITransactionEntity {
   }) {
     this.amount = amount;
   }
+
+  ExpenseEntity clone() {
+    return ExpenseEntity(
+      id: id,
+      createdAt: createdAt,
+      deletedAt: deletedAt,
+      description: description,
+      amount: amount,
+      date: date,
+      paid: paid,
+      observation: observation,
+      idAccount: idAccount,
+      idCategory: idCategory,
+      idCreditCard: idCreditCard,
+      idCreditCardTransaction: idCreditCardTransaction,
+    );
+  }
 }

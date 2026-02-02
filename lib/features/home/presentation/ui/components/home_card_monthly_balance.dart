@@ -1,10 +1,8 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:finan_master_app/features/config/presentation/notifiers/hide_amounts_notifier.dart';
 import 'package:finan_master_app/features/home/domain/entities/home_monthly_balance_entity.dart';
-import 'package:finan_master_app/features/home/presentation/notifiers/home_monthly_balance_notifier.dart';
-import 'package:finan_master_app/features/home/presentation/states/home_monthly_balance_state.dart';
+import 'package:finan_master_app/features/home/presentation/view_models/home_view_model.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
@@ -13,10 +11,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class HomeCardMonthlyBalance extends StatefulWidget {
-  final HomeMonthlyBalanceNotifier notifier;
-  final HideAmountsNotifier hideAmountsNotifier;
+  final HomeViewModel viewModel;
 
-  const HomeCardMonthlyBalance({super.key, required this.notifier, required this.hideAmountsNotifier});
+  const HomeCardMonthlyBalance({super.key, required this.viewModel});
 
   @override
   State<HomeCardMonthlyBalance> createState() => _HomeCardMonthlyBalanceState();
@@ -24,14 +21,6 @@ class HomeCardMonthlyBalance extends StatefulWidget {
 
 class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with ThemeContext {
   int touchedIndex = -1;
-
-  late HomeMonthlyBalanceState state;
-
-  @override
-  void initState() {
-    super.initState();
-    state = widget.notifier.value;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,16 +40,15 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
           ),
           AspectRatio(
             aspectRatio: 12 / 7,
-            child: ValueListenableBuilder(
-              valueListenable: widget.notifier,
-              builder: (_, state, __) {
-                final lastState = this.state;
-                this.state = state;
+            child: ListenableBuilder(
+              listenable: widget.viewModel.loadMonthlyBalance,
+              builder: (_, __) {
+                final prev = widget.viewModel.loadMonthlyBalance.previous;
 
-                if (state is ErrorHomeMonthlyBalanceState) {
+                if (widget.viewModel.loadMonthlyBalance.hasError) {
                   return Center(
                     child: Text(
-                      state.message.replaceAll('Exception: ', ''),
+                      widget.viewModel.loadMonthlyBalance.error.toString().replaceAll('Exception: ', ''),
                       style: textTheme.bodyMedium?.copyWith(color: colorScheme.error),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
@@ -68,9 +56,11 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
                   );
                 }
 
-                if (state is StartHomeMonthlyBalanceState || (state is LoadingHomeMonthlyBalanceState && lastState is! LoadedHomeMonthlyBalanceState)) {
+                if (widget.viewModel.loadMonthlyBalance.running && prev?.completed != true) {
                   return const Center(child: SizedBox(height: 30, width: 30, child: CircularProgressIndicator()));
                 }
+
+                final List<HomeMonthlyBalanceEntity> monthlyBalances = widget.viewModel.loadMonthlyBalance.result ?? widget.viewModel.loadMonthlyBalance.previous?.result ?? [];
 
                 return Padding(
                   padding: const EdgeInsets.only(top: 8),
@@ -89,15 +79,14 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
                             reservedSize: 80,
                             getTitlesWidget: (double value, TitleMeta meta) => SideTitleWidget(
                               axisSide: meta.axisSide,
-                              child: ValueListenableBuilder(
-                                valueListenable: widget.hideAmountsNotifier,
-                                builder: (_, state, __) {
-                                  return Text(
-                                    state ? '●●●●' : value.money,
-                                    style: textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.w300),
-                                  );
-                                }
-                              ),
+                              child: ListenableBuilder(
+                                  listenable: widget.viewModel,
+                                  builder: (_, __) {
+                                    return Text(
+                                      widget.viewModel.hideAmounts ? '●●●●' : value.money,
+                                      style: textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.w300),
+                                    );
+                                  }),
                             ),
                           ),
                         ),
@@ -108,19 +97,19 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
                             getTitlesWidget: (double value, TitleMeta meta) => SideTitleWidget(
                               axisSide: meta.axisSide,
                               space: 8,
-                              child: Text(widget.notifier.monthlyBalances[value.toInt()].date.formatMMM(), style: textTheme.bodySmall),
+                              child: Text(monthlyBalances[value.toInt()].date.formatMMM(), style: textTheme.bodySmall),
                             ),
                           ),
                         ),
                       ),
-                      barGroups: barGroups(),
+                      barGroups: barGroups(monthlyBalances),
                       barTouchData: BarTouchData(
                         touchCallback: touchCallback,
                         touchTooltipData: BarTouchTooltipData(
                           getTooltipColor: (_) => colorScheme.outlineVariant,
                           tooltipHorizontalAlignment: FLHorizontalAlignment.center,
                           getTooltipItem: (BarChartGroupData group, int groupIndex, BarChartRodData rod, int? rodIndex) {
-                            final HomeMonthlyBalanceEntity monthlyBalance = widget.notifier.monthlyBalances[group.x];
+                            final HomeMonthlyBalanceEntity monthlyBalance = monthlyBalances[group.x];
                             return BarTooltipItem(
                               '${monthlyBalance.date.formatMMMM().capitalizeFirstLetter()}\n',
                               textTheme.labelMedium!,
@@ -156,27 +145,28 @@ class _HomeCardMonthlyBalanceState extends State<HomeCardMonthlyBalance> with Th
     });
   }
 
-  List<BarChartGroupData> barGroups() {
-    return widget.notifier.monthlyBalances.map((e) {
-      final int index = widget.notifier.monthlyBalances.indexOf(e);
+  List<BarChartGroupData> barGroups(List<HomeMonthlyBalanceEntity> monthlyBalances) {
+    return monthlyBalances.map((e) {
+          final int index = monthlyBalances.indexOf(e);
 
-      final Color color = e.balance < 0 ? const Color(0xFFFF5454) : const Color(0xFF3CDE87);
+          final Color color = e.balance < 0 ? const Color(0xFFFF5454) : const Color(0xFF3CDE87);
 
-      return BarChartGroupData(
-        x: index,
-        barRods: [
-          BarChartRodData(
-            toY: e.balance,
-            color: index == touchedIndex ? color : color.withAlpha(100),
-            width: 18,
-            backDrawRodData: BackgroundBarChartRodData(
-              show: true,
-              toY: max(widget.notifier.monthlyBalances.map((e) => e.balance).max, 100),
-              color: colorScheme.outlineVariant.withAlpha(80),
-            ),
-          ),
-        ],
-      );
-    }).toList();
+          return BarChartGroupData(
+            x: index,
+            barRods: [
+              BarChartRodData(
+                toY: e.balance,
+                color: index == touchedIndex ? color : color.withAlpha(100),
+                width: 18,
+                backDrawRodData: BackgroundBarChartRodData(
+                  show: true,
+                  toY: max(monthlyBalances.map((e) => e.balance).max, 100),
+                  color: colorScheme.outlineVariant.withAlpha(80),
+                ),
+              ),
+            ],
+          );
+        }).toList() ??
+        [];
   }
 }

@@ -2,10 +2,9 @@ import 'package:finan_master_app/di/dependency_injection.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_bill_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_enum.dart';
-import 'package:finan_master_app/features/credit_card/presentation/notifiers/credit_card_bills_notifier.dart';
-import 'package:finan_master_app/features/credit_card/presentation/states/credit_card_bills_state.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/credit_card_simple_widget.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_bill_details_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_bills_view_model.dart';
 import 'package:finan_master_app/features/reports/presentation/enums/date_period_enum.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
@@ -31,10 +30,7 @@ class CreditCardBillsPage extends StatefulWidget {
 }
 
 class _CreditCardBillsPageState extends State<CreditCardBillsPage> with ThemeContext {
-  final CreditCardBillsNotifier notifier = DI.get<CreditCardBillsNotifier>();
-
-  late DateTime startDate;
-  late DateTime endDate;
+  final CreditCardBillsViewModel viewModel = DI.get<CreditCardBillsViewModel>();
 
   List<CreditCardBillEntity> billsChanged = [];
 
@@ -42,14 +38,8 @@ class _CreditCardBillsPageState extends State<CreditCardBillsPage> with ThemeCon
   void initState() {
     super.initState();
 
-    Future(() async {
-      final DateTime now = DateTime.now();
-
-      startDate = DateTime(now.subtractMonths(2).year, now.subtractMonths(2).month, now.day).getInitialMonth();
-      endDate = DateTime(now.addMonths(10).year, now.addMonths(10).month, now.day).getFinalMonth();
-
-      await notifier.findByPeriod(startDate: startDate, endDate: endDate, idCreditCard: widget.creditCard.id);
-    });
+    viewModel.init(widget.creditCard);
+    viewModel.findByPeriod.execute();
   }
 
   @override
@@ -82,21 +72,19 @@ class _CreditCardBillsPageState extends State<CreditCardBillsPage> with ThemeCon
                   pinned: true,
                 ),
               ),
-              ValueListenableBuilder(
-                valueListenable: notifier,
-                builder: (_, state, __) {
-                  return switch (state) {
-                    LoadingCreditCardBillsState _ || StartCreditCardBillsState _ => const SliverFillRemaining(hasScrollBody: false, child: Center(child: CircularProgressIndicator())),
-                    ErrorCreditCardBillsState error => SliverFillRemaining(hasScrollBody: false, child: MessageErrorWidget(error.message)),
-                    ListCreditCardBillsState _ => _List(
-                        key: ObjectKey(state),
-                        bills: state.bills,
-                        creditCard: widget.creditCard,
-                        onBillChanged: onBillChanged,
-                        startDate: startDate,
-                        endDate: endDate,
-                      ),
-                  };
+              ListenableBuilder(
+                listenable: viewModel.findByPeriod,
+                builder: (_, __) {
+                  if (viewModel.findByPeriod.running) return const SliverFillRemaining(hasScrollBody: false, child: Center(child: CircularProgressIndicator()));
+                  if (viewModel.findByPeriod.hasError) return SliverFillRemaining(hasScrollBody: false, child: MessageErrorWidget(viewModel.findByPeriod.error.toString()));
+
+                  return _List(
+                    bills: viewModel.findByPeriod.result ?? [],
+                    creditCard: widget.creditCard,
+                    onBillChanged: onBillChanged,
+                    startDate: viewModel.startDate,
+                    endDate: viewModel.endDate,
+                  );
                 },
               ),
             ],
@@ -109,15 +97,15 @@ class _CreditCardBillsPageState extends State<CreditCardBillsPage> with ThemeCon
   Future<void> filters() async {
     await FiltersBottomSheet.show(
       context: context,
-      filter: () => notifier.findByPeriod(startDate: startDate, endDate: endDate, idCreditCard: widget.creditCard.id),
+      filter: viewModel.findByPeriod.execute,
       children: [
         DatePeriodFilter(
           periods: const [DatePeriodEnum.oneMonth, DatePeriodEnum.threeMonth, DatePeriodEnum.sixMonth, DatePeriodEnum.oneYear],
-          dateRange: DateTimeRange(start: startDate, end: endDate),
+          dateRange: DateTimeRange(start: viewModel.startDate, end: viewModel.endDate),
           showClear: false,
           onSelected: (DateTime? dateTimeInitial, DateTime? dateTimeFinal) {
-            startDate = dateTimeInitial ?? startDate;
-            endDate = dateTimeFinal ?? endDate;
+            viewModel.setStartDate(dateTimeInitial ?? viewModel.startDate);
+            viewModel.setEndDate(dateTimeFinal ?? viewModel.endDate);
           },
         ),
       ],
@@ -160,7 +148,7 @@ class _List extends StatefulWidget {
   final DateTime startDate;
   final DateTime endDate;
 
-  const _List({super.key, required this.bills, required this.creditCard, required this.startDate, required this.endDate, required this.onBillChanged});
+  const _List({required this.bills, required this.creditCard, required this.startDate, required this.endDate, required this.onBillChanged});
 
   @override
   State<_List> createState() => _ListState();
