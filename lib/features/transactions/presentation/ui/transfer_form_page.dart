@@ -84,8 +84,9 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
                 ),
             ],
           ),
-          body: Builder(
-            builder: (_) {
+          body: ListenableBuilder(
+            listenable: Listenable.merge([viewModel, viewModel.init]),
+            builder: (_, __) {
               if (viewModel.init.running) return const SizedBox.shrink();
 
               return Form(

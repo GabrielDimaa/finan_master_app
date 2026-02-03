@@ -160,6 +160,7 @@ import 'package:finan_master_app/features/transactions/infra/repositories/transf
 import 'package:finan_master_app/features/transactions/presentation/view_models/expense_form_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/income_form_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_list_view_model.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/transfer_form_view_model.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_cloud_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_local_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/user_account_cloud_data_source.dart';
@@ -339,6 +340,7 @@ final class DependencyInjection {
     getIt.registerFactory<ExpenseFormViewModel>(() => ExpenseFormViewModel(expenseSave: getIt.get<IExpenseSave>(), expenseDelete: getIt.get<IExpenseDelete>(), expenseFind: getIt.get<IExpenseFind>(), categoryFind: getIt.get<ICategoryFind>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<IncomeFormViewModel>(() => IncomeFormViewModel(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), incomeFind: getIt.get<IIncomeFind>(), categoryFind: getIt.get<ICategoryFind>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<TransactionsListViewModel>(() => TransactionsListViewModel(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>(), categoryFind: getIt.get<ICategoryFind>()));
+    getIt.registerFactory<TransferFormViewModel>(() => TransferFormViewModel(transferSave: getIt.get<ITransferSave>(), transferDelete: getIt.get<ITransferDelete>(), accountFind: getIt.get<IAccountFind>()));
 
     //Notifiers
     getIt.registerSingleton<FirstStepsNotifier>(FirstStepsNotifier(firstStepsFind: getIt.get<IFirstStepsFind>(), firstStepsSave: getIt.get<IFirstStepsSave>(), eventNotifier: getIt.get<EventNotifier>()));
