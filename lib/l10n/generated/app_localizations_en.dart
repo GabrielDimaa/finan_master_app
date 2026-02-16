@@ -15,13 +15,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountBalance => 'Account balance';
 
   @override
-  String get accountsBalance => 'Account balances';
+  String get accountDeletionBlockedByBalance =>
+      'It is not possible to delete when there is balance in the account.';
 
   @override
   String get accountDetails => 'Account details';
 
   @override
   String get accountNotFound => 'Account not found.';
+
+  @override
+  String get accountsBalance => 'Account balances';
 
   @override
   String get accountUsedCreditCard =>

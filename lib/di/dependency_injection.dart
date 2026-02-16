@@ -160,6 +160,7 @@ import 'package:finan_master_app/features/transactions/infra/repositories/transf
 import 'package:finan_master_app/features/transactions/presentation/view_models/expense_form_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/income_form_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_list_view_model.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_unpaid_unreceived_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/transfer_form_view_model.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_cloud_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_local_data_source.dart';
@@ -274,10 +275,10 @@ final class DependencyInjection {
     getIt.registerFactory<IStatementRepository>(() => StatementRepository(dataSource: getIt.get<IStatementLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
 
     //Use cases
-    getIt.registerFactory<IAccountDelete>(() => AccountDelete(repository: getIt.get<IAccountRepository>(), adAccess: getIt.get<IAdAccess>()));
+    getIt.registerFactory<IAccountDelete>(() => AccountDelete(repository: getIt.get<IAccountRepository>(), creditCardFind: getIt.get<ICreditCardFind>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<IAccountFind>(() => AccountFind(repository: getIt.get<IAccountRepository>()));
     getIt.registerFactory<IAccountReadjustmentTransaction>(() => AccountReadjustmentTransaction(incomeSave: getIt.get<IIncomeSave>(), expenseSave: getIt.get<IExpenseSave>(), repository: getIt.get<IAccountRepository>()));
-    getIt.registerFactory<IAccountSave>(() => AccountSave(repository: getIt.get<IAccountRepository>(), adAccess: getIt.get<IAdAccess>()));
+    getIt.registerFactory<IAccountSave>(() => AccountSave(repository: getIt.get<IAccountRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<IAd>(() => Ad(repository: getIt.get<IAdRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<IAdAccess>(() => AdAccess(repository: getIt.get<IAdAccessRepository>()));
     getIt.registerFactory<IAuthFind>(() => AuthFind(repository: getIt.get<IAuthRepository>()));
@@ -341,6 +342,7 @@ final class DependencyInjection {
     getIt.registerFactory<IncomeFormViewModel>(() => IncomeFormViewModel(incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), incomeFind: getIt.get<IIncomeFind>(), categoryFind: getIt.get<ICategoryFind>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<TransactionsListViewModel>(() => TransactionsListViewModel(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>(), categoryFind: getIt.get<ICategoryFind>()));
     getIt.registerFactory<TransferFormViewModel>(() => TransferFormViewModel(transferSave: getIt.get<ITransferSave>(), transferDelete: getIt.get<ITransferDelete>(), accountFind: getIt.get<IAccountFind>()));
+    getIt.registerFactory<TransactionsUnpaidUnreceivedViewModel>(() => TransactionsUnpaidUnreceivedViewModel(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), categoryFind: getIt.get<ICategoryFind>(), accountFind: getIt.get<IAccountFind>()));
 
     //Notifiers
     getIt.registerSingleton<FirstStepsNotifier>(FirstStepsNotifier(firstStepsFind: getIt.get<IFirstStepsFind>(), firstStepsSave: getIt.get<IFirstStepsSave>(), eventNotifier: getIt.get<EventNotifier>()));

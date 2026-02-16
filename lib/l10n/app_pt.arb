@@ -1,9 +1,10 @@
 {
   "account": "Conta",
   "accountBalance": "Saldo em conta",
-  "accountsBalance": "Saldo em contas",
+  "accountDeletionBlockedByBalance": "Não é possível excluir quando possuir saldo na conta.",
   "accountDetails": "Detalhes da conta",
   "accountNotFound": "Conta não encontrada.",
+  "accountsBalance": "Saldo em contas",
   "accountUsedCreditCard": "Esta conta está sendo utilizada por um cartão de crédito.",
   "accounts": "Contas",
   "addCreditCard": "Adicionar cartão de crédito",

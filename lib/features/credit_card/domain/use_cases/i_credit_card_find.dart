@@ -7,4 +7,6 @@ abstract interface class ICreditCardFind {
   Future<CreditCardEntity?> findById(String id);
 
   Future<List<CreditCardWithBillEntity>> findCreditCardsWithBill();
+
+  Future<CreditCardEntity?> findByIdAccount(String id);
 }

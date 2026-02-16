@@ -14,7 +14,7 @@ class AccountListTile extends StatelessWidget {
     return ListTile(
       leading: account.financialInstitution!.icon(),
       title: Text(account.description),
-      subtitle: Text(account.balance.money),
+      subtitle: Text(account.transactionsAmount.money),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
     );

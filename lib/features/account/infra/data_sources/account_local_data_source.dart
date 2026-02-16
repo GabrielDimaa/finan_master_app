@@ -26,15 +26,15 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       CREATE TABLE $tableName (
         ${baseColumnsSql()},
         description TEXT NOT NULL,
-        initial_amount REAL NOT NULL DEFAULT 0,
+        id_statement_initial_amount TEXT REFERENCES $statementsTableName(${Model.idColumnName}) ON UPDATE CASCADE ON DELETE RESTRICT,
         financial_institution INTEGER NOT NULL,
         include_total_balance INTEGER NOT NULL DEFAULT 1
       );
     ''');
 
     batch.execute('''
-      INSERT INTO $tableName (${Model.idColumnName}, ${Model.createdAtColumnName}, description, initial_amount, financial_institution, include_total_balance)
-      VALUES ('${const Uuid().v1()}', '${DateTime.now().toIso8601String()}', '${FinancialInstitutionEnum.wallet.description}', 0, ${FinancialInstitutionEnum.wallet.value}, 1);
+      INSERT INTO $tableName (${Model.idColumnName}, ${Model.createdAtColumnName}, description, id_statement_initial_amount, financial_institution, include_total_balance)
+      VALUES ('${const Uuid().v1()}', '${DateTime.now().toIso8601String()}', '${FinancialInstitutionEnum.wallet.description}', null, ${FinancialInstitutionEnum.wallet.value}, 1);
     ''');
   }
 
@@ -48,6 +48,7 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
       deletedAt: base.deletedAt,
       description: map['${prefix}description'],
       transactionsAmount: map['${prefix}transactions_amount'],
+      idStatementInitialAmount: map['${prefix}id_statement_initial_amount'],
       initialAmount: map['${prefix}initial_amount'],
       financialInstitution: FinancialInstitutionEnum.getByValue(map['${prefix}financial_institution'])!,
       includeTotalBalance: map['${prefix}include_total_balance'] == 1,
@@ -81,13 +82,16 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
           $tableName.${Model.createdAtColumnName},
           $tableName.${Model.deletedAtColumnName},
           $tableName.description,
-          $tableName.initial_amount,
+          $tableName.id_statement_initial_amount,
           $tableName.financial_institution,
           $tableName.include_total_balance,
-          COALESCE(SUM($statementsTableName.amount), 0.0) AS transactions_amount
+          COALESCE(statement_initial_amount.amount, 0.0) AS initial_amount,
+          ROUND(COALESCE(SUM($statementsTableName.amount), 0.0), 2) AS transactions_amount
         FROM $tableName
         LEFT JOIN $statementsTableName
           ON $tableName.id = $statementsTableName.id_account AND $statementsTableName.${Model.deletedAtColumnName} IS NULL
+        LEFT JOIN $statementsTableName statement_initial_amount
+          ON $tableName.id_statement_initial_amount = statement_initial_amount.${Model.idColumnName} AND statement_initial_amount.${Model.deletedAtColumnName} IS NULL
         ${whereListed.isNotEmpty ? 'WHERE ${whereListed.join(' AND ')}' : ''}
         GROUP BY ${groupBy?.isNotEmpty == true ? '$groupBy' : '$tableName.${Model.idColumnName}, description'}
         ORDER BY ${orderBy ?? orderByDefault}
@@ -108,7 +112,7 @@ class AccountLocalDataSource extends LocalDataSource<AccountModel> implements IA
     try {
       const String sql = '''
         SELECT
-          SUM(amount) + (SELECT SUM(initial_amount) FROM accounts WHERE accounts.${Model.deletedAtColumnName} IS NULL) AS balance
+          ROUND(SUM(amount), 2) AS balance
         FROM $statementsTableName
         WHERE date <= ? AND ${Model.deletedAtColumnName} IS NULL;
       ''';

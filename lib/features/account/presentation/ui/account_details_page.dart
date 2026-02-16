@@ -102,7 +102,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> with ThemeConte
                       const Spacing.y(1.5),
                       Text(strings.accountBalance),
                       const Spacing.y(0.5),
-                      Text(viewModel.account.balance.money, style: textTheme.headlineLarge),
+                      Text(viewModel.account.transactionsAmount.money, style: textTheme.headlineLarge),
                       const Spacing.y(0.5),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,

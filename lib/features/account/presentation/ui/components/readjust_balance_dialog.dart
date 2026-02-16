@@ -86,7 +86,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
                     children: [
                       const Spacing.y(2),
                       TextFormField(
-                        initialValue: viewModel.account.balance.moneyWithoutSymbol,
+                        initialValue: viewModel.account.transactionsAmount.moneyWithoutSymbol,
                         decoration: InputDecoration(label: Text(strings.accountBalance), prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol),
                         validator: InputRequiredValidator().validate,
                         enabled: !viewModel.readjustBalance.running,
@@ -202,7 +202,7 @@ class _ReadjustBalanceState extends State<ReadjustBalance> with ThemeContext {
       if (formKey.currentState?.validate() ?? false) {
         formKey.currentState?.save();
 
-        final double difference = readjustmentValue - viewModel.account.balance;
+        final double difference = (readjustmentValue - viewModel.account.transactionsAmount).toRound(2);
 
         if (difference == 0) {
           context.pop();
