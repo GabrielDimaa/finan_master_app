@@ -1,9 +1,10 @@
 {
   "account": "Account",
   "accountBalance": "Account balance",
-  "accountsBalance": "Account balances",
+  "accountDeletionBlockedByBalance": "It is not possible to delete when there is balance in the account.",
   "accountDetails": "Account details",
   "accountNotFound": "Account not found.",
+  "accountsBalance": "Account balances",
   "accountUsedCreditCard": "This account is being used by a credit card.",
   "accounts": "Accounts",
   "addCreditCard": "Add credit card",

@@ -4,6 +4,7 @@ import 'package:finan_master_app/features/statement/helpers/statement_factory.da
 import 'package:finan_master_app/features/statement/infra/data_sources/i_statement_local_data_source.dart';
 import 'package:finan_master_app/features/statement/infra/models/statement_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
+import 'package:finan_master_app/shared/infra/models/model.dart';
 
 class StatementRepository implements IStatementRepository {
   final IStatementLocalDataSource _dataSource;
@@ -18,6 +19,13 @@ class StatementRepository implements IStatementRepository {
     final StatementModel result = await _dataSource.upsert(StatementFactory.fromEntity(entity), txn: txn);
 
     return StatementFactory.toEntity(result);
+  }
+
+  @override
+  Future<StatementEntity?> findById(String id) async {
+    final StatementModel? model = await _dataSource.findOne(where: '${Model.idColumnName} = ?', whereArgs: [id]);
+
+    return model != null ? StatementFactory.toEntity(model) : null;
   }
 
   @override

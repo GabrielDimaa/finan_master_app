@@ -5,13 +5,12 @@ import 'package:finan_master_app/features/account/helpers/account_factory.dart';
 import 'package:finan_master_app/features/account/infra/data_sources/i_account_local_data_source.dart';
 import 'package:finan_master_app/features/account/infra/models/account_model.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credit_card_local_data_source.dart';
-import 'package:finan_master_app/shared/infra/models/model.dart';
+import 'package:finan_master_app/shared/extensions/double_extension.dart';
+import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
 import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
-import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
 class AccountRepository implements IAccountRepository {
   final IAccountLocalDataSource _dataSource;
-  final ICreditCardLocalDataSource _creditCardLocalDataSource;
   final EventNotifier _eventNotifier;
 
   AccountRepository({
@@ -19,7 +18,6 @@ class AccountRepository implements IAccountRepository {
     required ICreditCardLocalDataSource creditCardLocalDataSource,
     required EventNotifier eventNotifier,
   })  : _dataSource = dataSource,
-        _creditCardLocalDataSource = creditCardLocalDataSource,
         _eventNotifier = eventNotifier;
 
   @override
@@ -35,19 +33,19 @@ class AccountRepository implements IAccountRepository {
   }
 
   @override
-  Future<AccountEntity> save(AccountEntity entity) async {
-    final AccountModel account = await _dataSource.upsert(AccountFactory.fromEntity(entity));
+  Future<AccountEntity> save(AccountEntity entity, {ITransactionExecutor? txn}) async {
+    final AccountModel account = await _dataSource.upsert(AccountFactory.fromEntity(entity), txn: txn);
 
     _eventNotifier.notify(EventType.account);
 
-    return AccountFactory.toEntity(account);
+    //Busca novamente para trazer os dados do saldo da conta atualizados.
+    final AccountModel model = (await _dataSource.findById(entity.id, txn: txn))!;
+
+    return AccountFactory.toEntity(model);
   }
 
   @override
   Future<void> delete(AccountEntity entity) async {
-    final bool existsCreditCard = await _creditCardLocalDataSource.exists(where: 'id_account = ? AND ${Model.deletedAtColumnName} IS NULL', whereArgs: [entity.id]);
-    if (existsCreditCard) throw Exception(R.strings.accountUsedCreditCard);
-
     await _dataSource.delete(AccountFactory.fromEntity(entity));
 
     _eventNotifier.notify(EventType.account);
@@ -62,6 +60,6 @@ class AccountRepository implements IAccountRepository {
 
     final List<AccountEntity> entities = models.map((account) => AccountFactory.toEntity(account)).toList();
 
-    return entities.map((account) => account.includeTotalBalance ? account.balance : 0).sum.toDouble();
+    return entities.map((account) => account.includeTotalBalance ? account.transactionsAmount : 0).sum.toDouble().toRound(2);
   }
 }

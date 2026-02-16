@@ -110,11 +110,11 @@ abstract class AppLocalizations {
   /// **'Account balance'**
   String get accountBalance;
 
-  /// No description provided for @accountsBalance.
+  /// No description provided for @accountDeletionBlockedByBalance.
   ///
   /// In en, this message translates to:
-  /// **'Account balances'**
-  String get accountsBalance;
+  /// **'It is not possible to delete when there is balance in the account.'**
+  String get accountDeletionBlockedByBalance;
 
   /// No description provided for @accountDetails.
   ///
@@ -127,6 +127,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account not found.'**
   String get accountNotFound;
+
+  /// No description provided for @accountsBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Account balances'**
+  String get accountsBalance;
 
   /// No description provided for @accountUsedCreditCard.
   ///

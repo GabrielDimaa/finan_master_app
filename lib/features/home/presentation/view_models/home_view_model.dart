@@ -12,6 +12,7 @@ import 'package:finan_master_app/features/transactions/domain/entities/income_en
 import 'package:finan_master_app/features/transactions/domain/entities/transactions_by_period_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_find.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
+import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/commands/command.dart';
 import 'package:flutter/foundation.dart';
 
@@ -113,8 +114,8 @@ class HomeViewModel extends ChangeNotifier {
     final List<ITransactionEntity> transactions = await _transactionFind.findUnpaidUnreceived();
 
     return (
-      amountsIncome: transactions.map((transaction) => transaction is IncomeEntity && !transaction.received ? transaction.amount : 0).sum.toDouble(),
-      amountsExpense: transactions.map((transaction) => transaction is ExpenseEntity && !transaction.paid ? transaction.amount : 0).sum.toDouble(),
+      amountsIncome: transactions.map((transaction) => transaction is IncomeEntity && !transaction.received ? transaction.amount : 0).sum.toDouble().toRound(2),
+      amountsExpense: transactions.map((transaction) => transaction is ExpenseEntity && !transaction.paid ? transaction.amount : 0).sum.toDouble().toRound(2),
     );
   }
 }

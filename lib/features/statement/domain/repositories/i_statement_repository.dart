@@ -4,6 +4,8 @@ import 'package:finan_master_app/shared/infra/data_sources/database_local/i_data
 abstract interface class IStatementRepository {
   Future<StatementEntity> save(StatementEntity entity, {ITransactionExecutor? txn});
 
+  Future<StatementEntity?> findById(String id);
+
   Future<StatementEntity?> findByIdExpense(String id);
 
   Future<StatementEntity?> findByIdIncome(String id);

@@ -1,26 +1,25 @@
 import 'package:finan_master_app/features/account/domain/enums/financial_institution_enum.dart';
 import 'package:finan_master_app/shared/domain/entities/entity.dart';
-import 'package:finan_master_app/shared/extensions/double_extension.dart';
 
 class AccountEntity extends Entity {
   String description;
+  String? idStatementInitialAmount;
   double initialAmount;
   FinancialInstitutionEnum? financialInstitution;
   bool includeTotalBalance;
 
   final double transactionsAmount;
 
-  double get balance => (initialAmount + transactionsAmount).toRound(2);
-
   AccountEntity({
     required super.id,
     required super.createdAt,
     required super.deletedAt,
     required this.description,
-    required this.transactionsAmount,
+    required this.idStatementInitialAmount,
     required this.initialAmount,
     required this.financialInstitution,
     required this.includeTotalBalance,
+    required this.transactionsAmount,
   });
 
   AccountEntity clone() {
@@ -29,10 +28,11 @@ class AccountEntity extends Entity {
       createdAt: createdAt,
       deletedAt: deletedAt,
       description: description,
-      transactionsAmount: transactionsAmount,
+      idStatementInitialAmount: idStatementInitialAmount,
       initialAmount: initialAmount,
       financialInstitution: financialInstitution,
       includeTotalBalance: includeTotalBalance,
+      transactionsAmount: transactionsAmount,
     );
   }
 }

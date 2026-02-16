@@ -13,6 +13,7 @@ import 'package:finan_master_app/features/transactions/infra/data_sources/expens
 import 'package:finan_master_app/features/transactions/infra/data_sources/income_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/transfer_local_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/user_account_local_data_source.dart';
+import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_batch.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_exception.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/database_local_transaction.dart';
@@ -29,7 +30,7 @@ import 'package:uuid/uuid.dart';
 final class DatabaseLocal implements IDatabaseLocal {
   String get _name => "finan_master.db";
 
-  int get _version => 8;
+  int get _version => 9;
 
   late Database database;
 
@@ -425,6 +426,120 @@ final class DatabaseLocal implements IDatabaseLocal {
             deleted_at IS NULL;
         ''');
       }
+    }
+
+    if (oldVersion < 9) {
+      final List<Map<String, dynamic>> bills = await db.rawQuery('''
+        SELECT
+          credit_card_bills.id,
+          ROUND(SUM(credit_card_transactions.amount), 2) AS total_amount
+        FROM credit_card_bills
+        LEFT JOIN credit_card_transactions
+          ON credit_card_bills.id = credit_card_transactions.id_credit_card_bill AND credit_card_transactions.deleted_at IS NULL
+        GROUP BY credit_card_bills.id
+        HAVING ABS(ROUND(SUM(credit_card_transactions.amount), 2)) = 0.01;
+      ''');
+
+      for (final bill in bills) {
+        final List<Map<String, dynamic>> transactions = await db.rawQuery('''
+          SELECT
+            id,
+            amount
+          FROM credit_card_transactions
+          WHERE
+            id_credit_card_bill = ? AND
+            deleted_at IS NULL AND
+            credit_card_transactions.amount < 0;
+        ''', [bill['id']]);
+
+        if (transactions.isNotEmpty) {
+          final double amountTransaction = transactions.first['amount'] ?? 0.0;
+          final double totalAmountBill = bill['total_amount'] ?? 0.0;
+          final double newAmount = (amountTransaction - totalAmountBill).truncateFractionalDigits(2);
+
+          final List<Map<String, dynamic>> expense = await db.rawQuery('''
+            SELECT id
+            FROM expenses
+            WHERE id_credit_card_transaction = ?;
+          ''', [transactions.first['id']]);
+
+          await db.transaction((txn) async {
+            if (expense.isNotEmpty) {
+              await txn.update(
+                'expenses',
+                {'amount': newAmount},
+                where: 'id = ?',
+                whereArgs: [expense.first['id']],
+              );
+
+              await txn.update(
+                'statements',
+                {'amount': newAmount},
+                where: 'id_expense = ?',
+                whereArgs: [expense.first['id']],
+              );
+            }
+
+            await txn.update(
+              'credit_card_transactions',
+              {'amount': newAmount},
+              where: 'id = ?',
+              whereArgs: [transactions.first['id']],
+            );
+          });
+        }
+      }
+
+      batch.execute('ALTER TABLE accounts ADD COLUMN id_statement_initial_amount TEXT REFERENCES statements ON UPDATE CASCADE ON DELETE RESTRICT;');
+
+      final List<Map<String, dynamic>> result = await db.rawQuery('''
+        SELECT 
+            accounts.*,
+            ROUND(COALESCE(SUM(statements.amount), 0.0), 2) AS transactions_amount
+          FROM accounts
+          LEFT JOIN statements
+            ON accounts.id = statements.id_account AND statements.deleted_at IS NULL
+          GROUP BY accounts.id, description;
+      ''');
+
+      for (final account in result) {
+        final double initialAmount = account['initial_amount'] ?? 0;
+        final double transactionsAmount = account['transactions_amount'] ?? 0;
+        final balance = (initialAmount + transactionsAmount).toRound(2);
+
+        final String idStatement = const Uuid().v1();
+
+        if (initialAmount > 0) {
+          batch.insert(
+            'statements',
+            {
+              'id': idStatement,
+              'created_at': DateTime.now().toIso8601String(),
+              'amount': initialAmount,
+              'date': account['created_at'],
+              'id_account': account['id'],
+            },
+          );
+
+          batch.update(
+            'accounts',
+            {'id_statement_initial_amount': idStatement},
+            where: 'id = ?',
+            whereArgs: [account['id']],
+          );
+        }
+
+        if (balance != 0) {
+          batch.update(
+            'accounts',
+            {'deleted_at': null},
+            where: 'id = ?',
+            whereArgs: [account['id']],
+          );
+        }
+      }
+
+      batch.execute('ALTER TABLE accounts DROP COLUMN initial_amount;');
     }
 
     await batch.commit();

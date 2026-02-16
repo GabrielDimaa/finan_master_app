@@ -11,6 +11,7 @@ import 'package:finan_master_app/features/credit_card/infra/data_sources/i_credi
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_bill_model.dart';
 import 'package:finan_master_app/features/credit_card/infra/models/credit_card_model.dart';
 import 'package:finan_master_app/shared/infra/data_sources/database_local/i_database_local_transaction.dart';
+import 'package:finan_master_app/shared/infra/models/model.dart';
 import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
 
@@ -96,5 +97,17 @@ class CreditCardRepository implements ICreditCardRepository {
     }
 
     return creditCardsWithBill;
+  }
+
+  @override
+  Future<CreditCardEntity?> findByIdAccount(String id) async {
+    final CreditCardModel? model = await _creditCardDataSource.findOne(where: 'id_account = ? AND ${Model.deletedAtColumnName} IS NULL', whereArgs: [id]);
+
+    return model != null
+        ? CreditCardFactory.toEntity(
+            model: model,
+            accountModel: await _accountDataSource.getSimpleById(model.idAccount) ?? (throw Exception(R.strings.accountNotFound)),
+          )
+        : null;
   }
 }

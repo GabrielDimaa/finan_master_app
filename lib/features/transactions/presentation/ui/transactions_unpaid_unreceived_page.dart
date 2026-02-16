@@ -67,7 +67,7 @@ class _TransactionsUnpaidUnreceivedPageState extends State<TransactionsUnpaidUnr
         ),
         body: SafeArea(
           child: ListenableBuilder(
-            listenable: viewModel,
+            listenable: Listenable.merge([viewModel, viewModel.init]),
             builder: (_, __) {
               return AnimatedSwitcher(
                 duration: const Duration(milliseconds: 500),

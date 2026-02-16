@@ -15,13 +15,17 @@ class AppLocalizationsPt extends AppLocalizations {
   String get accountBalance => 'Saldo em conta';
 
   @override
-  String get accountsBalance => 'Saldo em contas';
+  String get accountDeletionBlockedByBalance =>
+      'Não é possível excluir quando possuir saldo na conta.';
 
   @override
   String get accountDetails => 'Detalhes da conta';
 
   @override
   String get accountNotFound => 'Conta não encontrada.';
+
+  @override
+  String get accountsBalance => 'Saldo em contas';
 
   @override
   String get accountUsedCreditCard =>

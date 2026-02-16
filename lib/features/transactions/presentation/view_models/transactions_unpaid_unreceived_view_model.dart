@@ -9,6 +9,7 @@ import 'package:finan_master_app/features/transactions/domain/entities/i_transac
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_find.dart';
+import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/presentation/commands/command.dart';
 import 'package:flutter/foundation.dart';
 
@@ -36,9 +37,9 @@ class TransactionsUnpaidUnreceivedViewModel extends ChangeNotifier {
 
   List<ITransactionEntity> get transactions => _transactions;
 
-  double get totalPaidOrReceived => transactions.map((e) => isPaidOrReceived(e) ? e.amount : 0.0).sum.toDouble();
+  double get totalPaidOrReceived => transactions.map((e) => isPaidOrReceived(e) ? e.amount : 0.0).sum.toDouble().toRound(2);
 
-  double get totalPayableOrReceivable => transactions.map((e) => isPaidOrReceived(e) ? 0.0 : e.amount).sum.toDouble();
+  double get totalPayableOrReceivable => transactions.map((e) => isPaidOrReceived(e) ? 0.0 : e.amount).sum.toDouble().toRound(2);
 
   List<CategoryEntity> _categories = [];
 
