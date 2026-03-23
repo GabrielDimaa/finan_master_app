@@ -6,7 +6,6 @@ import 'package:finan_master_app/features/credit_card/domain/entities/credit_car
 import 'package:finan_master_app/features/credit_card/domain/entities/credit_card_transaction_entity.dart';
 import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_enum.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/pay_bill_dialog.dart';
-import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_details_sheet.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_bill_details_view_model.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';

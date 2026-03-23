@@ -1,6 +1,5 @@
 import 'package:finan_master_app/features/account/domain/entities/account_entity.dart';
 import 'package:finan_master_app/features/account/domain/use_cases/i_account_find.dart';
-import 'package:finan_master_app/features/category/domain/use_cases/i_category_find.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_find.dart';

@@ -14,7 +14,7 @@ class TransactionsSearchViewModel extends ChangeNotifier {
     search = Command1(_search);
   }
 
-  final int _limit = 10;
+  final int _limit = 50;
   int _offset = 0;
   bool _hasMore = true;
 
