@@ -51,7 +51,7 @@ class _FabTransactionsState extends State<FabTransactions> with ThemeContext {
 
   Future<void> goTransferFormPage() => context.pushNamedWithAd(TransferFormPage.route);
 
-  Future<void> goCreditCardExpenseFormPage() => context.pushNamedWithAd(CreditCardExpensePage.route);
+  Future<void> goCreditCardExpenseFormPage() => context.pushNamedWithAd(CreditCardExpenseFormPage.route);
 
   Widget label({required String text}) {
     return Container(

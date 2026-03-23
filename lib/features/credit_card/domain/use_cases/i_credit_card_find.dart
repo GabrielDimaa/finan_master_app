@@ -4,7 +4,7 @@ import 'package:finan_master_app/features/credit_card/domain/entities/credit_car
 abstract interface class ICreditCardFind {
   Future<List<CreditCardEntity>> findAll();
 
-  Future<CreditCardEntity?> findById(String id);
+  Future<CreditCardEntity?> findById(String id, {bool deleted = false});
 
   Future<List<CreditCardWithBillEntity>> findCreditCardsWithBill();
 

@@ -4,7 +4,7 @@ import 'package:finan_master_app/features/category/domain/enums/category_type_en
 abstract interface class ICategoryRepository {
   Future<List<CategoryEntity>> findAll({CategoryTypeEnum? type, bool deleted = false});
 
-  Future<CategoryEntity?> findById(String id);
+  Future<CategoryEntity?> findById(String id, {bool deleted = false});
 
   Future<CategoryEntity> save(CategoryEntity entity);
 

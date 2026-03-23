@@ -283,6 +283,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Do you really want to delete this account?';
 
   @override
+  String get deleteBillPayment => 'Delete bill payment';
+
+  @override
+  String get deleteBillPaymentConfirmation =>
+      'Do you really want to delete this bill payment?';
+
+  @override
   String get deleteData => 'Delete data';
 
   @override
@@ -294,10 +301,34 @@ class AppLocalizationsEn extends AppLocalizations {
       'Permanently delete your data from the system.';
 
   @override
+  String get deleteCardExpense => 'Delete card expense';
+
+  @override
+  String get deleteCardExpenseConfirmation =>
+      'Do you really want to delete this card expense?';
+
+  @override
+  String get deleteExpense => 'Delete expense';
+
+  @override
+  String get deleteExpenseConfirmation =>
+      'Do you really want to delete this expense?';
+
+  @override
+  String get deleteIncome => 'Delete income';
+
+  @override
+  String get deleteIncomeConfirmation =>
+      'Do you really want to delete this income?';
+
+  @override
   String get deletingTransactions => 'Deleting transactions...';
 
   @override
   String get description => 'Description';
+
+  @override
+  String get destination => 'Destination';
 
   @override
   String get doNotHaveAccount => 'Don\'t have an account?';
@@ -453,6 +484,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginWithGoogle => 'Login with Google';
+
+  @override
+  String get markAsPaid => 'Mark as paid';
+
+  @override
+  String get markAsReceived => 'Mark as received';
 
   @override
   String get menu => 'Menu';
@@ -649,10 +686,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Restore a backup to replace your current data with the backup data.';
 
   @override
+  String get resultNotFound => 'No results were found.';
+
+  @override
   String get requiredField => 'Required field.';
 
   @override
   String get save => 'Save';
+
+  @override
+  String get search => 'Search';
 
   @override
   String seconds(num count) {
@@ -736,6 +779,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stepIncome => 'Register your first income';
 
   @override
+  String get source => 'Source';
+
+  @override
   String get sourceAccountAndDestinationEquals =>
       'The source account and the destination account must be different.';
 
@@ -790,7 +836,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Outgoing and incoming account values are divergent.';
 
   @override
+  String get type => 'Type';
+
+  @override
   String get typeCategory => 'Category type';
+
+  @override
+  String get undoPayment => 'Undo payment';
+
+  @override
+  String get undoReceipt => 'Undo receipt';
 
   @override
   String get uninformedAccount => 'Uninformed account.';

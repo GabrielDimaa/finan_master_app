@@ -162,9 +162,9 @@ abstract class LocalDataSourceUtils {
 
   static ({String id, DateTime? createdAt, DateTime? deletedAt}) baseFromMap(Map<String, dynamic> map, {String prefix = ''}) {
     return (
-    id: map['$prefix${Model.idColumnName}'],
-    createdAt: DateTime.tryParse(map['$prefix${Model.createdAtColumnName}'].toString())?.toLocal(),
-    deletedAt: DateTime.tryParse(map['$prefix${Model.deletedAtColumnName}'].toString())?.toLocal(),
+      id: map['$prefix${Model.idColumnName}'],
+      createdAt: DateTime.tryParse(map['$prefix${Model.createdAtColumnName}'].toString())?.toLocal(),
+      deletedAt: DateTime.tryParse(map['$prefix${Model.deletedAtColumnName}'].toString())?.toLocal(),
     );
   }
 

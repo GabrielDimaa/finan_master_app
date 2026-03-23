@@ -62,4 +62,11 @@ class IncomeRepository implements IIncomeRepository {
 
     return models.map((model) => IncomeFactory.toEntity(model)).toList();
   }
+
+  @override
+  Future<IncomeEntity?> findById(String id) async {
+    final IncomeModel? model = await _incomeLocalDataSource.findById(id);
+
+    return model != null ? IncomeFactory.toEntity(model) : null;
+  }
 }

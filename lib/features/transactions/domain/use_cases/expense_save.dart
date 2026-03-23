@@ -54,4 +54,12 @@ class ExpenseSave implements IExpenseSave {
       return entitySaved;
     });
   }
+
+  @override
+  Future<void> savePaid({required bool paid, required String id}) async {
+    final ExpenseEntity expense = await _repository.findById(id) ?? (throw Exception(R.strings.transactionNotFound));
+    expense.paid = paid;
+
+    await save(expense);
+  }
 }

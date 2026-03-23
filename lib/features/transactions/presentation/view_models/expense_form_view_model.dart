@@ -18,7 +18,6 @@ class ExpenseFormViewModel extends ChangeNotifier {
 
   late final Command1<void, ExpenseEntity?> init;
   late final Command1<ExpenseEntity, ExpenseEntity> save;
-  late final Command1<void, ExpenseEntity> delete;
   late final Command1<List<TransactionByTextEntity>, String> findByText;
 
   ExpenseFormViewModel({
@@ -31,11 +30,8 @@ class ExpenseFormViewModel extends ChangeNotifier {
         _accountFind = accountFind {
     init = Command1(_init);
     save = Command1(expenseSave.save);
-    delete = Command1(expenseDelete.delete);
     findByText = Command1(expenseFind.findByText);
   }
-
-  bool get isLoading => save.running || delete.running;
 
   ExpenseEntity _expense = ExpenseFactory.newEntity();
 

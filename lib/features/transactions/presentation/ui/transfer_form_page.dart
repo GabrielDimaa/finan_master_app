@@ -76,12 +76,6 @@ class _TransferFormPageState extends State<TransferFormPage> with ThemeContext {
                 onPressed: save,
                 child: Text(strings.save),
               ),
-              if (widget.transfer?.isNew == false)
-                IconButton(
-                  tooltip: strings.delete,
-                  onPressed: delete,
-                  icon: const Icon(Icons.delete_outline),
-                ),
             ],
           ),
           body: ListenableBuilder(

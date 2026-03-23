@@ -2,4 +2,6 @@ import 'package:finan_master_app/features/transactions/domain/entities/income_en
 
 abstract interface class IIncomeSave {
   Future<IncomeEntity> save(IncomeEntity entity);
+
+  Future<void> saveReceived({required bool received, required String id});
 }

@@ -65,8 +65,8 @@ class CreditCardRepository implements ICreditCardRepository {
   }
 
   @override
-  Future<CreditCardEntity?> findById(String id, {ITransactionExecutor? txn}) async {
-    final CreditCardModel? model = await _creditCardDataSource.findById(id, txn: txn);
+  Future<CreditCardEntity?> findById(String id, {bool deleted = false, ITransactionExecutor? txn}) async {
+    final CreditCardModel? model = await _creditCardDataSource.findById(id, deleted: deleted, txn: txn);
 
     return model != null
         ? CreditCardFactory.toEntity(

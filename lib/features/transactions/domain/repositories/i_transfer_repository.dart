@@ -7,4 +7,6 @@ abstract interface class ITransferRepository {
   Future<void> delete(TransferEntity entity, {ITransactionExecutor? txn});
 
   Future<List<TransferEntity>> findByPeriod(DateTime startDate, DateTime endDate);
+
+  Future<TransferEntity?> findById(String id);
 }

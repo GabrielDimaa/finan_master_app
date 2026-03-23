@@ -3,7 +3,7 @@ import 'package:finan_master_app/features/account/domain/entities/account_entity
 abstract interface class IAccountFind {
   Future<List<AccountEntity>> findAll({bool deleted = false});
 
-  Future<AccountEntity?> findById(String id);
+  Future<AccountEntity?> findById(String id, {bool deleted = false});
 
   Future<double> findBalanceUntilDate(DateTime date);
 

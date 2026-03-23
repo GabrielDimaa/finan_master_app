@@ -284,6 +284,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Deseja realmente excluir esta conta?';
 
   @override
+  String get deleteBillPayment => 'Excluir pagamento de fatura';
+
+  @override
+  String get deleteBillPaymentConfirmation =>
+      'Deseja realmente excluir este pagamento de fatura?';
+
+  @override
   String get deleteData => 'Apagar dados';
 
   @override
@@ -295,10 +302,34 @@ class AppLocalizationsPt extends AppLocalizations {
       'Apague seus dados permanentemente do sistema.';
 
   @override
+  String get deleteCardExpense => 'Excluir despesa de cartão';
+
+  @override
+  String get deleteCardExpenseConfirmation =>
+      'Deseja realmente excluir esta despesa de cartão?';
+
+  @override
+  String get deleteExpense => 'Excluir despesa';
+
+  @override
+  String get deleteExpenseConfirmation =>
+      'Deseja realmente excluir esta despesa?';
+
+  @override
+  String get deleteIncome => 'Excluir receita';
+
+  @override
+  String get deleteIncomeConfirmation =>
+      'Deseja realmente excluir esta receita?';
+
+  @override
   String get deletingTransactions => 'Excluindo transações...';
 
   @override
   String get description => 'Descrição';
+
+  @override
+  String get destination => 'Destino';
 
   @override
   String get doNotHaveAccount => 'Não tem uma conta?';
@@ -454,6 +485,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get loginWithGoogle => 'Entrar com o Google';
+
+  @override
+  String get markAsPaid => 'Marcar como pago';
+
+  @override
+  String get markAsReceived => 'Marcar como recebido';
 
   @override
   String get menu => 'Menu';
@@ -653,10 +690,16 @@ class AppLocalizationsPt extends AppLocalizations {
       'Restaure um backup para substituir seus dados atuais pelos dados do backup.';
 
   @override
+  String get resultNotFound => 'Nenhum resultado foi encontrado.';
+
+  @override
   String get requiredField => 'Campo obrigatório.';
 
   @override
   String get save => 'Salvar';
+
+  @override
+  String get search => 'Pesquisar';
 
   @override
   String seconds(num count) {
@@ -739,6 +782,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get stepIncome => 'Cadastre sua primeira receita';
 
   @override
+  String get source => 'Origem';
+
+  @override
   String get sourceAccountAndDestinationEquals =>
       'A conta de origem e a conta de destino devem ser diferentes.';
 
@@ -793,7 +839,16 @@ class AppLocalizationsPt extends AppLocalizations {
       'Valor da conta de saída e de entrada estão divergentes.';
 
   @override
+  String get type => 'Tipo';
+
+  @override
   String get typeCategory => 'Tipo de categoria';
+
+  @override
+  String get undoPayment => 'Desfazer pagamento';
+
+  @override
+  String get undoReceipt => 'Desfazer recebimento';
 
   @override
   String get uninformedAccount => 'Conta não informada.';

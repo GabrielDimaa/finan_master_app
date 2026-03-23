@@ -31,23 +31,27 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-class CreditCardExpensePage extends StatefulWidget {
+class CreditCardExpenseFormPage extends StatefulWidget {
   final CreditCardTransactionEntity? creditCardExpense;
 
   static const route = 'credit-card-expense-form';
 
-  const CreditCardExpensePage({Key? key, this.creditCardExpense}) : super(key: key);
+  const CreditCardExpenseFormPage({Key? key, this.creditCardExpense}) : super(key: key);
 
   @override
-  State<CreditCardExpensePage> createState() => _CreditCardExpensePageState();
+  State<CreditCardExpenseFormPage> createState() => _CreditCardExpenseFormPageState();
 }
 
-class _CreditCardExpensePageState extends State<CreditCardExpensePage> with ThemeContext {
+class _CreditCardExpenseFormPageState extends State<CreditCardExpenseFormPage> with ThemeContext {
   final CreditCardExpenseFormViewModel viewModel = DI.get<CreditCardExpenseFormViewModel>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController amountController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
-  TextEditingValue textEditingValue = const TextEditingValue(text: '');
+  final TextEditingController observationController = TextEditingController();
+
+  final FocusNode descriptionFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -58,8 +62,10 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
         await viewModel.load.execute(widget.creditCardExpense);
         viewModel.load.throwIfError();
 
+        amountController.text = viewModel.creditCardExpense.amount.moneyWithoutSymbol;
+        descriptionController.text = viewModel.creditCardExpense.description;
         dateController.text = viewModel.creditCardExpense.date.format();
-        textEditingValue = TextEditingValue(text: viewModel.creditCardExpense.description);
+        observationController.text = viewModel.creditCardExpense.observation ?? '';
       } catch (e) {
         if (!mounted) return;
         ErrorDialog.show(context, e.toString());
@@ -81,12 +87,6 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                 onPressed: save,
                 child: Text(strings.save),
               ),
-              if (widget.creditCardExpense != null)
-                IconButton(
-                  tooltip: strings.delete,
-                  onPressed: delete,
-                  icon: const Icon(Icons.delete_outline),
-                ),
             ],
           ),
           body: ListenableBuilder(
@@ -104,7 +104,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                       child: Column(
                         children: [
                           TextFormField(
-                            initialValue: viewModel.creditCardExpense.amount.moneyWithoutSymbol,
+                            controller: amountController,
                             decoration: InputDecoration(
                               label: Text(strings.amount),
                               prefixText: NumberFormat.simpleCurrency(locale: R.locale.toString()).currencySymbol,
@@ -120,7 +120,8 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                           LayoutBuilder(
                             builder: (context, constraints) {
                               return Autocomplete<TransactionByTextEntity>(
-                                initialValue: textEditingValue,
+                                textEditingController: descriptionController,
+                                focusNode: descriptionFocusNode,
                                 displayStringForOption: (TransactionByTextEntity option) => option.description,
                                 fieldViewBuilder: (_, textController, focusNode, ___) {
                                   return TextFormField(
@@ -134,17 +135,11 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                                   );
                                 },
                                 optionsBuilder: (TextEditingValue textEditingValue) async {
-                                  if (textEditingValue.text.length <= 1) {
-                                    this.textEditingValue = textEditingValue;
-                                    return [];
-                                  }
-
-                                  if (textEditingValue.text == this.textEditingValue.text) return [];
+                                  if (textEditingValue.text.length <= 1) return [];
 
                                   await viewModel.findByText.execute(textEditingValue.text);
                                   viewModel.findByText.throwIfError();
 
-                                  this.textEditingValue = textEditingValue;
                                   return viewModel.findByText.result ?? [];
                                 },
                                 onSelected: (TransactionByTextEntity selection) {
@@ -262,7 +257,7 @@ class _CreditCardExpensePageState extends State<CreditCardExpensePage> with Them
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: TextFormField(
-                        initialValue: viewModel.creditCardExpense.observation,
+                        controller: observationController,
                         decoration: InputDecoration(label: Text("${strings.observation} (${strings.optional})")),
                         textCapitalization: TextCapitalization.sentences,
                         minLines: 2,

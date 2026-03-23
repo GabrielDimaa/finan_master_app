@@ -3,8 +3,8 @@ import 'package:finan_master_app/features/category/domain/enums/category_type_en
 import 'package:finan_master_app/features/transactions/domain/entities/expense_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
-import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
-import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/components/details/expense_details_sheet.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/components/details/income_details_sheet.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_unpaid_unreceived_view_model.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
@@ -22,7 +22,6 @@ import 'package:finan_master_app/shared/presentation/ui/components/message_error
 import 'package:finan_master_app/shared/presentation/ui/components/no_content_widget.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class TransactionsUnpaidUnreceivedPage extends StatefulWidget {
   static const String route = 'transactions-unpaid-unreceived';
@@ -142,7 +141,7 @@ class _TransactionsUnpaidUnreceivedPageState extends State<TransactionsUnpaidUnr
                                   Text(transaction.date.formatDateToRelative()),
                                 ],
                               ),
-                              onTap: () => goEdit(transaction),
+                              onTap: () => goDetails(transaction),
                             );
                           },
                         ),
@@ -158,15 +157,23 @@ class _TransactionsUnpaidUnreceivedPageState extends State<TransactionsUnpaidUnr
     );
   }
 
-  Future<void> goEdit(ITransactionEntity transaction) async {
-    final FormResultNavigation<ITransactionEntity>? result = await context.pushNamed(transaction is ExpenseEntity ? ExpenseFormPage.route : IncomeFormPage.route, extra: transaction);
-    if (result == null) return;
+  Future<void> goDetails(ITransactionEntity transaction) async {
+    FormResultNavigation<ITransactionEntity>? result;
 
-    if (result.isSave) {
-      viewModel.setTransactions(viewModel.transactions.map((e) => e.id == transaction.id ? result.value! : e).toList());
+    switch (transaction.runtimeType) {
+      case ExpenseEntity:
+        await ExpenseDetailsSheet.show(context: context, id: transaction.id, onChanged: (value) => result = value);
+        break;
+      case IncomeEntity:
+        await IncomeDetailsSheet.show(context: context, id: transaction.id, onChanged: (value) => result = value);
+        break;
     }
 
-    if (result.isDelete) {
+    if (result?.isSave == true) {
+      viewModel.setTransactions(viewModel.transactions.map((e) => e.id == transaction.id ? result!.value! : e).toList());
+    }
+
+    if (result?.isDelete == true) {
       viewModel.setTransactions(viewModel.transactions.where((e) => e.id != transaction.id).toList());
     }
   }

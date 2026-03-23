@@ -626,6 +626,18 @@ abstract class AppLocalizations {
   /// **'Do you really want to delete this account?'**
   String get deleteAccountConfirmation;
 
+  /// No description provided for @deleteBillPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete bill payment'**
+  String get deleteBillPayment;
+
+  /// No description provided for @deleteBillPaymentConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you really want to delete this bill payment?'**
+  String get deleteBillPaymentConfirmation;
+
   /// No description provided for @deleteData.
   ///
   /// In en, this message translates to:
@@ -644,6 +656,42 @@ abstract class AppLocalizations {
   /// **'Permanently delete your data from the system.'**
   String get deleteDataExplication;
 
+  /// No description provided for @deleteCardExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete card expense'**
+  String get deleteCardExpense;
+
+  /// No description provided for @deleteCardExpenseConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you really want to delete this card expense?'**
+  String get deleteCardExpenseConfirmation;
+
+  /// No description provided for @deleteExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete expense'**
+  String get deleteExpense;
+
+  /// No description provided for @deleteExpenseConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you really want to delete this expense?'**
+  String get deleteExpenseConfirmation;
+
+  /// No description provided for @deleteIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete income'**
+  String get deleteIncome;
+
+  /// No description provided for @deleteIncomeConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you really want to delete this income?'**
+  String get deleteIncomeConfirmation;
+
   /// No description provided for @deletingTransactions.
   ///
   /// In en, this message translates to:
@@ -655,6 +703,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Description'**
   String get description;
+
+  /// No description provided for @destination.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination'**
+  String get destination;
 
   /// No description provided for @doNotHaveAccount.
   ///
@@ -955,6 +1009,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login with Google'**
   String get loginWithGoogle;
+
+  /// No description provided for @markAsPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as paid'**
+  String get markAsPaid;
+
+  /// No description provided for @markAsReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as received'**
+  String get markAsReceived;
 
   /// No description provided for @menu.
   ///
@@ -1304,6 +1370,12 @@ abstract class AppLocalizations {
   /// **'Restore a backup to replace your current data with the backup data.'**
   String get restoreBackupExplication;
 
+  /// No description provided for @resultNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results were found.'**
+  String get resultNotFound;
+
   /// No description provided for @requiredField.
   ///
   /// In en, this message translates to:
@@ -1315,6 +1387,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
 
   /// No description provided for @seconds.
   ///
@@ -1460,6 +1538,12 @@ abstract class AppLocalizations {
   /// **'Register your first income'**
   String get stepIncome;
 
+  /// No description provided for @source.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get source;
+
   /// No description provided for @sourceAccountAndDestinationEquals.
   ///
   /// In en, this message translates to:
@@ -1562,11 +1646,29 @@ abstract class AppLocalizations {
   /// **'Outgoing and incoming account values are divergent.'**
   String get transferAmountDivergent;
 
+  /// No description provided for @type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get type;
+
   /// No description provided for @typeCategory.
   ///
   /// In en, this message translates to:
   /// **'Category type'**
   String get typeCategory;
+
+  /// No description provided for @undoPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo payment'**
+  String get undoPayment;
+
+  /// No description provided for @undoReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo receipt'**
+  String get undoReceipt;
 
   /// No description provided for @uninformedAccount.
   ///
