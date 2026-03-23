@@ -54,4 +54,12 @@ class IncomeSave implements IIncomeSave {
       return entitySaved;
     });
   }
+
+  @override
+  Future<void> saveReceived({required bool received, required String id}) async {
+    final IncomeEntity income = await _repository.findById(id) ?? (throw Exception(R.strings.transactionNotFound));
+    income.received = received;
+
+    await save(income);
+  }
 }

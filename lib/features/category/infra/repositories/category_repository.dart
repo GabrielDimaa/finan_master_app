@@ -24,8 +24,8 @@ class CategoryRepository implements ICategoryRepository {
   }
 
   @override
-  Future<CategoryEntity?> findById(String id) async {
-    final CategoryModel? category = await _dataSource.findById(id);
+  Future<CategoryEntity?> findById(String id, {bool deleted = false}) async {
+    final CategoryModel? category = await _dataSource.findById(id, deleted: deleted);
     if (category == null) return null;
 
     return CategoryFactory.toEntity(category);

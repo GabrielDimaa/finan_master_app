@@ -38,4 +38,11 @@ class TransferRepository implements ITransferRepository {
 
     return models.map((model) => TransferFactory.toEntity(model)).toList();
   }
+
+  @override
+  Future<TransferEntity?> findById(String id) async {
+    final result = await _transferLocalDataSource.findById(id);
+
+    return result != null ? TransferFactory.toEntity(result) : null;
+  }
 }

@@ -7,6 +7,7 @@ import 'package:finan_master_app/features/credit_card/domain/entities/credit_car
 import 'package:finan_master_app/features/credit_card/domain/enums/bill_status_enum.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/components/pay_bill_dialog.dart';
 import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_form_page.dart';
+import 'package:finan_master_app/features/credit_card/presentation/ui/credit_card_expense_details_sheet.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_bill_details_view_model.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
@@ -185,7 +186,7 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
                                               Text(transaction.date.formatDateToRelative()),
                                             ],
                                           ),
-                                          onTap: () => goCreditCardExpenseForm(transaction),
+                                          onTap: () => goCreditCardExpenseDetails(transaction),
                                         );
                                       },
                                     ),
@@ -253,10 +254,11 @@ class _CreditCardBillDetailsPageState extends State<CreditCardBillDetailsPage> w
     );
   }
 
-  Future<void> goCreditCardExpenseForm(CreditCardTransactionEntity entity) async {
-    if (entity.amount < 0) return;
+  Future<void> goCreditCardExpenseDetails(CreditCardTransactionEntity entity) async {
+    FormResultNavigation<CreditCardTransactionEntity>? result;
 
-    final FormResultNavigation<CreditCardTransactionEntity>? result = await context.pushNamed(CreditCardExpensePage.route, extra: entity);
+    await CreditCardExpenseDetailsSheet.show(context: context, id: entity.id, onChanged: (value) => result = value);
+
     if (result != null) {
       changed = true;
       await viewModel.refreshBill.execute();

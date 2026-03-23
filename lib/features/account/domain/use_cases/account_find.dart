@@ -11,7 +11,7 @@ class AccountFind implements IAccountFind {
   Future<List<AccountEntity>> findAll({bool deleted = false}) => _repository.findAll(deleted: deleted);
 
   @override
-  Future<AccountEntity?> findById(String id) => _repository.findById(id);
+  Future<AccountEntity?> findById(String id, {bool deleted = false}) => _repository.findById(id, deleted: deleted);
 
   @override
   Future<double> findBalanceUntilDate(DateTime date) => _repository.findBalanceUntilDate(date);

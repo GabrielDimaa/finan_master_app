@@ -31,11 +31,11 @@ class _ConfirmDialogState extends State<ConfirmDialog> with ThemeContext {
       ),
       actions: [
         TextButton(
-          onPressed: () => context.pop(false),
+          onPressed: () => Navigator.of(context).pop(false),
           child: Text(strings.cancel),
         ),
         TextButton(
-          onPressed: () => context.pop(true),
+          onPressed: () => Navigator.of(context).pop(true),
           child: Text(strings.confirm),
         ),
       ],

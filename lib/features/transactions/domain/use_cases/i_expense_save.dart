@@ -2,4 +2,6 @@ import 'package:finan_master_app/features/transactions/domain/entities/expense_e
 
 abstract interface class IExpenseSave {
   Future<ExpenseEntity> save(ExpenseEntity entity);
+
+  Future<void> savePaid({required bool paid, required String id});
 }

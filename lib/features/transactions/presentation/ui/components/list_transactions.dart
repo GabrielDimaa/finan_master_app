@@ -3,9 +3,9 @@ import 'package:finan_master_app/features/transactions/domain/entities/expense_e
 import 'package:finan_master_app/features/transactions/domain/entities/i_transaction_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/income_entity.dart';
 import 'package:finan_master_app/features/transactions/domain/entities/transfer_entity.dart';
-import 'package:finan_master_app/features/transactions/presentation/ui/expense_form_page.dart';
-import 'package:finan_master_app/features/transactions/presentation/ui/income_form_page.dart';
-import 'package:finan_master_app/features/transactions/presentation/ui/transfer_form_page.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/components/details/expense_details_sheet.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/components/details/income_details_sheet.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/components/details/transfer_details_sheet.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_list_view_model.dart';
 import 'package:finan_master_app/l10n/generated/app_localizations.dart';
 import 'package:finan_master_app/shared/classes/form_result_navigation.dart';
@@ -14,14 +14,11 @@ import 'package:finan_master_app/shared/extensions/double_extension.dart';
 import 'package:finan_master_app/shared/extensions/int_extension.dart';
 import 'package:finan_master_app/shared/extensions/string_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
-import 'package:finan_master_app/shared/presentation/ui/app_locale.dart';
-import 'package:finan_master_app/shared/presentation/ui/components/dialog/error_dialog.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/item_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_tile_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/list/selectable/list_view_selectable.dart';
 import 'package:finan_master_app/shared/presentation/ui/components/spacing.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class ListTransactions extends StatefulWidget {
   final TransactionsListViewModel viewModel;
@@ -72,15 +69,7 @@ class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
                 Text(expense.date.formatDateToRelative()),
               ],
             ),
-            onTap: () async {
-              try {
-                if (expense.idCreditCard != null) throw Exception(R.strings.notPossibleEditTransactionCreditCardPaid);
-                await goFormsPage(context: context, route: ExpenseFormPage.route, entity: expense);
-              } catch (e) {
-                if (!context.mounted) return;
-                ErrorDialog.show(context, e.toString());
-              }
-            },
+            onTap: () => goDetails(context: context, entity: expense),
           );
         }
 
@@ -114,7 +103,7 @@ class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
                 Text(income.date.formatDateToRelative()),
               ],
             ),
-            onTap: () => goFormsPage(context: context, route: IncomeFormPage.route, entity: income),
+            onTap: () => goDetails(context: context, entity: income),
           );
         }
 
@@ -145,7 +134,7 @@ class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
                     Text(transfer.date.formatDateToRelative()),
                   ],
                 ),
-                onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),
+                onTap: () => goDetails(context: context, entity: transfer),
               ),
               const Divider(),
               ListTileSelectable<ITransactionEntity>(
@@ -166,11 +155,11 @@ class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(transfer.amount.money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0xFFFF5454))),
+                    Text((-transfer.amount).money, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: const Color(0xFFFF5454))),
                     Text(transfer.date.formatDateToRelative()),
                   ],
                 ),
-                onTap: () => goFormsPage(context: context, route: TransferFormPage.route, entity: transfer),
+                onTap: () => goDetails(context: context, entity: transfer),
               ),
             ],
           );
@@ -181,8 +170,21 @@ class _ListTransactionsState extends State<ListTransactions> with ThemeContext {
     );
   }
 
-  Future<void> goFormsPage({required BuildContext context, required String route, required ITransactionEntity entity}) async {
-    final FormResultNavigation? result = await context.pushNamed(route, extra: entity);
+  Future<void> goDetails({required BuildContext context, required ITransactionEntity entity}) async {
+    FormResultNavigation? result;
+
+    switch (entity.runtimeType) {
+      case ExpenseEntity:
+        await ExpenseDetailsSheet.show(context: context, id: entity.id, onChanged: (value) => result = value);
+        break;
+      case IncomeEntity:
+        await IncomeDetailsSheet.show(context: context, id: entity.id, onChanged: (value) => result = value);
+        break;
+      case TransferEntity:
+        await TransferDetailsSheet.show(context: context, id: entity.id, onChanged: (value) => result = value);
+        break;
+    }
+
     if (result == null) return;
 
     widget.viewModel.findByPeriod.execute((startDate: widget.viewModel.startDate, endDate: widget.viewModel.endDate));

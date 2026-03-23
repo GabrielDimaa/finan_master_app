@@ -78,23 +78,17 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: Listenable.merge([viewModel.save, viewModel.delete]),
+      listenable: viewModel.save,
       builder: (_, __) {
         return SliverScaffold(
           appBar: SliverAppBarMedium(
             title: Text(strings.expense),
-            loading: viewModel.save.running || viewModel.delete.running,
+            loading: viewModel.save.running,
             actions: [
               FilledButton(
                 onPressed: save,
                 child: Text(strings.save),
               ),
-              if (widget.expense?.isNew == false)
-                IconButton(
-                  tooltip: strings.delete,
-                  onPressed: delete,
-                  icon: const Icon(Icons.delete_outline),
-                ),
             ],
           ),
           body: ListenableBuilder(
@@ -120,7 +114,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                             validator: InputValidators([InputRequiredValidator(), InputGreaterThanValueValidator(0)]).validate,
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.next,
-                            enabled: !viewModel.isLoading,
+                            enabled: !viewModel.save.running,
                             onSaved: (String? value) => viewModel.expense.amount = (value ?? '').moneyToDouble(),
                             inputFormatters: [FilteringTextInputFormatter.digitsOnly, MaskInputFormatter.currency()],
                           ),
@@ -139,7 +133,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                     focusNode: focusNode,
                                     validator: InputRequiredValidator().validate,
                                     onSaved: (String? value) => viewModel.expense.description = value?.trim() ?? '',
-                                    enabled: !viewModel.isLoading,
+                                    enabled: !viewModel.save.running,
                                   );
                                 },
                                 optionsBuilder: (TextEditingValue textEditingValue) async {
@@ -204,7 +198,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                             readOnly: true,
                             controller: dateController,
                             validator: InputRequiredValidator().validate,
-                            enabled: !viewModel.isLoading,
+                            enabled: !viewModel.save.running,
                             onTap: selectDate,
                           ),
                         ],
@@ -222,7 +216,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                     GroupTile(
                       onTap: selectCategory,
                       title: strings.category,
-                      enabled: !viewModel.isLoading,
+                      enabled: !viewModel.save.running,
                       tile: viewModel.expense.idCategory != null
                           ? Builder(
                               builder: (_) {
@@ -234,7 +228,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                   ),
                                   title: Text(category.description),
                                   trailing: const Icon(Icons.chevron_right),
-                                  enabled: !viewModel.isLoading,
+                                  enabled: !viewModel.save.running,
                                 );
                               },
                             )
@@ -242,14 +236,14 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                               leading: const Icon(Icons.category_outlined),
                               title: Text(strings.selectCategory),
                               trailing: const Icon(Icons.chevron_right),
-                              enabled: !viewModel.isLoading,
+                              enabled: !viewModel.save.running,
                             ),
                     ),
                     const Divider(),
                     GroupTile(
                       onTap: selectAccount,
                       title: strings.account,
-                      enabled: !viewModel.isLoading,
+                      enabled: !viewModel.save.running,
                       tile: viewModel.expense.idAccount != null
                           ? Builder(
                               builder: (_) {
@@ -258,7 +252,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                                   leading: account.financialInstitution!.icon(),
                                   title: Text(account.description),
                                   trailing: const Icon(Icons.chevron_right),
-                                  enabled: !viewModel.isLoading,
+                                  enabled: !viewModel.save.running,
                                 );
                               },
                             )
@@ -266,7 +260,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                               leading: const Icon(Icons.account_balance_outlined),
                               title: Text(strings.selectAccount),
                               trailing: const Icon(Icons.chevron_right),
-                              enabled: !viewModel.isLoading,
+                              enabled: !viewModel.save.running,
                             ),
                     ),
                     const Divider(),
@@ -280,7 +274,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
                         minLines: 2,
                         maxLines: 5,
                         onSaved: (String? value) => viewModel.expense.observation = value?.trim() ?? '',
-                        enabled: !viewModel.isLoading,
+                        enabled: !viewModel.save.running,
                       ),
                     ),
                   ],
@@ -294,7 +288,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   }
 
   Future<void> save() async {
-    if (viewModel.isLoading) return;
+    if (viewModel.save.running) return;
 
     try {
       if (formKey.currentState?.validate() ?? false) {
@@ -311,22 +305,8 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
     }
   }
 
-  Future<void> delete() async {
-    if (viewModel.isLoading) return;
-
-    try {
-      await viewModel.delete.execute(viewModel.expense);
-      viewModel.delete.throwIfError();
-
-      if (!mounted) return;
-      context.pop(FormResultNavigation<ExpenseEntity>.delete());
-    } catch (e) {
-      await ErrorDialog.show(context, e.toString());
-    }
-  }
-
   Future<void> selectCategory() async {
-    if (viewModel.isLoading) return;
+    if (viewModel.save.running) return;
 
     final CategoryEntity? result = await CategoriesListBottomSheet.show(
       context: context,
@@ -341,7 +321,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   }
 
   Future<void> selectAccount() async {
-    if (viewModel.isLoading) return;
+    if (viewModel.save.running) return;
 
     final AccountEntity? result = await AccountsListBottomSheet.show(
       context: context,
@@ -356,7 +336,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> with ThemeContext {
   }
 
   Future<void> selectDate() async {
-    if (viewModel.isLoading) return;
+    if (viewModel.save.running) return;
 
     final DateTime? result = await showDatePickerDefault(context: context, initialDate: viewModel.expense.date);
 

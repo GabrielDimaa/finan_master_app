@@ -77,6 +77,7 @@ import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_ca
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_save.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_transaction_delete.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_transaction_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/credit_card_transaction_save.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_bill_dates.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_bill_find.dart';
@@ -85,6 +86,7 @@ import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_save.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_delete.dart';
+import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_find.dart';
 import 'package:finan_master_app/features/credit_card/domain/use_cases/i_credit_card_transaction_save.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_bill_local_data_source.dart';
 import 'package:finan_master_app/features/credit_card/infra/data_sources/credit_card_local_data_source.dart';
@@ -97,6 +99,7 @@ import 'package:finan_master_app/features/credit_card/infra/repositories/credit_
 import 'package:finan_master_app/features/credit_card/infra/repositories/credit_card_transaction_repository.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_bill_details_view_model.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_bills_view_model.dart';
+import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_expense_details_view_model.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_expense_form_view_model.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_card_form_view_model.dart';
 import 'package:finan_master_app/features/credit_card/presentation/view_models/credit_cards_details_view_model.dart';
@@ -127,6 +130,7 @@ import 'package:finan_master_app/features/statement/infra/data_sources/statement
 import 'package:finan_master_app/features/statement/infra/repositories/statement_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_expense_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_income_repository.dart';
+import 'package:finan_master_app/features/transactions/domain/repositories/i_transaction_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/repositories/i_transfer_repository.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/expense_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/expense_find.dart';
@@ -140,6 +144,7 @@ import 'package:finan_master_app/features/transactions/domain/use_cases/i_income
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transaction_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_delete.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/i_transfer_save.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/income_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/income_find.dart';
@@ -147,20 +152,28 @@ import 'package:finan_master_app/features/transactions/domain/use_cases/income_s
 import 'package:finan_master_app/features/transactions/domain/use_cases/transaction_delete.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/transaction_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/transfer_delete.dart';
+import 'package:finan_master_app/features/transactions/domain/use_cases/transfer_find.dart';
 import 'package:finan_master_app/features/transactions/domain/use_cases/transfer_save.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/expense_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_expense_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_income_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/i_transaction_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/i_transfer_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/income_local_data_source.dart';
+import 'package:finan_master_app/features/transactions/infra/data_sources/transaction_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/data_sources/transfer_local_data_source.dart';
 import 'package:finan_master_app/features/transactions/infra/repositories/expense_repository.dart';
 import 'package:finan_master_app/features/transactions/infra/repositories/income_repository.dart';
+import 'package:finan_master_app/features/transactions/infra/repositories/transaction_repository.dart';
 import 'package:finan_master_app/features/transactions/infra/repositories/transfer_repository.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/expense_details_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/expense_form_view_model.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/income_details_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/income_form_view_model.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/search_transactions_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_list_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_unpaid_unreceived_view_model.dart';
+import 'package:finan_master_app/features/transactions/presentation/view_models/transfer_details_view_model.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/transfer_form_view_model.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_cloud_data_source.dart';
 import 'package:finan_master_app/features/user_account/infra/data_sources/i_user_account_local_data_source.dart';
@@ -252,6 +265,7 @@ final class DependencyInjection {
     getIt.registerFactory<IUserAccountLocalDataSource>(() => UserAccountLocalDataSource(databaseLocal: databaseLocal));
     getIt.registerFactory<IUserAccountCloudDataSource>(() => UserAccountCloudDataSource(firestore: getIt.get<FirebaseFirestore>()));
     getIt.registerFactory<IStatementLocalDataSource>(() => StatementLocalDataSource(databaseLocal: databaseLocal));
+    getIt.registerFactory<ITransactionLocalDataSource>(() => TransactionLocalDataSource(databaseLocal: databaseLocal));
 
     //Repositories
     getIt.registerFactory<IAccountRepository>(() => AccountRepository(dataSource: getIt.get<IAccountLocalDataSource>(), creditCardLocalDataSource: getIt.get<ICreditCardLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
@@ -273,6 +287,7 @@ final class DependencyInjection {
     getIt.registerFactory<IReportCategoriesRepository>(() => ReportCategoriesRepository(expenseLocalDataSource: getIt.get<IExpenseLocalDataSource>(), incomeLocalDataSource: getIt.get<IIncomeLocalDataSource>(), creditCardTransactionLocalDataSource: getIt.get<ICreditCardTransactionLocalDataSource>(), categoriesLocalDataSource: getIt.get<ICategoryLocalDataSource>()));
     getIt.registerFactory<ITransferRepository>(() => TransferRepository(transferLocalDataSource: getIt.get<ITransferLocalDataSource>(), eventNotifier: getIt.get<EventNotifier>()));
     getIt.registerFactory<IStatementRepository>(() => StatementRepository(dataSource: getIt.get<IStatementLocalDataSource>(), dbTransaction: databaseLocal.transactionInstance()));
+    getIt.registerFactory<ITransactionRepository>(() => TransactionRepository(dataSource: getIt.get<ITransactionLocalDataSource>()));
 
     //Use cases
     getIt.registerFactory<IAccountDelete>(() => AccountDelete(repository: getIt.get<IAccountRepository>(), creditCardFind: getIt.get<ICreditCardFind>(), adAccess: getIt.get<IAdAccess>()));
@@ -311,10 +326,12 @@ final class DependencyInjection {
     getIt.registerFactory<IResetPassword>(() => ResetPassword(repository: getIt.get<IAuthRepository>()));
     getIt.registerFactory<IRestoreBackup>(() => RestoreBackup(repository: getIt.get<IBackupRepository>()));
     getIt.registerFactory<ISignupAuth>(() => SignupAuth(repository: getIt.get<IAuthRepository>()));
-    getIt.registerFactory<ITransactionFind>(() => TransactionFind(expenseRepository: getIt.get<IExpenseRepository>(), incomeRepository: getIt.get<IIncomeRepository>(), transferRepository: getIt.get<ITransferRepository>()));
+    getIt.registerFactory<ITransactionFind>(() => TransactionFind(expenseRepository: getIt.get<IExpenseRepository>(), incomeRepository: getIt.get<IIncomeRepository>(), transferRepository: getIt.get<ITransferRepository>(), transactionRepository: getIt.get<ITransactionRepository>()));
     getIt.registerFactory<ITransactionDelete>(() => TransactionDelete(incomeDelete: getIt.get<IIncomeDelete>(), expenseDelete: getIt.get<IExpenseDelete>(), transferDelete: getIt.get<ITransferDelete>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>()));
     getIt.registerFactory<ITransferDelete>(() => TransferDelete(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
     getIt.registerFactory<ITransferSave>(() => TransferSave(repository: getIt.get<ITransferRepository>(), statementRepository: getIt.get<IStatementRepository>(), localDBTransactionRepository: getIt.get<ILocalDBTransactionRepository>(), adAccess: getIt.get<IAdAccess>()));
+    getIt.registerFactory<ICreditCardTransactionFind>(() => CreditCardTransactionFind(repository: getIt.get<ICreditCardTransactionRepository>()));
+    getIt.registerFactory<ITransferFind>(() => TransferFind(repository: getIt.get<ITransferRepository>()));
 
     //ViewModel
     getIt.registerFactory<AccountDetailsViewModel>(() => AccountDetailsViewModel(accountDelete: getIt.get<IAccountDelete>()));
@@ -343,6 +360,11 @@ final class DependencyInjection {
     getIt.registerFactory<TransactionsListViewModel>(() => TransactionsListViewModel(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), accountFind: getIt.get<IAccountFind>(), categoryFind: getIt.get<ICategoryFind>()));
     getIt.registerFactory<TransferFormViewModel>(() => TransferFormViewModel(transferSave: getIt.get<ITransferSave>(), transferDelete: getIt.get<ITransferDelete>(), accountFind: getIt.get<IAccountFind>()));
     getIt.registerFactory<TransactionsUnpaidUnreceivedViewModel>(() => TransactionsUnpaidUnreceivedViewModel(transactionFind: getIt.get<ITransactionFind>(), transactionDelete: getIt.get<ITransactionDelete>(), categoryFind: getIt.get<ICategoryFind>(), accountFind: getIt.get<IAccountFind>()));
+    getIt.registerFactory<TransactionsSearchViewModel>(() => TransactionsSearchViewModel(transactionFind: getIt.get<ITransactionFind>()));
+    getIt.registerFactory<ExpenseDetailsViewModel>(() => ExpenseDetailsViewModel(expenseFind: getIt.get<IExpenseFind>(), expenseSave: getIt.get<IExpenseSave>(), expenseDelete: getIt.get<IExpenseDelete>(), categoryFind: getIt.get<ICategoryFind>(), accountFind: getIt.get<IAccountFind>()));
+    getIt.registerFactory<IncomeDetailsViewModel>(() => IncomeDetailsViewModel(incomeFind: getIt.get<IIncomeFind>(), incomeSave: getIt.get<IIncomeSave>(), incomeDelete: getIt.get<IIncomeDelete>(), categoryFind: getIt.get<ICategoryFind>(), accountFind: getIt.get<IAccountFind>()));
+    getIt.registerFactory<TransferDetailsViewModel>(() => TransferDetailsViewModel(transferFind: getIt.get<ITransferFind>(), transferDelete: getIt.get<ITransferDelete>(), accountFind: getIt.get<IAccountFind>()));
+    getIt.registerFactory<CreditCardExpenseDetailsViewModel>(() => CreditCardExpenseDetailsViewModel(creditCardExpenseFind: getIt.get<ICreditCardTransactionFind>(), creditCardExpenseDelete: getIt.get<ICreditCardTransactionDelete>(), categoryFind: getIt.get<ICategoryFind>(), creditCardFind: getIt.get<ICreditCardFind>(), accountFind: getIt.get<IAccountFind>()));
 
     //Notifiers
     getIt.registerSingleton<FirstStepsNotifier>(FirstStepsNotifier(firstStepsFind: getIt.get<IFirstStepsFind>(), firstStepsSave: getIt.get<IFirstStepsSave>(), eventNotifier: getIt.get<EventNotifier>()));

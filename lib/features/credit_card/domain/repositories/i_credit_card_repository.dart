@@ -9,7 +9,7 @@ abstract interface class ICreditCardRepository {
 
   Future<List<CreditCardEntity>> findAll();
 
-  Future<CreditCardEntity?> findById(String id, {ITransactionExecutor? txn});
+  Future<CreditCardEntity?> findById(String id, {bool deleted = false, ITransactionExecutor? txn});
 
   Future<List<CreditCardWithBillEntity>> findCreditCardsWithBill();
 

@@ -12,4 +12,6 @@ abstract interface class IIncomeRepository {
   Future<List<TransactionByTextEntity>> findByText(String text);
 
   Future<List<IncomeEntity>> findUnreceived();
+
+  Future<IncomeEntity?> findById(String id);
 }

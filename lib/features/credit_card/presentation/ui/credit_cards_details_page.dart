@@ -187,7 +187,7 @@ class _CreditCardsDetailsPageState extends State<CreditCardsDetailsPage> with Th
   }
 
   Future<void> goCreditCardExpenseForm({required BuildContext context}) async {
-    final FormResultNavigation? result = await context.pushNamedWithAd(CreditCardExpensePage.route);
+    final FormResultNavigation? result = await context.pushNamedWithAd(CreditCardExpenseFormPage.route);
     if (result != null) await viewModel.refreshCreditCard();
   }
 }

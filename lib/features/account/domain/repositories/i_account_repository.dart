@@ -4,7 +4,7 @@ import 'package:finan_master_app/shared/infra/data_sources/database_local/i_data
 abstract interface class IAccountRepository {
   Future<List<AccountEntity>> findAll({bool deleted = false});
 
-  Future<AccountEntity?> findById(String id);
+  Future<AccountEntity?> findById(String id, {bool deleted = false});
 
   Future<AccountEntity> save(AccountEntity entity, {ITransactionExecutor? txn});
 

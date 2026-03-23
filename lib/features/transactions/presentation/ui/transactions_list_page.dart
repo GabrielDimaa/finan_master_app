@@ -5,6 +5,7 @@ import 'package:finan_master_app/features/transactions/presentation/ui/component
 import 'package:finan_master_app/features/transactions/presentation/ui/components/filters_transactions.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/list_transactions.dart';
 import 'package:finan_master_app/features/transactions/presentation/ui/components/totals_transactions.dart';
+import 'package:finan_master_app/features/transactions/presentation/ui/components/transactions_search.dart';
 import 'package:finan_master_app/features/transactions/presentation/view_models/transactions_list_view_model.dart';
 import 'package:finan_master_app/shared/extensions/date_time_extension.dart';
 import 'package:finan_master_app/shared/presentation/mixins/theme_context.dart';
@@ -81,8 +82,14 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
           centerTitle: true,
           actions: [
             IconButton(
+              tooltip: strings.filter,
               icon: const Icon(Icons.today_outlined),
               onPressed: selectDate,
+            ),
+            IconButton(
+              tooltip: strings.search,
+              icon: const Icon(Icons.search),
+              onPressed: () => TransactionsSearch.show(context: context),
             ),
           ],
           actionsInModeSelection: [

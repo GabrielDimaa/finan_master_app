@@ -27,14 +27,14 @@ class AccountRepository implements IAccountRepository {
   }
 
   @override
-  Future<AccountEntity?> findById(String id) async {
-    final AccountModel? account = await _dataSource.findById(id);
+  Future<AccountEntity?> findById(String id, {bool deleted = false}) async {
+    final AccountModel? account = await _dataSource.findById(id, deleted: deleted);
     return account != null ? AccountFactory.toEntity(account) : null;
   }
 
   @override
   Future<AccountEntity> save(AccountEntity entity, {ITransactionExecutor? txn}) async {
-    final AccountModel account = await _dataSource.upsert(AccountFactory.fromEntity(entity), txn: txn);
+    await _dataSource.upsert(AccountFactory.fromEntity(entity), txn: txn);
 
     _eventNotifier.notify(EventType.account);
 

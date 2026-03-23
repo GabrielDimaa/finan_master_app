@@ -45,9 +45,9 @@ extension DateTimeExtension on DateTime {
   String formatDateToRelative() {
     final DateTime now = DateTime.now();
 
-    if (isSameDay(now, this)) return R.strings.today;
+    if (isSameDay(now)) return R.strings.today;
 
-    if (isSameDay(now.subtract(const Duration(days: 1)), this)) return R.strings.yesterday;
+    if (isSameDay(now.subtract(const Duration(days: 1)))) return R.strings.yesterday;
 
     return DateFormat('d MMM', AppLocale().locale.languageCode).format(this).replaceAll('.', '').toUpperCase();
   }
@@ -58,7 +58,7 @@ extension DateTimeExtension on DateTime {
 
   String formatYMMMM() => DateFormat.yMMMM(AppLocale().locale.languageCode).format(this);
 
-  bool isSameDay(DateTime date1, DateTime date2) => date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
+  bool isSameDay(DateTime date) => date.year == year && date.month == month && date.day == day;
 }
 
 int differenceInMonths(DateTime startDate, DateTime endDate) {

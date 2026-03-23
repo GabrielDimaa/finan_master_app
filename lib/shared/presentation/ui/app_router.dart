@@ -154,9 +154,9 @@ sealed class AppRouter {
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,
-          name: CreditCardExpensePage.route,
-          path: '/${CreditCardExpensePage.route}',
-          builder: (_, GoRouterState state) => CreditCardExpensePage(creditCardExpense: state.extra as CreditCardTransactionEntity?),
+          name: CreditCardExpenseFormPage.route,
+          path: '/${CreditCardExpenseFormPage.route}',
+          builder: (_, GoRouterState state) => CreditCardExpenseFormPage(creditCardExpense: state.extra as CreditCardTransactionEntity?),
         ),
         GoRoute(
           parentNavigatorKey: _rootNavigatorKey,

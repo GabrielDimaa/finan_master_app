@@ -84,4 +84,11 @@ class ExpenseRepository implements IExpenseRepository {
 
     return models.map((model) => ExpenseFactory.toEntity(model)).toList();
   }
+
+  @override
+  Future<ExpenseEntity?> findById(String id) async {
+    final ExpenseModel? model = await _expenseLocalDataSource.findById(id);
+
+    return model != null ? ExpenseFactory.toEntity(model) : null;
+  }
 }

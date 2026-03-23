@@ -89,12 +89,6 @@ class _IncomeFormPageState extends State<IncomeFormPage> with ThemeContext {
                 onPressed: save,
                 child: Text(strings.save),
               ),
-              if (widget.income?.isNew == false)
-                IconButton(
-                  tooltip: strings.delete,
-                  onPressed: delete,
-                  icon: const Icon(Icons.delete_outline),
-                ),
             ],
           ),
           body: ListenableBuilder(
