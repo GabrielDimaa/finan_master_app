@@ -4,11 +4,13 @@ import 'package:finan_master_app/features/category/domain/repositories/i_categor
 import 'package:finan_master_app/features/category/helpers/factories/category_factory.dart';
 import 'package:finan_master_app/features/category/infra/data_sources/i_category_local_data_source.dart';
 import 'package:finan_master_app/features/category/infra/models/category_model.dart';
+import 'package:finan_master_app/shared/presentation/notifiers/event_notifier.dart';
 
 class CategoryRepository implements ICategoryRepository {
   final ICategoryLocalDataSource _dataSource;
+  final EventNotifier _eventNotifier;
 
-  CategoryRepository({required ICategoryLocalDataSource dataSource}) : _dataSource = dataSource;
+  CategoryRepository({required ICategoryLocalDataSource dataSource, required EventNotifier eventNotifier}) : _dataSource = dataSource, _eventNotifier = eventNotifier;
 
   @override
   Future<List<CategoryEntity>> findAll({CategoryTypeEnum? type, bool deleted = false}) async {
@@ -34,9 +36,16 @@ class CategoryRepository implements ICategoryRepository {
   @override
   Future<CategoryEntity> save(CategoryEntity entity) async {
     final CategoryModel category = await _dataSource.upsert(CategoryFactory.fromEntity(entity));
+
+    _eventNotifier.notify(EventType.category);
+
     return CategoryFactory.toEntity(category);
   }
 
   @override
-  Future<void> delete(CategoryEntity entity) => _dataSource.delete(CategoryFactory.fromEntity(entity));
+  Future<void> delete(CategoryEntity entity) async {
+    await _dataSource.delete(CategoryFactory.fromEntity(entity));
+
+    _eventNotifier.notify(EventType.category);
+  }
 }
