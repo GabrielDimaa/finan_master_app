@@ -52,13 +52,13 @@ class _TransactionsListPageState extends State<TransactionsListPage> with ThemeC
       viewModel.init.throwIfError();
 
       eventNotifier.addListener(() {
-        if ([EventType.income, EventType.expense, EventType.transfer].contains(eventNotifier.value)) onRefresh();
+        if ([EventType.income, EventType.expense, EventType.transfer, EventType.account, EventType.category].contains(eventNotifier.value)) onRefresh(forceInit: true);
       });
     });
   }
 
-  Future<void> onRefresh({DateTime? startDate, DateTime? endDate}) async {
-    if (viewModel.init.hasError) {
+  Future<void> onRefresh({DateTime? startDate, DateTime? endDate, bool? forceInit}) async {
+    if (viewModel.init.hasError || forceInit == true) {
       await viewModel.init.execute((startDate: startDate ?? viewModel.startDate, endDate: endDate ?? viewModel.endDate, filterType: viewModel.filterType));
     } else {
       await viewModel.findByPeriod.execute((startDate: startDate ?? viewModel.startDate, endDate: endDate ?? viewModel.endDate));

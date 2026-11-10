@@ -15,4 +15,5 @@ enum EventType {
   expense,
   creditCard,
   account,
+  category,
 }
